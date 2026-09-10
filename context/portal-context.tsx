@@ -45,7 +45,7 @@ interface PortalContextType {
   rejectQuote: (requestId: string, reason: string) => void;
   submitPayment: (
     requestId: string,
-    method: "Bank Transfer" | "Trade Credit Account" | "Credit Card",
+    method: "Bank Transfer" | "Credit Card",
     reference?: string
   ) => void;
   sendMessage: (requestId: string, text: string) => void;
@@ -182,7 +182,7 @@ export function PortalProvider({ children }: { children: React.ReactNode }) {
           const updated: PartRequest = {
             ...r,
             status: "Awaiting Payment",
-            actionRequired: "Settle invoice or release on SP Motors 30-Day Trade Credit",
+            actionRequired: "Settle invoice via Bank Transfer or Card",
             actionType: "pay_now",
             quoteAcceptance: acceptanceAudit,
             payment: {
@@ -276,7 +276,7 @@ export function PortalProvider({ children }: { children: React.ReactNode }) {
 
   const submitPayment = (
     requestId: string,
-    method: "Bank Transfer" | "Trade Credit Account" | "Credit Card",
+    method: "Bank Transfer" | "Credit Card",
     reference?: string
   ) => {
     setRequests((prev) =>
@@ -304,11 +304,8 @@ export function PortalProvider({ children }: { children: React.ReactNode }) {
 
     const target = requests.find((r) => r.id === requestId);
     const reqNum = target?.requestNumber || "Request";
-    const isCredit = method === "Trade Credit Account";
 
-    const desc = isCredit
-      ? `Charged to SP Motors 30-Day Trade Account. Payment status recorded as Paid. PO released to supplier.`
-      : `Payment settled via ${method} (Ref: ${reference || reqNum}). Payment status recorded as Paid.`;
+    const desc = `Payment settled via ${method} (Ref: ${reference || reqNum}). Payment status recorded as Paid.`;
 
     setActivities((prev) => [
       {
@@ -326,8 +323,8 @@ export function PortalProvider({ children }: { children: React.ReactNode }) {
     setNotifications((prev) => [
       {
         id: `notif-${Date.now()}`,
-        type: isCredit ? "Order Placed" : "Payment Received",
-        title: isCredit ? `Order Placed: ${reqNum}` : `Payment Recorded (Paid): ${reqNum}`,
+        type: "Payment Received",
+        title: `Payment Recorded (Paid): ${reqNum}`,
         description: desc,
         timestamp: "Just now",
         read: false,

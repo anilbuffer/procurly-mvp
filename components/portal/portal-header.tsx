@@ -42,6 +42,12 @@ export function PortalHeader() {
     }
   };
 
+  // Sync browser tab title with active portal section
+  useEffect(() => {
+    document.title = `${getTabTitle()} | Procurly`;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeTab]);
+
   return (
     <header className="sticky top-0 z-30 bg-white border-b border-slate-200/80 px-6 sm:px-8 py-4">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">

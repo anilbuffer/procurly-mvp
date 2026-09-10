@@ -657,7 +657,7 @@ export function LoginView() {
                   <div className="p-3 bg-white/70 rounded-xl border border-amber-200/80 text-[11px] text-amber-900 space-y-1">
                     <p className="font-bold">Next Steps:</p>
                     <p>
-                      Our trade desk will manually review your workshop registration and contact <strong>{regContactName}</strong> within 1 business day once your trade credit line is activated.
+                      Our trade desk will manually review your workshop registration and contact <strong>{regContactName}</strong> within 1 business day once your trade customer account is activated.
                     </p>
                   </div>
                 </div>

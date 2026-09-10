@@ -7,7 +7,6 @@ import {
   Building2,
   Copy,
   Check,
-  ShieldCheck,
   ArrowRight,
   DollarSign,
   FileText,
@@ -26,8 +25,8 @@ export function PaymentModal() {
   } = usePortal();
 
   const [paymentMethod, setPaymentMethod] = useState<
-    "Trade Credit Account" | "Bank Transfer" | "Credit Card"
-  >("Trade Credit Account");
+    "Bank Transfer" | "Credit Card"
+  >("Bank Transfer");
   const [bankReference, setBankReference] = useState("");
   const [copiedField, setCopiedField] = useState<string | null>(null);
 
@@ -135,7 +134,7 @@ export function PaymentModal() {
                     Settlement Method
                   </span>
                   <span className="font-bold text-slate-800">
-                    {pay.paymentMethod || "Trade Credit Account"}
+                    {pay.paymentMethod || "Bank Transfer"}
                   </span>
                 </div>
                 <div className="p-3 bg-white rounded-xl border border-emerald-100 shadow-2xs">
@@ -197,28 +196,8 @@ export function PaymentModal() {
                 <label className="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-2">
                   Select Settlement Method
                 </label>
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                  {/* Option 1: Trade Credit Account */}
-                  <div
-                    onClick={() => setPaymentMethod("Trade Credit Account")}
-                    className={`p-3.5 rounded-xl border-2 cursor-pointer transition-all ${
-                      paymentMethod === "Trade Credit Account"
-                        ? "border-[#ED2025] bg-red-50/20"
-                        : "border-slate-200 hover:border-slate-300"
-                    }`}
-                  >
-                    <div className="flex items-center gap-2 mb-1">
-                      <ShieldCheck className="w-4 h-4 text-emerald-600" />
-                      <span className="font-bold text-xs text-slate-900">
-                        Trade Credit
-                      </span>
-                    </div>
-                    <p className="text-[10px] text-slate-500 leading-tight">
-                      30-Day Net Trade line (Immediate release)
-                    </p>
-                  </div>
-
-                  {/* Option 2: Bank Transfer */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {/* Option 1: Bank Transfer */}
                   <div
                     onClick={() => setPaymentMethod("Bank Transfer")}
                     className={`p-3.5 rounded-xl border-2 cursor-pointer transition-all ${
@@ -238,7 +217,7 @@ export function PaymentModal() {
                     </p>
                   </div>
 
-                  {/* Option 3: Credit Card */}
+                  {/* Option 2: Credit Card */}
                   <div
                     onClick={() => setPaymentMethod("Credit Card")}
                     className={`p-3.5 rounded-xl border-2 cursor-pointer transition-all ${
@@ -261,27 +240,6 @@ export function PaymentModal() {
               </div>
 
               {/* Details based on chosen method */}
-              {paymentMethod === "Trade Credit Account" && (
-                <div className="p-4 rounded-xl bg-emerald-50/70 border border-emerald-200 space-y-2 text-xs">
-                  <div className="flex items-center justify-between">
-                    <span className="font-bold text-emerald-900">
-                      Approved SP Motors Trade Account
-                    </span>
-                    <span className="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold text-[10px]">
-                      APPROVED
-                    </span>
-                  </div>
-                  <p className="text-emerald-800 leading-relaxed">
-                    Releasing this order onto your 30-day billing term records the status as Paid and releases the purchase order to the Japan parts supplier.
-                  </p>
-                  <div className="pt-2 flex justify-between text-slate-600 border-t border-emerald-200/60 font-mono text-[11px]">
-                    <span>Credit Limit: $50,000 NZD</span>
-                    <span className="font-bold text-emerald-800">
-                      Available Line: $42,600 NZD
-                    </span>
-                  </div>
-                </div>
-              )}
 
               {paymentMethod === "Bank Transfer" && (
                 <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-3 text-xs">
@@ -421,9 +379,7 @@ export function PaymentModal() {
               className="px-6 py-2.5 bg-[#ED2025] hover:bg-[#d11a1f] text-white font-bold text-xs uppercase tracking-wider rounded-xl shadow-md shadow-red-500/20 transition-all active:scale-95 flex items-center gap-2"
             >
               <span>
-                {paymentMethod === "Trade Credit Account"
-                  ? "Release Order & Mark Paid"
-                  : paymentMethod === "Bank Transfer"
+                {paymentMethod === "Bank Transfer"
                   ? "Record Bank Transfer (Mark Paid)"
                   : "Pay Now via Card (Mark Paid)"}
               </span>

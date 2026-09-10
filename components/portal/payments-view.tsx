@@ -31,6 +31,13 @@ export function PaymentsView() {
     return status === filterStatus;
   });
 
+  const totalPaid = paymentRequests
+    .filter((r) => r.payment?.status === "Paid")
+    .reduce((sum, r) => sum + (r.payment?.amount || r.quotedValue || 0), 0);
+  const totalUnpaid = paymentRequests
+    .filter((r) => r.payment?.status !== "Paid" && r.quotedValue)
+    .reduce((sum, r) => sum + (r.quotedValue || 0), 0);
+
   const handleOpenPaymentModal = (req: PartRequest) => {
     setPaymentRequest(req);
     setIsPaymentModalOpen(true);
@@ -58,18 +65,18 @@ export function PaymentsView() {
           >
             All Documents (PDF) →
           </button>
-          <div className="p-4 bg-slate-50 border border-slate-200 rounded-xl flex items-center gap-6 text-xs font-mono">
+          <div className="p-3.5 bg-slate-50 border border-slate-200 rounded-xl flex items-center gap-6 text-xs font-mono">
             <div>
               <span className="text-[10px] text-slate-400 block uppercase font-sans font-bold">
-                Trade Credit Facility
+                Awaiting Settlement
               </span>
-              <span className="font-bold text-slate-800">$50,000.00 NZD</span>
+              <span className="font-bold text-amber-600">${totalUnpaid.toFixed(2)} NZD</span>
             </div>
-            <div className="border-l pl-6">
+            <div className="border-l pl-6 border-slate-200">
               <span className="text-[10px] text-slate-400 block uppercase font-sans font-bold">
-                Available Line
+                Total Settled
               </span>
-              <span className="font-bold text-emerald-600">$42,600.00 NZD</span>
+              <span className="font-bold text-emerald-600">${totalPaid.toFixed(2)} NZD</span>
             </div>
           </div>
         </div>
@@ -81,7 +88,7 @@ export function PaymentsView() {
         <div>
           <span className="font-bold block">Autohub Invoicing & Payment Tracking Notice</span>
           <p className="text-blue-800 text-[11px] leading-relaxed">
-            Tax invoices are generated within the existing Autohub operational workflow. For MVP, payment status is recorded strictly as <strong>Unpaid</strong> or <strong>Paid</strong>. Customers can record settlements directly or charge against their pre-approved trade credit facility.
+            Tax invoices are generated within the existing Autohub operational workflow. For MVP, payment status is recorded strictly as <strong>Unpaid</strong> or <strong>Paid</strong>. Customers can record settlements directly via Bank Transfer or Card Payment.
           </p>
         </div>
       </div>

@@ -123,7 +123,7 @@ export interface PaymentDetails {
   amount: number;
   currency: string;
   status: PaymentStatus;
-  paymentMethod?: "Bank Transfer" | "Trade Credit Account" | "Credit Card";
+  paymentMethod?: "Bank Transfer" | "Credit Card";
   paymentReference: string;
   bankDetails: {
     bankName: string;

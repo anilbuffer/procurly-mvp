@@ -235,7 +235,7 @@ export function PortalSidebar({ collapsed = false, onToggleCollapse }: PortalSid
               className="w-full flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-[#222C46] text-slate-300 hover:text-white transition-colors"
             >
               <UserCheck className="w-3.5 h-3.5 text-emerald-400" />
-              <span>Trade Profile & Credit</span>
+              <span>Trade Profile & Settings</span>
             </button>
             <Link
               href="/login?mode=change_password"

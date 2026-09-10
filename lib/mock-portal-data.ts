@@ -129,7 +129,7 @@ export const INITIAL_REQUESTS: PartRequest[] = [
     dateSubmitted: "2026-09-07",
     status: "Awaiting Payment",
     quotedValue: 485.0,
-    actionRequired: "Settle invoice or release on SP Motors 30-Day Trade Credit",
+    actionRequired: "Settle invoice via Bank Transfer or Card",
     actionType: "pay_now",
     quotation: {
       id: "quote-125",
@@ -206,7 +206,7 @@ export const INITIAL_REQUESTS: PartRequest[] = [
     dateSubmitted: "2026-09-05",
     status: "Awaiting Payment",
     quotedValue: 650.0,
-    actionRequired: "Settle invoice or release on SP Motors 30-Day Trade Credit",
+    actionRequired: "Settle invoice via Bank Transfer or Card",
     actionType: "pay_now",
     quotation: {
       id: "quote-119",
@@ -432,7 +432,7 @@ export const INITIAL_REQUESTS: PartRequest[] = [
       amount: 1980.0,
       currency: "NZD",
       status: "Paid",
-      paymentMethod: "Trade Credit Account",
+      paymentMethod: "Bank Transfer",
       paymentReference: "AH-P-000120",
       bankDetails: {
         bankName: "ANZ New Zealand",
@@ -644,7 +644,7 @@ export const INITIAL_NOTIFICATIONS: PortalNotification[] = [
     id: "notif-2",
     type: "Payment Received",
     title: "Payment Received: AH-P-000120",
-    description: "$1,980.00 confirmed on Trade Credit line. PO sent to Honda factory.",
+    description: "$1,980.00 confirmed via Bank Transfer. PO sent to Honda factory.",
     timestamp: "1h ago",
     read: false,
     requestId: "req-120",

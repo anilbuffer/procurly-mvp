@@ -73,7 +73,7 @@ export function SettingsView() {
                 onClick={() => setActiveTab("payments")}
                 className="font-bold text-emerald-700 hover:underline inline-flex items-center gap-1"
               >
-                <span>30-Day Net Trade Line ($50k) →</span>
+                <span>Standard 30-Day Payment Terms →</span>
               </button>
             </div>
           </div>
