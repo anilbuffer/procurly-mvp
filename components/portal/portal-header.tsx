@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useRef } from "react";
+import Link from "next/link";
 import { Search, ChevronRight } from "lucide-react";
 import { usePortal } from "@/context/portal-context";
 import { NotificationCenter } from "./notification-center";
@@ -54,19 +55,19 @@ export function PortalHeader() {
         {/* Left: Breadcrumbs & Page Title */}
         <div>
           <nav className="flex items-center gap-1.5 text-xs text-slate-500 font-medium mb-1">
-            <button
-              onClick={() => setActiveTab("dashboard")}
+            <Link
+              href="/customer/dashboard"
               className="hover:text-slate-900 transition-colors"
             >
               Home
-            </button>
+            </Link>
             <ChevronRight className="w-3 h-3 text-slate-400" />
-            <button
-              onClick={() => setActiveTab("dashboard")}
+            <Link
+              href="/customer/dashboard"
               className="text-slate-600 hover:text-slate-900 transition-colors font-medium"
             >
               Customer Portal
-            </button>
+            </Link>
             <ChevronRight className="w-3 h-3 text-slate-400" />
             <span className="text-[#ED2025] font-semibold">{getTabTitle()}</span>
           </nav>

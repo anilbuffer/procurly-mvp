@@ -69,11 +69,7 @@ export function PortalSidebar({ collapsed = false, onToggleCollapse }: PortalSid
         {/* Brand Header */}
         <div className="h-16 px-5 flex items-center justify-between border-b border-[#1E2538]/60">
           <Link
-            href="/dashboard?tab=dashboard"
-            onClick={(e) => {
-              e.preventDefault();
-              setActiveTab("dashboard");
-            }}
+            href="/customer/dashboard"
             className="flex items-center gap-3 cursor-pointer group"
           >
             <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#ED2025] to-[#B91C1C] flex items-center justify-center shadow-md shadow-[#ED2025]/30">
@@ -130,15 +126,11 @@ export function PortalSidebar({ collapsed = false, onToggleCollapse }: PortalSid
               {navItems.map((item) => {
                 const Icon = item.icon;
                 const isActive = activeTab === item.id;
-                const href = `/dashboard?tab=${item.id}`;
+                const href = `/customer/${item.id}`;
                 return (
                   <Link
                     key={item.id}
                     href={href}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      setActiveTab(item.id);
-                    }}
                     className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold transition-all group ${
                       isActive
                         ? "bg-[#1E2538] text-white shadow-inner font-bold"
@@ -180,11 +172,7 @@ export function PortalSidebar({ collapsed = false, onToggleCollapse }: PortalSid
             )}
             <nav className="space-y-1">
               <Link
-                href="/dashboard?tab=settings"
-                onClick={(e) => {
-                  e.preventDefault();
-                  setActiveTab("settings");
-                }}
+                href="/customer/settings"
                 className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold transition-all group ${
                   activeTab === "settings"
                     ? "bg-[#1E2538] text-white shadow-inner font-bold"
@@ -252,7 +240,7 @@ export function PortalSidebar({ collapsed = false, onToggleCollapse }: PortalSid
               <span>Trade Profile & Settings</span>
             </button>
             <Link
-              href="/procurement"
+              href="/procurement/dashboard"
               className="w-full flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-blue-500/15 text-blue-400 hover:text-blue-300 transition-colors font-medium"
             >
               <ArrowRightLeft className="w-3.5 h-3.5 text-blue-400" />

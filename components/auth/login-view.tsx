@@ -45,9 +45,9 @@ export function getPortalRoute(targetEmail: string): string {
     normalized.includes("sarah") ||
     normalized.includes("procurement")
   ) {
-    return "/procurement";
+    return "/procurement/dashboard";
   }
-  return "/dashboard";
+  return "/customer/dashboard";
 }
 
 export function LoginView() {
@@ -561,14 +561,14 @@ export function LoginView() {
               <div className="flex flex-wrap items-center justify-center gap-2 pt-1">
                 <button
                   type="button"
-                  onClick={() => router.push("/dashboard")}
+                  onClick={() => router.push("/customer/dashboard")}
                   className="text-xs font-semibold text-slate-600 hover:text-blue-700 inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-blue-50 border border-slate-200 hover:border-blue-200 transition-colors"
                 >
                   <span>Direct Customer Portal →</span>
                 </button>
                 <button
                   type="button"
-                  onClick={() => router.push("/procurement")}
+                  onClick={() => router.push("/procurement/dashboard")}
                   className="text-xs font-semibold text-slate-600 hover:text-[#B30D12] inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-red-50 border border-slate-200 hover:border-red-200 transition-colors"
                 >
                   <span>Direct Procurement Portal →</span>
@@ -675,7 +675,7 @@ export function LoginView() {
 
                   <button
                     type="button"
-                    onClick={() => router.push("/dashboard")}
+                    onClick={() => router.push("/customer/dashboard")}
                     className="w-full text-center text-xs text-slate-600 hover:text-slate-900 font-bold py-2"
                   >
                     Explore Customer Portal with Demo Account →

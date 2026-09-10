@@ -103,7 +103,7 @@ export function BrandPanel() {
         {/* Tagline: Exactly matching reference */}
         <div className="mt-7">
           <p className="text-2xl sm:text-3xl text-white/95 font-normal leading-tight tracking-tight">
-            International procurement <br />
+            International procurement
             with confidence
           </p>
         </div>

@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 
-export default function DashboardLegacyRedirect({
+export default function CustomerIndexPage({
   searchParams,
 }: {
   searchParams?: { tab?: string };

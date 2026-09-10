@@ -1,22 +1,17 @@
 "use client";
 
 import React, { useState } from "react";
-import { usePortal } from "@/context/portal-context";
 import { PortalSidebar } from "./portal-sidebar";
 import { PortalHeader } from "./portal-header";
-import { DashboardView } from "./dashboard-view";
-import { RequestsView } from "./requests-view";
-import { OrdersView } from "./orders-view";
-import { ShipmentsView } from "./shipments-view";
-import { PaymentsView } from "./payments-view";
-import { DocumentsView } from "./documents-view";
-import { SettingsView } from "./settings-view";
 import { NewRequestModal } from "./new-request-modal";
 import { RequestDetailsModal } from "./request-details-modal";
 import { PaymentModal } from "./payment-modal";
 
-export function CustomerPortalLayout() {
-  const { activeTab } = usePortal();
+interface CustomerPortalLayoutProps {
+  children?: React.ReactNode;
+}
+
+export function CustomerPortalLayout({ children }: CustomerPortalLayoutProps) {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
   return (
@@ -38,13 +33,7 @@ export function CustomerPortalLayout() {
 
         {/* Dynamic Page Content */}
         <main className="flex-1 p-6 sm:p-8 max-w-7xl mx-auto w-full">
-          {activeTab === "dashboard" && <DashboardView />}
-          {activeTab === "requests" && <RequestsView />}
-          {activeTab === "orders" && <OrdersView />}
-          {activeTab === "shipments" && <ShipmentsView />}
-          {activeTab === "payments" && <PaymentsView />}
-          {activeTab === "documents" && <DocumentsView />}
-          {activeTab === "settings" && <SettingsView />}
+          {children}
         </main>
       </div>
 

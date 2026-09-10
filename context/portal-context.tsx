@@ -1,6 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useState, useMemo, useCallback, useEffect } from "react";
+import { usePathname, useRouter } from "next/navigation";
 import {
   PartRequest,
   PortalTab,
@@ -60,7 +61,30 @@ interface PortalContextType {
 const PortalContext = createContext<PortalContextType | undefined>(undefined);
 
 export function PortalProvider({ children }: { children: React.ReactNode }) {
-  const [activeTab, setActiveTabState] = useState<PortalTab>("dashboard");
+  const pathname = usePathname();
+  const router = useRouter();
+
+  // Derive active tab from URL pathname: /customer/[tab]
+  const activeTab: PortalTab = useMemo(() => {
+    if (!pathname) return "dashboard";
+    const segments = pathname.split("/").filter(Boolean);
+    const tabCandidate = segments[1] as PortalTab;
+    if (
+      tabCandidate &&
+      ["dashboard", "requests", "orders", "shipments", "payments", "documents", "settings"].includes(tabCandidate)
+    ) {
+      return tabCandidate;
+    }
+    return "dashboard";
+  }, [pathname]);
+
+  const setActiveTab = useCallback(
+    (tab: PortalTab) => {
+      router.push(`/customer/${tab}`);
+    },
+    [router]
+  );
+
   const [requests, setRequests] = useState<PartRequest[]>(INITIAL_REQUESTS);
   const [activities, setActivities] = useState<ProcurementActivity[]>(INITIAL_ACTIVITIES);
   const [notifications, setNotifications] =
@@ -76,35 +100,18 @@ export function PortalProvider({ children }: { children: React.ReactNode }) {
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
   const [paymentRequest, setPaymentRequest] = useState<PartRequest | null>(null);
 
-  // ─── URL Synchronization ───────────────────────────────
-
-  const updateUrl = useCallback((tab: PortalTab, reqId?: string | null) => {
-    if (typeof window === "undefined") return;
-    const url = new URL(window.location.href);
-    url.searchParams.set("tab", tab);
-    if (reqId) {
-      url.searchParams.set("request", reqId);
-    } else {
-      url.searchParams.delete("request");
+  const setSelectedRequest = useCallback((req: PartRequest | null) => {
+    setSelectedRequestState(req);
+    if (typeof window !== "undefined") {
+      const url = new URL(window.location.href);
+      if (req) {
+        url.searchParams.set("request", req.id);
+      } else {
+        url.searchParams.delete("request");
+      }
+      window.history.pushState({}, "", url.pathname + (url.search ? url.search : ""));
     }
-    window.history.pushState({ tab, request: reqId }, "", url.pathname + url.search);
   }, []);
-
-  const setActiveTab = useCallback(
-    (tab: PortalTab) => {
-      setActiveTabState(tab);
-      updateUrl(tab, selectedRequest?.id);
-    },
-    [selectedRequest, updateUrl]
-  );
-
-  const setSelectedRequest = useCallback(
-    (req: PartRequest | null) => {
-      setSelectedRequestState(req);
-      updateUrl(activeTab, req ? req.id : null);
-    },
-    [activeTab, updateUrl]
-  );
 
   const addSavedAddress = useCallback((addr: SavedAddress) => {
     setSavedAddresses((prev) => {
@@ -115,19 +122,12 @@ export function PortalProvider({ children }: { children: React.ReactNode }) {
     });
   }, []);
 
-  // Sync on mount & popstate
+  // Sync request modal selection from URL query param on mount & popstate
   useEffect(() => {
     if (typeof window === "undefined") return;
     const syncFromUrl = () => {
       const params = new URLSearchParams(window.location.search);
-      const tab = params.get("tab") as PortalTab | null;
       const reqId = params.get("request");
-      if (
-        tab &&
-        ["dashboard", "requests", "orders", "shipments", "payments", "documents", "settings"].includes(tab)
-      ) {
-        setActiveTabState(tab);
-      }
       if (reqId) {
         const found = requests.find((r) => r.id === reqId || r.requestNumber === reqId);
         if (found) {
