@@ -268,81 +268,6 @@ export function LoginView() {
   return (
     <AuthLayout>
       <div className="w-full flex flex-col justify-center text-left">
-        {/* Top Navigation Pill Tabs (Quick switcher between authentication modes) */}
-        <div className="flex items-center gap-1.5 p-1 bg-slate-200/80 rounded-xl mb-6 overflow-x-auto">
-          <button
-            type="button"
-            onClick={() => {
-              setAuthMode("login");
-              setLoginError(null);
-            }}
-            className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all whitespace-nowrap ${
-              authMode === "login"
-                ? "bg-white text-slate-900 shadow-xs"
-                : "text-slate-600 hover:text-slate-900"
-            }`}
-          >
-            Sign In
-          </button>
-          <button
-            type="button"
-            onClick={() => {
-              setAuthMode("register");
-              setRegError(null);
-              setRegSubmitted(false);
-            }}
-            className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all whitespace-nowrap ${
-              authMode === "register"
-                ? "bg-white text-slate-900 shadow-xs"
-                : "text-slate-600 hover:text-slate-900"
-            }`}
-          >
-            Register Trade Account
-          </button>
-          <button
-            type="button"
-            onClick={() => setAuthMode("mfa")}
-            className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all whitespace-nowrap flex items-center gap-1 ${
-              authMode === "mfa"
-                ? "bg-white text-slate-900 shadow-xs"
-                : "text-slate-600 hover:text-slate-900"
-            }`}
-          >
-            <span>MFA</span>
-            <span className="text-[9px] px-1 py-0.2 rounded bg-amber-100 text-amber-800 uppercase font-black">
-              Opt
-            </span>
-          </button>
-          <button
-            type="button"
-            onClick={() => {
-              setAuthMode("forgot_password");
-              setForgotEmail(email);
-              setResetSentSuccess(false);
-            }}
-            className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all whitespace-nowrap ${
-              authMode === "forgot_password"
-                ? "bg-white text-slate-900 shadow-xs"
-                : "text-slate-600 hover:text-slate-900"
-            }`}
-          >
-            Forgot Password
-          </button>
-          <button
-            type="button"
-            onClick={() => {
-              setAuthMode("change_password");
-              setPasswordChangeSuccess(false);
-            }}
-            className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all whitespace-nowrap ${
-              authMode === "change_password"
-                ? "bg-white text-slate-900 shadow-xs"
-                : "text-slate-600 hover:text-slate-900"
-            }`}
-          >
-            Change Password
-          </button>
-        </div>
 
         {/* ------------------------------------------------------------- */}
         {/* MODE 1: EMAIL + PASSWORD SIGN IN                              */}
@@ -796,16 +721,7 @@ export function LoginView() {
                   </label>
                 </div>
 
-                {/* MVP Manual Approval Notice */}
-                <div className="p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-600 space-y-1">
-                  <div className="flex items-center gap-1.5 font-bold text-slate-900">
-                    <Clock className="w-3.5 h-3.5 text-amber-600" />
-                    <span>Manual Approval Policy</span>
-                  </div>
-                  <p className="text-[11px] text-slate-500 leading-relaxed">
-                    Customer approval is manual for MVP. Complex automated verification (NZBN, GST, multiple contacts, multiple addresses) is streamlined.
-                  </p>
-                </div>
+
 
                 {/* Submit Button */}
                 <Button
@@ -840,15 +756,7 @@ export function LoginView() {
         {/* ------------------------------------------------------------- */}
         {authMode === "mfa" && (
           <div className="space-y-4 animate-in fade-in duration-200">
-            {/* Top Eyebrow with Optional Badge */}
-            <div className="flex items-center justify-between">
-              <span className="text-[12px] font-bold uppercase tracking-[0.06em] text-[#C40E14] antialiased">
-                SECURE ACCOUNT ACCESS
-              </span>
-              <span className="text-[10px] font-bold text-amber-800 bg-amber-100 border border-amber-300 uppercase px-2 py-0.5 rounded-full">
-                OPTIONAL STEP
-              </span>
-            </div>
+
 
             {/* Main Heading */}
             <h1 className="text-3xl sm:text-[36px] font-bold text-[#0F172A] tracking-tight leading-[1.15] font-sans">
@@ -933,21 +841,6 @@ export function LoginView() {
               >
                 {mfaStatus === "success" ? "Verified • Redirecting..." : "Verify and finish"}
               </Button>
-
-              {/* SECURE ACCOUNT ACCESS OPTIONAL SKIP BUTTON */}
-              <div className="pt-2">
-                <button
-                  type="button"
-                  onClick={() => router.push("/dashboard")}
-                  className="w-full py-2.5 px-4 rounded-lg border border-slate-300 hover:bg-white bg-slate-50 text-slate-700 font-bold text-xs transition-colors flex items-center justify-center gap-1.5 shadow-2xs"
-                >
-                  <ShieldCheck className="w-4 h-4 text-emerald-600" />
-                  <span>Skip Secure Account Access (Optional) →</span>
-                </button>
-                <p className="text-[10px] text-center text-slate-400 mt-1">
-                  MFA setup is optional for this session. You can activate it anytime in Account Settings.
-                </p>
-              </div>
 
               <div className="text-center pt-2">
                 <button

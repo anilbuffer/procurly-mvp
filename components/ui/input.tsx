@@ -56,8 +56,8 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
                 "w-full h-12 bg-white text-slate-900 text-sm font-medium placeholder:text-slate-400",
                 "border border-slate-300 rounded-lg transition-all duration-150 ease-in-out",
                 "focus:outline-none focus:border-[#ED2025] focus:ring-2 focus:ring-[#ED2025]/20",
-                leftIcon ? "pl-11" : "px-4",
-                rightIcon ? "pr-11" : "px-4",
+                leftIcon ? "pl-11" : "pl-4",
+                rightIcon ? "pr-11" : "pr-4",
                 error &&
                   "border-red-500 focus:border-red-600 focus:ring-red-500/20 bg-red-50/20 text-red-950",
                 disabled && "bg-slate-100 text-slate-400 cursor-not-allowed border-slate-200",
