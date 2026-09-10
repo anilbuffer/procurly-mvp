@@ -3,7 +3,6 @@
 import React, { useState } from "react";
 import {
   X,
-  CreditCard,
   Building2,
   Copy,
   Check,
@@ -12,6 +11,7 @@ import {
   FileText,
   CheckCircle2,
   Clock,
+  ShieldCheck,
 } from "lucide-react";
 import { usePortal } from "@/context/portal-context";
 
@@ -24,9 +24,6 @@ export function PaymentModal() {
     submitPayment,
   } = usePortal();
 
-  const [paymentMethod, setPaymentMethod] = useState<
-    "Bank Transfer" | "Credit Card"
-  >("Bank Transfer");
   const [bankReference, setBankReference] = useState("");
   const [copiedField, setCopiedField] = useState<string | null>(null);
 
@@ -59,7 +56,7 @@ export function PaymentModal() {
   };
 
   const handleProcessPayment = () => {
-    submitPayment(req.id, paymentMethod, bankReference || pay.paymentReference);
+    submitPayment(req.id, bankReference || pay.paymentReference);
     setIsPaymentModalOpen(false);
     setPaymentRequest(null);
   };
@@ -76,7 +73,7 @@ export function PaymentModal() {
             <div>
               <div className="flex items-center gap-2">
                 <h2 className="text-base font-bold text-slate-900">
-                  Autohub Settlement & Payment Record
+                  Autohub Invoice & Payment Status
                 </h2>
                 {isPaid ? (
                   <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-200">
@@ -110,10 +107,10 @@ export function PaymentModal() {
             <FileText className="w-4 h-4 text-slate-500 shrink-0 mt-0.5" />
             <div className="text-xs">
               <span className="font-bold text-slate-800 block">
-                Autohub Operational Invoicing
+                Autohub Operational Invoicing & Payment Status
               </span>
               <p className="text-slate-500 text-[11px] leading-relaxed">
-                Official tax invoice generation remains in the existing Autohub operational process. The portal records payment status and settlement references.
+                Tax invoices are generated within the existing Autohub operational process. This portal tracks payment status (<strong>Unpaid</strong> / <strong>Paid</strong>) and logs settlement references.
               </p>
             </div>
           </div>
@@ -129,14 +126,6 @@ export function PaymentModal() {
               </div>
 
               <div className="grid grid-cols-2 gap-3 text-xs">
-                <div className="p-3 bg-white rounded-xl border border-emerald-100 shadow-2xs">
-                  <span className="text-slate-400 block text-[10px] uppercase font-bold">
-                    Settlement Method
-                  </span>
-                  <span className="font-bold text-slate-800">
-                    {pay.paymentMethod || "Bank Transfer"}
-                  </span>
-                </div>
                 <div className="p-3 bg-white rounded-xl border border-emerald-100 shadow-2xs">
                   <span className="text-slate-400 block text-[10px] uppercase font-bold">
                     Payment Status
@@ -159,10 +148,18 @@ export function PaymentModal() {
                     ${pay.amount.toFixed(2)} NZD
                   </span>
                 </div>
+                <div className="p-3 bg-white rounded-xl border border-emerald-100 shadow-2xs">
+                  <span className="text-slate-400 block text-[10px] uppercase font-bold">
+                    Payment Reference
+                  </span>
+                  <span className="font-mono font-bold text-slate-800">
+                    {pay.paymentReference}
+                  </span>
+                </div>
               </div>
 
               <p className="text-[11px] text-emerald-800 leading-relaxed">
-                Autohub Operations has logged this settlement. Your order is confirmed and scheduled for dispatch through Autohub Logistics.
+                Autohub Operations has recorded payment confirmation. Your order is unlocked and in procurement fulfillment with Autohub Logistics.
               </p>
             </div>
           ) : (
@@ -191,175 +188,92 @@ export function PaymentModal() {
                 </div>
               </div>
 
-              {/* Payment Method Selector */}
-              <div>
-                <label className="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-2">
-                  Select Settlement Method
-                </label>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  {/* Option 1: Bank Transfer */}
-                  <div
-                    onClick={() => setPaymentMethod("Bank Transfer")}
-                    className={`p-3.5 rounded-xl border-2 cursor-pointer transition-all ${
-                      paymentMethod === "Bank Transfer"
-                        ? "border-[#ED2025] bg-red-50/20"
-                        : "border-slate-200 hover:border-slate-300"
-                    }`}
-                  >
-                    <div className="flex items-center gap-2 mb-1">
-                      <Building2 className="w-4 h-4 text-blue-600" />
-                      <span className="font-bold text-xs text-slate-900">
-                        Bank Transfer
-                      </span>
-                    </div>
-                    <p className="text-[10px] text-slate-500 leading-tight">
-                      ANZ NZ direct deposit or wire
-                    </p>
+              {/* Direct Bank Settlement Details */}
+              <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-3 text-xs">
+                <div className="flex items-center gap-2">
+                  <Building2 className="w-4 h-4 text-slate-700" />
+                  <h4 className="font-bold text-slate-900">
+                    Autohub NZ Direct Deposit / Wire Details:
+                  </h4>
+                </div>
+
+                <div className="space-y-2 font-mono">
+                  <div className="flex justify-between items-center bg-white p-2 rounded-lg border border-slate-200">
+                    <span className="text-slate-500 font-sans text-xs">Bank:</span>
+                    <span className="font-bold text-slate-900">
+                      {pay.bankDetails.bankName}
+                    </span>
                   </div>
 
-                  {/* Option 2: Credit Card */}
-                  <div
-                    onClick={() => setPaymentMethod("Credit Card")}
-                    className={`p-3.5 rounded-xl border-2 cursor-pointer transition-all ${
-                      paymentMethod === "Credit Card"
-                        ? "border-[#ED2025] bg-red-50/20"
-                        : "border-slate-200 hover:border-slate-300"
-                    }`}
-                  >
-                    <div className="flex items-center gap-2 mb-1">
-                      <CreditCard className="w-4 h-4 text-purple-600" />
-                      <span className="font-bold text-xs text-slate-900">
-                        Card Payment
-                      </span>
-                    </div>
-                    <p className="text-[10px] text-slate-500 leading-tight">
-                      Visa / Mastercard / Amex
-                    </p>
+                  <div className="flex justify-between items-center bg-white p-2 rounded-lg border border-slate-200">
+                    <span className="text-slate-500 font-sans text-xs">
+                      Account Name:
+                    </span>
+                    <span className="font-bold text-slate-900">
+                      {pay.bankDetails.accountName}
+                    </span>
                   </div>
+
+                  <div className="flex justify-between items-center bg-white p-2 rounded-lg border border-slate-200">
+                    <span className="text-slate-500 font-sans text-xs">
+                      Account Number:
+                    </span>
+                    <div className="flex items-center gap-2">
+                      <span className="font-bold text-slate-900">
+                        {pay.bankDetails.accountNumber}
+                      </span>
+                      <button
+                        onClick={() =>
+                          handleCopy(pay.bankDetails.accountNumber, "acc")
+                        }
+                        className="p-1 hover:bg-slate-100 rounded text-slate-400 hover:text-slate-700"
+                        title="Copy account number"
+                      >
+                        {copiedField === "acc" ? (
+                          <Check className="w-3.5 h-3.5 text-emerald-600" />
+                        ) : (
+                          <Copy className="w-3.5 h-3.5" />
+                        )}
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="flex justify-between items-center bg-white p-2 rounded-lg border border-amber-300 bg-amber-50/20">
+                    <span className="text-amber-900 font-sans text-xs font-bold">
+                      Mandatory Reference:
+                    </span>
+                    <div className="flex items-center gap-2">
+                      <span className="font-bold text-amber-900">
+                        {pay.paymentReference}
+                      </span>
+                      <button
+                        onClick={() => handleCopy(pay.paymentReference, "ref")}
+                        className="p-1 hover:bg-amber-100 rounded text-amber-700"
+                        title="Copy reference"
+                      >
+                        {copiedField === "ref" ? (
+                          <Check className="w-3.5 h-3.5 text-emerald-600" />
+                        ) : (
+                          <Copy className="w-3.5 h-3.5" />
+                        )}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-1">
+                    Bank Transaction Reference (Optional)
+                  </label>
+                  <input
+                    type="text"
+                    value={bankReference}
+                    onChange={(e) => setBankReference(e.target.value)}
+                    placeholder="e.g. ANZ-TX-98124912"
+                    className="w-full text-xs p-2.5 rounded-lg border border-slate-200 outline-none focus:border-[#ED2025]"
+                  />
                 </div>
               </div>
-
-              {/* Details based on chosen method */}
-
-              {paymentMethod === "Bank Transfer" && (
-                <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-3 text-xs">
-                  <h4 className="font-bold text-slate-900">
-                    Autohub New Zealand Bank Account Details:
-                  </h4>
-
-                  <div className="space-y-2 font-mono">
-                    <div className="flex justify-between items-center bg-white p-2 rounded-lg border border-slate-200">
-                      <span className="text-slate-500 font-sans text-xs">Bank:</span>
-                      <span className="font-bold text-slate-900">
-                        {pay.bankDetails.bankName}
-                      </span>
-                    </div>
-
-                    <div className="flex justify-between items-center bg-white p-2 rounded-lg border border-slate-200">
-                      <span className="text-slate-500 font-sans text-xs">
-                        Account Name:
-                      </span>
-                      <span className="font-bold text-slate-900">
-                        {pay.bankDetails.accountName}
-                      </span>
-                    </div>
-
-                    <div className="flex justify-between items-center bg-white p-2 rounded-lg border border-slate-200">
-                      <span className="text-slate-500 font-sans text-xs">
-                        Account Number:
-                      </span>
-                      <div className="flex items-center gap-2">
-                        <span className="font-bold text-slate-900">
-                          {pay.bankDetails.accountNumber}
-                        </span>
-                        <button
-                          onClick={() =>
-                            handleCopy(pay.bankDetails.accountNumber, "acc")
-                          }
-                          className="p-1 hover:bg-slate-100 rounded text-slate-400 hover:text-slate-700"
-                        >
-                          {copiedField === "acc" ? (
-                            <Check className="w-3.5 h-3.5 text-emerald-600" />
-                          ) : (
-                            <Copy className="w-3.5 h-3.5" />
-                          )}
-                        </button>
-                      </div>
-                    </div>
-
-                    <div className="flex justify-between items-center bg-white p-2 rounded-lg border border-amber-300 bg-amber-50/20">
-                      <span className="text-amber-900 font-sans text-xs font-bold">
-                        Mandatory Reference:
-                      </span>
-                      <div className="flex items-center gap-2">
-                        <span className="font-bold text-amber-900">
-                          {pay.paymentReference}
-                        </span>
-                        <button
-                          onClick={() => handleCopy(pay.paymentReference, "ref")}
-                          className="p-1 hover:bg-amber-100 rounded text-amber-700"
-                        >
-                          {copiedField === "ref" ? (
-                            <Check className="w-3.5 h-3.5 text-emerald-600" />
-                          ) : (
-                            <Copy className="w-3.5 h-3.5" />
-                          )}
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-1">
-                      Bank Transaction Reference (After transfer)
-                    </label>
-                    <input
-                      type="text"
-                      value={bankReference}
-                      onChange={(e) => setBankReference(e.target.value)}
-                      placeholder="e.g. ANZ-TX-98124912"
-                      className="w-full text-xs p-2.5 rounded-lg border border-slate-200 outline-none focus:border-[#ED2025]"
-                    />
-                  </div>
-                </div>
-              )}
-
-              {paymentMethod === "Credit Card" && (
-                <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-3 text-xs">
-                  <div>
-                    <label className="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-1">
-                      Card Number
-                    </label>
-                    <input
-                      type="text"
-                      placeholder="4000 1234 5678 9010"
-                      className="w-full text-xs p-2.5 rounded-lg border border-slate-200 font-mono"
-                    />
-                  </div>
-                  <div className="grid grid-cols-2 gap-3">
-                    <div>
-                      <label className="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-1">
-                        Expiry Date
-                      </label>
-                      <input
-                        type="text"
-                        placeholder="MM/YY"
-                        className="w-full text-xs p-2.5 rounded-lg border border-slate-200 font-mono"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-1">
-                        CVC
-                      </label>
-                      <input
-                        type="password"
-                        placeholder="123"
-                        className="w-full text-xs p-2.5 rounded-lg border border-slate-200 font-mono"
-                      />
-                    </div>
-                  </div>
-                </div>
-              )}
             </>
           )}
         </div>
@@ -378,11 +292,7 @@ export function PaymentModal() {
               onClick={handleProcessPayment}
               className="px-6 py-2.5 bg-[#ED2025] hover:bg-[#d11a1f] text-white font-bold text-xs uppercase tracking-wider rounded-xl shadow-md shadow-red-500/20 transition-all active:scale-95 flex items-center gap-2"
             >
-              <span>
-                {paymentMethod === "Bank Transfer"
-                  ? "Record Bank Transfer (Mark Paid)"
-                  : "Pay Now via Card (Mark Paid)"}
-              </span>
+              <span>Record Settlement (Mark as Paid)</span>
               <ArrowRight className="w-4 h-4" />
             </button>
           )}

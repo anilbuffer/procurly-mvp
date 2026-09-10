@@ -1,38 +1,40 @@
 "use client";
 
 import React from "react";
-import Link from "next/link";
 import {
   LayoutGrid,
+  Search as SearchIcon,
   FileText,
-  CheckSquare,
-  Truck,
-  CreditCard,
-  FolderArchive,
+  Building2,
+  FileCheck,
+  ShoppingCart,
   Settings,
-  Plus,
   ChevronDown,
   ChevronLeft,
   ChevronRight,
   LogOut,
-  UserCheck,
   KeyRound,
+  UserCog,
   ArrowRightLeft,
 } from "lucide-react";
-import { usePortal } from "@/context/portal-context";
-import { PortalTab } from "@/types/portal";
+import { useProcurement } from "@/context/procurement-context";
+import { ProcurementTab } from "@/types/procurement";
+import Link from "next/link";
 
-interface PortalSidebarProps {
+interface ProcurementSidebarProps {
   collapsed?: boolean;
   onToggleCollapse?: () => void;
 }
 
-export function PortalSidebar({ collapsed = false, onToggleCollapse }: PortalSidebarProps) {
-  const { activeTab, setActiveTab, setIsNewRequestModalOpen, metrics } = usePortal();
+export function ProcurementSidebar({
+  collapsed = false,
+  onToggleCollapse,
+}: ProcurementSidebarProps) {
+  const { activeTab, setActiveTab, metrics } = useProcurement();
   const [showUserMenu, setShowUserMenu] = React.useState(false);
 
   const navItems: {
-    id: PortalTab;
+    id: ProcurementTab;
     label: string;
     icon: React.ElementType;
     badge?: number;
@@ -40,22 +42,28 @@ export function PortalSidebar({ collapsed = false, onToggleCollapse }: PortalSid
   }[] = [
     { id: "dashboard", label: "Dashboard", icon: LayoutGrid },
     {
-      id: "requests",
-      label: "Requests",
-      icon: FileText,
-      badge: 3,
+      id: "sourcing",
+      label: "Sourcing Queue",
+      icon: SearchIcon,
+      badge: metrics.sourcing + metrics.newRequests,
       badgeColor: "bg-[#ED2025] text-white",
     },
-    { id: "orders", label: "Orders", icon: CheckSquare },
+    { id: "requests", label: "Requests", icon: FileText },
+    { id: "suppliers", label: "Suppliers", icon: Building2 },
     {
-      id: "shipments",
-      label: "Shipments",
-      icon: Truck,
-      badge: 4,
-      badgeColor: "bg-[#2563EB] text-white",
+      id: "quotes",
+      label: "Quotes",
+      icon: FileCheck,
+      badge: metrics.quotesReady > 0 ? metrics.quotesReady : undefined,
+      badgeColor: "bg-amber-500 text-white",
     },
-    { id: "payments", label: "Payments", icon: CreditCard },
-    { id: "documents", label: "Documents", icon: FolderArchive },
+    {
+      id: "orders",
+      label: "Orders",
+      icon: ShoppingCart,
+      badge: metrics.ordersInProgress > 0 ? metrics.ordersInProgress : undefined,
+      badgeColor: "bg-blue-600 text-white",
+    },
   ];
 
   return (
@@ -69,7 +77,7 @@ export function PortalSidebar({ collapsed = false, onToggleCollapse }: PortalSid
         {/* Brand Header */}
         <div className="h-16 px-5 flex items-center justify-between border-b border-[#1E2538]/60">
           <Link
-            href="/dashboard?tab=dashboard"
+            href="/procurement?tab=dashboard"
             onClick={(e) => {
               e.preventDefault();
               setActiveTab("dashboard");
@@ -85,7 +93,7 @@ export function PortalSidebar({ collapsed = false, onToggleCollapse }: PortalSid
                   PROCUR<span className="text-[#ED2025]">ly</span>
                 </span>
                 <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider mt-1">
-                  Customer Portal
+                  Procurement Portal
                 </span>
               </div>
             )}
@@ -106,31 +114,20 @@ export function PortalSidebar({ collapsed = false, onToggleCollapse }: PortalSid
           )}
         </div>
 
-        {/* Action Button: + NEW PARTS REQUEST */}
-        <div className="p-4">
-          <button
-            onClick={() => setIsNewRequestModalOpen(true)}
-            className={`w-full bg-gradient-to-r from-[#ED2025] to-[#E11D48] hover:from-[#d11a1f] hover:to-[#be123c] text-white font-bold text-xs uppercase tracking-wider rounded-xl shadow-lg shadow-[#ED2025]/25 hover:shadow-xl hover:shadow-[#ED2025]/35 transition-all transform active:scale-95 flex items-center justify-center gap-2 py-3 px-3.5`}
-          >
-            <Plus className="w-4 h-4 stroke-[3]" />
-            {!collapsed && <span>New Parts Request</span>}
-          </button>
-        </div>
-
         {/* Navigation Links */}
-        <div className="px-3 py-2 space-y-6">
-          {/* Main Section */}
+        <div className="px-3 py-4 space-y-6">
+          {/* Procurement Section */}
           <div>
             {!collapsed && (
               <div className="px-3 pb-2 text-[10px] font-bold text-slate-500 uppercase tracking-widest">
-                Main
+                Procurement
               </div>
             )}
             <nav className="space-y-1">
               {navItems.map((item) => {
                 const Icon = item.icon;
                 const isActive = activeTab === item.id;
-                const href = `/dashboard?tab=${item.id}`;
+                const href = `/procurement?tab=${item.id}`;
                 return (
                   <Link
                     key={item.id}
@@ -156,7 +153,7 @@ export function PortalSidebar({ collapsed = false, onToggleCollapse }: PortalSid
                       {!collapsed && <span>{item.label}</span>}
                     </div>
 
-                    {!collapsed && item.badge && (
+                    {!collapsed && item.badge !== undefined && item.badge > 0 && (
                       <span
                         className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
                           item.badgeColor || "bg-slate-700 text-white"
@@ -171,16 +168,14 @@ export function PortalSidebar({ collapsed = false, onToggleCollapse }: PortalSid
             </nav>
           </div>
 
+          {/* Divider */}
+          <div className="border-t border-[#1E2538]/60" />
+
           {/* Settings Section */}
           <div>
-            {!collapsed && (
-              <div className="px-3 pb-2 text-[10px] font-bold text-slate-500 uppercase tracking-widest">
-                Settings
-              </div>
-            )}
             <nav className="space-y-1">
               <Link
-                href="/dashboard?tab=settings"
+                href="/procurement?tab=settings"
                 onClick={(e) => {
                   e.preventDefault();
                   setActiveTab("settings");
@@ -214,16 +209,16 @@ export function PortalSidebar({ collapsed = false, onToggleCollapse }: PortalSid
           className="flex items-center justify-between p-2 rounded-xl bg-[#141B2B] hover:bg-[#1B2338] cursor-pointer transition-all border border-[#1E2538]/40"
         >
           <div className="flex items-center gap-3 min-w-0">
-            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-600 to-indigo-700 text-white font-bold text-xs flex items-center justify-center shadow-md shadow-blue-500/20 shrink-0">
-              JW
+            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#ED2025] to-[#B91C1C] text-white font-bold text-xs flex items-center justify-center shadow-md shadow-red-500/20 shrink-0">
+              SJ
             </div>
             {!collapsed && (
               <div className="truncate text-left">
                 <p className="text-xs font-bold text-white truncate leading-tight">
-                  James Wilson
+                  Sarah Jenkins
                 </p>
                 <p className="text-[10px] text-slate-400 font-medium truncate">
-                  Service Manager
+                  Senior Sourcing Specialist
                 </p>
               </div>
             )}
@@ -233,13 +228,12 @@ export function PortalSidebar({ collapsed = false, onToggleCollapse }: PortalSid
 
         {/* User dropdown popover */}
         {showUserMenu && !collapsed && (
-          <div className="absolute bottom-16 left-3 right-3 bg-[#182033] border border-[#27324D] rounded-xl shadow-2xl p-2.5 space-y-2 z-50 text-xs text-slate-200 animate-in fade-in slide-in-from-bottom-2 duration-150">
+          <div className="absolute bottom-16 left-3 right-3 bg-[#182033] border border-[#27324D] rounded-xl shadow-2xl p-2.5 space-y-2 z-50 text-xs text-slate-200">
             <div className="px-2 py-1 border-b border-[#27324D]/60 pb-2">
               <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
-                Customer Account
+                Autohub Procurement
               </span>
-              <p className="font-bold text-white text-xs mt-0.5">SP Motors Auckland</p>
-              <p className="text-[10px] text-slate-400 font-mono">NZBN: 9429049988776</p>
+              <p className="font-bold text-white text-xs mt-0.5">Sourcing Desk</p>
             </div>
             <button
               onClick={() => {
@@ -248,15 +242,15 @@ export function PortalSidebar({ collapsed = false, onToggleCollapse }: PortalSid
               }}
               className="w-full flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-[#222C46] text-slate-300 hover:text-white transition-colors"
             >
-              <UserCheck className="w-3.5 h-3.5 text-emerald-400" />
-              <span>Trade Profile & Settings</span>
+              <UserCog className="w-3.5 h-3.5 text-emerald-400" />
+              <span>Staff Profile & Settings</span>
             </button>
             <Link
-              href="/procurement"
-              className="w-full flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-blue-500/15 text-blue-400 hover:text-blue-300 transition-colors font-medium"
+              href="/dashboard"
+              className="w-full flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-red-500/15 text-red-400 hover:text-red-300 transition-colors font-medium"
             >
-              <ArrowRightLeft className="w-3.5 h-3.5 text-blue-400" />
-              <span>Switch to Procurement Portal</span>
+              <ArrowRightLeft className="w-3.5 h-3.5 text-red-400" />
+              <span>Switch to Customer Portal</span>
             </Link>
             <Link
               href="/login?mode=change_password"

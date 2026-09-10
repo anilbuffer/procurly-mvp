@@ -10,12 +10,45 @@ import {
   ShieldCheck,
   Building2,
   ExternalLink,
+  Check,
 } from "lucide-react";
 import { usePortal } from "@/context/portal-context";
 
 export function DocumentsView() {
   const { requests, setSelectedRequest, setActiveTab } = usePortal();
   const [docSearch, setDocSearch] = useState("");
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+
+  const handleDownload = (doc: (typeof docs)[0]) => {
+    const fileContent = `========================================================
+AUTOHUB / PROCURly OFFICIAL PROCUREMENT RECORD
+========================================================
+Document Title : ${doc.title}
+Category       : ${doc.category}
+Reference      : ${doc.ref}
+Date Issued    : ${doc.date}
+Document Size  : ${doc.size}
+Customer       : SP Motors Ltd (NZBN 9429049988776)
+Audited By     : Autohub Procurement Operations
+Status         : Verified Official Record
+========================================================
+This document is generated from the Procurly Trade Portal.
+For formal queries contact ops@procurly.autohub.co.nz
+========================================================`;
+
+    const blob = new Blob([fileContent], { type: "text/plain;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `${doc.title.replace(/[^a-zA-Z0-9-_]/g, "_")}.txt`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+
+    setToastMessage(`Downloaded "${doc.title}"`);
+    setTimeout(() => setToastMessage(null), 3500);
+  };
 
   const docs = [
     {
@@ -68,7 +101,15 @@ export function DocumentsView() {
   );
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 relative">
+      {/* Toast Feedback */}
+      {toastMessage && (
+        <div className="fixed top-5 right-5 z-50 flex items-center gap-2 bg-emerald-600 text-white px-4 py-3 rounded-xl shadow-xl font-bold text-xs animate-in slide-in-from-top-3 fade-in duration-200">
+          <Check className="w-4 h-4" />
+          <span>{toastMessage}</span>
+        </div>
+      )}
+
       <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2 text-xs font-bold text-amber-600 uppercase tracking-wider mb-1">
@@ -89,6 +130,17 @@ export function DocumentsView() {
             onChange={(e) => setDocSearch(e.target.value)}
             className="w-full px-3.5 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-[#ED2025]"
           />
+        </div>
+      </div>
+
+      {/* Operational Invoicing Notice */}
+      <div className="bg-slate-50 border border-slate-200 rounded-2xl p-4 flex items-start gap-3 text-xs text-slate-700">
+        <FileText className="w-4 h-4 text-slate-500 shrink-0 mt-0.5" />
+        <div>
+          <span className="font-bold text-slate-900 block">Autohub Invoicing Notice</span>
+          <p className="text-slate-600 text-[11px] leading-relaxed">
+            Official GST tax invoices are generated outside this portal within Autohub's core operational system. The portal records invoice references and tracks payment status (<strong>Unpaid</strong> / <strong>Paid</strong>).
+          </p>
         </div>
       </div>
 
@@ -140,7 +192,7 @@ export function DocumentsView() {
             </div>
 
             <button
-              onClick={() => alert(`Downloading ${d.title}`)}
+              onClick={() => handleDownload(d)}
               className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-100 hover:bg-slate-200 rounded-lg text-slate-700 font-bold transition-colors"
             >
               <Download className="w-3.5 h-3.5" />

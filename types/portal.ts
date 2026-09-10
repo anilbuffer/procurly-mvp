@@ -73,14 +73,6 @@ export interface SavedAddress {
   isDefault?: boolean;
 }
 
-export interface FreightOption {
-  id: string;
-  name: string;
-  carrier: string;
-  transitTime: string;
-  cost: number;
-}
-
 export interface Quotation {
   id: string;
   requestId: string;
@@ -90,15 +82,13 @@ export interface Quotation {
   unitPrice: number;
   subtotal: number;
   gstAmount: number;
-  freightCost: number; // Single flat freight value entered manually by staff for MVP
+  freightCost: number; // Single freight value entered manually by staff. No freight comparison engine.
   freightNote?: string;
   totalAmount: number;
   currency: string;
   validUntil: string;
   termsAccepted?: boolean; // Single static acceptance
   termsVersion?: string; // Optional legacy / audit
-  freightOptions?: FreightOption[]; // Optional/deprecated for MVP
-  selectedFreightId?: string;
   supplierLocation: string;
   notes?: string;
 }
@@ -112,18 +102,17 @@ export interface QuoteAcceptanceAudit {
   vehicleVerified: boolean;
   partVerified: boolean;
   addressVerified: boolean;
-  selectedFreightMethod?: string;
   freightCost?: number;
 }
 
 export interface PaymentDetails {
   id: string;
   requestId: string;
-  invoiceNumber: string;
+  invoiceNumber: string; // Generated in existing Autohub operational process; recorded in portal
   amount: number;
   currency: string;
-  status: PaymentStatus;
-  paymentMethod?: "Bank Transfer" | "Credit Card";
+  status: PaymentStatus; // Status only: "Unpaid" | "Paid"
+  paymentMethod?: string;
   paymentReference: string;
   bankDetails: {
     bankName: string;
@@ -132,7 +121,6 @@ export interface PaymentDetails {
     swiftBic?: string;
   };
   paidAt?: string;
-  paymentProofUrl?: string;
   dueDate: string;
 }
 

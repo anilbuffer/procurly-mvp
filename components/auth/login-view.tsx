@@ -29,12 +29,31 @@ import {
   Phone,
   Clock,
 } from "lucide-react";
+import { useAuth } from "@/context/auth-context";
 
 export type AuthMode = "login" | "register" | "mfa" | "forgot_password" | "change_password";
+
+/**
+ * Route resolution based on account role:
+ * - Procurement Desk (Sarah Jenkins / @procurly.io) -> /procurement
+ * - Customer Trade Portal (James Wilson / @spmotors.co.nz) -> /dashboard
+ */
+export function getPortalRoute(targetEmail: string): string {
+  const normalized = (targetEmail || "").toLowerCase().trim();
+  if (
+    normalized.includes("procurly.io") ||
+    normalized.includes("sarah") ||
+    normalized.includes("procurement")
+  ) {
+    return "/procurement";
+  }
+  return "/dashboard";
+}
 
 export function LoginView() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { login: authLogin } = useAuth();
 
   // Mode state: login | register | mfa | forgot_password | change_password
   const initialModeParam = searchParams?.get("mode") as AuthMode;
@@ -128,6 +147,9 @@ export function LoginView() {
     await new Promise((resolve) => setTimeout(resolve, 600));
     setIsLoggingIn(false);
 
+    const targetRoute = getPortalRoute(email);
+    authLogin(email);
+
     // If user has optional MFA enabled, transition to MFA step
     if (requireMfa) {
       setAuthMode("mfa");
@@ -135,7 +157,7 @@ export function LoginView() {
       // Direct access bypass without MFA
       setLoginSuccess(true);
       setTimeout(() => {
-        router.push("/dashboard");
+        router.push(targetRoute);
       }, 1000);
     }
   };
@@ -190,10 +212,13 @@ export function LoginView() {
       return;
     }
 
+    const targetRoute = getPortalRoute(email);
+    authLogin(email);
+
     if (mfaCode === "123456" || mfaAttemptsCount < 2) {
       setMfaStatus("success");
       setTimeout(() => {
-        router.push("/dashboard");
+        router.push(targetRoute);
       }, 1200);
     } else {
       const newAttempts = mfaAttemptsCount + 1;
@@ -247,8 +272,9 @@ export function LoginView() {
     setIsUpdatingPassword(false);
     setPasswordChangeSuccess(true);
 
+    const targetRoute = getPortalRoute(email);
     setTimeout(() => {
-      router.push("/dashboard");
+      router.push(targetRoute);
     }, 1800);
   };
 
@@ -257,6 +283,16 @@ export function LoginView() {
     setEmail(demoEmail);
     setPassword(demoPass);
     setLoginError(null);
+  };
+
+  // Direct 1-click launch helper for demo accounts
+  const handleLaunchDemoUser = (demoEmail: string, demoPass: string) => {
+    setEmail(demoEmail);
+    setPassword(demoPass);
+    setLoginError(null);
+    authLogin(demoEmail);
+    const targetRoute = getPortalRoute(demoEmail);
+    router.push(targetRoute);
   };
 
   // Password requirements checker
@@ -301,7 +337,9 @@ export function LoginView() {
                 variant="success"
                 icon={<CheckCircle2 className="w-4 h-4 text-emerald-600" />}
                 title="Credentials verified"
-                description="Secure direct session initialized. Redirecting to workspace..."
+                description={`Secure direct session initialized. Redirecting to ${
+                  getPortalRoute(email) === "/procurement" ? "Procurement Portal" : "Customer Portal"
+                } workspace...`}
               />
             )}
 
@@ -391,57 +429,119 @@ export function LoginView() {
               >
                 <span>
                   {requireMfa
-                    ? "Continue to Secure Access (MFA) →"
-                    : "Sign In Directly →"}
+                    ? `Continue to ${getPortalRoute(email) === "/procurement" ? "Procurement Portal" : "Customer Portal"} (MFA) →`
+                    : `Sign In to ${getPortalRoute(email) === "/procurement" ? "Procurement Portal" : "Customer Portal"} →`}
                 </span>
               </Button>
             </form>
 
-            {/* Quick Demo Pre-fills */}
-            <div className="pt-2 border-t border-slate-200/80 space-y-2">
-              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
-                Quick Demo Sign-In Credentials:
-              </span>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
-                <button
-                  type="button"
-                  onClick={() =>
-                    handleSelectDemoUser(
-                      "james.wilson@spmotors.co.nz",
-                      "Procurly2026!"
-                    )
-                  }
-                  className="p-2 text-left rounded-lg border border-slate-200 bg-white hover:border-[#B30D12] hover:bg-red-50/20 transition-all text-slate-700"
-                >
-                  <p className="font-bold text-slate-900 truncate">
-                    James Wilson (SP Motors)
-                  </p>
-                  <p className="text-[10px] text-slate-500 truncate">
-                    james.wilson@spmotors.co.nz
-                  </p>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() =>
-                    handleSelectDemoUser(
-                      "sarah.jenkins@procurly.io",
-                      "AdminSecure2026!"
-                    )
-                  }
-                  className="p-2 text-left rounded-lg border border-slate-200 bg-white hover:border-[#B30D12] hover:bg-red-50/20 transition-all text-slate-700"
-                >
-                  <p className="font-bold text-slate-900 truncate">
-                    Sarah Jenkins (Admin)
-                  </p>
-                  <p className="text-[10px] text-slate-500 truncate">
-                    sarah.jenkins@procurly.io
-                  </p>
-                </button>
+            {/* Quick Demo Pre-fills & Direct Launch */}
+            <div className="pt-2 border-t border-slate-200/80 space-y-2.5">
+              <div className="flex items-center justify-between">
+                <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">
+                  Quick Demo Sign-In Credentials:
+                </span>
+                <span className="text-[10px] text-slate-400 font-medium">
+                  Click card to prefill or Launch
+                </span>
               </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                {/* 1. Customer Portal: James Wilson */}
+                <div
+                  className={`group relative p-3 rounded-xl border transition-all ${
+                    email === "james.wilson@spmotors.co.nz"
+                      ? "border-blue-500 bg-blue-50/50 ring-1 ring-blue-500/30 shadow-xs"
+                      : "border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50/50"
+                  }`}
+                >
+                  <div className="flex items-center justify-between mb-1.5">
+                    <span className="text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded bg-blue-100 text-blue-800 font-sans">
+                      Customer Portal
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() =>
+                        handleLaunchDemoUser(
+                          "james.wilson@spmotors.co.nz",
+                          "Procurly2026!"
+                        )
+                      }
+                      className="text-[10px] font-bold text-blue-600 hover:text-blue-800 inline-flex items-center gap-0.5 hover:underline cursor-pointer"
+                    >
+                      <span>Launch</span>
+                      <ArrowRight className="w-3 h-3" />
+                    </button>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() =>
+                      handleSelectDemoUser(
+                        "james.wilson@spmotors.co.nz",
+                        "Procurly2026!"
+                      )
+                    }
+                    className="w-full text-left cursor-pointer"
+                  >
+                    <p className="font-bold text-slate-900 truncate">
+                      James Wilson (SP Motors)
+                    </p>
+                    <p className="text-[10px] text-slate-500 truncate">
+                      james.wilson@spmotors.co.nz
+                    </p>
+                  </button>
+                </div>
+
+                {/* 2. Procurement Portal: Sarah Jenkins */}
+                <div
+                  className={`group relative p-3 rounded-xl border transition-all ${
+                    email === "sarah.jenkins@procurly.io"
+                      ? "border-[#B30D12] bg-red-50/50 ring-1 ring-[#B30D12]/30 shadow-xs"
+                      : "border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50/50"
+                  }`}
+                >
+                  <div className="flex items-center justify-between mb-1.5">
+                    <span className="text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded bg-red-100 text-[#B30D12] font-sans">
+                      Procurement Portal
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() =>
+                        handleLaunchDemoUser(
+                          "sarah.jenkins@procurly.io",
+                          "AdminSecure2026!"
+                        )
+                      }
+                      className="text-[10px] font-bold text-[#B30D12] hover:text-[#9B0A0F] inline-flex items-center gap-0.5 hover:underline cursor-pointer"
+                    >
+                      <span>Launch</span>
+                      <ArrowRight className="w-3 h-3" />
+                    </button>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() =>
+                      handleSelectDemoUser(
+                        "sarah.jenkins@procurly.io",
+                        "AdminSecure2026!"
+                      )
+                    }
+                    className="w-full text-left cursor-pointer"
+                  >
+                    <p className="font-bold text-slate-900 truncate">
+                      Sarah Jenkins (Procurement)
+                    </p>
+                    <p className="text-[10px] text-slate-500 truncate">
+                      sarah.jenkins@procurly.io
+                    </p>
+                  </button>
+                </div>
+              </div>
+              <p className="text-[10px] text-slate-400 text-center italic pt-0.5">
+                * Admin portal will be configured in a subsequent milestone.
+              </p>
             </div>
 
-            {/* Direct Portal Link & Register Trade Account Link */}
+            {/* Direct Portal Links & Register Trade Account Link */}
             <div className="pt-2 text-center border-t border-slate-200/80 space-y-2">
               <p className="text-xs text-slate-600">
                 New trade customer?{" "}
@@ -458,13 +558,20 @@ export function LoginView() {
                 </button>
               </p>
 
-              <div>
+              <div className="flex flex-wrap items-center justify-center gap-2 pt-1">
                 <button
                   type="button"
                   onClick={() => router.push("/dashboard")}
-                  className="text-xs font-semibold text-slate-500 hover:text-[#B30D12] inline-flex items-center gap-1"
+                  className="text-xs font-semibold text-slate-600 hover:text-blue-700 inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-blue-50 border border-slate-200 hover:border-blue-200 transition-colors"
                 >
-                  <span>Direct Access to Customer Portal Workspace (Demo Mode) →</span>
+                  <span>Direct Customer Portal →</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => router.push("/procurement")}
+                  className="text-xs font-semibold text-slate-600 hover:text-[#B30D12] inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-red-50 border border-slate-200 hover:border-red-200 transition-colors"
+                >
+                  <span>Direct Procurement Portal →</span>
                 </button>
               </div>
             </div>
@@ -784,7 +891,9 @@ export function LoginView() {
                 variant="success"
                 icon={<CheckCircle2 className="w-4 h-4 text-[#059669]" />}
                 title="Identity verified"
-                description="Authentication successful. Redirecting to procurement workspace..."
+                description={`Authentication successful. Redirecting to ${
+                  getPortalRoute(email) === "/procurement" ? "Procurement Portal" : "Customer Portal"
+                } workspace...`}
               />
             )}
 
@@ -955,15 +1064,15 @@ export function LoginView() {
                   </h4>
                 </div>
                 <p className="text-xs text-emerald-700 leading-relaxed">
-                  Your new credentials have been activated in the Autohub Identity System. Redirecting to your Customer Portal dashboard...
+                  Your new credentials have been activated in the Autohub Identity System. Redirecting to your {getPortalRoute(email) === "/procurement" ? "Procurement Portal" : "Customer Portal"}...
                 </p>
                 <div className="pt-2">
                   <Button
                     type="button"
-                    onClick={() => router.push("/dashboard")}
+                    onClick={() => router.push(getPortalRoute(email))}
                     className="w-full h-11 text-xs font-bold bg-[#B30D12] hover:bg-[#9B0A0F] text-white rounded-lg"
                   >
-                    Go to Customer Portal Now →
+                    Go to {getPortalRoute(email) === "/procurement" ? "Procurement Portal" : "Customer Portal"} Now →
                   </Button>
                 </div>
               </div>

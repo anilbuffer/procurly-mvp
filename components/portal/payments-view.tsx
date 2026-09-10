@@ -88,7 +88,7 @@ export function PaymentsView() {
         <div>
           <span className="font-bold block">Autohub Invoicing & Payment Tracking Notice</span>
           <p className="text-blue-800 text-[11px] leading-relaxed">
-            Tax invoices are generated within the existing Autohub operational workflow. For MVP, payment status is recorded strictly as <strong>Unpaid</strong> or <strong>Paid</strong>. Customers can record settlements directly via Bank Transfer or Card Payment.
+            Tax invoices are generated within the existing Autohub operational workflow. For MVP, payment status is recorded strictly as <strong>Unpaid</strong> or <strong>Paid</strong>. Settlement references and bank details are logged for tracking.
           </p>
         </div>
       </div>

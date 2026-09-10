@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useState, useMemo } from "react";
+import React, { createContext, useContext, useState, useMemo, useCallback, useEffect } from "react";
 import {
   PartRequest,
   PortalTab,
@@ -38,6 +38,7 @@ interface PortalContextType {
   markAllNotificationsAsRead: () => void;
   activities: ProcurementActivity[];
   savedAddresses: SavedAddress[];
+  addSavedAddress: (address: SavedAddress) => void;
   searchQuery: string;
   setSearchQuery: (query: string) => void;
   submitNewRequest: (reqData: Partial<PartRequest>) => PartRequest;
@@ -45,7 +46,6 @@ interface PortalContextType {
   rejectQuote: (requestId: string, reason: string) => void;
   submitPayment: (
     requestId: string,
-    method: "Bank Transfer" | "Credit Card",
     reference?: string
   ) => void;
   sendMessage: (requestId: string, text: string) => void;
@@ -60,7 +60,7 @@ interface PortalContextType {
 const PortalContext = createContext<PortalContextType | undefined>(undefined);
 
 export function PortalProvider({ children }: { children: React.ReactNode }) {
-  const [activeTab, setActiveTab] = useState<PortalTab>("dashboard");
+  const [activeTab, setActiveTabState] = useState<PortalTab>("dashboard");
   const [requests, setRequests] = useState<PartRequest[]>(INITIAL_REQUESTS);
   const [activities, setActivities] = useState<ProcurementActivity[]>(INITIAL_ACTIVITIES);
   const [notifications, setNotifications] =
@@ -69,12 +69,77 @@ export function PortalProvider({ children }: { children: React.ReactNode }) {
   const [searchQuery, setSearchQuery] = useState("");
 
   // Modals
-  const [selectedRequest, setSelectedRequest] = useState<PartRequest | null>(null);
+  const [selectedRequest, setSelectedRequestState] = useState<PartRequest | null>(null);
   const [isNewRequestModalOpen, setIsNewRequestModalOpen] = useState(false);
   const [isQuoteModalOpen, setIsQuoteModalOpen] = useState(false);
   const [quoteRequest, setQuoteRequest] = useState<PartRequest | null>(null);
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
   const [paymentRequest, setPaymentRequest] = useState<PartRequest | null>(null);
+
+  // ─── URL Synchronization ───────────────────────────────
+
+  const updateUrl = useCallback((tab: PortalTab, reqId?: string | null) => {
+    if (typeof window === "undefined") return;
+    const url = new URL(window.location.href);
+    url.searchParams.set("tab", tab);
+    if (reqId) {
+      url.searchParams.set("request", reqId);
+    } else {
+      url.searchParams.delete("request");
+    }
+    window.history.pushState({ tab, request: reqId }, "", url.pathname + url.search);
+  }, []);
+
+  const setActiveTab = useCallback(
+    (tab: PortalTab) => {
+      setActiveTabState(tab);
+      updateUrl(tab, selectedRequest?.id);
+    },
+    [selectedRequest, updateUrl]
+  );
+
+  const setSelectedRequest = useCallback(
+    (req: PartRequest | null) => {
+      setSelectedRequestState(req);
+      updateUrl(activeTab, req ? req.id : null);
+    },
+    [activeTab, updateUrl]
+  );
+
+  const addSavedAddress = useCallback((addr: SavedAddress) => {
+    setSavedAddresses((prev) => {
+      if (addr.isDefault) {
+        return [addr, ...prev.map((a) => ({ ...a, isDefault: false }))];
+      }
+      return [...prev, addr];
+    });
+  }, []);
+
+  // Sync on mount & popstate
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const syncFromUrl = () => {
+      const params = new URLSearchParams(window.location.search);
+      const tab = params.get("tab") as PortalTab | null;
+      const reqId = params.get("request");
+      if (
+        tab &&
+        ["dashboard", "requests", "orders", "shipments", "payments", "documents", "settings"].includes(tab)
+      ) {
+        setActiveTabState(tab);
+      }
+      if (reqId) {
+        const found = requests.find((r) => r.id === reqId || r.requestNumber === reqId);
+        if (found) {
+          setSelectedRequestState(found);
+        }
+      }
+    };
+
+    syncFromUrl();
+    window.addEventListener("popstate", syncFromUrl);
+    return () => window.removeEventListener("popstate", syncFromUrl);
+  }, [requests]);
 
   // Counter metrics
   const metrics = useMemo(() => {
@@ -276,7 +341,6 @@ export function PortalProvider({ children }: { children: React.ReactNode }) {
 
   const submitPayment = (
     requestId: string,
-    method: "Bank Transfer" | "Credit Card",
     reference?: string
   ) => {
     setRequests((prev) =>
@@ -291,7 +355,6 @@ export function PortalProvider({ children }: { children: React.ReactNode }) {
               ? {
                   ...r.payment,
                   status: "Paid",
-                  paymentMethod: method,
                   paidAt: new Date().toISOString(),
                   paymentReference: reference || r.payment.paymentReference,
                 }
@@ -305,7 +368,7 @@ export function PortalProvider({ children }: { children: React.ReactNode }) {
     const target = requests.find((r) => r.id === requestId);
     const reqNum = target?.requestNumber || "Request";
 
-    const desc = `Payment settled via ${method} (Ref: ${reference || reqNum}). Payment status recorded as Paid.`;
+    const desc = `Payment recorded as Paid (Ref: ${reference || reqNum}). Order unlocked for fulfillment.`;
 
     setActivities((prev) => [
       {
@@ -379,6 +442,7 @@ export function PortalProvider({ children }: { children: React.ReactNode }) {
         markAllNotificationsAsRead,
         activities,
         savedAddresses,
+        addSavedAddress,
         searchQuery,
         setSearchQuery,
         submitNewRequest,

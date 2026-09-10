@@ -295,7 +295,7 @@ export function RequestDetailsModal() {
                       }}
                       className="px-4 py-1.5 bg-[#ED2025] hover:bg-[#d11a1f] text-white font-bold text-xs uppercase tracking-wider rounded-lg shadow-sm whitespace-nowrap"
                     >
-                      Pay Now (Unpaid) →
+                      Record Settlement (Unpaid) →
                     </button>
                   )}
                 </div>
@@ -550,7 +550,7 @@ export function RequestDetailsModal() {
                           className="px-4 py-2 bg-[#ED2025] hover:bg-[#d11a1f] text-white font-bold text-xs uppercase tracking-wider rounded-xl shadow-sm inline-flex items-center gap-1.5"
                         >
                           <DollarSign className="w-3.5 h-3.5" />
-                          <span>Record Settlement / Pay Now (Unpaid) →</span>
+                          <span>Record Settlement (Status: Unpaid) →</span>
                         </button>
                         <button
                           onClick={() => {

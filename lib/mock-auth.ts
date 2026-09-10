@@ -2,14 +2,25 @@ import { User } from "@/types/auth";
 
 export const MOCK_USERS: User[] = [
   {
+    id: "user-customer-01",
+    name: "James Wilson",
+    email: "james.wilson@spmotors.co.nz",
+    role: "viewer",
+    avatarUrl: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    organization: "SP Motors Ltd",
+    department: "Service & Workshop",
+    title: "Service Manager (Customer)",
+    lastActive: "Just now",
+  },
+  {
     id: "user-admin-01",
     name: "Sarah Jenkins",
     email: "sarah.jenkins@procurly.io",
     role: "admin",
     avatarUrl: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&auto=format&fit=crop&q=80",
-    organization: "Acme Global Enterprise",
-    department: "Executive Leadership",
-    title: "Chief Procurement Officer & Admin",
+    organization: "Autohub Procurement Desk",
+    department: "Strategic Sourcing",
+    title: "Senior Sourcing Specialist (Procurement)",
     lastActive: "Just now",
   },
   {

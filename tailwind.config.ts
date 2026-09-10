@@ -24,7 +24,7 @@ const config: Config = {
             900: "#771d1d",
           },
           navy: {
-            DEFAULT: "#263b9f",
+            DEFAULT: "#2B4499",
             50: "#eef2ff",
             100: "#e0e7ff",
             200: "#c7d2fe",
@@ -39,8 +39,8 @@ const config: Config = {
         },
       },
       fontFamily: {
-        roboto: ["var(--font-roboto)", "Roboto", "sans-serif"],
-        sans: ["var(--font-roboto)", "Roboto", "sans-serif"],
+        inter: ["var(--font-inter)", "Inter", "sans-serif"],
+        sans: ["var(--font-inter)", "Inter", "sans-serif"],
       },
     },
   },
