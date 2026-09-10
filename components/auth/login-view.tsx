@@ -274,15 +274,7 @@ export function LoginView() {
         {/* ------------------------------------------------------------- */}
         {authMode === "login" && (
           <div className="space-y-5 animate-in fade-in duration-200">
-            {/* Eyebrow */}
-            <div className="flex items-center justify-between">
-              <span className="text-[12px] font-bold uppercase tracking-[0.06em] text-[#C40E14] antialiased">
-                SECURE ACCOUNT ACCESS
-              </span>
-              <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider bg-white px-2 py-0.5 rounded border border-slate-200">
-                PROCURly Portal
-              </span>
-            </div>
+
 
             {/* Heading */}
             <div>
@@ -388,32 +380,6 @@ export function LoginView() {
                 </label>
               </div>
 
-              {/* SECURE ACCOUNT ACCESS OPTIONAL TOGGLE CARD */}
-              <div className="p-3.5 rounded-xl border border-slate-200 bg-slate-50/70 hover:bg-slate-50 transition-colors">
-                <label className="flex items-start gap-3 cursor-pointer select-none">
-                  <input
-                    type="checkbox"
-                    checked={requireMfa}
-                    onChange={(e) => setRequireMfa(e.target.checked)}
-                    className="mt-0.5 w-4 h-4 rounded text-[#B30D12] focus:ring-0 cursor-pointer"
-                  />
-                  <div className="text-xs">
-                    <div className="flex items-center gap-2">
-                      <span className="font-bold text-slate-900">
-                        Secure Account Access (MFA Verification)
-                      </span>
-                      <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-amber-100 text-amber-800 uppercase">
-                        Optional
-                      </span>
-                    </div>
-                    <p className="text-slate-500 text-[11px] leading-relaxed mt-0.5">
-                      {requireMfa
-                        ? "Enabled: You will be prompted for 6-digit authenticator code after signing in."
-                        : "Disabled: Sign in directly with email and password without secondary MFA prompt."}
-                    </p>
-                  </div>
-                </label>
-              </div>
 
               {/* Primary Sign In Button */}
               <Button
