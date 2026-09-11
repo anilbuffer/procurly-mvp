@@ -35,10 +35,19 @@ export function PortalSidebar({ collapsed = false, onToggleCollapse }: PortalSid
     metrics,
     requests,
     activeCustomer,
-    setActiveCustomerId,
-    availableCustomers,
   } = usePortal();
   const [showUserMenu, setShowUserMenu] = React.useState(false);
+  const userMenuRef = React.useRef<HTMLDivElement>(null);
+
+  React.useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (userMenuRef.current && !userMenuRef.current.contains(e.target as Node)) {
+        setShowUserMenu(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   const activeOrdersCount = requests.filter(
     (r) => r.status === "Ordered" || r.status === "Approved" || r.status === "Awaiting Payment"
@@ -216,7 +225,7 @@ export function PortalSidebar({ collapsed = false, onToggleCollapse }: PortalSid
       </div>
 
       {/* Bottom User Profile Section */}
-      <div className="p-3 border-t border-[#1E2538]/60 relative">
+      <div ref={userMenuRef} className="p-3 border-t border-[#1E2538]/60 relative">
         <div
           onClick={() => setShowUserMenu(!showUserMenu)}
           className="flex items-center justify-between p-2 rounded-xl bg-[#141B2B] hover:bg-[#1B2338] cursor-pointer transition-all border border-[#1E2538]/40"
@@ -240,7 +249,13 @@ export function PortalSidebar({ collapsed = false, onToggleCollapse }: PortalSid
               </div>
             )}
           </div>
-          {!collapsed && <ChevronDown className="w-3.5 h-3.5 text-slate-400 shrink-0" />}
+          {!collapsed && (
+            <ChevronDown
+              className={`w-3.5 h-3.5 text-slate-400 shrink-0 transition-transform duration-200 ${
+                showUserMenu ? "rotate-180" : ""
+              }`}
+            />
+          )}
         </div>
 
         {/* User dropdown popover */}
@@ -254,34 +269,7 @@ export function PortalSidebar({ collapsed = false, onToggleCollapse }: PortalSid
               <p className="text-[10px] text-slate-400 font-mono">{activeCustomer.email}</p>
             </div>
 
-            {/* Switch Account */}
-            <div className="px-2 pt-1 pb-1">
-              <span className="text-[9px] font-bold uppercase tracking-wider text-slate-500 block mb-1">
-                Switch Trade Account
-              </span>
-              <div className="space-y-1">
-                {availableCustomers.map((cust) => (
-                  <button
-                    key={cust.id}
-                    type="button"
-                    onClick={() => {
-                      setActiveCustomerId(cust.id);
-                      setShowUserMenu(false);
-                    }}
-                    className={`w-full text-left px-2 py-1 rounded text-[11px] font-medium transition-colors flex items-center justify-between ${
-                      activeCustomer.id === cust.id
-                        ? "bg-[#ED2025]/20 text-red-300 font-bold"
-                        : "hover:bg-[#222C46] text-slate-300"
-                    }`}
-                  >
-                    <span className="truncate">{cust.businessName}</span>
-                    {activeCustomer.id === cust.id && <span className="text-red-400 text-xs">✓</span>}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <div className="border-t border-[#27324D]/60 pt-1">
+            <div className="pt-0.5 space-y-0.5">
               <button
                 onClick={() => {
                   setActiveTab("settings");
