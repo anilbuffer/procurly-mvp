@@ -6,13 +6,7 @@ import { useRouter, usePathname } from "next/navigation";
 import {
   Search,
   ChevronRight,
-  User,
-  ShieldCheck,
-  LogOut,
-  ExternalLink,
-  Layers,
   ArrowRight,
-  Settings,
 } from "lucide-react";
 import { useUnifiedData } from "@/context/unified-data-context";
 import { NotificationPopover } from "./notification-popover";
@@ -31,14 +25,11 @@ export function AdminHeader() {
 
   const {
     requests,
-    currentStaffUser,
   } = useUnifiedData();
 
   const [globalSearch, setGlobalSearch] = useState("");
   const [isSearchFocused, setIsSearchFocused] = useState(false);
-  const [isProfileOpen, setIsProfileOpen] = useState(false);
   const searchInputRef = useRef<HTMLInputElement>(null);
-  const profileRef = useRef<HTMLDivElement>(null);
   const searchContainerRef = useRef<HTMLDivElement>(null);
 
   // Keyboard shortcut ⌘K / Ctrl+K
@@ -53,12 +44,9 @@ export function AdminHeader() {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
 
-  // Close profile dropdown on outside click
+  // Close search dropdown on outside click
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
-      if (profileRef.current && !profileRef.current.contains(e.target as Node)) {
-        setIsProfileOpen(false);
-      }
       if (searchContainerRef.current && !searchContainerRef.current.contains(e.target as Node)) {
         setIsSearchFocused(false);
       }
@@ -229,76 +217,6 @@ export function AdminHeader() {
 
           {/* Top-Right Notification Icon */}
           <NotificationPopover />
-
-          {/* User Profile & Role Switcher */}
-          <div className="relative" ref={profileRef}>
-            <button
-              type="button"
-              onClick={() => setIsProfileOpen(!isProfileOpen)}
-              className="flex items-center gap-2 p-1.5 pr-2.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 transition-all shadow-xs focus:outline-none focus:ring-2 focus:ring-[#ED2025]/30"
-            >
-              {currentStaffUser.avatarUrl ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  src={currentStaffUser.avatarUrl}
-                  alt={currentStaffUser.name}
-                  className="w-7 h-7 rounded-lg object-cover"
-                />
-              ) : (
-                <div className="w-7 h-7 rounded-lg bg-slate-800 text-white flex items-center justify-center font-bold text-xs">
-                  {currentStaffUser.name[0]}
-                </div>
-              )}
-              <div className="text-left hidden lg:block">
-                <span className="block text-xs font-bold text-slate-900 leading-tight">
-                  {currentStaffUser.name}
-                </span>
-                <span className="block text-[10px] font-medium text-slate-500 leading-tight">
-                  {currentStaffUser.role || "Administrator"}
-                </span>
-              </div>
-            </button>
-
-            {/* Profile Dropdown */}
-            {isProfileOpen && (
-              <div className="absolute right-0 mt-2 w-72 rounded-2xl bg-white p-3 shadow-xl border border-slate-200 z-50 animate-in fade-in-0 zoom-in-95">
-                {/* Current User Info */}
-                <div className="px-3 py-2 border-b border-slate-100">
-                  <p className="text-xs font-bold text-slate-900">{currentStaffUser.name}</p>
-                  <p className="text-[11px] text-slate-500">{currentStaffUser.email}</p>
-                  <p className="text-[10px] text-slate-400 mt-1">{currentStaffUser.title}</p>
-                </div>
-
-                {/* Links */}
-                <div className="pt-2 space-y-0.5">
-                  <Link
-                    href="/admin/settings"
-                    onClick={() => setIsProfileOpen(false)}
-                    className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors"
-                  >
-                    <Settings className="w-3.5 h-3.5 text-slate-400" />
-                    Admin Settings
-                  </Link>
-                  <Link
-                    href="/customer/dashboard"
-                    onClick={() => setIsProfileOpen(false)}
-                    className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium text-slate-600 hover:bg-slate-50 hover:text-slate-900"
-                  >
-                    <ExternalLink className="w-3.5 h-3.5 text-slate-400" />
-                    Switch to Customer Portal
-                  </Link>
-                  <Link
-                    href="/"
-                    onClick={() => setIsProfileOpen(false)}
-                    className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium text-rose-600 hover:bg-rose-50"
-                  >
-                    <LogOut className="w-3.5 h-3.5" />
-                    Sign Out
-                  </Link>
-                </div>
-              </div>
-            )}
-          </div>
         </div>
       </div>
     </header>
