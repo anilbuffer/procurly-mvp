@@ -60,37 +60,36 @@ export function PortalSidebar({ collapsed = false, onToggleCollapse }: PortalSid
     badge?: number;
     badgeColor?: string;
   }[] = [
-    { id: "dashboard", label: "Dashboard", icon: LayoutGrid },
-    {
-      id: "requests",
-      label: "Requests",
-      icon: FileText,
-      badge: metrics.awaitingAction > 0 ? metrics.awaitingAction : undefined,
-      badgeColor: "bg-[#ED2025] text-white",
-    },
-    {
-      id: "orders",
-      label: "Orders",
-      icon: CheckSquare,
-      badge: activeOrdersCount > 0 ? activeOrdersCount : undefined,
-      badgeColor: "bg-purple-600 text-white",
-    },
-    {
-      id: "shipments",
-      label: "Shipments",
-      icon: Truck,
-      badge: metrics.inTransit > 0 ? metrics.inTransit : undefined,
-      badgeColor: "bg-[#2563EB] text-white",
-    },
-    { id: "payments", label: "Payments", icon: CreditCard },
-    { id: "documents", label: "Documents", icon: FolderArchive },
-  ];
+      { id: "dashboard", label: "Dashboard", icon: LayoutGrid },
+      {
+        id: "requests",
+        label: "Requests",
+        icon: FileText,
+        badge: metrics.awaitingAction > 0 ? metrics.awaitingAction : undefined,
+        badgeColor: "bg-[#ED2025] text-white",
+      },
+      {
+        id: "orders",
+        label: "Orders",
+        icon: CheckSquare,
+        badge: activeOrdersCount > 0 ? activeOrdersCount : undefined,
+        badgeColor: "bg-purple-600 text-white",
+      },
+      {
+        id: "shipments",
+        label: "Shipments",
+        icon: Truck,
+        badge: metrics.inTransit > 0 ? metrics.inTransit : undefined,
+        badgeColor: "bg-[#2563EB] text-white",
+      },
+      { id: "payments", label: "Payments", icon: CreditCard },
+      { id: "documents", label: "Documents", icon: FolderArchive },
+    ];
 
   return (
     <aside
-      className={`fixed top-0 left-0 z-40 h-screen bg-[#0C101A] border-r border-[#1E2538] transition-all duration-300 flex flex-col justify-between select-none ${
-        collapsed ? "w-20" : "w-64"
-      }`}
+      className={`fixed top-0 left-0 z-40 h-screen bg-[#0C101A] border-r border-[#1E2538] transition-all duration-300 flex flex-col justify-between select-none ${collapsed ? "w-20" : "w-64"
+        }`}
     >
       {/* Top Section */}
       <div>
@@ -130,17 +129,6 @@ export function PortalSidebar({ collapsed = false, onToggleCollapse }: PortalSid
           )}
         </div>
 
-        {/* Action Button: + NEW PARTS REQUEST */}
-        <div className="p-4">
-          <button
-            onClick={() => setIsNewRequestModalOpen(true)}
-            className={`w-full bg-gradient-to-r from-[#ED2025] to-[#E11D48] hover:from-[#d11a1f] hover:to-[#be123c] text-white font-bold text-xs uppercase tracking-wider rounded-xl shadow-lg shadow-[#ED2025]/25 hover:shadow-xl hover:shadow-[#ED2025]/35 transition-all transform active:scale-95 flex items-center justify-center gap-2 py-3 px-3.5`}
-          >
-            <Plus className="w-4 h-4 stroke-[3]" />
-            {!collapsed && <span>New Parts Request</span>}
-          </button>
-        </div>
-
         {/* Navigation Links */}
         <div className="px-3 py-2 space-y-6">
           {/* Main Section */}
@@ -159,19 +147,17 @@ export function PortalSidebar({ collapsed = false, onToggleCollapse }: PortalSid
                   <Link
                     key={item.id}
                     href={href}
-                    className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold transition-all group ${
-                      isActive
-                        ? "bg-[#1E2538] text-white shadow-inner font-bold"
-                        : "text-slate-400 hover:text-white hover:bg-[#151C2C]"
-                    }`}
+                    className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold transition-all group ${isActive
+                      ? "bg-[#1E2538] text-white shadow-inner font-bold"
+                      : "text-slate-400 hover:text-white hover:bg-[#151C2C]"
+                      }`}
                   >
                     <div className="flex items-center gap-3">
                       <Icon
-                        className={`w-4 h-4 transition-colors ${
-                          isActive
-                            ? "text-[#ED2025]"
-                            : "text-slate-400 group-hover:text-white"
-                        }`}
+                        className={`w-4 h-4 transition-colors ${isActive
+                          ? "text-[#ED2025]"
+                          : "text-slate-400 group-hover:text-white"
+                          }`}
                       />
                       {!collapsed && <span>{item.label}</span>}
                     </div>
@@ -179,9 +165,8 @@ export function PortalSidebar({ collapsed = false, onToggleCollapse }: PortalSid
                     {!collapsed && item.badge && (
                       <span
                         suppressHydrationWarning
-                        className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
-                          item.badgeColor || "bg-slate-700 text-white"
-                        }`}
+                        className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${item.badgeColor || "bg-slate-700 text-white"
+                          }`}
                       >
                         {item.badge}
                       </span>
@@ -202,19 +187,17 @@ export function PortalSidebar({ collapsed = false, onToggleCollapse }: PortalSid
             <nav className="space-y-1">
               <Link
                 href="/customer/settings"
-                className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold transition-all group ${
-                  activeTab === "settings"
-                    ? "bg-[#1E2538] text-white shadow-inner font-bold"
-                    : "text-slate-400 hover:text-white hover:bg-[#151C2C]"
-                }`}
+                className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold transition-all group ${activeTab === "settings"
+                  ? "bg-[#1E2538] text-white shadow-inner font-bold"
+                  : "text-slate-400 hover:text-white hover:bg-[#151C2C]"
+                  }`}
               >
                 <div className="flex items-center gap-3">
                   <Settings
-                    className={`w-4 h-4 transition-colors ${
-                      activeTab === "settings"
-                        ? "text-[#ED2025]"
-                        : "text-slate-400 group-hover:text-white"
-                    }`}
+                    className={`w-4 h-4 transition-colors ${activeTab === "settings"
+                      ? "text-[#ED2025]"
+                      : "text-slate-400 group-hover:text-white"
+                      }`}
                   />
                   {!collapsed && <span>Settings</span>}
                 </div>
@@ -251,9 +234,8 @@ export function PortalSidebar({ collapsed = false, onToggleCollapse }: PortalSid
           </div>
           {!collapsed && (
             <ChevronDown
-              className={`w-3.5 h-3.5 text-slate-400 shrink-0 transition-transform duration-200 ${
-                showUserMenu ? "rotate-180" : ""
-              }`}
+              className={`w-3.5 h-3.5 text-slate-400 shrink-0 transition-transform duration-200 ${showUserMenu ? "rotate-180" : ""
+                }`}
             />
           )}
         </div>
@@ -262,9 +244,6 @@ export function PortalSidebar({ collapsed = false, onToggleCollapse }: PortalSid
         {showUserMenu && !collapsed && (
           <div className="absolute bottom-16 left-3 right-3 bg-[#182033] border border-[#27324D] rounded-xl shadow-2xl p-2.5 space-y-2 z-50 text-xs text-slate-200 animate-in fade-in slide-in-from-bottom-2 duration-150">
             <div className="px-2 py-1 border-b border-[#27324D]/60 pb-2">
-              <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
-                Active Customer Account
-              </span>
               <p className="font-bold text-white text-xs mt-0.5">{activeCustomer.businessName}</p>
               <p className="text-[10px] text-slate-400 font-mono">{activeCustomer.email}</p>
             </div>

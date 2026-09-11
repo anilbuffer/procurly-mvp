@@ -15,7 +15,6 @@ import {
   ChevronLeft,
   ChevronRight,
   ChevronDown,
-  ShieldCheck,
   ArrowRightLeft,
   LogOut,
   UserCheck,
@@ -234,7 +233,7 @@ export function AdminSidebar({ collapsed, onToggleCollapse }: AdminSidebarProps)
                   {currentStaffUser?.name || "David Vance"}
                 </p>
                 <p className="text-[10px] text-slate-400 font-medium truncate">
-                  {currentStaffUser?.role || "Administrator"} • {currentStaffUser?.department || "Executive Management"}
+                  {currentStaffUser?.role || "Administrator"}
                 </p>
               </div>
             )}
@@ -254,20 +253,8 @@ export function AdminSidebar({ collapsed, onToggleCollapse }: AdminSidebarProps)
               } bg-[#182033] border border-[#27324D] rounded-xl shadow-2xl p-2.5 space-y-2 z-50 text-xs text-slate-200 animate-in fade-in slide-in-from-bottom-2 duration-150`}
           >
             <div className="px-2 py-1 border-b border-[#27324D]/60 pb-2">
-              <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
-                Active Staff Account
-              </span>
               <p className="font-bold text-white text-xs mt-0.5">{currentStaffUser?.name || "David Vance"}</p>
               <p className="text-[10px] text-slate-400 font-mono truncate">{currentStaffUser?.email}</p>
-              <div className="mt-1.5 flex items-center gap-1.5">
-                <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[9px] font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/20">
-                  <ShieldCheck className="w-2.5 h-2.5" />
-                  {currentStaffUser?.role || "Administrator"}
-                </span>
-                <span className="text-[9px] text-slate-400 font-medium truncate">
-                  {currentStaffUser?.title}
-                </span>
-              </div>
             </div>
 
             <div className="pt-0.5 space-y-0.5">
