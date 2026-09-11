@@ -48,12 +48,12 @@ export function RequestsTableView() {
         if (searchQuery.trim()) {
           const q = searchQuery.toLowerCase().trim();
           const match =
-            r.requestNumber.toLowerCase().includes(q) ||
-            r.customerName.toLowerCase().includes(q) ||
-            r.contactName.toLowerCase().includes(q) ||
-            r.vehicle.make.toLowerCase().includes(q) ||
-            r.vehicle.model.toLowerCase().includes(q) ||
-            r.part.name.toLowerCase().includes(q);
+            (r.requestNumber || "").toLowerCase().includes(q) ||
+            (r.customerName || "").toLowerCase().includes(q) ||
+            (r.contactName || "").toLowerCase().includes(q) ||
+            (r.vehicle?.make || "").toLowerCase().includes(q) ||
+            (r.vehicle?.model || "").toLowerCase().includes(q) ||
+            (r.part?.name || "").toLowerCase().includes(q);
           if (!match) return false;
         }
 
@@ -82,8 +82,8 @@ export function RequestsTableView() {
         if (sortBy === "oldest") {
           return new Date(a.dateSubmitted).getTime() - new Date(b.dateSubmitted).getTime();
         }
-        // recently_updated
-        return a.lastUpdated.localeCompare(b.lastUpdated);
+        // recently_updated (descending order, with safe fallback)
+        return (b.lastUpdated || "").localeCompare(a.lastUpdated || "");
       });
   }, [requests, searchQuery, statusFilter, paymentFilter, customerFilter, sortBy]);
 

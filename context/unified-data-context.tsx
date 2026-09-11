@@ -133,78 +133,63 @@ interface UnifiedDataContextType {
 const UnifiedDataContext = createContext<UnifiedDataContextType | undefined>(undefined);
 
 export function UnifiedDataProvider({ children }: { children: React.ReactNode }) {
-  // Initialize state from localStorage if available
-  const [requests, setRequests] = useState<PartRequest[]>(() => {
-    if (typeof window !== "undefined") {
-      try {
-        const saved = localStorage.getItem(STORAGE_REQUESTS);
-        if (saved) return JSON.parse(saved);
-      } catch (e) {
-        console.error("Failed to load requests from localStorage", e);
-      }
-    }
-    return INITIAL_SHARED_REQUESTS;
-  });
+  // Initialize state with canonical mock data (identical on server and client initial render)
+  const [requests, setRequests] = useState<PartRequest[]>(INITIAL_SHARED_REQUESTS);
+  const [customers, setCustomers] = useState<CustomerRecord[]>(MOCK_CUSTOMERS);
+  const [suppliers, setSuppliers] = useState<Supplier[]>(MOCK_SUPPLIERS);
+  const [staffUsers, setStaffUsers] = useState<StaffUser[]>(MOCK_STAFF_USERS);
+  const [notifications, setNotifications] = useState<PortalNotification[]>(INITIAL_NOTIFICATIONS);
+  const [activeStaffRole, setActiveStaffRole] = useState<StaffRole>("Administrator");
+  const [isHydrated, setIsHydrated] = useState(false);
 
-  const [customers, setCustomers] = useState<CustomerRecord[]>(() => {
-    if (typeof window !== "undefined") {
-      try {
-        const saved = localStorage.getItem(STORAGE_CUSTOMERS);
-        if (saved) return JSON.parse(saved);
-      } catch (e) {
-        console.error("Failed to load customers from localStorage", e);
-      }
-    }
-    return MOCK_CUSTOMERS;
-  });
-
-  const [suppliers, setSuppliers] = useState<Supplier[]>(() => {
-    if (typeof window !== "undefined") {
-      try {
-        const saved = localStorage.getItem(STORAGE_SUPPLIERS);
-        if (saved) return JSON.parse(saved);
-      } catch (e) {
-        console.error("Failed to load suppliers from localStorage", e);
-      }
-    }
-    return MOCK_SUPPLIERS;
-  });
-
-  const [staffUsers, setStaffUsers] = useState<StaffUser[]>(() => {
-    if (typeof window !== "undefined") {
-      try {
-        const saved = localStorage.getItem(STORAGE_STAFF);
-        if (saved) return JSON.parse(saved);
-      } catch (e) {
-        console.error("Failed to load staff from localStorage", e);
-      }
-    }
-    return MOCK_STAFF_USERS;
-  });
-
-  const [notifications, setNotifications] = useState<PortalNotification[]>(() => {
-    if (typeof window !== "undefined") {
-      try {
-        const saved = localStorage.getItem(STORAGE_NOTIFICATIONS);
-        if (saved) return JSON.parse(saved);
-      } catch (e) {
-        console.error("Failed to load notifications from localStorage", e);
-      }
-    }
-    return INITIAL_NOTIFICATIONS;
-  });
-
-  const [activeStaffRole, setActiveStaffRole] = useState<StaffRole>(() => {
-    if (typeof window !== "undefined") {
-      try {
-        const saved = localStorage.getItem(STORAGE_ACTIVE_ROLE);
-        if (saved && ["Administrator", "Procurement", "Operations", "Finance"].includes(saved)) {
-          return saved as StaffRole;
+  // Hydrate state from localStorage after mount to eliminate SSR hydration mismatches
+  useEffect(() => {
+    try {
+      const savedRequests = localStorage.getItem(STORAGE_REQUESTS);
+      if (savedRequests) {
+        const parsed = JSON.parse(savedRequests);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          setRequests(parsed);
         }
-      } catch (e) {}
+      }
+      const savedCustomers = localStorage.getItem(STORAGE_CUSTOMERS);
+      if (savedCustomers) {
+        const parsed = JSON.parse(savedCustomers);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          setCustomers(parsed);
+        }
+      }
+      const savedSuppliers = localStorage.getItem(STORAGE_SUPPLIERS);
+      if (savedSuppliers) {
+        const parsed = JSON.parse(savedSuppliers);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          setSuppliers(parsed);
+        }
+      }
+      const savedStaff = localStorage.getItem(STORAGE_STAFF);
+      if (savedStaff) {
+        const parsed = JSON.parse(savedStaff);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          setStaffUsers(parsed);
+        }
+      }
+      const savedNotifications = localStorage.getItem(STORAGE_NOTIFICATIONS);
+      if (savedNotifications) {
+        const parsed = JSON.parse(savedNotifications);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          setNotifications(parsed);
+        }
+      }
+      const savedRole = localStorage.getItem(STORAGE_ACTIVE_ROLE);
+      if (savedRole && ["Administrator", "Procurement", "Operations", "Finance"].includes(savedRole)) {
+        setActiveStaffRole(savedRole as StaffRole);
+      }
+    } catch (e) {
+      console.error("Failed to load state from localStorage", e);
+    } finally {
+      setIsHydrated(true);
     }
-    return "Administrator";
-  });
+  }, []);
 
   // Current logged in staff based on active role
   const currentStaffUser = useMemo(() => {
@@ -231,24 +216,29 @@ export function UnifiedDataProvider({ children }: { children: React.ReactNode })
   );
 
   useEffect(() => {
+    if (!isHydrated) return;
     persistState(STORAGE_REQUESTS, requests);
-  }, [requests, persistState]);
+  }, [requests, isHydrated, persistState]);
 
   useEffect(() => {
+    if (!isHydrated) return;
     persistState(STORAGE_CUSTOMERS, customers);
-  }, [customers, persistState]);
+  }, [customers, isHydrated, persistState]);
 
   useEffect(() => {
+    if (!isHydrated) return;
     persistState(STORAGE_SUPPLIERS, suppliers);
-  }, [suppliers, persistState]);
+  }, [suppliers, isHydrated, persistState]);
 
   useEffect(() => {
+    if (!isHydrated) return;
     persistState(STORAGE_STAFF, staffUsers);
-  }, [staffUsers, persistState]);
+  }, [staffUsers, isHydrated, persistState]);
 
   useEffect(() => {
+    if (!isHydrated) return;
     persistState(STORAGE_NOTIFICATIONS, notifications);
-  }, [notifications, persistState]);
+  }, [notifications, isHydrated, persistState]);
 
   // Listen to external window/tab storage events and BroadcastChannel for instant live sync
   useEffect(() => {
@@ -428,7 +418,7 @@ export function UnifiedDataProvider({ children }: { children: React.ReactNode })
                   actor: currentStaffUser.name,
                   type: "status",
                 },
-                ...r.activity,
+                ...(r.activity || []),
               ],
             };
           }
@@ -459,7 +449,7 @@ export function UnifiedDataProvider({ children }: { children: React.ReactNode })
                   actor: currentStaffUser.name,
                   type: "status",
                 },
-                ...r.activity,
+                ...(r.activity || []),
               ],
             };
           }
@@ -482,7 +472,7 @@ export function UnifiedDataProvider({ children }: { children: React.ReactNode })
       setRequests((prev) =>
         prev.map((r) => {
           if (r.id === requestId || r.requestNumber === requestId) {
-            const quotations = [...r.supplierQuotations, newQuote];
+            const quotations = [...(r.supplierQuotations || []), newQuote];
             return {
               ...r,
               status: r.status === "Submitted" ? "Sourcing" : r.status,
@@ -498,7 +488,7 @@ export function UnifiedDataProvider({ children }: { children: React.ReactNode })
                   actor: currentStaffUser.name,
                   type: "quote",
                 },
-                ...r.activity,
+                ...(r.activity || []),
               ],
             };
           }
@@ -516,7 +506,7 @@ export function UnifiedDataProvider({ children }: { children: React.ReactNode })
           if (r.id === requestId || r.requestNumber === requestId) {
             return {
               ...r,
-              supplierQuotations: r.supplierQuotations.map((sq) =>
+              supplierQuotations: (r.supplierQuotations || []).map((sq) =>
                 sq.id === quoteId ? { ...sq, ...updated } : sq
               ),
               lastUpdated: "Just now",
@@ -536,7 +526,7 @@ export function UnifiedDataProvider({ children }: { children: React.ReactNode })
           if (r.id === requestId || r.requestNumber === requestId) {
             return {
               ...r,
-              supplierQuotations: r.supplierQuotations.filter((sq) => sq.id !== quoteId),
+              supplierQuotations: (r.supplierQuotations || []).filter((sq) => sq.id !== quoteId),
               selectedQuotationId: r.selectedQuotationId === quoteId ? undefined : r.selectedQuotationId,
               lastUpdated: "Just now",
             };
@@ -553,8 +543,9 @@ export function UnifiedDataProvider({ children }: { children: React.ReactNode })
       setRequests((prev) =>
         prev.map((r) => {
           if (r.id === requestId || r.requestNumber === requestId) {
-            const selected = r.supplierQuotations.find((sq) => sq.id === quoteId);
-            const updatedQuotes = r.supplierQuotations.map((sq) => ({
+            const currentQuotes = r.supplierQuotations || [];
+            const selected = currentQuotes.find((sq) => sq.id === quoteId);
+            const updatedQuotes = currentQuotes.map((sq) => ({
               ...sq,
               isSelected: sq.id === quoteId,
             }));
@@ -592,7 +583,7 @@ export function UnifiedDataProvider({ children }: { children: React.ReactNode })
                   actor: currentStaffUser.name,
                   type: "quote",
                 },
-                ...r.activity,
+                ...(r.activity || []),
               ],
             };
           }
@@ -678,7 +669,7 @@ export function UnifiedDataProvider({ children }: { children: React.ReactNode })
                   actor: currentStaffUser.name,
                   type: "quote",
                 },
-                ...r.activity,
+                ...(r.activity || []),
               ],
             };
           }
@@ -760,7 +751,7 @@ export function UnifiedDataProvider({ children }: { children: React.ReactNode })
                   actor,
                   type: "quote",
                 },
-                ...r.activity,
+                ...(r.activity || []),
               ],
             };
           }
@@ -805,7 +796,7 @@ export function UnifiedDataProvider({ children }: { children: React.ReactNode })
                   actor: r.contactName || "Customer",
                   type: "quote",
                 },
-                ...r.activity,
+                ...(r.activity || []),
               ],
             };
           }
@@ -834,7 +825,7 @@ export function UnifiedDataProvider({ children }: { children: React.ReactNode })
                   timestamp: "Just now",
                   isCustomerVisible: true,
                 },
-                ...r.internalNotes,
+                ...(r.internalNotes || []),
               ],
               activity: [
                 {
@@ -846,7 +837,7 @@ export function UnifiedDataProvider({ children }: { children: React.ReactNode })
                   actor: r.contactName || "Customer",
                   type: "note",
                 },
-                ...r.activity,
+                ...(r.activity || []),
               ],
             };
           }
@@ -898,7 +889,7 @@ export function UnifiedDataProvider({ children }: { children: React.ReactNode })
                   actor: currentStaffUser.name,
                   type: "payment",
                 },
-                ...r.activity,
+                ...(r.activity || []),
               ],
             };
           }
@@ -951,7 +942,7 @@ export function UnifiedDataProvider({ children }: { children: React.ReactNode })
                   actor: currentStaffUser.name,
                   type: "payment",
                 },
-                ...r.activity,
+                ...(r.activity || []),
               ],
             };
           }
@@ -1011,7 +1002,7 @@ export function UnifiedDataProvider({ children }: { children: React.ReactNode })
                   actor: currentStaffUser.name,
                   type: "order",
                 },
-                ...r.activity,
+                ...(r.activity || []),
               ],
             };
           }
@@ -1126,7 +1117,7 @@ export function UnifiedDataProvider({ children }: { children: React.ReactNode })
                   actor: currentStaffUser.name,
                   type: "shipment",
                 },
-                ...r.activity,
+                ...(r.activity || []),
               ],
             };
           }
@@ -1206,7 +1197,7 @@ export function UnifiedDataProvider({ children }: { children: React.ReactNode })
                   actor: currentStaffUser.name,
                   type: "shipment",
                 },
-                ...r.activity,
+                ...(r.activity || []),
               ],
             };
           }
@@ -1245,7 +1236,7 @@ export function UnifiedDataProvider({ children }: { children: React.ReactNode })
                   actor: currentStaffUser.name,
                   type: "status",
                 },
-                ...r.activity,
+                ...(r.activity || []),
               ],
             };
           }
@@ -1274,7 +1265,7 @@ export function UnifiedDataProvider({ children }: { children: React.ReactNode })
                   timestamp: "Just now",
                   isCustomerVisible,
                 },
-                ...r.internalNotes,
+                ...(r.internalNotes || []),
               ],
               activity: [
                 {
@@ -1286,7 +1277,7 @@ export function UnifiedDataProvider({ children }: { children: React.ReactNode })
                   actor: currentStaffUser.name,
                   type: "note",
                 },
-                ...r.activity,
+                ...(r.activity || []),
               ],
             };
           }
@@ -1313,7 +1304,7 @@ export function UnifiedDataProvider({ children }: { children: React.ReactNode })
                   uploadedAt: "Just now",
                   uploadedBy: currentStaffUser.name,
                 },
-                ...r.documents,
+                ...(r.documents || []),
               ],
               lastUpdated: "Just now",
             };

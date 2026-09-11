@@ -66,8 +66,7 @@ export function DashboardView() {
 
   const handleActionClick = (req: PartRequest) => {
     if (req.actionType === "review_quote" || req.status === "Quoted") {
-      setQuoteRequest(req);
-      setIsQuoteModalOpen(true);
+      setSelectedRequest(req);
     } else if (req.actionType === "pay_now" || req.status === "Approved" || req.status === "Awaiting Payment") {
       setPaymentRequest(req);
       setIsPaymentModalOpen(true);

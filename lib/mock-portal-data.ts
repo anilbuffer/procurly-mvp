@@ -82,6 +82,8 @@ export const INITIAL_REQUESTS: PartRequest[] = [
     quotation: {
       id: "quote-128",
       requestId: "req-128",
+      version: 1,
+      estimatedTransitDays: 5,
       itemDescription: "OEM Toyota Front Lower Suspension Arm (LH) with integrated high-durability silent bush and pre-greased ball joint.",
       oemNumber: "48069-26150",
       quantity: 1,
@@ -134,6 +136,8 @@ export const INITIAL_REQUESTS: PartRequest[] = [
     quotation: {
       id: "quote-125",
       requestId: "req-125",
+      version: 1,
+      estimatedTransitDays: 5,
       itemDescription: "Genuine Toyota Left Lower Arm Sub-Assembly with bushing and joint.",
       oemNumber: "48069-26140",
       quantity: 1,
@@ -211,6 +215,8 @@ export const INITIAL_REQUESTS: PartRequest[] = [
     quotation: {
       id: "quote-119",
       requestId: "req-119",
+      version: 1,
+      estimatedTransitDays: 5,
       itemDescription: "Mazda OEM Adaptive LED Headlight Unit (Right Hand Side).",
       oemNumber: "KB8B-51-031K",
       quantity: 1,

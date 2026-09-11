@@ -105,16 +105,18 @@ export function AdminHeader() {
     return requests
       .filter((r) => {
         return (
-          r.requestNumber.toLowerCase().includes(query) ||
-          r.customerName.toLowerCase().includes(query) ||
-          r.contactName.toLowerCase().includes(query) ||
-          r.vehicle.make.toLowerCase().includes(query) ||
-          r.vehicle.model.toLowerCase().includes(query) ||
-          r.part.name.toLowerCase().includes(query) ||
-          (r.selectedQuotationId &&
-            r.supplierQuotations.some((sq) =>
-              sq.supplierName.toLowerCase().includes(query)
-            ))
+          r.requestNumber?.toLowerCase().includes(query) ||
+          (r.customerName || "").toLowerCase().includes(query) ||
+          (r.contactName || "").toLowerCase().includes(query) ||
+          (r.vehicle?.make || "").toLowerCase().includes(query) ||
+          (r.vehicle?.model || "").toLowerCase().includes(query) ||
+          (r.part?.name || "").toLowerCase().includes(query) ||
+          Boolean(
+            r.selectedQuotationId &&
+              r.supplierQuotations?.some((sq) =>
+                sq.supplierName?.toLowerCase().includes(query)
+              )
+          )
         );
       })
       .slice(0, 6);
@@ -215,7 +217,7 @@ export function AdminHeader() {
                               {r.requestNumber}
                             </span>
                             <span className="text-xs font-semibold text-slate-800">
-                              {r.customerName}
+                              {r.customerName || r.contactName || "Customer"}
                             </span>
                           </div>
                           <div className="text-[11px] text-slate-500 mt-0.5">

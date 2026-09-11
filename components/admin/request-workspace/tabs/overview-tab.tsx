@@ -331,13 +331,13 @@ export function OverviewTab({ request }: OverviewTabProps) {
           </button>
         </div>
 
-        {request.internalNotes.length === 0 ? (
+        {(request.internalNotes || []).length === 0 ? (
           <div className="text-center py-6 text-xs text-slate-400">
             No notes logged yet. Click &quot;Add Note&quot; to leave internal guidance.
           </div>
         ) : (
           <div className="space-y-3">
-            {request.internalNotes.map((note) => (
+            {(request.internalNotes || []).map((note) => (
               <div
                 key={note.id}
                 className={`p-3.5 rounded-xl border text-xs ${

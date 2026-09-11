@@ -102,7 +102,7 @@ export function RequestDetailWorkspace({
     {
       id: "sourcing",
       label: "Sourcing",
-      badge: request.supplierQuotations.length > 0 ? request.supplierQuotations.length : undefined,
+      badge: request.supplierQuotations?.length || undefined,
     },
     {
       id: "quote",
@@ -122,12 +122,12 @@ export function RequestDetailWorkspace({
     {
       id: "documents",
       label: "Documents",
-      badge: (request.documents.length + (request.supporting.photos?.length || 0)) || undefined,
+      badge: ((request.documents?.length || 0) + (request.supporting.photos?.length || 0)) || undefined,
     },
     {
       id: "activity",
       label: "Activity",
-      badge: request.activity.length || undefined,
+      badge: request.activity?.length || undefined,
     },
   ];
 

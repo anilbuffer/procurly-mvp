@@ -105,14 +105,15 @@ export function SourcingTab({ request }: SourcingTabProps) {
         leadTimeDays: Number(leadTimeDays),
         condition,
         notes,
-        isSelected: request.supplierQuotations.length === 0,
+        isSelected: (request.supplierQuotations?.length || 0) === 0,
       });
     }
 
     setShowAddModal(false);
   };
 
-  const selectedQuote = request.supplierQuotations.find((q) => q.isSelected);
+  const supplierQuotations = request.supplierQuotations || [];
+  const selectedQuote = supplierQuotations.find((q) => q.isSelected);
 
   return (
     <div className="space-y-6">
@@ -120,7 +121,7 @@ export function SourcingTab({ request }: SourcingTabProps) {
       <div className="bg-slate-50 border border-slate-200 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs">
         <div>
           <h3 className="text-sm font-bold text-slate-900">
-            Supplier Quotations ({request.supplierQuotations.length})
+            Supplier Quotations ({supplierQuotations.length})
           </h3>
           <p className="text-xs text-slate-500">
             Compare international quotations and select the preferred supplier to build the Customer Quote.
@@ -137,7 +138,7 @@ export function SourcingTab({ request }: SourcingTabProps) {
       </div>
 
       {/* Supplier Quotations Table */}
-      {request.supplierQuotations.length === 0 ? (
+      {supplierQuotations.length === 0 ? (
         <div className="bg-white rounded-2xl border border-dashed border-slate-300 p-12 text-center shadow-xs">
           <Package className="w-10 h-10 text-slate-300 mx-auto mb-3" />
           <h4 className="text-sm font-bold text-slate-700">No Supplier Quotes Yet</h4>
@@ -171,7 +172,7 @@ export function SourcingTab({ request }: SourcingTabProps) {
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
-                {request.supplierQuotations.map((quote) => {
+                {supplierQuotations.map((quote) => {
                   const total = quote.supplierCost + quote.supplierFreight;
                   const isSelected = quote.isSelected;
 

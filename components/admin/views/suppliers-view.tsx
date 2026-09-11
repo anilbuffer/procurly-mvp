@@ -94,7 +94,7 @@ export function SuppliersView() {
   const getSupplierQuotationHistory = (supId: string): { reqNum: string; quote: SupplierQuotation }[] => {
     const list: { reqNum: string; quote: SupplierQuotation }[] = [];
     requests.forEach((r) => {
-      r.supplierQuotations.forEach((q) => {
+      r.supplierQuotations?.forEach((q) => {
         if (q.supplierId === supId) {
           list.push({ reqNum: r.requestNumber, quote: q });
         }

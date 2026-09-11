@@ -63,6 +63,19 @@ export function RequestDetailsModal() {
   const [isRejecting, setIsRejecting] = useState(false);
   const [rejectReason, setRejectReason] = useState("Local source found faster");
 
+  // Sync active tab based on selected request status
+  React.useEffect(() => {
+    if (!selectedRequest) return;
+    const req = requests.find((r) => r.id === selectedRequest.id) || selectedRequest;
+    if (req.status === "Quoted" && (req.quotation || req.customerQuote)) {
+      setActiveTab("quote");
+    } else if ((req.status === "Shipped" || req.status === "Delivered") && req.shipment) {
+      setActiveTab("shipment");
+    } else {
+      setActiveTab("overview");
+    }
+  }, [selectedRequest?.id, selectedRequest?.status, requests]);
+
   if (!selectedRequest) return null;
 
   const req = requests.find((r) => r.id === selectedRequest.id) || selectedRequest;

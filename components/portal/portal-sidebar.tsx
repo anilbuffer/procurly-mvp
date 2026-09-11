@@ -169,6 +169,7 @@ export function PortalSidebar({ collapsed = false, onToggleCollapse }: PortalSid
 
                     {!collapsed && item.badge && (
                       <span
+                        suppressHydrationWarning
                         className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
                           item.badgeColor || "bg-slate-700 text-white"
                         }`}

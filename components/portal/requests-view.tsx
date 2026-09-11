@@ -222,8 +222,7 @@ export function RequestsView() {
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
-                            setQuoteRequest(req);
-                            setIsQuoteModalOpen(true);
+                            setSelectedRequest(req);
                           }}
                           className="px-3 py-1 bg-[#ED2025] hover:bg-[#d11a1f] text-white font-bold text-[11px] uppercase tracking-wider rounded-lg shadow-xs"
                         >

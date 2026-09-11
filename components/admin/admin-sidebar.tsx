@@ -143,7 +143,7 @@ export function AdminSidebar({ collapsed, onToggleCollapse }: AdminSidebarProps)
           <div className="flex items-center gap-2">
             <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
             <span className="text-[11px] font-semibold text-slate-300">
-              Role: <span className="text-white font-bold">{activeStaffRole}</span>
+              Role: <span suppressHydrationWarning className="text-white font-bold">{activeStaffRole}</span>
             </span>
           </div>
           <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-slate-800 text-slate-400">
@@ -188,6 +188,7 @@ export function AdminSidebar({ collapsed, onToggleCollapse }: AdminSidebarProps)
 
                     {!collapsed && item.badge !== undefined && (
                       <span
+                        suppressHydrationWarning
                         className={`text-[10px] font-bold px-1.5 py-0.2 rounded-full ${
                           active
                             ? "bg-white/20 text-white"

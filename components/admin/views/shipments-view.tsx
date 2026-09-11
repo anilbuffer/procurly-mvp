@@ -29,9 +29,9 @@ export function ShipmentsView() {
     if (!search.trim()) return true;
     const q = search.toLowerCase().trim();
     return (
-      r.requestNumber.toLowerCase().includes(q) ||
-      r.customerName.toLowerCase().includes(q) ||
-      r.part.name.toLowerCase().includes(q) ||
+      (r.requestNumber || "").toLowerCase().includes(q) ||
+      (r.customerName || "").toLowerCase().includes(q) ||
+      (r.part?.name || "").toLowerCase().includes(q) ||
       (r.shipment?.trackingNumber && r.shipment.trackingNumber.toLowerCase().includes(q)) ||
       (r.shipment?.carrier && r.shipment.carrier.toLowerCase().includes(q))
     );

@@ -159,7 +159,7 @@ export interface CustomerQuoteVersion {
 export interface Quotation {
   id: string;
   requestId: string;
-  version: number;
+  version?: number;
   itemDescription: string;
   oemNumber?: string;
   quantity: number;
@@ -170,7 +170,7 @@ export interface Quotation {
   freightNote?: string;
   totalAmount: number;
   currency: string;
-  estimatedTransitDays: number;
+  estimatedTransitDays?: number;
   validUntil: string;
   termsAccepted?: boolean;
   termsVersion?: string;
@@ -316,17 +316,17 @@ export interface StaffUser {
 export interface PartRequest {
   id: string;
   requestNumber: string; // e.g. "AH-P-000123"
-  customerId: string;
-  customerName: string;
-  contactName: string;
-  customerEmail: string;
-  customerPhone: string;
+  customerId?: string;
+  customerName?: string;
+  contactName?: string;
+  customerEmail?: string;
+  customerPhone?: string;
   vehicle: VehicleInfo;
   part: PartInfo;
   supporting: SupportingInfo;
   deliveryAddress: SavedAddress;
   dateSubmitted: string;
-  lastUpdated: string;
+  lastUpdated?: string;
   status: RequestStatus;
 
   // Assignment
@@ -334,10 +334,10 @@ export interface PartRequest {
   assignedStaffRole?: string;
 
   // Sourcing & Quotes
-  supplierQuotations: SupplierQuotation[];
+  supplierQuotations?: SupplierQuotation[];
   selectedQuotationId?: string;
   costCalculation?: CostCalculation;
-  customerQuoteVersions: CustomerQuoteVersion[];
+  customerQuoteVersions?: CustomerQuoteVersion[];
   customerQuote?: Quotation;
   quotation?: Quotation;
   quotedValue?: number;
@@ -354,9 +354,9 @@ export interface PartRequest {
   shipment?: ShipmentDetails;
 
   // Documents, Notes, Activity
-  documents: RequestDocument[];
-  internalNotes: InternalNote[];
-  activity: RequestActivity[];
+  documents?: RequestDocument[];
+  internalNotes?: InternalNote[];
+  activity?: RequestActivity[];
   messages?: any[];
 
   // Legacy / customer action prompt helpers

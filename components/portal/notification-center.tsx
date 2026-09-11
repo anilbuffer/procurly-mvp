@@ -86,10 +86,9 @@ export function NotificationCenter() {
     if (notif.requestId) {
       const targetReq = requests.find((r) => r.id === notif.requestId);
       if (targetReq) {
-        if (targetReq.actionType === "review_quote") {
-          setQuoteRequest(targetReq);
-          setIsQuoteModalOpen(true);
-        } else if (targetReq.actionType === "pay_now") {
+        if (targetReq.actionType === "review_quote" || targetReq.status === "Quoted") {
+          setSelectedRequest(targetReq);
+        } else if (targetReq.actionType === "pay_now" || ((targetReq.status === "Approved" || targetReq.status === "Awaiting Payment") && targetReq.payment?.status !== "Paid")) {
           setPaymentRequest(targetReq);
           setIsPaymentModalOpen(true);
         } else {
@@ -109,7 +108,10 @@ export function NotificationCenter() {
       >
         <Bell className="w-5 h-5" />
         {unreadNotificationsCount > 0 && (
-          <span className="absolute -top-1 -right-1 w-5 h-5 bg-[#ED2025] text-white font-black text-[11px] rounded-full flex items-center justify-center shadow-md shadow-red-500/30 border-2 border-white animate-pulse">
+          <span
+            suppressHydrationWarning
+            className="absolute -top-1 -right-1 w-5 h-5 bg-[#ED2025] text-white font-black text-[11px] rounded-full flex items-center justify-center shadow-md shadow-red-500/30 border-2 border-white animate-pulse"
+          >
             {unreadNotificationsCount}
           </span>
         )}

@@ -81,10 +81,25 @@ export function ShipmentsView() {
       </div>
 
       {/* Shipment Cards */}
-      <div className="space-y-6">
-        {shippedRequests.map((req) => {
-          const sh = req.shipment!;
-          const currentMilestoneIdx = MILESTONES.indexOf(sh.currentMilestone);
+      {shippedRequests.length === 0 ? (
+        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-12 text-center">
+          <Truck className="w-10 h-10 text-slate-300 mx-auto mb-3" />
+          <p className="font-bold text-slate-700">No active consignments in transit</p>
+          <p className="text-xs text-slate-400 mt-1">
+            When your supplier order is dispatched by Autohub Logistics, live tracking milestones will appear here.
+          </p>
+          <button
+            onClick={() => setActiveTab("requests")}
+            className="mt-4 px-5 py-2 bg-[#ED2025] hover:bg-[#d11a1f] text-white font-bold text-xs uppercase tracking-wider rounded-xl transition-colors"
+          >
+            View Active Requests →
+          </button>
+        </div>
+      ) : (
+        <div className="space-y-6">
+          {shippedRequests.map((req) => {
+            const sh = req.shipment!;
+            const currentMilestoneIdx = MILESTONES.indexOf(sh.currentMilestone);
 
           return (
             <div
@@ -228,7 +243,8 @@ export function ShipmentsView() {
             </div>
           );
         })}
-      </div>
+        </div>
+      )}
     </div>
   );
 }

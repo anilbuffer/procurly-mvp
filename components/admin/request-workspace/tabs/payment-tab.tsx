@@ -34,7 +34,7 @@ export function PaymentTab({ request: initialRequest, onNavigateToTab }: Payment
 
   // Supplier Order Modal state (unlocked once paid)
   const [showOrderModal, setShowOrderModal] = useState(false);
-  const selectedSupplierQuote = request.supplierQuotations.find((q) => q.isSelected);
+  const selectedSupplierQuote = request.supplierQuotations?.find((q) => q.isSelected);
   const [orderSupplierName, setOrderSupplierName] = useState(
     selectedSupplierQuote?.supplierName || "Nagoya Auto Parts Co."
   );

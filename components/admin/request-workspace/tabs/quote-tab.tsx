@@ -28,7 +28,7 @@ export function QuoteTab({ request }: QuoteTabProps) {
   const { createCustomerQuote } = useUnifiedData();
 
   // Selected supplier quotation reference
-  const selectedQuote = request.supplierQuotations.find((q) => q.isSelected);
+  const selectedQuote = request.supplierQuotations?.find((q) => q.isSelected);
 
   // Quote builder form state
   const baseCost = selectedQuote

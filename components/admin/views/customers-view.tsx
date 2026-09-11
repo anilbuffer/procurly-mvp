@@ -59,8 +59,9 @@ export function CustomersView() {
     return requests.filter(
       (r) =>
         r.customerId === customerId ||
-        r.customerName.toLowerCase() ===
-          customers.find((c) => c.id === customerId)?.businessName.toLowerCase()
+        (Boolean(r.customerName) &&
+          r.customerName?.toLowerCase() ===
+            customers.find((c) => c.id === customerId)?.businessName.toLowerCase())
     );
   };
 

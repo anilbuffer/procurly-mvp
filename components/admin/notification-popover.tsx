@@ -45,7 +45,10 @@ export function NotificationPopover() {
       >
         <Bell className="w-4 h-4" />
         {unreadNotificationsCount > 0 && (
-          <span className="absolute -top-1 -right-1 flex h-4 min-w-[16px] items-center justify-center rounded-full bg-[#ED2025] px-1 text-[10px] font-bold text-white shadow-xs animate-in zoom-in-50 duration-200">
+          <span
+            suppressHydrationWarning
+            className="absolute -top-1 -right-1 flex h-4 min-w-[16px] items-center justify-center rounded-full bg-[#ED2025] px-1 text-[10px] font-bold text-white shadow-xs animate-in zoom-in-50 duration-200"
+          >
             {unreadNotificationsCount}
           </span>
         )}
