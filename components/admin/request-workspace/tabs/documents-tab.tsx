@@ -52,7 +52,7 @@ export function DocumentsTab({ request }: DocumentsTabProps) {
       type: "Customer" as const,
       size: "2.4 MB",
       uploadedAt: request.dateSubmitted,
-      uploadedBy: request.contactName,
+      uploadedBy: request.contactName || request.customerName || "Customer",
       url: photoUrl,
     })) || []),
     // Add customer supporting pdfs
@@ -62,7 +62,7 @@ export function DocumentsTab({ request }: DocumentsTabProps) {
       type: "Customer" as const,
       size: "850 KB",
       uploadedAt: request.dateSubmitted,
-      uploadedBy: request.contactName,
+      uploadedBy: request.contactName || request.customerName || "Customer",
     })) || []),
   ];
 
@@ -146,7 +146,7 @@ export function DocumentsTab({ request }: DocumentsTabProps) {
 
                   <div className="text-[11px] text-slate-500 space-y-0.5 mb-4">
                     <p>Uploaded: {doc.uploadedAt}</p>
-                    <p>By: {doc.uploadedBy}</p>
+                    <p>By: {doc.uploadedBy || "System"}</p>
                   </div>
                 </div>
 

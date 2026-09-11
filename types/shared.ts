@@ -263,7 +263,7 @@ export interface RequestDocument {
   type: "Customer" | "Supplier" | "Shipment" | "General";
   size: string;
   uploadedAt: string;
-  uploadedBy: string;
+  uploadedBy?: string;
   url?: string;
 }
 
