@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { useRouter } from "next/navigation";
 import {
   X,
   Car,
@@ -35,6 +36,7 @@ import {
 } from "@/types/portal";
 
 export function RequestDetailsModal() {
+  const router = useRouter();
   const {
     requests,
     selectedRequest,
@@ -799,10 +801,11 @@ export function RequestDetailsModal() {
                   <span className="text-slate-500">Need full tracking dashboard?</span>
                   <button
                     onClick={() => {
+                      const id = selectedRequest.id;
                       setSelectedRequest(null);
-                      setPortalTab("shipments");
+                      router.push(`/customer/shipments?id=${encodeURIComponent(id)}`);
                     }}
-                    className="inline-flex items-center gap-1.5 font-bold text-[#ED2025] hover:underline"
+                    className="inline-flex items-center gap-1.5 font-bold text-[#ED2025] hover:underline cursor-pointer"
                   >
                     <span>Open in Full Shipments View</span>
                     <ExternalLink className="w-3.5 h-3.5" />

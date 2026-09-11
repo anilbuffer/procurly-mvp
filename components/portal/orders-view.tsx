@@ -1,10 +1,12 @@
 "use client";
 
 import React from "react";
+import { useRouter } from "next/navigation";
 import { CheckSquare, Truck, ArrowRight, ShieldCheck, Clock, CheckCircle2 } from "lucide-react";
 import { usePortal } from "@/context/portal-context";
 
 export function OrdersView() {
+  const router = useRouter();
   const { requests, setSelectedRequest, setActiveTab, setIsNewRequestModalOpen } = usePortal();
 
   // Orders in procurement, placed, or fulfilled
@@ -138,9 +140,9 @@ export function OrdersView() {
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
-                            setActiveTab("shipments");
+                            router.push(`/customer/shipments?id=${req.id}`);
                           }}
-                          className="px-3 py-1 bg-cyan-50 hover:bg-cyan-100 text-cyan-800 font-bold rounded-lg transition-colors inline-flex items-center gap-1"
+                          className="px-3 py-1 bg-cyan-50 hover:bg-cyan-100 text-cyan-800 font-bold rounded-lg transition-colors inline-flex items-center gap-1 cursor-pointer"
                         >
                           <Truck className="w-3 h-3" />
                           Track →
