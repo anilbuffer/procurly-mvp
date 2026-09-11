@@ -12,6 +12,7 @@ import {
   ExternalLink,
   Layers,
   ArrowRight,
+  Settings,
 } from "lucide-react";
 import { useUnifiedData } from "@/context/unified-data-context";
 import { NotificationPopover } from "./notification-popover";
@@ -270,6 +271,14 @@ export function AdminHeader() {
 
                 {/* Links */}
                 <div className="pt-2 space-y-0.5">
+                  <Link
+                    href="/admin/settings"
+                    onClick={() => setIsProfileOpen(false)}
+                    className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors"
+                  >
+                    <Settings className="w-3.5 h-3.5 text-slate-400" />
+                    Admin Settings
+                  </Link>
                   <Link
                     href="/customer/dashboard"
                     onClick={() => setIsProfileOpen(false)}

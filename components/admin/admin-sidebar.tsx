@@ -17,7 +17,6 @@ import {
   ChevronDown,
   ArrowRightLeft,
   LogOut,
-  UserCheck,
 } from "lucide-react";
 import { useUnifiedData } from "@/context/unified-data-context";
 
@@ -101,11 +100,6 @@ export function AdminSidebar({ collapsed, onToggleCollapse }: AdminSidebarProps)
           name: "User Management",
           href: "/admin/users",
           icon: UserCog,
-        },
-        {
-          name: "Settings",
-          href: "/admin/settings",
-          icon: Settings,
         },
       ],
     },
@@ -263,7 +257,7 @@ export function AdminSidebar({ collapsed, onToggleCollapse }: AdminSidebarProps)
                 onClick={() => setShowUserMenu(false)}
                 className="w-full flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-[#222C46] text-slate-300 hover:text-white transition-colors"
               >
-                <UserCheck className="w-3.5 h-3.5 text-emerald-400" />
+                <Settings className="w-3.5 h-3.5 text-emerald-400" />
                 <span>Admin Profile & Settings</span>
               </Link>
               <Link
