@@ -35,17 +35,23 @@ export type AuthMode = "login" | "register" | "mfa" | "forgot_password" | "chang
 
 /**
  * Route resolution based on account role:
- * - Procurement Desk (Sarah Jenkins / @procurly.io) -> /procurement
- * - Customer Trade Portal (James Wilson / @spmotors.co.nz) -> /dashboard
+ * - Autohub Admin Staff (Sarah, Marcus, Rachel, David / @procurly.io) -> /admin/dashboard
+ * - Customer Trade Portal (James Wilson, Dave Miller / @spmotors.co.nz) -> /customer/dashboard
  */
 export function getPortalRoute(targetEmail: string): string {
   const normalized = (targetEmail || "").toLowerCase().trim();
   if (
     normalized.includes("procurly.io") ||
     normalized.includes("sarah") ||
-    normalized.includes("procurement")
+    normalized.includes("marcus") ||
+    normalized.includes("rachel") ||
+    normalized.includes("david") ||
+    normalized.includes("admin") ||
+    normalized.includes("procurement") ||
+    normalized.includes("operations") ||
+    normalized.includes("finance")
   ) {
-    return "/procurement/dashboard";
+    return "/admin/dashboard";
   }
   return "/customer/dashboard";
 }
@@ -491,17 +497,17 @@ export function LoginView() {
                   </button>
                 </div>
 
-                {/* 2. Procurement Portal: Sarah Jenkins */}
+                {/* 2. Unified Admin Portal: Sarah Jenkins (Procurement) / David Vance (Admin) */}
                 <div
                   className={`group relative p-3 rounded-xl border transition-all ${
-                    email === "sarah.jenkins@procurly.io"
-                      ? "border-[#B30D12] bg-red-50/50 ring-1 ring-[#B30D12]/30 shadow-xs"
+                    email.includes("procurly.io")
+                      ? "border-[#ED2025] bg-red-50/50 ring-1 ring-[#ED2025]/30 shadow-xs"
                       : "border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50/50"
                   }`}
                 >
                   <div className="flex items-center justify-between mb-1.5">
-                    <span className="text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded bg-red-100 text-[#B30D12] font-sans">
-                      Procurement Portal
+                    <span className="text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded bg-red-100 text-[#ED2025] font-sans">
+                      Admin Portal
                     </span>
                     <button
                       type="button"
@@ -511,7 +517,7 @@ export function LoginView() {
                           "AdminSecure2026!"
                         )
                       }
-                      className="text-[10px] font-bold text-[#B30D12] hover:text-[#9B0A0F] inline-flex items-center gap-0.5 hover:underline cursor-pointer"
+                      className="text-[10px] font-bold text-[#ED2025] hover:text-[#C8101E] inline-flex items-center gap-0.5 hover:underline cursor-pointer"
                     >
                       <span>Launch</span>
                       <ArrowRight className="w-3 h-3" />
@@ -528,7 +534,7 @@ export function LoginView() {
                     className="w-full text-left cursor-pointer"
                   >
                     <p className="font-bold text-slate-900 truncate">
-                      Sarah Jenkins (Procurement)
+                      Sarah Jenkins (Admin Desk)
                     </p>
                     <p className="text-[10px] text-slate-500 truncate">
                       sarah.jenkins@procurly.io
@@ -536,9 +542,6 @@ export function LoginView() {
                   </button>
                 </div>
               </div>
-              <p className="text-[10px] text-slate-400 text-center italic pt-0.5">
-                * Admin portal will be configured in a subsequent milestone.
-              </p>
             </div>
 
             {/* Direct Portal Links & Register Trade Account Link */}
@@ -552,7 +555,7 @@ export function LoginView() {
                     setRegError(null);
                     setRegSubmitted(false);
                   }}
-                  className="font-bold text-[#B30D12] hover:underline"
+                  className="font-bold text-[#ED2025] hover:underline"
                 >
                   Register your business account →
                 </button>
@@ -562,16 +565,16 @@ export function LoginView() {
                 <button
                   type="button"
                   onClick={() => router.push("/customer/dashboard")}
-                  className="text-xs font-semibold text-slate-600 hover:text-blue-700 inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-blue-50 border border-slate-200 hover:border-blue-200 transition-colors"
+                  className="text-xs font-semibold text-slate-700 hover:text-[#2B4499] inline-flex items-center gap-1 px-3.5 py-1.5 rounded-xl bg-slate-100 hover:bg-blue-50 border border-slate-200 hover:border-blue-200 transition-colors"
                 >
-                  <span>Direct Customer Portal →</span>
+                  <span>Customer Portal →</span>
                 </button>
                 <button
                   type="button"
-                  onClick={() => router.push("/procurement/dashboard")}
-                  className="text-xs font-semibold text-slate-600 hover:text-[#B30D12] inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-red-50 border border-slate-200 hover:border-red-200 transition-colors"
+                  onClick={() => router.push("/admin/dashboard")}
+                  className="text-xs font-semibold text-slate-700 hover:text-[#ED2025] inline-flex items-center gap-1 px-3.5 py-1.5 rounded-xl bg-slate-100 hover:bg-red-50 border border-slate-200 hover:border-red-200 transition-colors"
                 >
-                  <span>Direct Procurement Portal →</span>
+                  <span>Unified Admin Portal →</span>
                 </button>
               </div>
             </div>

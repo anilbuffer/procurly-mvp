@@ -17,6 +17,7 @@ import { usePortal } from "@/context/portal-context";
 
 export function PaymentModal() {
   const {
+    requests,
     isPaymentModalOpen,
     setIsPaymentModalOpen,
     paymentRequest,
@@ -29,14 +30,14 @@ export function PaymentModal() {
 
   if (!isPaymentModalOpen || !paymentRequest) return null;
 
-  const req = paymentRequest;
+  const req = requests.find((r) => r.id === paymentRequest.id) || paymentRequest;
   const pay = req.payment || {
-    id: "pay-default",
+    id: `pay-${req.id}`,
     requestId: req.id,
-    invoiceNumber: "INV-2026-00892",
-    amount: req.quotedValue || 485.0,
+    invoiceNumber: req.invoiceReference || `INV-2026-${req.requestNumber.replace(/[^0-9]/g, "")}`,
+    amount: req.pricing?.totalCustomerNZD || req.quotedValue || (req.costCalculations?.[0]?.totalCustomerNZD) || 485.0,
     currency: "NZD",
-    status: "Unpaid" as const,
+    status: (req.paymentStatus || "Unpaid") as "Unpaid" | "Paid",
     paymentReference: `${req.requestNumber}`,
     bankDetails: {
       bankName: "ANZ New Zealand",
@@ -44,10 +45,10 @@ export function PaymentModal() {
       accountNumber: "01-0288-0349821-00",
       swiftBic: "ANZBNZ22",
     },
-    dueDate: "2026-09-14",
+    dueDate: "2026-09-30",
   };
 
-  const isPaid = pay.status === "Paid";
+  const isPaid = pay.status === "Paid" || req.paymentStatus === "Paid";
 
   const handleCopy = (text: string, field: string) => {
     navigator.clipboard.writeText(text);

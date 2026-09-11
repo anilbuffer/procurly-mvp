@@ -24,6 +24,7 @@ export function DashboardView() {
     setQuoteRequest,
     setIsPaymentModalOpen,
     setPaymentRequest,
+    activeCustomer,
   } = usePortal();
 
   // Action required items from requests
@@ -31,39 +32,43 @@ export function DashboardView() {
     (r) =>
       r.actionType === "review_quote" ||
       r.actionType === "pay_now" ||
-      r.actionType === "view_details"
+      r.actionType === "view_details" ||
+      r.status === "Quoted" ||
+      (r.status === "Approved" && r.payment?.status !== "Paid") ||
+      (r.status === "Awaiting Payment" && r.payment?.status !== "Paid")
   );
 
-  // Status badge styling helper
+  // Status badge styling helper (covers all 9 canonical workflow statuses)
   const getStatusBadge = (status: RequestStatus) => {
     switch (status) {
+      case "Submitted":
+        return "bg-sky-50 text-sky-700 border border-sky-200";
+      case "Sourcing":
+        return "bg-purple-50 text-purple-700 border border-purple-200";
       case "Quoted":
         return "bg-amber-100 text-amber-800 border border-amber-200";
+      case "Approved":
+        return "bg-emerald-50 text-emerald-700 border border-emerald-200";
       case "Awaiting Payment":
-        return "bg-amber-50 text-amber-700 border border-amber-300";
-      case "Payment Disputed":
-        return "bg-red-50 text-red-700 border border-red-200";
-      case "Logistics Exception":
-        return "bg-slate-100 text-slate-700 border border-slate-300";
-      case "Sourcing":
-        return "bg-indigo-50 text-indigo-700 border border-indigo-200";
+        return "bg-orange-50 text-orange-800 border border-orange-200";
       case "Ordered":
         return "bg-blue-50 text-blue-700 border border-blue-200";
       case "Shipped":
-        return "bg-sky-100 text-sky-800 border border-sky-300";
+        return "bg-cyan-50 text-cyan-800 border border-cyan-200";
       case "Delivered":
+        return "bg-teal-50 text-teal-700 border border-teal-200";
       case "Completed":
-        return "bg-emerald-50 text-emerald-700 border border-emerald-200";
+        return "bg-slate-100 text-slate-700 border border-slate-200";
       default:
         return "bg-slate-100 text-slate-700 border border-slate-200";
     }
   };
 
   const handleActionClick = (req: PartRequest) => {
-    if (req.actionType === "review_quote") {
+    if (req.actionType === "review_quote" || req.status === "Quoted") {
       setQuoteRequest(req);
       setIsQuoteModalOpen(true);
-    } else if (req.actionType === "pay_now") {
+    } else if (req.actionType === "pay_now" || req.status === "Approved" || req.status === "Awaiting Payment") {
       setPaymentRequest(req);
       setIsPaymentModalOpen(true);
     } else {
@@ -81,14 +86,14 @@ export function DashboardView() {
             <ShieldCheck className="w-3.5 h-3.5 text-blue-600" />
             <span>APPROVED TRADE CUSTOMER</span>
             <span className="text-blue-300">•</span>
-            <span className="font-mono text-[11px]">NZBN: 9429049988776</span>
+            <span className="font-mono text-[11px]">{activeCustomer.businessName}</span>
           </div>
 
           <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
-            Good morning, SP Motors Auckland
+            Good morning, {activeCustomer.businessName}
           </h1>
           <p className="text-sm text-slate-500 font-medium">
-            Here&apos;s an overview of your procurement activity.
+            Here&apos;s an overview of your procurement activity across all 9 workflow stages.
           </p>
         </div>
 

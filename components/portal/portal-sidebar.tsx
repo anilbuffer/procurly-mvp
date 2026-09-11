@@ -28,8 +28,21 @@ interface PortalSidebarProps {
 }
 
 export function PortalSidebar({ collapsed = false, onToggleCollapse }: PortalSidebarProps) {
-  const { activeTab, setActiveTab, setIsNewRequestModalOpen, metrics } = usePortal();
+  const {
+    activeTab,
+    setActiveTab,
+    setIsNewRequestModalOpen,
+    metrics,
+    requests,
+    activeCustomer,
+    setActiveCustomerId,
+    availableCustomers,
+  } = usePortal();
   const [showUserMenu, setShowUserMenu] = React.useState(false);
+
+  const activeOrdersCount = requests.filter(
+    (r) => r.status === "Ordered" || r.status === "Approved" || r.status === "Awaiting Payment"
+  ).length;
 
   const navItems: {
     id: PortalTab;
@@ -43,15 +56,21 @@ export function PortalSidebar({ collapsed = false, onToggleCollapse }: PortalSid
       id: "requests",
       label: "Requests",
       icon: FileText,
-      badge: 3,
+      badge: metrics.awaitingAction > 0 ? metrics.awaitingAction : undefined,
       badgeColor: "bg-[#ED2025] text-white",
     },
-    { id: "orders", label: "Orders", icon: CheckSquare },
+    {
+      id: "orders",
+      label: "Orders",
+      icon: CheckSquare,
+      badge: activeOrdersCount > 0 ? activeOrdersCount : undefined,
+      badgeColor: "bg-purple-600 text-white",
+    },
     {
       id: "shipments",
       label: "Shipments",
       icon: Truck,
-      badge: 4,
+      badge: metrics.inTransit > 0 ? metrics.inTransit : undefined,
       badgeColor: "bg-[#2563EB] text-white",
     },
     { id: "payments", label: "Payments", icon: CreditCard },
@@ -202,16 +221,20 @@ export function PortalSidebar({ collapsed = false, onToggleCollapse }: PortalSid
           className="flex items-center justify-between p-2 rounded-xl bg-[#141B2B] hover:bg-[#1B2338] cursor-pointer transition-all border border-[#1E2538]/40"
         >
           <div className="flex items-center gap-3 min-w-0">
-            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-600 to-indigo-700 text-white font-bold text-xs flex items-center justify-center shadow-md shadow-blue-500/20 shrink-0">
-              JW
+            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-600 to-indigo-700 text-white font-bold text-xs flex items-center justify-center shadow-md shadow-blue-500/20 shrink-0 uppercase">
+              {activeCustomer.contactName
+                .split(" ")
+                .map((n) => n[0])
+                .slice(0, 2)
+                .join("") || "CU"}
             </div>
             {!collapsed && (
               <div className="truncate text-left">
                 <p className="text-xs font-bold text-white truncate leading-tight">
-                  James Wilson
+                  {activeCustomer.contactName}
                 </p>
                 <p className="text-[10px] text-slate-400 font-medium truncate">
-                  Service Manager
+                  {activeCustomer.businessName}
                 </p>
               </div>
             )}
@@ -224,42 +247,65 @@ export function PortalSidebar({ collapsed = false, onToggleCollapse }: PortalSid
           <div className="absolute bottom-16 left-3 right-3 bg-[#182033] border border-[#27324D] rounded-xl shadow-2xl p-2.5 space-y-2 z-50 text-xs text-slate-200 animate-in fade-in slide-in-from-bottom-2 duration-150">
             <div className="px-2 py-1 border-b border-[#27324D]/60 pb-2">
               <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
-                Customer Account
+                Active Customer Account
               </span>
-              <p className="font-bold text-white text-xs mt-0.5">SP Motors Auckland</p>
-              <p className="text-[10px] text-slate-400 font-mono">NZBN: 9429049988776</p>
+              <p className="font-bold text-white text-xs mt-0.5">{activeCustomer.businessName}</p>
+              <p className="text-[10px] text-slate-400 font-mono">{activeCustomer.email}</p>
             </div>
-            <button
-              onClick={() => {
-                setActiveTab("settings");
-                setShowUserMenu(false);
-              }}
-              className="w-full flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-[#222C46] text-slate-300 hover:text-white transition-colors"
-            >
-              <UserCheck className="w-3.5 h-3.5 text-emerald-400" />
-              <span>Trade Profile & Settings</span>
-            </button>
-            <Link
-              href="/procurement/dashboard"
-              className="w-full flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-blue-500/15 text-blue-400 hover:text-blue-300 transition-colors font-medium"
-            >
-              <ArrowRightLeft className="w-3.5 h-3.5 text-blue-400" />
-              <span>Switch to Procurement Portal</span>
-            </Link>
-            <Link
-              href="/login?mode=change_password"
-              className="w-full flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-[#222C46] text-slate-300 hover:text-white transition-colors"
-            >
-              <KeyRound className="w-3.5 h-3.5 text-amber-400" />
-              <span>Change Password</span>
-            </Link>
-            <Link
-              href="/login"
-              className="w-full flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-red-500/10 text-red-400 hover:text-red-300 transition-colors"
-            >
-              <LogOut className="w-3.5 h-3.5" />
-              <span>Log Out</span>
-            </Link>
+
+            {/* Switch Account */}
+            <div className="px-2 pt-1 pb-1">
+              <span className="text-[9px] font-bold uppercase tracking-wider text-slate-500 block mb-1">
+                Switch Trade Account
+              </span>
+              <div className="space-y-1">
+                {availableCustomers.map((cust) => (
+                  <button
+                    key={cust.id}
+                    type="button"
+                    onClick={() => {
+                      setActiveCustomerId(cust.id);
+                      setShowUserMenu(false);
+                    }}
+                    className={`w-full text-left px-2 py-1 rounded text-[11px] font-medium transition-colors flex items-center justify-between ${
+                      activeCustomer.id === cust.id
+                        ? "bg-[#ED2025]/20 text-red-300 font-bold"
+                        : "hover:bg-[#222C46] text-slate-300"
+                    }`}
+                  >
+                    <span className="truncate">{cust.businessName}</span>
+                    {activeCustomer.id === cust.id && <span className="text-red-400 text-xs">✓</span>}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="border-t border-[#27324D]/60 pt-1">
+              <button
+                onClick={() => {
+                  setActiveTab("settings");
+                  setShowUserMenu(false);
+                }}
+                className="w-full flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-[#222C46] text-slate-300 hover:text-white transition-colors"
+              >
+                <UserCheck className="w-3.5 h-3.5 text-emerald-400" />
+                <span>Trade Profile & Settings</span>
+              </button>
+              <Link
+                href="/admin/dashboard"
+                className="w-full flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-blue-500/15 text-blue-400 hover:text-blue-300 transition-colors font-medium"
+              >
+                <ArrowRightLeft className="w-3.5 h-3.5 text-blue-400" />
+                <span>Switch to Admin Portal</span>
+              </Link>
+              <Link
+                href="/login"
+                className="w-full flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-red-500/10 text-red-400 hover:text-red-300 transition-colors"
+              >
+                <LogOut className="w-3.5 h-3.5" />
+                <span>Log Out</span>
+              </Link>
+            </div>
           </div>
         )}
       </div>

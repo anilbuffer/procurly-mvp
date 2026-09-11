@@ -1,177 +1,32 @@
-export type RequestStatus =
-  | "Submitted"
-  | "Sourcing"
-  | "Quoted"
-  | "Approved"
-  | "Awaiting Payment"
-  | "Ordered"
-  | "Shipped"
-  | "Delivered"
-  | "Completed"
-  | "Logistics Exception"
-  | "Payment Disputed";
+// ─── Customer Portal Types (Aligned with Canonical Shared Types) ───
 
-
-export type ShipmentMilestone =
-  | "Received At Shipping Facility"
-  | "In Transit"
-  | "Arrived in NZ"
-  | "Customs Clearance"
-  | "Out For Delivery"
-  | "Delivered";
-
-export type PaymentStatus = "Unpaid" | "Paid";
-
-export interface VehicleInfo {
-  make: string;
-  model: string;
-  year: number;
-  vin: string;
-  registration?: string;
-  engine?: string;
-  variant?: string;
-  transmission?: string;
-  driveConfig?: string;
-}
-
-export type PartPreference =
-  | "Genuine OEM"
-  | "OEM Supplier Tier 1"
-  | "Quality Aftermarket"
-  | "Any Suitable Alternative";
-
-export type PartCondition =
-  | "Brand New OEM"
-  | "Brand New Certified Aftermarket"
-  | "Used Grade A"
-  | "Remanufactured";
-
-export interface PartInfo {
-  name: string;
-  partNumber?: string;
-  quantity: number;
-  preference: PartPreference;
-  condition: PartCondition;
-}
-
-export interface SupportingInfo {
-  notes?: string;
-  photos: string[];
-  documents: string[];
-}
-
-export interface SavedAddress {
-  id: string;
-  label: string;
-  recipientName: string;
-  businessName: string;
-  streetAddress: string;
-  suburb: string;
-  city: string;
-  postalCode: string;
-  phone: string;
-  isDefault?: boolean;
-}
-
-export interface Quotation {
-  id: string;
-  requestId: string;
-  itemDescription: string;
-  oemNumber?: string;
-  quantity: number;
-  unitPrice: number;
-  subtotal: number;
-  gstAmount: number;
-  freightCost: number; // Single freight value entered manually by staff. No freight comparison engine.
-  freightNote?: string;
-  totalAmount: number;
-  currency: string;
-  validUntil: string;
-  termsAccepted?: boolean; // Single static acceptance
-  termsVersion?: string; // Optional legacy / audit
-  supplierLocation: string;
-  notes?: string;
-}
-
-export interface QuoteAcceptanceAudit {
-  acceptedAt: string;
-  acceptedBy: string;
-  userRole: string;
-  termsAccepted: boolean; // Single static acceptance checkbox
-  termsVersion?: string;
-  vehicleVerified: boolean;
-  partVerified: boolean;
-  addressVerified: boolean;
-  freightCost?: number;
-}
-
-export interface PaymentDetails {
-  id: string;
-  requestId: string;
-  invoiceNumber: string; // Generated in existing Autohub operational process; recorded in portal
-  amount: number;
-  currency: string;
-  status: PaymentStatus; // Status only: "Unpaid" | "Paid"
-  paymentMethod?: string;
-  paymentReference: string;
-  bankDetails: {
-    bankName: string;
-    accountName: string;
-    accountNumber: string;
-    swiftBic?: string;
-  };
-  paidAt?: string;
-  dueDate: string;
-}
-
-export interface MilestoneLog {
-  milestone: ShipmentMilestone;
-  location: string;
-  timestamp: string;
-  description: string;
-  isCompleted: boolean;
-}
-
-export interface ShipmentDetails {
-  trackingNumber: string;
-  carrier: string;
-  carrierWebsite?: string;
-  currentMilestone: ShipmentMilestone;
-  origin: string;
-  destination: string;
-  estimatedDelivery: string;
-  dispatchedAt: string;
-  deliveredAt?: string;
-  milestonesHistory: MilestoneLog[];
-}
-
-export interface RequestMessage {
-  id: string;
-  senderName: string;
-  senderRole: "Customer" | "Autohub Operations";
-  message: string;
-  timestamp: string;
-  avatarUrl?: string;
-}
-
-export interface PartRequest {
-  id: string;
-  requestNumber: string; // e.g. AH-P-000128
-  vehicle: VehicleInfo;
-  part: PartInfo;
-  supporting: SupportingInfo;
-  deliveryAddress: SavedAddress;
-  dateSubmitted: string;
-  status: RequestStatus;
-  quotedValue?: number;
-  actionRequired?: string;
-  actionType?: "review_quote" | "pay_now" | "view_details" | "none";
-  quotation?: Quotation;
-  quoteAcceptance?: QuoteAcceptanceAudit;
-  payment?: PaymentDetails;
-  shipment?: ShipmentDetails;
-  messages?: RequestMessage[];
-}
+export type {
+  RequestStatus,
+  ShipmentMilestone,
+  PaymentStatus,
+  CustomerResponse,
+  VehicleInfo,
+  PartPreference,
+  PartCondition,
+  PartInfo,
+  SupportingInfo,
+  SavedAddress,
+  SupplierAvailability,
+  SupplierCondition,
+  SupplierQuotation,
+  CostCalculation,
+  CustomerQuoteVersion,
+  Quotation,
+  QuoteAcceptanceAudit,
+  PaymentDetails,
+  SupplierOrder,
+  MilestoneLog,
+  ShipmentDetails,
+  RequestDocument,
+  InternalNote,
+  RequestActivity,
+  PartRequest,
+} from "./shared";
 
 export type PortalTab =
   | "dashboard"
@@ -188,12 +43,18 @@ export type NotificationType =
   | "Information Required"
   | "Quote Available"
   | "Quote Accepted"
+  | "Quote Sent"
+  | "Quote Rejected"
   | "Payment Received"
   | "Order Placed"
   | "Shipment Dispatched"
   | "Shipment Arrived"
+  | "Shipment Updated"
   | "Delivery Out"
-  | "Delivered";
+  | "Delivered"
+  | "New Request"
+  | "Customer Registration"
+  | "General";
 
 export interface PortalNotification {
   id: string;
@@ -203,6 +64,15 @@ export interface PortalNotification {
   timestamp: string;
   read: boolean;
   requestId?: string;
+}
+
+export interface RequestMessage {
+  id: string;
+  senderName: string;
+  senderRole: "Customer" | "Autohub Operations";
+  message: string;
+  timestamp: string;
+  avatarUrl?: string;
 }
 
 export interface ProcurementActivity {

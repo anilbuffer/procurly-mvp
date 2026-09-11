@@ -36,6 +36,7 @@ import {
 
 export function RequestDetailsModal() {
   const {
+    requests,
     selectedRequest,
     setSelectedRequest,
     acceptQuote,
@@ -43,6 +44,7 @@ export function RequestDetailsModal() {
     setIsPaymentModalOpen,
     setPaymentRequest,
     setActiveTab: setPortalTab,
+    activeCustomer,
   } = usePortal();
 
   // Navigation tabs: overview | quote | shipment (in-app messaging removed for MVP)
@@ -63,7 +65,7 @@ export function RequestDetailsModal() {
 
   if (!selectedRequest) return null;
 
-  const req = selectedRequest;
+  const req = requests.find((r) => r.id === selectedRequest.id) || selectedRequest;
 
   // The 9-stage customer-facing lifecycle
   const LIFECYCLE_STAGES: RequestStatus[] = [
@@ -104,8 +106,8 @@ export function RequestDetailsModal() {
 
     const audit: QuoteAcceptanceAudit = {
       acceptedAt: new Date().toLocaleString("en-NZ", { timeZone: "Pacific/Auckland" }),
-      acceptedBy: "James Wilson",
-      userRole: "Service Manager (SP Motors Auckland)",
+      acceptedBy: activeCustomer?.contactName || req.contactName || "Customer",
+      userRole: `Authorized Representative (${activeCustomer?.businessName || req.customerName || "Trade Customer"})`,
       termsAccepted: true, // Static acceptance verified
       vehicleVerified: true,
       partVerified: true,

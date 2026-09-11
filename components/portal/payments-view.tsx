@@ -20,23 +20,56 @@ export function PaymentsView() {
   const { requests, setIsPaymentModalOpen, setPaymentRequest, setSelectedRequest, setActiveTab } = usePortal();
   const [filterStatus, setFilterStatus] = useState<"All" | "Unpaid" | "Paid">("All");
 
-  // Requests that have payment record or are quoted/awaiting payment
+  // Requests that have payment record, are invoiceable, or in stages Approved onwards
   const paymentRequests = requests.filter(
-    (r) => r.payment || r.quotedValue !== undefined
+    (r) =>
+      r.payment ||
+      r.paymentStatus !== undefined ||
+      r.invoiceReference ||
+      [
+        "Approved",
+        "Awaiting Payment",
+        "Ordered",
+        "Shipped",
+        "Delivered",
+        "Completed",
+      ].includes(r.status) ||
+      r.quotedValue !== undefined ||
+      r.pricing?.totalCustomerNZD !== undefined
   );
 
+  const getAmount = (r: PartRequest) => {
+    return (
+      r.payment?.amount ||
+      r.pricing?.totalCustomerNZD ||
+      r.quotedValue ||
+      r.customerQuote?.totalAmount ||
+      (r.costCalculations?.[0]?.totalCustomerNZD) ||
+      450.0
+    );
+  };
+
+  const getInvoiceNumber = (r: PartRequest) => {
+    return (
+      r.payment?.invoiceNumber ||
+      r.invoiceReference ||
+      `INV-2026-${r.requestNumber.replace(/[^0-9]/g, "")}`
+    );
+  };
+
   const filtered = paymentRequests.filter((r) => {
-    const status = r.payment?.status === "Paid" ? "Paid" : "Unpaid";
+    const isPaid = r.payment?.status === "Paid" || r.paymentStatus === "Paid";
+    const status = isPaid ? "Paid" : "Unpaid";
     if (filterStatus === "All") return true;
     return status === filterStatus;
   });
 
   const totalPaid = paymentRequests
-    .filter((r) => r.payment?.status === "Paid")
-    .reduce((sum, r) => sum + (r.payment?.amount || r.quotedValue || 0), 0);
+    .filter((r) => r.payment?.status === "Paid" || r.paymentStatus === "Paid")
+    .reduce((sum, r) => sum + getAmount(r), 0);
   const totalUnpaid = paymentRequests
-    .filter((r) => r.payment?.status !== "Paid" && r.quotedValue)
-    .reduce((sum, r) => sum + (r.quotedValue || 0), 0);
+    .filter((r) => r.payment?.status !== "Paid" && r.paymentStatus !== "Paid")
+    .reduce((sum, r) => sum + getAmount(r), 0);
 
   const handleOpenPaymentModal = (req: PartRequest) => {
     setPaymentRequest(req);
@@ -137,13 +170,15 @@ export function PaymentsView() {
               ) : (
                 filtered.map((req) => {
                   const pay = req.payment;
-                  const paymentStatus: "Unpaid" | "Paid" =
-                    pay?.status === "Paid" ? "Paid" : "Unpaid";
+                  const isPaid = pay?.status === "Paid" || req.paymentStatus === "Paid";
+                  const paymentStatus: "Unpaid" | "Paid" = isPaid ? "Paid" : "Unpaid";
+                  const invoiceNum = getInvoiceNumber(req);
+                  const amount = getAmount(req);
 
                   return (
                     <tr key={req.id} className="hover:bg-slate-50 transition-colors">
                       <td className="py-4 px-6 font-mono font-bold text-slate-900">
-                        {pay?.invoiceNumber || "AUTOHUB-INV"}
+                        {invoiceNum}
                       </td>
                       <td className="py-4 px-4 font-mono">
                         <button
@@ -155,13 +190,13 @@ export function PaymentsView() {
                         </button>
                       </td>
                       <td className="py-4 px-4">
-                        <p className="font-semibold text-slate-800">{req.part.name}</p>
+                        <p className="font-semibold text-slate-800">{req.part?.name || req.partName}</p>
                         <p className="text-[11px] text-slate-500">
-                          {req.vehicle.year} {req.vehicle.make} {req.vehicle.model}
+                          {req.vehicle?.year} {req.vehicle?.make} {req.vehicle?.model}
                         </p>
                       </td>
                       <td className="py-4 px-4 font-mono font-bold text-slate-900">
-                        ${(pay?.amount || req.quotedValue || 0).toFixed(2)}
+                        ${amount.toFixed(2)}
                       </td>
                       <td className="py-4 px-4">
                         {paymentStatus === "Paid" ? (

@@ -35,20 +35,23 @@ export function RequestsView() {
     return requests.filter((r) => {
       // Status filter
       if (statusFilter === "Awaiting Action") {
-        if (!r.actionType || r.actionType === "none") return false;
-      } else if (statusFilter === "Quoted") {
-        if (r.status !== "Quoted") return false;
+        if (
+          (!r.actionType || r.actionType === "none") &&
+          r.status !== "Quoted" &&
+          !(r.status === "Approved" && r.payment?.status !== "Paid") &&
+          !(r.status === "Awaiting Payment" && r.payment?.status !== "Paid")
+        )
+          return false;
       } else if (statusFilter === "In Procurement") {
         if (
           r.status !== "Sourcing" &&
           r.status !== "Ordered" &&
-          r.status !== "Approved"
+          r.status !== "Approved" &&
+          r.status !== "Awaiting Payment"
         )
           return false;
-      } else if (statusFilter === "Shipped") {
-        if (r.status !== "Shipped") return false;
-      } else if (statusFilter === "Completed") {
-        if (r.status !== "Completed" && r.status !== "Delivered") return false;
+      } else if (statusFilter !== "All") {
+        if (r.status !== statusFilter) return false;
       }
 
       // Search query filter
@@ -68,23 +71,24 @@ export function RequestsView() {
 
   const getStatusBadge = (status: RequestStatus) => {
     switch (status) {
+      case "Submitted":
+        return "bg-sky-50 text-sky-700 border border-sky-200";
+      case "Sourcing":
+        return "bg-purple-50 text-purple-700 border border-purple-200";
       case "Quoted":
         return "bg-amber-100 text-amber-800 border border-amber-200";
+      case "Approved":
+        return "bg-emerald-50 text-emerald-700 border border-emerald-200";
       case "Awaiting Payment":
-        return "bg-amber-50 text-amber-700 border border-amber-300";
-      case "Payment Disputed":
-        return "bg-red-50 text-red-700 border border-red-200";
-      case "Logistics Exception":
-        return "bg-slate-100 text-slate-700 border border-slate-300";
-      case "Sourcing":
-        return "bg-indigo-50 text-indigo-700 border border-indigo-200";
+        return "bg-orange-50 text-orange-800 border border-orange-200";
       case "Ordered":
         return "bg-blue-50 text-blue-700 border border-blue-200";
       case "Shipped":
-        return "bg-sky-100 text-sky-800 border border-sky-300";
+        return "bg-cyan-50 text-cyan-800 border border-cyan-200";
       case "Delivered":
+        return "bg-teal-50 text-teal-700 border border-teal-200";
       case "Completed":
-        return "bg-emerald-50 text-emerald-700 border border-emerald-200";
+        return "bg-slate-100 text-slate-700 border border-slate-200";
       default:
         return "bg-slate-100 text-slate-700 border border-slate-200";
     }
@@ -94,14 +98,19 @@ export function RequestsView() {
     <div className="space-y-6">
       {/* Top Controls Bar */}
       <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 flex flex-col md:flex-row md:items-center justify-between gap-4">
-        {/* Status Tabs */}
+        {/* Status Tabs Covering 9 Canonical Stages */}
         <div className="flex flex-wrap items-center gap-1.5 text-xs font-bold">
           {[
             "All",
             "Awaiting Action",
+            "Submitted",
+            "Sourcing",
             "Quoted",
-            "In Procurement",
+            "Approved",
+            "Awaiting Payment",
+            "Ordered",
             "Shipped",
+            "Delivered",
             "Completed",
           ].map((tab) => {
             const isActive = statusFilter === tab;
@@ -109,7 +118,7 @@ export function RequestsView() {
               <button
                 key={tab}
                 onClick={() => setStatusFilter(tab)}
-                className={`px-3.5 py-2 rounded-xl transition-all ${
+                className={`px-3 py-1.5 rounded-xl transition-all ${
                   isActive
                     ? "bg-[#0C101A] text-white shadow-sm"
                     : "bg-slate-100 hover:bg-slate-200/70 text-slate-600"
@@ -209,7 +218,7 @@ export function RequestsView() {
 
                     {/* Action */}
                     <td className="py-4 px-6 text-right whitespace-nowrap">
-                      {req.actionType === "review_quote" ? (
+                      {req.actionType === "review_quote" || req.status === "Quoted" ? (
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
@@ -220,7 +229,7 @@ export function RequestsView() {
                         >
                           Review Quote →
                         </button>
-                      ) : req.actionType === "pay_now" ? (
+                      ) : req.actionType === "pay_now" || ((req.status === "Approved" || req.status === "Awaiting Payment") && req.payment?.status !== "Paid") ? (
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
@@ -231,6 +240,10 @@ export function RequestsView() {
                         >
                           Pay Now →
                         </button>
+                      ) : req.status === "Shipped" ? (
+                        <span className="text-blue-600 font-bold text-[11px] inline-flex items-center gap-1 group-hover:underline">
+                          <span>Track Shipment →</span>
+                        </span>
                       ) : (
                         <span className="text-slate-400 group-hover:text-[#ED2025] font-semibold inline-flex items-center gap-1">
                           <span>View</span>

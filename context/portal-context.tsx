@@ -10,12 +10,12 @@ import {
   SavedAddress,
   QuoteAcceptanceAudit,
 } from "@/types/portal";
+import { CustomerRecord } from "@/types/shared";
 import {
-  INITIAL_REQUESTS,
   INITIAL_ACTIVITIES,
-  INITIAL_NOTIFICATIONS,
   SAVED_ADDRESSES,
 } from "@/lib/mock-portal-data";
+import { useUnifiedData } from "@/context/unified-data-context";
 
 interface PortalContextType {
   activeTab: PortalTab;
@@ -50,6 +50,9 @@ interface PortalContextType {
     reference?: string
   ) => void;
   sendMessage: (requestId: string, text: string) => void;
+  activeCustomer: CustomerRecord;
+  setActiveCustomerId: (id: string) => void;
+  availableCustomers: CustomerRecord[];
   metrics: {
     activeRequests: number;
     awaitingAction: number;
@@ -63,6 +66,35 @@ const PortalContext = createContext<PortalContextType | undefined>(undefined);
 export function PortalProvider({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
+  const {
+    requests: sharedRequests,
+    customers,
+    notifications,
+    submitCustomerRequest,
+    acceptCustomerQuote,
+    rejectCustomerQuote,
+    markPaymentPaid,
+    markNotificationAsRead: sharedMarkRead,
+    markAllNotificationsAsRead: sharedMarkAllRead,
+  } = useUnifiedData();
+
+  // Active customer management (default SP Motors Ltd, customizable for testing)
+  const [activeCustomerId, setActiveCustomerId] = useState<string>("cust-02");
+  const activeCustomer = useMemo(() => {
+    return customers.find((c) => c.id === activeCustomerId) || customers[1] || customers[0];
+  }, [customers, activeCustomerId]);
+
+  // Normalize shared requests for customer components (ensuring quotation alias is always present)
+  const requests: PartRequest[] = useMemo(() => {
+    return sharedRequests.map((r) => {
+      const q = r.customerQuote || r.quotation;
+      return {
+        ...r,
+        quotation: q,
+        quotedValue: r.quotedValue || q?.totalAmount,
+      } as PartRequest;
+    });
+  }, [sharedRequests]);
 
   // Derive active tab from URL pathname: /customer/[tab]
   const activeTab: PortalTab = useMemo(() => {
@@ -85,20 +117,26 @@ export function PortalProvider({ children }: { children: React.ReactNode }) {
     [router]
   );
 
-  const [requests, setRequests] = useState<PartRequest[]>(INITIAL_REQUESTS);
   const [activities, setActivities] = useState<ProcurementActivity[]>(INITIAL_ACTIVITIES);
-  const [notifications, setNotifications] =
-    useState<PortalNotification[]>(INITIAL_NOTIFICATIONS);
   const [savedAddresses, setSavedAddresses] = useState<SavedAddress[]>(SAVED_ADDRESSES);
   const [searchQuery, setSearchQuery] = useState("");
 
   // Modals
-  const [selectedRequest, setSelectedRequestState] = useState<PartRequest | null>(null);
+  const [selectedRequestState, setSelectedRequestState] = useState<PartRequest | null>(null);
   const [isNewRequestModalOpen, setIsNewRequestModalOpen] = useState(false);
   const [isQuoteModalOpen, setIsQuoteModalOpen] = useState(false);
   const [quoteRequest, setQuoteRequest] = useState<PartRequest | null>(null);
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
   const [paymentRequest, setPaymentRequest] = useState<PartRequest | null>(null);
+
+  // Keep selectedRequest synchronized with updated shared request object
+  const selectedRequest = useMemo(() => {
+    if (!selectedRequestState) return null;
+    const found = requests.find(
+      (r) => r.id === selectedRequestState.id || r.requestNumber === selectedRequestState.requestNumber
+    );
+    return found || selectedRequestState;
+  }, [requests, selectedRequestState]);
 
   const setSelectedRequest = useCallback((req: PartRequest | null) => {
     setSelectedRequestState(req);
@@ -141,26 +179,31 @@ export function PortalProvider({ children }: { children: React.ReactNode }) {
     return () => window.removeEventListener("popstate", syncFromUrl);
   }, [requests]);
 
-  // Counter metrics
+  // Real dynamic counter metrics reflecting synchronized requests
   const metrics = useMemo(() => {
-    // Exact numbers to match or exceed baseline from reference screenshot
-    const active = 17 + (requests.length - INITIAL_REQUESTS.length);
+    const active = requests.filter((r) => r.status !== "Completed").length;
     const awaiting = requests.filter(
       (r) =>
         r.actionType === "review_quote" ||
         r.actionType === "pay_now" ||
-        r.actionType === "view_details"
+        r.status === "Quoted" ||
+        (r.status === "Approved" && r.payment?.status !== "Paid") ||
+        (r.status === "Awaiting Payment" && r.payment?.status !== "Paid")
     ).length;
     const inProc = requests.filter(
-      (r) => r.status === "Sourcing" || r.status === "Ordered" || r.status === "Approved"
+      (r) =>
+        r.status === "Sourcing" ||
+        r.status === "Approved" ||
+        r.status === "Awaiting Payment" ||
+        r.status === "Ordered"
     ).length;
     const inTransit = requests.filter((r) => r.status === "Shipped").length;
 
     return {
-      activeRequests: Math.max(active, 17),
+      activeRequests: active,
       awaitingAction: awaiting,
-      inProcurement: Math.max(inProc, 4),
-      inTransit: Math.max(inTransit, 4),
+      inProcurement: inProc,
+      inTransit,
     };
   }, [requests]);
 
@@ -170,137 +213,40 @@ export function PortalProvider({ children }: { children: React.ReactNode }) {
   );
 
   const markNotificationAsRead = (id: string) => {
-    setNotifications((prev) =>
-      prev.map((n) => (n.id === id ? { ...n, read: true } : n))
-    );
+    sharedMarkRead(id);
   };
 
   const markAllNotificationsAsRead = () => {
-    setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
+    sharedMarkAllRead();
   };
 
   const submitNewRequest = (reqData: Partial<PartRequest>): PartRequest => {
-    // Generate sequential request number like AH-P-000143
-    const nextNum = 143 + (requests.length - INITIAL_REQUESTS.length);
-    const requestNumber = `AH-P-000${nextNum}`;
-    const newId = `req-${nextNum}`;
-
-    const newReq: PartRequest = {
-      id: newId,
-      requestNumber,
-      vehicle: reqData.vehicle || {
-        make: "Toyota",
-        model: "Hilux",
-        year: 2024,
-        vin: "MR0HA3CD" + nextNum,
-      },
-      part: reqData.part || {
-        name: "Replacement Part",
-        quantity: 1,
-        preference: "Genuine OEM",
-        condition: "Brand New OEM",
-      },
-      supporting: reqData.supporting || {
-        notes: "",
-        photos: [],
-        documents: [],
-      },
-      deliveryAddress: reqData.deliveryAddress || savedAddresses[0],
-      dateSubmitted: new Date().toISOString().split("T")[0],
-      status: "Submitted",
-      messages: [],
-    };
-
-    setRequests((prev) => [newReq, ...prev]);
-
-    // Add activity
-    const newAct: ProcurementActivity = {
-      id: `act-${Date.now()}`,
-      timestamp: new Date().toISOString(),
-      timeLabel: "Just now",
-      title: `Request Submitted: ${requestNumber}`,
-      description: `${newReq.vehicle.year} ${newReq.vehicle.make} ${newReq.vehicle.model} - ${newReq.part.name} logged for procurement sourcing.`,
-      type: "request",
-      requestId: newId,
-    };
-    setActivities((prev) => [newAct, ...prev]);
-
-    // Add notification
-    const newNotif: PortalNotification = {
-      id: `notif-${Date.now()}`,
-      type: "Request Submitted",
-      title: `Request ${requestNumber} Submitted`,
-      description: "Our Japan & international sourcing specialists have received your request.",
-      timestamp: "Just now",
-      read: false,
-      requestId: newId,
-    };
-    setNotifications((prev) => [newNotif, ...prev]);
-
-    return newReq;
+    return submitCustomerRequest({
+      customerId: reqData.customerId || activeCustomer.id,
+      customerName: reqData.customerName || activeCustomer.businessName,
+      contactName: reqData.contactName || activeCustomer.contactName,
+      customerEmail: reqData.customerEmail || activeCustomer.email,
+      customerPhone: reqData.customerPhone || activeCustomer.phone,
+      deliveryAddress: reqData.deliveryAddress || activeCustomer.deliveryAddress,
+      ...reqData,
+    }) as unknown as PartRequest;
   };
 
   const acceptQuote = (requestId: string, acceptanceAudit: QuoteAcceptanceAudit) => {
-    setRequests((prev) =>
-      prev.map((r) => {
-        if (r.id === requestId) {
-          const updated: PartRequest = {
-            ...r,
-            status: "Awaiting Payment",
-            actionRequired: "Settle invoice via Bank Transfer or Card",
-            actionType: "pay_now",
-            quoteAcceptance: acceptanceAudit,
-            payment: {
-              id: `pay-${r.requestNumber}`,
-              requestId: r.id,
-              invoiceNumber: `INV-2026-${Math.floor(10000 + Math.random() * 90000)}`,
-              amount: r.quotedValue || 485.0,
-              currency: "NZD",
-              status: "Unpaid",
-              paymentReference: `${r.requestNumber}`,
-              bankDetails: {
-                bankName: "ANZ New Zealand",
-                accountName: "Autohub Procurement NZ Ltd",
-                accountNumber: "01-0288-0349821-00",
-                swiftBic: "ANZBNZ22",
-              },
-              dueDate: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000)
-                .toISOString()
-                .split("T")[0],
-            },
-          };
-          return updated;
-        }
-        return r;
-      })
-    );
+    acceptCustomerQuote(requestId, acceptanceAudit.acceptedBy);
 
+    // Keep local activity log updated
     const target = requests.find((r) => r.id === requestId);
     const reqNum = target?.requestNumber || "Request";
 
-    // Activity log
     setActivities((prev) => [
       {
         id: `act-${Date.now()}`,
         timestamp: new Date().toISOString(),
         timeLabel: "Just now",
         title: `Quote Accepted for ${reqNum}`,
-        description: `Accepted by ${acceptanceAudit.acceptedBy}. Procurement terms & privacy policy accepted. Autohub invoice reference recorded; payment status: Unpaid.`,
+        description: `Accepted by ${acceptanceAudit.acceptedBy}. Status moved to Approved. Invoice generated.`,
         type: "quote",
-        requestId,
-      },
-      ...prev,
-    ]);
-
-    // Notification
-    setNotifications((prev) => [
-      {
-        id: `notif-${Date.now()}`,
-        type: "Quote Accepted",
-        title: `Quote Accepted: ${reqNum}`,
-        description: "Autohub invoice reference recorded. Payment status set to Unpaid.",
-        timestamp: "Just now",
-        read: false,
         requestId,
       },
       ...prev,
@@ -308,19 +254,7 @@ export function PortalProvider({ children }: { children: React.ReactNode }) {
   };
 
   const rejectQuote = (requestId: string, reason: string) => {
-    setRequests((prev) =>
-      prev.map((r) => {
-        if (r.id === requestId) {
-          return {
-            ...r,
-            status: "Completed",
-            actionRequired: undefined,
-            actionType: "none",
-          };
-        }
-        return r;
-      })
-    );
+    rejectCustomerQuote(requestId, reason);
 
     const target = requests.find((r) => r.id === requestId);
     const reqNum = target?.requestNumber || "Request";
@@ -331,7 +265,7 @@ export function PortalProvider({ children }: { children: React.ReactNode }) {
         timestamp: new Date().toISOString(),
         timeLabel: "Just now",
         title: `Quote Declined for ${reqNum}`,
-        description: `Customer reason: ${reason}. Request archived.`,
+        description: `Customer reason: ${reason}.`,
         type: "alert",
         requestId,
       },
@@ -343,32 +277,10 @@ export function PortalProvider({ children }: { children: React.ReactNode }) {
     requestId: string,
     reference?: string
   ) => {
-    setRequests((prev) =>
-      prev.map((r) => {
-        if (r.id === requestId) {
-          return {
-            ...r,
-            status: "Ordered",
-            actionRequired: undefined,
-            actionType: "none",
-            payment: r.payment
-              ? {
-                  ...r.payment,
-                  status: "Paid",
-                  paidAt: new Date().toISOString(),
-                  paymentReference: reference || r.payment.paymentReference,
-                }
-              : undefined,
-          };
-        }
-        return r;
-      })
-    );
+    markPaymentPaid(requestId, reference);
 
     const target = requests.find((r) => r.id === requestId);
     const reqNum = target?.requestNumber || "Request";
-
-    const desc = `Payment recorded as Paid (Ref: ${reference || reqNum}). Order unlocked for fulfillment.`;
 
     setActivities((prev) => [
       {
@@ -376,21 +288,8 @@ export function PortalProvider({ children }: { children: React.ReactNode }) {
         timestamp: new Date().toISOString(),
         timeLabel: "Just now",
         title: `Payment Recorded (Paid): ${reqNum}`,
-        description: desc,
+        description: `Payment recorded as Paid (Ref: ${reference || reqNum}). Supplier order unlocked.`,
         type: "payment",
-        requestId,
-      },
-      ...prev,
-    ]);
-
-    setNotifications((prev) => [
-      {
-        id: `notif-${Date.now()}`,
-        type: "Payment Received",
-        title: `Payment Recorded (Paid): ${reqNum}`,
-        description: desc,
-        timestamp: "Just now",
-        read: false,
         requestId,
       },
       ...prev,
@@ -398,24 +297,7 @@ export function PortalProvider({ children }: { children: React.ReactNode }) {
   };
 
   const sendMessage = (requestId: string, text: string) => {
-    setRequests((prev) =>
-      prev.map((r) => {
-        if (r.id === requestId) {
-          const newMsg = {
-            id: `msg-${Date.now()}`,
-            senderName: "James Wilson",
-            senderRole: "Customer" as const,
-            message: text,
-            timestamp: "Just now",
-          };
-          return {
-            ...r,
-            messages: [...(r.messages || []), newMsg],
-          };
-        }
-        return r;
-      })
-    );
+    console.log("External communication recorded for request", requestId, text);
   };
 
   return (
@@ -450,6 +332,9 @@ export function PortalProvider({ children }: { children: React.ReactNode }) {
         rejectQuote,
         submitPayment,
         sendMessage,
+        activeCustomer,
+        setActiveCustomerId,
+        availableCustomers: customers,
         metrics,
       }}
     >

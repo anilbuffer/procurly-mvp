@@ -15,9 +15,97 @@ import {
 import { usePortal } from "@/context/portal-context";
 
 export function DocumentsView() {
-  const { requests, setSelectedRequest, setActiveTab } = usePortal();
+  const { requests, activeCustomer, setSelectedRequest, setActiveTab } = usePortal();
   const [docSearch, setDocSearch] = useState("");
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+
+  const docs = React.useMemo(() => {
+    const list: Array<{
+      id: string;
+      title: string;
+      category: "Tax Invoice" | "Quotation" | "Customs & Compliance" | "Fitment Verification" | "Legal & Warranty";
+      date: string;
+      size: string;
+      ref: string;
+      vehicleInfo?: string;
+      partInfo?: string;
+      amount?: string;
+    }> = [];
+
+    // Official terms
+    list.push({
+      id: "policy-terms",
+      title: "Autohub Trade Customer Procurement Terms v2.4",
+      category: "Legal & Warranty",
+      date: "01 Aug 2026",
+      size: "520 KB",
+      ref: "POLICY",
+    });
+
+    requests.forEach((req) => {
+      const veh = `${req.vehicle?.year || ""} ${req.vehicle?.make || ""} ${req.vehicle?.model || ""}`.trim();
+      const prt = req.part?.name || req.partName || "Component";
+      const amt = req.pricing?.totalCustomerNZD || req.quotedValue || req.customerQuote?.totalAmount || 0;
+
+      // 1. Tax Invoice if invoice exists or status >= Approved
+      if (
+        req.invoiceReference ||
+        req.payment ||
+        ["Approved", "Awaiting Payment", "Ordered", "Shipped", "Delivered", "Completed"].includes(req.status)
+      ) {
+        const invNum = req.invoiceReference || req.payment?.invoiceNumber || `INV-2026-${req.requestNumber.replace(/[^0-9]/g, "")}`;
+        list.push({
+          id: `inv-${req.id}`,
+          title: `Tax Invoice ${invNum} (${veh} - ${prt})`,
+          category: "Tax Invoice",
+          date: req.createdAt ? req.createdAt.split("T")[0] : "08 Sep 2026",
+          size: "188 KB",
+          ref: req.requestNumber,
+          vehicleInfo: veh,
+          partInfo: prt,
+          amount: amt ? `$${amt.toFixed(2)} NZD` : undefined,
+        });
+      }
+
+      // 2. Quotation Spec Sheet if quoted or costCalculations exist
+      if (
+        req.quotedValue ||
+        req.customerQuote ||
+        (req.costCalculations && req.costCalculations.length > 0) ||
+        ["Quoted", "Approved", "Awaiting Payment", "Ordered", "Shipped", "Delivered", "Completed"].includes(req.status)
+      ) {
+        list.push({
+          id: `quote-${req.id}`,
+          title: `Official Quotation Spec Sheet ${req.requestNumber} (${veh} OEM ${prt})`,
+          category: "Quotation",
+          date: req.createdAt ? req.createdAt.split("T")[0] : "08 Sep 2026",
+          size: "245 KB",
+          ref: req.requestNumber,
+          vehicleInfo: veh,
+          partInfo: prt,
+          amount: amt ? `$${amt.toFixed(2)} NZD` : undefined,
+        });
+      }
+
+      // 3. Customs / Waybill if Shipped / Delivered / Completed
+      if (req.shipment || ["Shipped", "Delivered", "Completed"].includes(req.status)) {
+        const carrier = req.shipment?.carrier || "DHL Express Airfreight";
+        const tracking = req.shipment?.trackingNumber || `AWB-${req.requestNumber.replace(/[^0-9]/g, "")}`;
+        list.push({
+          id: `customs-${req.id}`,
+          title: `NZ Customs MPI Clearance & Consignment (${carrier} - ${tracking})`,
+          category: "Customs & Compliance",
+          date: req.shipment?.dispatchedAt ? req.shipment.dispatchedAt.split("T")[0] : "07 Sep 2026",
+          size: "412 KB",
+          ref: req.requestNumber,
+          vehicleInfo: veh,
+          partInfo: prt,
+        });
+      }
+    });
+
+    return list;
+  }, [requests]);
 
   const handleDownload = (doc: (typeof docs)[0]) => {
     const fileContent = `========================================================
@@ -28,7 +116,11 @@ Category       : ${doc.category}
 Reference      : ${doc.ref}
 Date Issued    : ${doc.date}
 Document Size  : ${doc.size}
-Customer       : SP Motors Ltd (NZBN 9429049988776)
+Customer       : ${activeCustomer?.businessName || "SP Motors Ltd"} (${activeCustomer?.contactName || "Contact"})
+Delivery Addr  : ${activeCustomer?.deliveryAddress || "Auckland, New Zealand"}
+Vehicle        : ${doc.vehicleInfo || "Trade Vehicle Specified"}
+Part / Scope   : ${doc.partInfo || "Procured Component"}
+Financial Val  : ${doc.amount || "Refer to Schedule"}
 Audited By     : Autohub Procurement Operations
 Status         : Verified Official Record
 ========================================================
@@ -49,49 +141,6 @@ For formal queries contact ops@procurly.autohub.co.nz
     setToastMessage(`Downloaded "${doc.title}"`);
     setTimeout(() => setToastMessage(null), 3500);
   };
-
-  const docs = [
-    {
-      id: "doc-1",
-      title: "Tax Invoice INV-2026-00892 (Toyota Hiace Control Arm)",
-      category: "Tax Invoice",
-      date: "08 Sep 2026",
-      size: "184 KB",
-      ref: "AH-P-000125",
-    },
-    {
-      id: "doc-2",
-      title: "Quotation Spec Sheet AH-P-000128 (Hiace OEM Arm)",
-      category: "Quotation",
-      date: "08 Sep 2026",
-      size: "240 KB",
-      ref: "AH-P-000128",
-    },
-    {
-      id: "doc-3",
-      title: "NZ Customs MPI Bio-security Release Notice (MF-NZ-98234812)",
-      category: "Customs & Compliance",
-      date: "07 Sep 2026",
-      size: "412 KB",
-      ref: "AH-P-000135",
-    },
-    {
-      id: "doc-4",
-      title: "Tax Invoice INV-2026-00810 (Honda Civic Brembo Calipers)",
-      category: "Tax Invoice",
-      date: "02 Sep 2026",
-      size: "192 KB",
-      ref: "AH-P-000120",
-    },
-    {
-      id: "doc-5",
-      title: "Autohub Trade Customer Procurement Terms v2.4",
-      category: "Legal & Warranty",
-      date: "01 Aug 2026",
-      size: "520 KB",
-      ref: "POLICY",
-    },
-  ];
 
   const filtered = docs.filter(
     (d) =>

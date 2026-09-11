@@ -103,11 +103,11 @@ export function ShipmentsView() {
                     </span>
                   </div>
                   <h3 className="text-base font-bold text-slate-900">
-                    {req.part.name}
+                    {req.part?.name || req.partName}
                   </h3>
                   <p className="text-xs text-slate-500">
-                    Vehicle: {req.vehicle.year} {req.vehicle.make} {req.vehicle.model}{" "}
-                    (VIN: {req.vehicle.vin})
+                    Vehicle: {req.vehicle?.year} {req.vehicle?.make} {req.vehicle?.model}{" "}
+                    (VIN: {req.vehicle?.vin || "N/A"})
                   </p>
                 </div>
 
@@ -152,7 +152,7 @@ export function ShipmentsView() {
                 </div>
               </div>
 
-              {/* Progress Stepper Bar for 5 Internal Logistics Milestones */}
+              {/* Progress Stepper Bar for 6 Logistics Milestones */}
               <div>
                 <div className="flex items-center justify-between text-[11px] font-bold text-slate-600 mb-2">
                   <span>Shipment Logistics Pipeline</span>
@@ -162,8 +162,8 @@ export function ShipmentsView() {
                   </span>
                 </div>
 
-                <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
-                  {MILESTONES.slice(0, 5).map((m, idx) => {
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2">
+                  {MILESTONES.map((m, idx) => {
                     const isCompleted = idx <= currentMilestoneIdx;
                     const isCurrent = idx === currentMilestoneIdx;
 

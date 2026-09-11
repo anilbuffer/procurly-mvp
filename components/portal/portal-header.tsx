@@ -103,6 +103,15 @@ export function PortalHeader() {
             </div>
           </div>
 
+          {/* Switch to Admin Portal Button */}
+          <Link
+            href="/admin/dashboard"
+            className="hidden sm:inline-flex items-center gap-1.5 px-3 py-2 text-xs font-bold text-slate-700 hover:text-[#ED2025] bg-slate-100/90 hover:bg-red-50 border border-slate-200 hover:border-red-200 rounded-xl transition-colors shadow-xs"
+          >
+            <span>Admin Portal</span>
+            <span className="w-1.5 h-1.5 rounded-full bg-[#ED2025]" />
+          </Link>
+
           {/* Notifications Bell */}
           <NotificationCenter />
         </div>
