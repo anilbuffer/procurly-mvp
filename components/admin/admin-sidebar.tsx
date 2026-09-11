@@ -58,68 +58,68 @@ export function AdminSidebar({ collapsed, onToggleCollapse }: AdminSidebarProps)
       badgeColor?: string;
     }[];
   }[] = [
-    {
-      label: "MAIN",
-      items: [
-        {
-          name: "Dashboard",
-          href: "/admin/dashboard",
-          icon: LayoutDashboard,
-        },
-        {
-          name: "Requests",
-          href: "/admin/requests",
-          icon: FileText,
-          badge: adminMetrics.totalActive > 0 ? adminMetrics.totalActive : undefined,
-          badgeColor: "bg-[#ED2025] text-white",
-        },
-        {
-          name: "Customers",
-          href: "/admin/customers",
-          icon: Building2,
-        },
-      ],
-    },
-    {
-      label: "OPERATIONS",
-      items: [
-        {
-          name: "Suppliers",
-          href: "/admin/suppliers",
-          icon: Package,
-        },
-        {
-          name: "Shipments",
-          href: "/admin/shipments",
-          icon: Truck,
-          badge: adminMetrics.shipped > 0 ? adminMetrics.shipped : undefined,
-          badgeColor: "bg-[#2563EB] text-white",
-        },
-      ],
-    },
-    {
-      label: "FINANCE",
-      items: [
-        {
-          name: "Payments",
-          href: "/admin/payments",
-          icon: CreditCard,
-          badge: adminMetrics.awaitingPayment > 0 ? adminMetrics.awaitingPayment : undefined,
-          badgeColor: "bg-amber-500 text-white",
-        },
-      ],
-    },
-    {
-      label: "ADMINISTRATION",
-      items: [
-        {
-          name: "User Management",
-          href: "/admin/users",
-          icon: UserCog,
-        },
-      ],
-    },
-  ];
+      {
+        label: "MAIN",
+        items: [
+          {
+            name: "Dashboard",
+            href: "/admin/dashboard",
+            icon: LayoutDashboard,
+          },
+          {
+            name: "Requests",
+            href: "/admin/requests",
+            icon: FileText,
+            badge: adminMetrics.totalActive > 0 ? adminMetrics.totalActive : undefined,
+            badgeColor: "bg-[#ED2025] text-white",
+          },
+          {
+            name: "Customers",
+            href: "/admin/customers",
+            icon: Building2,
+          },
+        ],
+      },
+      {
+        label: "OPERATIONS",
+        items: [
+          {
+            name: "Suppliers",
+            href: "/admin/suppliers",
+            icon: Package,
+          },
+          {
+            name: "Shipments",
+            href: "/admin/shipments",
+            icon: Truck,
+            badge: adminMetrics.shipped > 0 ? adminMetrics.shipped : undefined,
+            badgeColor: "bg-[#2563EB] text-white",
+          },
+        ],
+      },
+      {
+        label: "FINANCE",
+        items: [
+          {
+            name: "Payments",
+            href: "/admin/payments",
+            icon: CreditCard,
+            badge: adminMetrics.awaitingPayment > 0 ? adminMetrics.awaitingPayment : undefined,
+            badgeColor: "bg-amber-500 text-white",
+          },
+        ],
+      },
+      {
+        label: "ADMINISTRATION",
+        items: [
+          {
+            name: "User Management",
+            href: "/admin/users",
+            icon: UserCog,
+          },
+        ],
+      },
+    ];
 
   return (
     <aside
@@ -128,9 +128,8 @@ export function AdminSidebar({ collapsed, onToggleCollapse }: AdminSidebarProps)
     >
       {/* Brand Header */}
       <div
-        className={`h-16 flex items-center justify-between border-b border-slate-800 shrink-0 ${
-          collapsed ? "px-2.5" : "px-4"
-        }`}
+        className={`h-16 flex items-center justify-between border-b border-slate-800 shrink-0 ${collapsed ? "px-2.5" : "px-4"
+          }`}
       >
         {!collapsed ? (
           <Link href="/admin/dashboard" className="flex items-center gap-3">
@@ -216,14 +215,14 @@ export function AdminSidebar({ collapsed, onToggleCollapse }: AdminSidebarProps)
       </div>
 
       {/* User Info / Profile Card at Bottom */}
-      <div ref={userMenuRef} className="p-3 border-t border-slate-800 shrink-0 relative bg-[#111827]">
+      <div ref={userMenuRef} className="p-3 border-t border-[#1E2538]/60 relative">
         <div
           onClick={() => setShowUserMenu(!showUserMenu)}
-          className={`flex items-center justify-between p-2 rounded-xl transition-all select-none cursor-pointer hover:bg-[#182033] border border-transparent hover:border-[#27324D]/60 ${collapsed ? "justify-center" : ""
+          className={`flex items-center justify-between p-2 rounded-xl transition-all select-none cursor-pointer bg-[#141B2B] hover:bg-[#182033] border border-transparent hover:border-[#27324D]/60 ${collapsed ? "justify-center" : ""
             }`}
           title={collapsed ? `${currentStaffUser?.name || "David Vance"} (${currentStaffUser?.role || "Administrator"})` : undefined}
         >
-          <div className="flex items-center gap-2.5 min-w-0">
+          <div className="flex items-center gap-3 min-w-0">
             {currentStaffUser?.avatarUrl ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img

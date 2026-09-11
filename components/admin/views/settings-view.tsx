@@ -44,7 +44,7 @@ export function AdminSettingsView() {
   };
 
   return (
-    <div className="space-y-6 max-w-4xl">
+    <div className="flex-1 space-y-6 p-6 sm:p-8 max-w-7xl mx-auto w-full">
       {/* Top Banner */}
       <div className="bg-slate-50 border border-slate-200 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs">
         <div>

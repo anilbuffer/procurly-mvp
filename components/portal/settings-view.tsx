@@ -71,7 +71,7 @@ export function SettingsView() {
   };
 
   return (
-    <div className="space-y-6 max-w-5xl relative">
+    <div className="flex-1 space-y-6 p-6 sm:p-8 max-w-7xl mx-auto w-full">
       {/* Toast Feedback */}
       {toastMessage && (
         <div className="fixed top-5 right-5 z-50 flex items-center gap-2 bg-emerald-600 text-white px-4 py-3 rounded-xl shadow-xl font-bold text-xs animate-in slide-in-from-top-3 fade-in duration-200">
