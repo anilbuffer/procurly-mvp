@@ -338,7 +338,7 @@ export function QuoteTab({ request }: QuoteTabProps) {
           Quote History & Versions
         </h3>
 
-        {request.customerQuoteVersions.length === 0 ? (
+        {(request.customerQuoteVersions || []).length === 0 ? (
           <p className="text-xs text-slate-400 italic">No previous versions.</p>
         ) : (
           <div className="overflow-x-auto">
@@ -353,7 +353,7 @@ export function QuoteTab({ request }: QuoteTabProps) {
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
-                {request.customerQuoteVersions.map((v) => (
+                {(request.customerQuoteVersions || []).map((v) => (
                   <tr key={v.version} className="hover:bg-slate-50">
                     <td className="py-2.5 font-bold text-slate-900">Quote v{v.version}</td>
                     <td className="py-2.5 text-slate-500">{v.date}</td>
