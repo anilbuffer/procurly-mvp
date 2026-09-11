@@ -24,8 +24,6 @@ export function PaymentsView() {
   const paymentRequests = requests.filter(
     (r) =>
       r.payment ||
-      r.paymentStatus !== undefined ||
-      r.invoiceReference ||
       [
         "Approved",
         "Awaiting Payment",
@@ -34,17 +32,15 @@ export function PaymentsView() {
         "Delivered",
         "Completed",
       ].includes(r.status) ||
-      r.quotedValue !== undefined ||
-      r.pricing?.totalCustomerNZD !== undefined
+      r.quotedValue !== undefined
   );
 
   const getAmount = (r: PartRequest) => {
     return (
       r.payment?.amount ||
-      r.pricing?.totalCustomerNZD ||
       r.quotedValue ||
       r.customerQuote?.totalAmount ||
-      (r.costCalculations?.[0]?.totalCustomerNZD) ||
+      r.costCalculation?.totalCustomerQuote ||
       450.0
     );
   };
@@ -52,23 +48,22 @@ export function PaymentsView() {
   const getInvoiceNumber = (r: PartRequest) => {
     return (
       r.payment?.invoiceNumber ||
-      r.invoiceReference ||
       `INV-2026-${r.requestNumber.replace(/[^0-9]/g, "")}`
     );
   };
 
   const filtered = paymentRequests.filter((r) => {
-    const isPaid = r.payment?.status === "Paid" || r.paymentStatus === "Paid";
+    const isPaid = r.payment?.status === "Paid";
     const status = isPaid ? "Paid" : "Unpaid";
     if (filterStatus === "All") return true;
     return status === filterStatus;
   });
 
   const totalPaid = paymentRequests
-    .filter((r) => r.payment?.status === "Paid" || r.paymentStatus === "Paid")
+    .filter((r) => r.payment?.status === "Paid")
     .reduce((sum, r) => sum + getAmount(r), 0);
   const totalUnpaid = paymentRequests
-    .filter((r) => r.payment?.status !== "Paid" && r.paymentStatus !== "Paid")
+    .filter((r) => r.payment?.status !== "Paid")
     .reduce((sum, r) => sum + getAmount(r), 0);
 
   const handleOpenPaymentModal = (req: PartRequest) => {
@@ -170,7 +165,7 @@ export function PaymentsView() {
               ) : (
                 filtered.map((req) => {
                   const pay = req.payment;
-                  const isPaid = pay?.status === "Paid" || req.paymentStatus === "Paid";
+                  const isPaid = pay?.status === "Paid";
                   const paymentStatus: "Unpaid" | "Paid" = isPaid ? "Paid" : "Unpaid";
                   const invoiceNum = getInvoiceNumber(req);
                   const amount = getAmount(req);
@@ -190,7 +185,7 @@ export function PaymentsView() {
                         </button>
                       </td>
                       <td className="py-4 px-4">
-                        <p className="font-semibold text-slate-800">{req.part?.name || req.partName}</p>
+                        <p className="font-semibold text-slate-800">{req.part?.name || "Component"}</p>
                         <p className="text-[11px] text-slate-500">
                           {req.vehicle?.year} {req.vehicle?.make} {req.vehicle?.model}
                         </p>

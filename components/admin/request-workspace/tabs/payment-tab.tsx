@@ -52,8 +52,8 @@ export function PaymentTab({ request: initialRequest, onNavigateToTab }: Payment
   );
 
   const payment = request.payment;
-  const isPaid = payment?.status === "Paid" || request.paymentStatus === "Paid";
-  const amount = payment?.amount || request.quotedValue || (request.costCalculations?.[0]?.totalCustomerNZD) || 410.0;
+  const isPaid = payment?.status === "Paid";
+  const amount = payment?.amount || request.quotedValue || request.costCalculation?.totalCustomerQuote || 410.0;
 
   const handleMarkPaid = (e: React.FormEvent) => {
     e.preventDefault();

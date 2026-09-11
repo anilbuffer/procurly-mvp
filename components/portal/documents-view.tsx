@@ -44,21 +44,20 @@ export function DocumentsView() {
 
     requests.forEach((req) => {
       const veh = `${req.vehicle?.year || ""} ${req.vehicle?.make || ""} ${req.vehicle?.model || ""}`.trim();
-      const prt = req.part?.name || req.partName || "Component";
-      const amt = req.pricing?.totalCustomerNZD || req.quotedValue || req.customerQuote?.totalAmount || 0;
+      const prt = req.part?.name || "Component";
+      const amt = req.quotedValue || req.customerQuote?.totalAmount || 0;
 
       // 1. Tax Invoice if invoice exists or status >= Approved
       if (
-        req.invoiceReference ||
         req.payment ||
         ["Approved", "Awaiting Payment", "Ordered", "Shipped", "Delivered", "Completed"].includes(req.status)
       ) {
-        const invNum = req.invoiceReference || req.payment?.invoiceNumber || `INV-2026-${req.requestNumber.replace(/[^0-9]/g, "")}`;
+        const invNum = req.payment?.invoiceNumber || `INV-2026-${req.requestNumber.replace(/[^0-9]/g, "")}`;
         list.push({
           id: `inv-${req.id}`,
           title: `Tax Invoice ${invNum} (${veh} - ${prt})`,
           category: "Tax Invoice",
-          date: req.createdAt ? req.createdAt.split("T")[0] : "08 Sep 2026",
+          date: req.dateSubmitted || "08 Sep 2026",
           size: "188 KB",
           ref: req.requestNumber,
           vehicleInfo: veh,
@@ -71,14 +70,14 @@ export function DocumentsView() {
       if (
         req.quotedValue ||
         req.customerQuote ||
-        (req.costCalculations && req.costCalculations.length > 0) ||
+        req.costCalculation ||
         ["Quoted", "Approved", "Awaiting Payment", "Ordered", "Shipped", "Delivered", "Completed"].includes(req.status)
       ) {
         list.push({
           id: `quote-${req.id}`,
           title: `Official Quotation Spec Sheet ${req.requestNumber} (${veh} OEM ${prt})`,
           category: "Quotation",
-          date: req.createdAt ? req.createdAt.split("T")[0] : "08 Sep 2026",
+          date: req.dateSubmitted || "08 Sep 2026",
           size: "245 KB",
           ref: req.requestNumber,
           vehicleInfo: veh,

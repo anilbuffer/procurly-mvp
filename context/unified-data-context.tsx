@@ -976,7 +976,7 @@ export function UnifiedDataProvider({ children }: { children: React.ReactNode })
       }
     ): boolean => {
       const target = getRequestById(requestId);
-      if (!target || (target.payment?.status !== "Paid" && target.paymentStatus !== "Paid")) {
+      if (!target || target.payment?.status !== "Paid") {
         return false; // BLOCKED by Payment Gate!
       }
 

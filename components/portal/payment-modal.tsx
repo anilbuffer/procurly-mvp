@@ -34,10 +34,10 @@ export function PaymentModal() {
   const pay = req.payment || {
     id: `pay-${req.id}`,
     requestId: req.id,
-    invoiceNumber: req.invoiceReference || `INV-2026-${req.requestNumber.replace(/[^0-9]/g, "")}`,
-    amount: req.pricing?.totalCustomerNZD || req.quotedValue || (req.costCalculations?.[0]?.totalCustomerNZD) || 485.0,
+    invoiceNumber: `INV-2026-${req.requestNumber.replace(/[^0-9]/g, "")}`,
+    amount: req.quotedValue || req.customerQuote?.totalAmount || req.costCalculation?.totalCustomerQuote || 485.0,
     currency: "NZD",
-    status: (req.paymentStatus || "Unpaid") as "Unpaid" | "Paid",
+    status: "Unpaid" as "Unpaid" | "Paid",
     paymentReference: `${req.requestNumber}`,
     bankDetails: {
       bankName: "ANZ New Zealand",
@@ -48,7 +48,7 @@ export function PaymentModal() {
     dueDate: "2026-09-30",
   };
 
-  const isPaid = pay.status === "Paid" || req.paymentStatus === "Paid";
+  const isPaid = pay.status === "Paid";
 
   const handleCopy = (text: string, field: string) => {
     navigator.clipboard.writeText(text);
@@ -202,7 +202,7 @@ export function PaymentModal() {
                   <div className="flex justify-between items-center bg-white p-2 rounded-lg border border-slate-200">
                     <span className="text-slate-500 font-sans text-xs">Bank:</span>
                     <span className="font-bold text-slate-900">
-                      {pay.bankDetails.bankName}
+                      {pay.bankDetails?.bankName}
                     </span>
                   </div>
 
@@ -211,7 +211,7 @@ export function PaymentModal() {
                       Account Name:
                     </span>
                     <span className="font-bold text-slate-900">
-                      {pay.bankDetails.accountName}
+                      {pay.bankDetails?.accountName}
                     </span>
                   </div>
 
@@ -221,11 +221,11 @@ export function PaymentModal() {
                     </span>
                     <div className="flex items-center gap-2">
                       <span className="font-bold text-slate-900">
-                        {pay.bankDetails.accountNumber}
+                        {pay.bankDetails?.accountNumber}
                       </span>
                       <button
                         onClick={() =>
-                          handleCopy(pay.bankDetails.accountNumber, "acc")
+                          handleCopy(pay.bankDetails?.accountNumber || "", "acc")
                         }
                         className="p-1 hover:bg-slate-100 rounded text-slate-400 hover:text-slate-700"
                         title="Copy account number"

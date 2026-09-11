@@ -103,7 +103,7 @@ export function ShipmentsView() {
                     </span>
                   </div>
                   <h3 className="text-base font-bold text-slate-900">
-                    {req.part?.name || req.partName}
+                    {req.part?.name || "Component"}
                   </h3>
                   <p className="text-xs text-slate-500">
                     Vehicle: {req.vehicle?.year} {req.vehicle?.make} {req.vehicle?.model}{" "}
