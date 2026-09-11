@@ -34,8 +34,6 @@ export function PortalHeader() {
         return "Shipment Tracking";
       case "payments":
         return "Billing & Payments";
-      case "documents":
-        return "Procurement Documents";
       case "settings":
         return "Trade Settings";
       default:

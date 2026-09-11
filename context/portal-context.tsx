@@ -103,7 +103,7 @@ export function PortalProvider({ children }: { children: React.ReactNode }) {
     const tabCandidate = segments[1] as PortalTab;
     if (
       tabCandidate &&
-      ["dashboard", "requests", "orders", "shipments", "payments", "documents", "settings"].includes(tabCandidate)
+      ["dashboard", "requests", "orders", "shipments", "payments", "settings"].includes(tabCandidate)
     ) {
       return tabCandidate;
     }

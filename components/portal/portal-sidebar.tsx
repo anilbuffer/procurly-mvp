@@ -8,7 +8,6 @@ import {
   CheckSquare,
   Truck,
   CreditCard,
-  FolderArchive,
   Settings,
   Plus,
   ChevronDown,
@@ -83,7 +82,6 @@ export function PortalSidebar({ collapsed = false, onToggleCollapse }: PortalSid
         badgeColor: "bg-[#2563EB] text-white",
       },
       { id: "payments", label: "Payments", icon: CreditCard },
-      { id: "documents", label: "Documents", icon: FolderArchive },
     ];
 
   return (

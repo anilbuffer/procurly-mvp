@@ -8,7 +8,7 @@ export default function DashboardLegacyRedirect({
   const tab = searchParams?.tab;
   if (
     tab &&
-    ["dashboard", "requests", "orders", "shipments", "payments", "documents", "settings"].includes(tab)
+    ["dashboard", "requests", "orders", "shipments", "payments", "settings"].includes(tab)
   ) {
     redirect(`/customer/${tab}`);
   }

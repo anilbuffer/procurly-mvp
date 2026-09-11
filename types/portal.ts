@@ -34,7 +34,6 @@ export type PortalTab =
   | "orders"
   | "shipments"
   | "payments"
-  | "documents"
   | "settings";
 
 export type NotificationType =

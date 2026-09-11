@@ -1,5 +1,5 @@
-import { DocumentsView } from "@/components/portal/documents-view";
+import { redirect } from "next/navigation";
 
 export default function CustomerDocumentsPage() {
-  return <DocumentsView />;
+  redirect("/customer/dashboard");
 }

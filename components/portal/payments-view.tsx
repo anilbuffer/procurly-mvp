@@ -17,7 +17,7 @@ import { usePortal } from "@/context/portal-context";
 import { PartRequest } from "@/types/portal";
 
 export function PaymentsView() {
-  const { requests, setIsPaymentModalOpen, setPaymentRequest, setSelectedRequest, setActiveTab } = usePortal();
+  const { requests, setIsPaymentModalOpen, setPaymentRequest, setSelectedRequest } = usePortal();
   const [filterStatus, setFilterStatus] = useState<"All" | "Unpaid" | "Paid">("All");
 
   // Requests that have payment record, are invoiceable, or in stages Approved onwards
@@ -87,12 +87,6 @@ export function PaymentsView() {
         </div>
 
         <div className="flex flex-wrap items-center gap-3">
-          <button
-            onClick={() => setActiveTab("documents")}
-            className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-xl transition-colors"
-          >
-            All Documents (PDF) →
-          </button>
           <div className="p-3.5 bg-slate-50 border border-slate-200 rounded-xl flex items-center gap-6 text-xs font-mono">
             <div>
               <span className="text-[10px] text-slate-400 block uppercase font-sans font-bold">
