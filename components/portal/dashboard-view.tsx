@@ -274,8 +274,8 @@ export function DashboardView() {
                       {req.actionType === "review_quote"
                         ? "Review Quote"
                         : req.actionType === "pay_now"
-                        ? "Pay Now"
-                        : "View Details"}
+                          ? "Pay Now"
+                          : "View Details"}
                     </span>
                     <ArrowRight className="w-3.5 h-3.5" />
                   </button>
@@ -286,81 +286,6 @@ export function DashboardView() {
         </div>
       )}
 
-      {/* 4. Recent Requests Table */}
-      <div className="bg-white rounded-2xl border border-slate-200/90 shadow-sm overflow-hidden">
-        {/* Header */}
-        <div className="p-6 pb-4 flex items-center justify-between border-b border-slate-100">
-          <div>
-            <h2 className="text-base font-bold text-slate-900">Recent Requests</h2>
-            <p className="text-xs text-slate-500">
-              Overview of current parts procurement requests
-            </p>
-          </div>
-          <button
-            onClick={() => setActiveTab("requests")}
-            className="text-xs font-bold text-slate-600 hover:text-[#ED2025] inline-flex items-center gap-1 transition-colors"
-          >
-            <span>View All Requests</span>
-            <ArrowRight className="w-3.5 h-3.5" />
-          </button>
-        </div>
-
-        {/* Table */}
-        <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse">
-            <thead>
-              <tr className="border-b border-slate-100 bg-slate-50/50 text-[11px] font-bold text-slate-500 uppercase tracking-wider">
-                <th className="py-3 px-5">Request</th>
-                <th className="py-3 px-4">Vehicle</th>
-                <th className="py-3 px-4">Part</th>
-                <th className="py-3 px-4">Status</th>
-                <th className="py-3 px-5 text-right">Value</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-100 text-xs text-slate-700">
-              {requests.slice(0, 6).map((req) => (
-                <tr
-                  key={req.id}
-                  onClick={() => setSelectedRequest(req)}
-                  className="hover:bg-slate-50/80 cursor-pointer transition-colors group"
-                >
-                  {/* Request Number */}
-                  <td className="py-3.5 px-5 font-mono font-bold text-slate-900 group-hover:text-[#ED2025] transition-colors">
-                    {req.requestNumber}
-                  </td>
-
-                  {/* Vehicle */}
-                  <td className="py-3.5 px-4 font-medium text-slate-800 whitespace-nowrap">
-                    {req.vehicle.make} {req.vehicle.model} {req.vehicle.year}
-                  </td>
-
-                  {/* Part Name */}
-                  <td className="py-3.5 px-4 text-slate-600 max-w-[220px] truncate" title={req.part.name}>
-                    {req.part.name}
-                  </td>
-
-                  {/* Status Badge */}
-                  <td className="py-3.5 px-4 whitespace-nowrap">
-                    <span
-                      className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${getStatusBadge(
-                        req.status
-                      )}`}
-                    >
-                      <span className="w-1.5 h-1.5 rounded-full bg-current opacity-70" />
-                      {req.status}
-                    </span>
-                  </td>
-
-                  {/* Value */}
-                  <td className="py-3.5 px-5 text-right font-mono font-bold text-slate-900 whitespace-nowrap">
-                    {req.quotedValue ? `$${req.quotedValue.toFixed(2)}` : "—"}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
     </div>
   );
 }
