@@ -180,10 +180,9 @@ export function UnifiedDataProvider({ children }: { children: React.ReactNode })
           setNotifications(parsed);
         }
       }
-      const savedRole = localStorage.getItem(STORAGE_ACTIVE_ROLE);
-      if (savedRole && ["Administrator", "Procurement", "Operations", "Finance"].includes(savedRole)) {
-        setActiveStaffRole(savedRole as StaffRole);
-      }
+      localStorage.removeItem(STORAGE_ACTIVE_ROLE);
+      localStorage.removeItem("procurly_active_staff_role");
+      setActiveStaffRole("Administrator");
     } catch (e) {
       console.error("Failed to load state from localStorage", e);
     } finally {
@@ -191,11 +190,11 @@ export function UnifiedDataProvider({ children }: { children: React.ReactNode })
     }
   }, []);
 
-  // Current logged in staff based on active role
+  // Current logged in staff (always Administrator by default)
   const currentStaffUser = useMemo(() => {
-    const matched = staffUsers.find((u) => u.role === activeStaffRole);
-    return matched || staffUsers[3] || staffUsers[0];
-  }, [staffUsers, activeStaffRole]);
+    const adminUser = staffUsers.find((u) => u.role === "Administrator");
+    return adminUser || staffUsers[0] || MOCK_STAFF_USERS[0];
+  }, [staffUsers]);
 
   // Sync state changes to localStorage, broadcast CustomEvent and post to BroadcastChannel
   const persistState = useCallback(
@@ -1359,10 +1358,10 @@ export function UnifiedDataProvider({ children }: { children: React.ReactNode })
   );
 
   const switchStaffRole = useCallback((role: StaffRole) => {
-    setActiveStaffRole(role);
+    setActiveStaffRole("Administrator");
     if (typeof window !== "undefined") {
       try {
-        localStorage.setItem(STORAGE_ACTIVE_ROLE, role);
+        localStorage.removeItem(STORAGE_ACTIVE_ROLE);
       } catch (e) {}
     }
   }, []);

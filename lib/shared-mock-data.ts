@@ -115,6 +115,17 @@ export const MOCK_CUSTOMERS: CustomerRecord[] = [
 
 export const MOCK_STAFF_USERS: StaffUser[] = [
   {
+    id: "user-staff-04",
+    name: "David Vance",
+    email: "david.vance@procurly.io",
+    role: "Administrator",
+    status: "Active",
+    lastLogin: "Today, 10:30 AM",
+    avatarUrl: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&auto=format&fit=crop&q=80",
+    department: "Executive Management",
+    title: "Operations & Procurement Director",
+  },
+  {
     id: "user-staff-01",
     name: "Sarah Jenkins",
     email: "sarah.jenkins@procurly.io",
@@ -146,17 +157,6 @@ export const MOCK_STAFF_USERS: StaffUser[] = [
     avatarUrl: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&auto=format&fit=crop&q=80",
     department: "Finance & Accounts",
     title: "Finance & Accounts Specialist",
-  },
-  {
-    id: "user-staff-04",
-    name: "David Vance",
-    email: "david.vance@procurly.io",
-    role: "Administrator",
-    status: "Active",
-    lastLogin: "Today, 10:30 AM",
-    avatarUrl: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&auto=format&fit=crop&q=80",
-    department: "Executive Management",
-    title: "Operations & Procurement Director",
   },
 ];
 

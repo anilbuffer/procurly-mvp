@@ -1,24 +1,12 @@
 "use client";
 
 import React, { useState } from "react";
-import {
-  UserCog,
-  ShieldCheck,
-  Plus,
-  Edit2,
-  Trash2,
-  CheckCircle2,
-  Clock,
-  Shield,
-  User,
-  X,
-} from "lucide-react";
+import { Plus, Edit2 } from "lucide-react";
 import { StaffUser, StaffRole } from "@/types/shared";
 import { useUnifiedData } from "@/context/unified-data-context";
 
 export function UsersView() {
-  const { staffUsers, addStaffUser, updateStaffUser, switchStaffRole, activeStaffRole } =
-    useUnifiedData();
+  const { staffUsers, addStaffUser, updateStaffUser } = useUnifiedData();
 
   const [showAddModal, setShowAddModal] = useState(false);
   const [editingUser, setEditingUser] = useState<StaffUser | null>(null);
@@ -78,13 +66,6 @@ export function UsersView() {
     setShowAddModal(false);
   };
 
-  const roleDescriptions: Record<StaffRole, string> = {
-    Administrator: "Full system administration access across all workflows, settings, and permissions.",
-    Procurement: "Manages Requests, Supplier Sourcing, Quotations, and Supplier Purchase Orders.",
-    Operations: "Manages Requests, Inbound/Outbound Shipments, Milestones, and Final Delivery.",
-    Finance: "Manages Requests, Payments, Settlement verification, and Invoice status.",
-  };
-
   return (
     <div className="space-y-6">
       {/* Top Banner */}
@@ -106,57 +87,6 @@ export function UsersView() {
           <Plus className="w-4 h-4" />
           Add Internal User
         </button>
-      </div>
-
-      {/* RBAC Overview Cards (Section 29) */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-xs">
-        {(["Administrator", "Procurement", "Operations", "Finance"] as StaffRole[]).map((r) => {
-          const isActive = activeStaffRole === r;
-          const count = staffUsers.filter((u) => u.role === r).length;
-
-          return (
-            <div
-              key={r}
-              className={`p-4 rounded-2xl border transition-all ${
-                isActive
-                  ? "bg-slate-900 text-white border-slate-800 shadow-md"
-                  : "bg-white text-slate-700 border-slate-200 shadow-xs"
-              }`}
-            >
-              <div className="flex items-center justify-between mb-2">
-                <span className="font-bold uppercase tracking-wider text-[11px] flex items-center gap-1.5">
-                  <Shield className="w-3.5 h-3.5" />
-                  {r}
-                </span>
-                <span
-                  className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
-                    isActive ? "bg-red-500 text-white" : "bg-slate-100 text-slate-600"
-                  }`}
-                >
-                  {count} Staff
-                </span>
-              </div>
-              <p
-                className={`text-[11px] leading-relaxed mb-3 ${
-                  isActive ? "text-slate-300" : "text-slate-500"
-                }`}
-              >
-                {roleDescriptions[r]}
-              </p>
-              <button
-                type="button"
-                onClick={() => switchStaffRole(r)}
-                className={`w-full py-1.5 rounded-lg text-xs font-bold transition-all ${
-                  isActive
-                    ? "bg-emerald-500 text-white cursor-default"
-                    : "bg-slate-100 hover:bg-slate-200 text-slate-800"
-                }`}
-              >
-                {isActive ? "✓ Active Session Role" : "Test as " + r}
-              </button>
-            </div>
-          );
-        })}
       </div>
 
       {/* Staff Table (Section 28) */}

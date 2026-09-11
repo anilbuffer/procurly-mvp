@@ -32,7 +32,6 @@ export function OverviewTab({ request }: OverviewTabProps) {
     assignStaff,
     addInternalNote,
     staffUsers,
-    activeStaffRole,
   } = useUnifiedData();
 
   // Status modal state

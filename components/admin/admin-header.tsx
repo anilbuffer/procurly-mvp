@@ -7,17 +7,14 @@ import {
   Search,
   ChevronRight,
   User,
-  Shield,
   ShieldCheck,
   LogOut,
   ExternalLink,
-  Check,
   Layers,
   ArrowRight,
 } from "lucide-react";
 import { useUnifiedData } from "@/context/unified-data-context";
 import { NotificationPopover } from "./notification-popover";
-import { StaffRole } from "@/types/shared";
 
 export function AdminHeader() {
   const router = useRouter();
@@ -33,9 +30,7 @@ export function AdminHeader() {
 
   const {
     requests,
-    activeStaffRole,
     currentStaffUser,
-    switchStaffRole,
   } = useUnifiedData();
 
   const [globalSearch, setGlobalSearch] = useState("");
@@ -127,13 +122,6 @@ export function AdminHeader() {
     setIsSearchFocused(false);
     router.push(`/admin/requests?id=${reqId}`);
   };
-
-  const rolesList: StaffRole[] = [
-    "Administrator",
-    "Procurement",
-    "Operations",
-    "Finance",
-  ];
 
   return (
     <header className="sticky top-0 z-30 bg-white border-b border-slate-200/90 px-6 sm:px-8 py-3.5 shadow-xs">
@@ -265,7 +253,7 @@ export function AdminHeader() {
                   {currentStaffUser.name}
                 </span>
                 <span className="block text-[10px] font-medium text-slate-500 leading-tight">
-                  {activeStaffRole}
+                  {currentStaffUser.role || "Administrator"}
                 </span>
               </div>
             </button>
@@ -278,36 +266,6 @@ export function AdminHeader() {
                   <p className="text-xs font-bold text-slate-900">{currentStaffUser.name}</p>
                   <p className="text-[11px] text-slate-500">{currentStaffUser.email}</p>
                   <p className="text-[10px] text-slate-400 mt-1">{currentStaffUser.title}</p>
-                </div>
-
-                {/* RBAC Role Switcher (Section 29) */}
-                <div className="py-2 border-b border-slate-100">
-                  <div className="px-3 pb-1 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
-                    Switch Staff Role (RBAC)
-                  </div>
-                  <div className="space-y-0.5">
-                    {rolesList.map((role) => (
-                      <button
-                        key={role}
-                        type="button"
-                        onClick={() => {
-                          switchStaffRole(role);
-                          setIsProfileOpen(false);
-                        }}
-                        className={`w-full flex items-center justify-between px-3 py-1.5 rounded-lg text-xs transition-colors ${
-                          activeStaffRole === role
-                            ? "bg-red-50 text-[#ED2025] font-bold"
-                            : "text-slate-600 hover:bg-slate-50 hover:text-slate-900 font-medium"
-                        }`}
-                      >
-                        <span className="flex items-center gap-2">
-                          <Shield className="w-3.5 h-3.5" />
-                          {role}
-                        </span>
-                        {activeStaffRole === role && <Check className="w-3.5 h-3.5" />}
-                      </button>
-                    ))}
-                  </div>
                 </div>
 
                 {/* Links */}
