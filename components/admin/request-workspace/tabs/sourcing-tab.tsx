@@ -203,7 +203,28 @@ export function SourcingTab({ request }: SourcingTabProps) {
                         </button>
                       </td>
                       <td className="py-3 px-4">
-                        <span className="font-bold text-slate-900 block">{quote.supplierName}</span>
+                        <div className="flex items-center gap-1.5">
+                          <span className="font-bold text-slate-900 block">{quote.supplierName}</span>
+                          {(() => {
+                            const supRec = suppliers.find((s) => s.id === quote.supplierId || s.name === quote.supplierName);
+                            if (supRec && supRec.status !== "Active") {
+                              return (
+                                <span
+                                  className={`text-[9px] px-1.5 py-0.5 rounded font-bold border ${
+                                    supRec.status === "Suspended"
+                                      ? "bg-amber-50 text-amber-800 border-amber-200"
+                                      : supRec.status === "Preferred"
+                                      ? "bg-purple-50 text-purple-800 border-purple-200"
+                                      : "bg-slate-100 text-slate-500 border-slate-200"
+                                  }`}
+                                >
+                                  {supRec.status}
+                                </span>
+                              );
+                            }
+                            return null;
+                          })()}
+                        </div>
                         <span className="text-[10px] text-slate-400">
                           {quote.supplierCountry} • {quote.supplierContact}
                         </span>
@@ -320,10 +341,21 @@ export function SourcingTab({ request }: SourcingTabProps) {
                   >
                     {suppliers.map((s) => (
                       <option key={s.id} value={s.id}>
-                        {s.name} ({s.country})
+                        {s.name} ({s.country}) [{s.status}]
                       </option>
                     ))}
                   </select>
+                  {(() => {
+                    const selSup = suppliers.find((s) => s.id === supplierId);
+                    if (selSup && selSup.status !== "Active" && selSup.status !== "Preferred") {
+                      return (
+                        <p className="text-[11px] text-amber-800 bg-amber-50 border border-amber-200 p-2 rounded-lg mt-1.5">
+                          Operational Alert: <strong>{selSup.name}</strong> is currently {selSup.status}. Quotes from inactive suppliers should be verified.
+                        </p>
+                      );
+                    }
+                    return null;
+                  })()}
                 </div>
 
                 <div>

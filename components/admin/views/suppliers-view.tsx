@@ -14,15 +14,17 @@ import {
   CheckCircle2,
   X,
 } from "lucide-react";
-import { Supplier, SupplierQuotation } from "@/types/shared";
+import { Supplier, SupplierQuotation, SupplierStatus } from "@/types/shared";
 import { useUnifiedData } from "@/context/unified-data-context";
 
 export function SuppliersView() {
-  const { suppliers, requests, addSupplier, updateSupplier } = useUnifiedData();
+  const { suppliers, requests, addSupplier, updateSupplier, updateSupplierStatus } = useUnifiedData();
 
   const [selectedSupplier, setSelectedSupplier] = useState<Supplier | null>(null);
   const [showAddModal, setShowAddModal] = useState(false);
   const [editingSupplier, setEditingSupplier] = useState<Supplier | null>(null);
+  const [search, setSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState<string>("All");
 
   // Form State
   const [name, setName] = useState("");
@@ -32,6 +34,7 @@ export function SuppliersView() {
   const [country, setCountry] = useState("Japan");
   const [category, setCategory] = useState("Genuine OEM");
   const [specializations, setSpecializations] = useState("Toyota, Lexus");
+  const [formStatus, setFormStatus] = useState<SupplierStatus>("Active");
 
   const handleOpenAdd = () => {
     setEditingSupplier(null);
@@ -42,6 +45,7 @@ export function SuppliersView() {
     setCountry("Japan");
     setCategory("Genuine OEM");
     setSpecializations("Toyota, Lexus");
+    setFormStatus("Active");
     setShowAddModal(true);
   };
 
@@ -54,6 +58,7 @@ export function SuppliersView() {
     setCountry(s.country);
     setCategory(s.category);
     setSpecializations(s.specializations.join(", "));
+    setFormStatus(s.status);
     setShowAddModal(true);
   };
 
@@ -70,6 +75,7 @@ export function SuppliersView() {
         country,
         category,
         specializations: specs,
+        status: formStatus,
       });
     } else {
       const newSup: Supplier = {
@@ -82,7 +88,7 @@ export function SuppliersView() {
         category,
         specializations: specs,
         rating: 5,
-        status: "Active",
+        status: formStatus,
       };
       addSupplier(newSup);
     }
@@ -103,23 +109,110 @@ export function SuppliersView() {
     return list;
   };
 
+  const filteredSuppliers = suppliers.filter((s) => {
+    if (statusFilter !== "All" && s.status !== statusFilter) return false;
+    if (!search.trim()) return true;
+    const q = search.toLowerCase().trim();
+    return (
+      s.name.toLowerCase().includes(q) ||
+      s.contact.toLowerCase().includes(q) ||
+      s.country.toLowerCase().includes(q) ||
+      s.category.toLowerCase().includes(q) ||
+      s.specializations.some((spec) => spec.toLowerCase().includes(q))
+    );
+  });
+
+  const activeCount = suppliers.filter((s) => s.status === "Active" || s.status === "Preferred").length;
+  const inactiveCount = suppliers.filter((s) => s.status === "Inactive" || s.status === "Suspended").length;
+
+  const getStatusBadgeClass = (status: SupplierStatus) => {
+    switch (status) {
+      case "Active":
+        return "bg-emerald-50 text-emerald-700 border-emerald-200";
+      case "Preferred":
+        return "bg-purple-50 text-purple-700 border-purple-200 font-bold";
+      case "Suspended":
+        return "bg-amber-50 text-amber-700 border-amber-200 font-semibold";
+      case "Inactive":
+      default:
+        return "bg-slate-100 text-slate-500 border-slate-200";
+    }
+  };
+
   return (
     <div className="space-y-6">
-      {/* Top Banner */}
-      <div className="bg-slate-50 border border-slate-200 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs">
-        <div>
-          <h2 className="text-sm font-bold text-slate-900 uppercase tracking-wider">
-            Approved Supplier Directory ({suppliers.length})
-          </h2>
-          <p className="text-xs text-slate-500">
-            Authorized overseas and domestic automotive parts distribution partners.
-          </p>
+      {/* Top Banner & Metrics */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs">
+          <span className="text-slate-400 block text-[11px] uppercase font-bold tracking-wider">
+            Total Distribution Partners
+          </span>
+          <span className="font-mono text-2xl font-black text-slate-900 mt-1 block">
+            {suppliers.length}
+          </span>
+          <span className="text-[10px] text-slate-400 mt-0.5 block">
+            Authorized regional OEM & aftermarket partners
+          </span>
+        </div>
+
+        <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs">
+          <span className="text-slate-400 block text-[11px] uppercase font-bold tracking-wider">
+            Active / Preferred Suppliers
+          </span>
+          <span className="font-mono text-2xl font-black text-emerald-600 mt-1 block">
+            {activeCount}
+          </span>
+          <span className="text-[10px] text-slate-400 mt-0.5 block">
+            Authorized for quoting and ordering
+          </span>
+        </div>
+
+        <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs">
+          <span className="text-slate-400 block text-[11px] uppercase font-bold tracking-wider">
+            Inactive / Suspended
+          </span>
+          <span className="font-mono text-2xl font-black text-slate-500 mt-1 block">
+            {inactiveCount}
+          </span>
+          <span className="text-[10px] text-slate-400 mt-0.5 block">
+            Excluded from active procurement selection
+          </span>
+        </div>
+      </div>
+
+      {/* Controls Bar: Search, Filters & Add */}
+      <div className="bg-white rounded-2xl border border-slate-200 p-4 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div className="w-full sm:w-80">
+          <input
+            type="text"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search Supplier Name, Country, Specialization..."
+            className="w-full px-3.5 py-2 text-xs bg-slate-100/80 hover:bg-slate-100 focus:bg-white text-slate-900 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#ED2025]/30 focus:border-[#ED2025]"
+          />
+        </div>
+
+        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0">
+          {(["All", "Active", "Preferred", "Suspended", "Inactive"] as const).map((filter) => (
+            <button
+              key={filter}
+              type="button"
+              onClick={() => setStatusFilter(filter)}
+              className={`px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all ${
+                statusFilter === filter
+                  ? "bg-slate-900 text-white shadow-xs"
+                  : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+              }`}
+            >
+              {filter}
+            </button>
+          ))}
         </div>
 
         <button
           type="button"
           onClick={handleOpenAdd}
-          className="px-3.5 py-2 bg-[#ED2025] hover:bg-[#C8101E] text-white rounded-xl text-xs font-bold transition-all shadow-xs flex items-center gap-1.5 self-start sm:self-auto"
+          className="px-3.5 py-2 bg-[#ED2025] hover:bg-[#C8101E] text-white rounded-xl text-xs font-bold transition-all shadow-xs flex items-center gap-1.5 self-start sm:self-auto shrink-0"
         >
           <Plus className="w-4 h-4" />
           Add Supplier
@@ -142,7 +235,7 @@ export function SuppliersView() {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
-              {suppliers.map((s) => (
+              {filteredSuppliers.map((s) => (
                 <tr key={s.id} className="hover:bg-slate-50/70 transition-colors">
                   <td className="py-3.5 px-4 font-bold text-slate-900">
                     <div className="flex items-center gap-2.5">
@@ -181,17 +274,28 @@ export function SuppliersView() {
                   </td>
                   <td className="py-3.5 px-4">
                     <span
-                      className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
-                        s.status === "Active"
-                          ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
-                          : "bg-slate-100 text-slate-500"
-                      }`}
+                      className={`text-[10px] px-2.5 py-0.5 rounded-full border font-bold ${getStatusBadgeClass(
+                        s.status
+                      )}`}
                     >
                       {s.status}
                     </span>
                   </td>
                   <td className="py-3.5 px-4 text-center">
                     <div className="flex items-center justify-center gap-1.5">
+                      {/* Live Quick Status Selector */}
+                      <select
+                        value={s.status}
+                        onChange={(e) => updateSupplierStatus(s.id, e.target.value as SupplierStatus)}
+                        className="text-[11px] font-medium py-1 px-2 rounded-lg border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 focus:ring-1 focus:ring-[#ED2025] cursor-pointer"
+                        title="Change Supplier Operational Status"
+                      >
+                        <option value="Active">Active</option>
+                        <option value="Preferred">Preferred</option>
+                        <option value="Suspended">Suspended</option>
+                        <option value="Inactive">Inactive</option>
+                      </select>
+
                       <button
                         type="button"
                         onClick={() => setSelectedSupplier(s)}
@@ -205,17 +309,6 @@ export function SuppliersView() {
                         className="p-1.5 text-slate-400 hover:text-slate-800 rounded-lg"
                       >
                         <Edit2 className="w-3.5 h-3.5" />
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() =>
-                          updateSupplier(s.id, {
-                            status: s.status === "Active" ? "Inactive" : "Active",
-                          })
-                        }
-                        className="px-2 py-1 text-[11px] font-medium text-slate-500 hover:text-rose-600 rounded-lg"
-                      >
-                        {s.status === "Active" ? "Deactivate" : "Activate"}
                       </button>
                     </div>
                   </td>

@@ -117,6 +117,8 @@ export interface SupplierQuotation {
   createdAt: string;
 }
 
+export type SupplierStatus = "Active" | "Inactive" | "Suspended" | "Preferred";
+
 export interface Supplier {
   id: string;
   name: string;
@@ -127,7 +129,7 @@ export interface Supplier {
   category: string;
   specializations: string[];
   rating?: number;
-  status: "Active" | "Inactive";
+  status: SupplierStatus;
 }
 
 // ─── Customer Quotation & Calculation ───────────────────────
@@ -346,6 +348,7 @@ export interface PartRequest {
 
   // Payment
   payment?: PaymentDetails;
+  paymentStatus?: PaymentStatus;
 
   // Supplier Order
   supplierOrder?: SupplierOrder;
@@ -368,10 +371,12 @@ export interface PartRequest {
 
 export type NotificationType =
   | "New Request"
+  | "Status Update"
   | "Quote Sent"
   | "Quote Accepted"
   | "Quote Rejected"
   | "Payment Received"
+  | "Payment Updated"
   | "Order Placed"
   | "Shipment Updated"
   | "Customer Registration"

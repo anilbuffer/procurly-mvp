@@ -51,6 +51,7 @@ export function NotificationCenter() {
       case "Quote Accepted":
         return <FileCheck2 className="w-4 h-4 text-amber-500" />;
       case "Payment Received":
+      case "Payment Updated":
         return <DollarSign className="w-4 h-4 text-emerald-500" />;
       case "Order Placed":
         return <Box className="w-4 h-4 text-purple-500" />;
@@ -61,6 +62,8 @@ export function NotificationCenter() {
         return <Truck className="w-4 h-4 text-blue-500" />;
       case "Information Required":
         return <AlertCircle className="w-4 h-4 text-red-500" />;
+      case "Status Update":
+        return <CheckCircle2 className="w-4 h-4 text-blue-500" />;
       default:
         return <CheckCircle2 className="w-4 h-4 text-emerald-500" />;
     }

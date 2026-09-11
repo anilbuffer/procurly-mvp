@@ -7,12 +7,14 @@ import React, {
   useEffect,
   useMemo,
   useCallback,
+  useRef,
 } from "react";
 import {
   PartRequest,
   CustomerRecord,
   StaffUser,
   Supplier,
+  SupplierStatus,
   PortalNotification,
   StaffRole,
   RequestStatus,
@@ -118,6 +120,7 @@ interface UnifiedDataContextType {
   updateCustomerStatus: (customerId: string, status: CustomerStatus) => void;
   addSupplier: (supplier: Supplier) => void;
   updateSupplier: (supplierId: string, updated: Partial<Supplier>) => void;
+  updateSupplierStatus: (supplierId: string, status: SupplierStatus) => void;
   addStaffUser: (user: StaffUser) => void;
   updateStaffUser: (userId: string, updated: Partial<StaffUser>) => void;
   switchStaffRole: (role: StaffRole) => void;
@@ -196,22 +199,29 @@ export function UnifiedDataProvider({ children }: { children: React.ReactNode })
     return adminUser || staffUsers[0] || MOCK_STAFF_USERS[0];
   }, [staffUsers]);
 
-  // Sync state changes to localStorage, broadcast CustomEvent and post to BroadcastChannel
+  // Persistent BroadcastChannel and sync lock ref to eliminate race conditions & dropped messages
+  const broadcastChannelRef = useRef<BroadcastChannel | null>(null);
+  const isSyncingRef = useRef(false);
+
+  // Sync state changes to localStorage, broadcast CustomEvent and post to persistent BroadcastChannel
   const persistState = useCallback(
     (key: string, data: any) => {
+      if (!isHydrated || isSyncingRef.current) return;
       if (typeof window !== "undefined") {
         try {
-          localStorage.setItem(key, JSON.stringify(data));
-          window.dispatchEvent(new CustomEvent("procurly_state_sync", { detail: { key, data } }));
-          if ("BroadcastChannel" in window) {
-            const channel = new BroadcastChannel("procurly_sync_channel");
-            channel.postMessage({ type: "SYNC_STATE", key, data });
-            channel.close();
+          const serialized = JSON.stringify(data);
+          const existing = localStorage.getItem(key);
+          if (existing !== serialized) {
+            localStorage.setItem(key, serialized);
+            window.dispatchEvent(new CustomEvent("procurly_state_sync", { detail: { key, data } }));
+            if (broadcastChannelRef.current) {
+              broadcastChannelRef.current.postMessage({ type: "SYNC_STATE", key, data });
+            }
           }
         } catch (e) {}
       }
     },
-    []
+    [isHydrated]
   );
 
   useEffect(() => {
@@ -239,49 +249,87 @@ export function UnifiedDataProvider({ children }: { children: React.ReactNode })
     persistState(STORAGE_NOTIFICATIONS, notifications);
   }, [notifications, isHydrated, persistState]);
 
-  // Listen to external window/tab storage events and BroadcastChannel for instant live sync
+  // Listen to external window/tab storage events, custom window sync, and persistent BroadcastChannel for instant live sync
   useEffect(() => {
     const handleStorage = (e: StorageEvent) => {
-      if (e.key === STORAGE_REQUESTS && e.newValue) {
-        setRequests(JSON.parse(e.newValue));
-      } else if (e.key === STORAGE_CUSTOMERS && e.newValue) {
-        setCustomers(JSON.parse(e.newValue));
-      } else if (e.key === STORAGE_SUPPLIERS && e.newValue) {
-        setSuppliers(JSON.parse(e.newValue));
-      } else if (e.key === STORAGE_STAFF && e.newValue) {
-        setStaffUsers(JSON.parse(e.newValue));
-      } else if (e.key === STORAGE_NOTIFICATIONS && e.newValue) {
-        setNotifications(JSON.parse(e.newValue));
-      }
+      if (!e.newValue) return;
+      try {
+        isSyncingRef.current = true;
+        const parsed = JSON.parse(e.newValue);
+        if (e.key === STORAGE_REQUESTS && Array.isArray(parsed)) {
+          setRequests(parsed);
+        } else if (e.key === STORAGE_CUSTOMERS && Array.isArray(parsed)) {
+          setCustomers(parsed);
+        } else if (e.key === STORAGE_SUPPLIERS && Array.isArray(parsed)) {
+          setSuppliers(parsed);
+        } else if (e.key === STORAGE_STAFF && Array.isArray(parsed)) {
+          setStaffUsers(parsed);
+        } else if (e.key === STORAGE_NOTIFICATIONS && Array.isArray(parsed)) {
+          setNotifications(parsed);
+        }
+      } catch (err) {}
+      setTimeout(() => {
+        isSyncingRef.current = false;
+      }, 50);
     };
 
     window.addEventListener("storage", handleStorage);
 
-    let channel: BroadcastChannel | null = null;
+    const handleCustomSync = (e: Event) => {
+      const customEvt = e as CustomEvent;
+      const { key, data } = customEvt.detail || {};
+      if (!key || isSyncingRef.current) return;
+      isSyncingRef.current = true;
+      if (key === STORAGE_REQUESTS && Array.isArray(data)) setRequests(data);
+      else if (key === STORAGE_CUSTOMERS && Array.isArray(data)) setCustomers(data);
+      else if (key === STORAGE_SUPPLIERS && Array.isArray(data)) setSuppliers(data);
+      else if (key === STORAGE_STAFF && Array.isArray(data)) setStaffUsers(data);
+      else if (key === STORAGE_NOTIFICATIONS && Array.isArray(data)) setNotifications(data);
+      setTimeout(() => {
+        isSyncingRef.current = false;
+      }, 50);
+    };
+
+    window.addEventListener("procurly_state_sync", handleCustomSync);
+
+    // Persistent BroadcastChannel for instantaneous cross-tab live synchronization
     if (typeof window !== "undefined" && "BroadcastChannel" in window) {
-      channel = new BroadcastChannel("procurly_sync_channel");
-      channel.onmessage = (event) => {
-        const { type, key, data } = event.data || {};
-        if (type === "SYNC_STATE") {
-          if (key === STORAGE_REQUESTS && data) setRequests(data);
-          else if (key === STORAGE_CUSTOMERS && data) setCustomers(data);
-          else if (key === STORAGE_SUPPLIERS && data) setSuppliers(data);
-          else if (key === STORAGE_STAFF && data) setStaffUsers(data);
-          else if (key === STORAGE_NOTIFICATIONS && data) setNotifications(data);
-        } else if (type === "RESET_ALL") {
-          setRequests(INITIAL_SHARED_REQUESTS);
-          setCustomers(MOCK_CUSTOMERS);
-          setSuppliers(MOCK_SUPPLIERS);
-          setStaffUsers(MOCK_STAFF_USERS);
-          setNotifications(INITIAL_NOTIFICATIONS);
-          setActiveStaffRole("Administrator");
-        }
-      };
+      try {
+        const channel = new BroadcastChannel("procurly_sync_channel");
+        channel.onmessage = (event) => {
+          const { type, key, data } = event.data || {};
+          if (type === "SYNC_STATE") {
+            isSyncingRef.current = true;
+            if (key === STORAGE_REQUESTS && Array.isArray(data)) setRequests(data);
+            else if (key === STORAGE_CUSTOMERS && Array.isArray(data)) setCustomers(data);
+            else if (key === STORAGE_SUPPLIERS && Array.isArray(data)) setSuppliers(data);
+            else if (key === STORAGE_STAFF && Array.isArray(data)) setStaffUsers(data);
+            else if (key === STORAGE_NOTIFICATIONS && Array.isArray(data)) setNotifications(data);
+            setTimeout(() => {
+              isSyncingRef.current = false;
+            }, 50);
+          } else if (type === "RESET_ALL") {
+            setRequests(INITIAL_SHARED_REQUESTS);
+            setCustomers(MOCK_CUSTOMERS);
+            setSuppliers(MOCK_SUPPLIERS);
+            setStaffUsers(MOCK_STAFF_USERS);
+            setNotifications(INITIAL_NOTIFICATIONS);
+            setActiveStaffRole("Administrator");
+          }
+        };
+        broadcastChannelRef.current = channel;
+      } catch (err) {
+        console.error("BroadcastChannel init error:", err);
+      }
     }
 
     return () => {
       window.removeEventListener("storage", handleStorage);
-      if (channel) channel.close();
+      window.removeEventListener("procurly_state_sync", handleCustomSync);
+      if (broadcastChannelRef.current) {
+        broadcastChannelRef.current.close();
+        broadcastChannelRef.current = null;
+      }
     };
   }, []);
 
@@ -400,12 +448,162 @@ export function UnifiedDataProvider({ children }: { children: React.ReactNode })
   // ─── Actions: Update Status & Assignment ────────────────
   const updateRequestStatus = useCallback(
     (requestId: string, status: RequestStatus) => {
+      let targetReqNumber = requestId;
       setRequests((prev) =>
         prev.map((r) => {
           if (r.id === requestId || r.requestNumber === requestId) {
+            targetReqNumber = r.requestNumber;
+            let actionRequired = r.actionRequired;
+            let actionType = r.actionType;
+            let updatedPayment = r.payment;
+            let updatedShipment = r.shipment;
+            let updatedQuote = r.customerQuote;
+            let updatedSupplierOrder = r.supplierOrder;
+            let paymentStatus = r.payment?.status || r.paymentStatus || "Unpaid";
+
+            if (status === "Submitted") {
+              actionRequired = "Waiting for Autohub specialist sourcing review";
+              actionType = "none";
+            } else if (status === "Sourcing") {
+              actionRequired = "Autohub specialists contacting verified supplier network";
+              actionType = "none";
+            } else if (status === "Quoted") {
+              actionRequired = "Review & approve quote to proceed to fulfillment";
+              actionType = "review_quote";
+              if (!updatedQuote) {
+                const totalAmt = r.quotedValue || 450;
+                updatedQuote = {
+                  id: `quote-${r.requestNumber}-1`,
+                  requestId: r.id,
+                  version: 1,
+                  itemDescription: `${r.vehicle.make} ${r.vehicle.model} ${r.part.name}`,
+                  oemNumber: r.part.partNumber,
+                  quantity: r.part.quantity,
+                  unitPrice: totalAmt - 70,
+                  subtotal: totalAmt - 70,
+                  freightCost: 70,
+                  freightNote: "Standard consolidated air delivery",
+                  gstAmount: Number(((totalAmt * 15) / 115).toFixed(2)),
+                  totalAmount: totalAmt,
+                  currency: "NZD",
+                  estimatedTransitDays: 5,
+                  validUntil: new Date(Date.now() + 7 * 86400000).toISOString().split("T")[0],
+                  termsAccepted: false,
+                  procurementTerms: "Standard Autohub B2B Warranty",
+                  notes: "Quoted via Autohub verified supplier network.",
+                };
+              }
+            } else if (status === "Approved") {
+              if (!updatedPayment) {
+                const amt = r.quotedValue || updatedQuote?.totalAmount || 450;
+                updatedPayment = {
+                  id: `pay-${r.requestNumber}`,
+                  requestId: r.id,
+                  invoiceNumber: `INV-2026-${r.requestNumber.replace(/[^0-9]/g, "")}`,
+                  amount: amt,
+                  currency: "NZD",
+                  status: paymentStatus as "Paid" | "Unpaid",
+                  paymentReference: r.requestNumber,
+                  dueDate: new Date(Date.now() + 5 * 86400000).toISOString().split("T")[0],
+                  lastUpdated: "Just now",
+                };
+              }
+              if (paymentStatus === "Paid" || updatedPayment?.status === "Paid") {
+                actionRequired = "Payment received in full. Ready for supplier ordering.";
+                actionType = "none";
+              } else {
+                actionRequired = "Settle invoice via Bank Transfer or Card";
+                actionType = "pay_now";
+              }
+            } else if (status === "Awaiting Payment") {
+              if (!updatedPayment) {
+                const amt = r.quotedValue || updatedQuote?.totalAmount || 450;
+                updatedPayment = {
+                  id: `pay-${r.requestNumber}`,
+                  requestId: r.id,
+                  invoiceNumber: `INV-2026-${r.requestNumber.replace(/[^0-9]/g, "")}`,
+                  amount: amt,
+                  currency: "NZD",
+                  status: "Unpaid",
+                  paymentReference: r.requestNumber,
+                  dueDate: new Date(Date.now() + 5 * 86400000).toISOString().split("T")[0],
+                  lastUpdated: "Just now",
+                };
+              }
+              actionRequired = "Settle invoice via Bank Transfer or Card";
+              actionType = "pay_now";
+            } else if (status === "Ordered") {
+              if (!updatedSupplierOrder) {
+                updatedSupplierOrder = {
+                  id: `ord-${Date.now()}`,
+                  supplierId: r.selectedQuotationId || "sup-01",
+                  supplierName: "Nagoya Auto Parts Co.",
+                  supplierRef: `PO-${r.requestNumber.replace("AH-P-", "")}`,
+                  orderDate: new Date().toISOString().split("T")[0],
+                  cost: 280,
+                  freight: 45,
+                  total: 325,
+                  notes: "Order placed. Awaiting dispatch.",
+                  documents: [],
+                };
+              }
+              actionRequired = "Supplier order placed. Awaiting dispatch & shipment tracking.";
+              actionType = "none";
+            } else if (status === "Shipped") {
+              if (!updatedShipment) {
+                const tracking = `NZ${Math.floor(100000000 + Math.random() * 900000000)}`;
+                const initialMilestone: ShipmentMilestone = "Received At Shipping Facility";
+                updatedShipment = {
+                  id: `ship-${Date.now()}`,
+                  trackingNumber: tracking,
+                  carrier: "Autohub Express Air Cargo",
+                  currentMilestone: initialMilestone,
+                  origin: "Nagoya Consolidation Hub, Japan",
+                  destination: r.deliveryAddress.label,
+                  estimatedDelivery: new Date(Date.now() + 5 * 86400000).toISOString().split("T")[0],
+                  dispatchedAt: new Date().toISOString(),
+                  lastUpdated: "Just now",
+                  milestonesHistory: [
+                    { milestone: "Received At Shipping Facility", location: "Nagoya Hub, Japan", timestamp: new Date().toISOString(), description: "Package received at hub.", isCompleted: true },
+                    { milestone: "In Transit", location: "International Air Transit", timestamp: "Pending", description: "Cargo flight scheduled.", isCompleted: false },
+                    { milestone: "Arrived in NZ", location: "Auckland Cargo Terminal", timestamp: "Pending", description: "Flight discharge.", isCompleted: false },
+                    { milestone: "Customs Clearance", location: "Auckland Customs & MPI", timestamp: "Pending", description: "Customs inspection.", isCompleted: false },
+                    { milestone: "Out For Delivery", location: "Auckland Metro Hub", timestamp: "Pending", description: "Courier dispatch.", isCompleted: false },
+                    { milestone: "Delivered", location: r.deliveryAddress.label, timestamp: "Pending", description: "Proof of delivery signature.", isCompleted: false },
+                  ],
+                };
+              }
+              actionRequired = `Consignment in transit: ${updatedShipment.carrier} (${updatedShipment.trackingNumber})`;
+              actionType = "view_details";
+            } else if (status === "Delivered") {
+              if (updatedShipment) {
+                updatedShipment = {
+                  ...updatedShipment,
+                  currentMilestone: "Delivered",
+                  deliveredAt: updatedShipment.deliveredAt || new Date().toISOString(),
+                  milestonesHistory: updatedShipment.milestonesHistory.map((m) => ({
+                    ...m,
+                    isCompleted: true,
+                    timestamp: m.timestamp === "Pending" ? new Date().toISOString() : m.timestamp,
+                  })),
+                };
+              }
+              actionRequired = "Consignment delivered to destination";
+              actionType = "none";
+            } else if (status === "Completed") {
+              actionRequired = "Request completed & archived";
+              actionType = "none";
+            }
+
             return {
               ...r,
               status,
+              actionRequired,
+              actionType,
+              payment: updatedPayment,
+              shipment: updatedShipment,
+              customerQuote: updatedQuote,
+              supplierOrder: updatedSupplierOrder,
               lastUpdated: "Just now",
               activity: [
                 {
@@ -413,7 +611,7 @@ export function UnifiedDataProvider({ children }: { children: React.ReactNode })
                   timestamp: new Date().toISOString(),
                   timeLabel: "Just now",
                   title: `Status changed to ${status}`,
-                  description: `Status manually updated to ${status} by ${currentStaffUser.name}.`,
+                  description: `Status updated to ${status} by ${currentStaffUser.name}.`,
                   actor: currentStaffUser.name,
                   type: "status",
                 },
@@ -424,6 +622,20 @@ export function UnifiedDataProvider({ children }: { children: React.ReactNode })
           return r;
         })
       );
+
+      // Trigger notification for real-time awareness in both portals
+      setNotifications((prev) => [
+        {
+          id: `notif-${Date.now()}`,
+          type: "Status Update",
+          title: `Status: ${targetReqNumber} → ${status}`,
+          description: `Request stage updated to ${status}.`,
+          timestamp: "Just now",
+          read: false,
+          requestId,
+        },
+        ...prev,
+      ]);
     },
     [currentStaffUser]
   );
@@ -867,6 +1079,7 @@ export function UnifiedDataProvider({ children }: { children: React.ReactNode })
 
             return {
               ...r,
+              status: r.status === "Awaiting Payment" ? "Approved" : r.status,
               paymentStatus: "Paid",
               payment: {
                 ...currentPay,
@@ -921,8 +1134,10 @@ export function UnifiedDataProvider({ children }: { children: React.ReactNode })
         prev.map((r) => {
           if (r.id === requestId || r.requestNumber === requestId) {
             if (!r.payment) return r;
+            const shouldRevertToAwaiting = r.status === "Approved" && !r.supplierOrder;
             return {
               ...r,
+              status: shouldRevertToAwaiting ? "Awaiting Payment" : r.status,
               paymentStatus: "Unpaid",
               payment: {
                 ...r.payment,
@@ -930,6 +1145,8 @@ export function UnifiedDataProvider({ children }: { children: React.ReactNode })
                 paidAt: undefined,
                 lastUpdated: "Just now",
               },
+              actionRequired: "Settle invoice via Bank Transfer or Card",
+              actionType: "pay_now",
               lastUpdated: "Just now",
               activity: [
                 {
@@ -948,8 +1165,24 @@ export function UnifiedDataProvider({ children }: { children: React.ReactNode })
           return r;
         })
       );
+
+      const target = getRequestById(requestId);
+      if (target) {
+        setNotifications((prev) => [
+          {
+            id: `notif-${Date.now()}`,
+            type: "Payment Updated",
+            title: `Payment Reverted: ${target.requestNumber}`,
+            description: `Payment marked as Unpaid. Settlement pending.`,
+            timestamp: "Just now",
+            read: false,
+            requestId: target.id,
+          },
+          ...prev,
+        ]);
+      }
     },
-    [currentStaffUser]
+    [currentStaffUser, getRequestById]
   );
 
   // ─── Actions: Supplier Order ─────────────────────────────
@@ -1177,7 +1410,11 @@ export function UnifiedDataProvider({ children }: { children: React.ReactNode })
 
             return {
               ...r,
-              status: isFinalDelivery ? "Delivered" : r.status,
+              status: isFinalDelivery ? "Delivered" : r.status === "Delivered" ? "Shipped" : r.status,
+              actionRequired: isFinalDelivery
+                ? "Consignment delivered to destination"
+                : `Consignment in transit: ${r.shipment.carrier} (${nextMilestone})`,
+              actionType: isFinalDelivery ? "none" : "view_details",
               shipment: {
                 ...r.shipment,
                 currentMilestone: nextMilestone,
@@ -1203,8 +1440,24 @@ export function UnifiedDataProvider({ children }: { children: React.ReactNode })
           return r;
         })
       );
+
+      const target = getRequestById(requestId);
+      if (target) {
+        setNotifications((prev) => [
+          {
+            id: `notif-${Date.now()}`,
+            type: "Shipment Updated",
+            title: `Shipment Update: ${target.requestNumber}`,
+            description: `Milestone advanced to ${nextMilestone}.`,
+            timestamp: "Just now",
+            read: false,
+            requestId: target.id,
+          },
+          ...prev,
+        ]);
+      }
     },
-    [currentStaffUser]
+    [currentStaffUser, getRequestById]
   );
 
   const recordDelivery = useCallback(
@@ -1343,6 +1596,15 @@ export function UnifiedDataProvider({ children }: { children: React.ReactNode })
     []
   );
 
+  const updateSupplierStatus = useCallback(
+    (supplierId: string, status: SupplierStatus) => {
+      setSuppliers((prev) =>
+        prev.map((s) => (s.id === supplierId ? { ...s, status } : s))
+      );
+    },
+    []
+  );
+
   // ─── User Management & RBAC ──────────────────────────────
   const addStaffUser = useCallback((user: StaffUser) => {
     setStaffUsers((prev) => [user, ...prev]);
@@ -1387,10 +1649,8 @@ export function UnifiedDataProvider({ children }: { children: React.ReactNode })
         localStorage.removeItem(STORAGE_STAFF);
         localStorage.removeItem(STORAGE_NOTIFICATIONS);
         window.dispatchEvent(new CustomEvent("procurly_state_sync", { detail: { key: "RESET_ALL" } }));
-        if ("BroadcastChannel" in window) {
-          const channel = new BroadcastChannel("procurly_sync_channel");
-          channel.postMessage({ type: "RESET_ALL" });
-          channel.close();
+        if (broadcastChannelRef.current) {
+          broadcastChannelRef.current.postMessage({ type: "RESET_ALL" });
         }
       } catch (e) {}
     }
@@ -1439,6 +1699,7 @@ export function UnifiedDataProvider({ children }: { children: React.ReactNode })
         updateCustomerStatus,
         addSupplier,
         updateSupplier,
+        updateSupplierStatus,
         addStaffUser,
         updateStaffUser,
         switchStaffRole,
