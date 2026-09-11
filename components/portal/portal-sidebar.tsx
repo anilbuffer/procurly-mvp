@@ -27,7 +27,6 @@ export function PortalSidebar({ collapsed = false, onToggleCollapse }: PortalSid
   const {
     activeTab,
     setActiveTab,
-    setIsNewRequestModalOpen,
     metrics,
     requests,
     activeCustomer,
@@ -49,37 +48,65 @@ export function PortalSidebar({ collapsed = false, onToggleCollapse }: PortalSid
     (r) => r.status === "Ordered" || r.status === "Approved" || r.status === "Awaiting Payment"
   ).length;
 
-  const navItems: {
-    id: PortalTab;
+  const awaitingPaymentCount = requests.filter(
+    (r) => r.status === "Awaiting Payment" || (r.status === "Approved" && r.payment?.status !== "Paid")
+  ).length;
+
+  const navGroups: {
     label: string;
-    icon: React.ElementType;
-    badge?: number;
-    badgeColor?: string;
+    items: {
+      id: PortalTab;
+      label: string;
+      icon: React.ElementType;
+      badge?: number;
+      badgeColor?: string;
+    }[];
   }[] = [
-      { id: "dashboard", label: "Dashboard", icon: LayoutGrid },
-      {
-        id: "requests",
-        label: "Requests",
-        icon: FileText,
-        badge: metrics.awaitingAction > 0 ? metrics.awaitingAction : undefined,
-        badgeColor: "bg-[#ED2025] text-white",
-      },
-      {
-        id: "orders",
-        label: "Orders",
-        icon: CheckSquare,
-        badge: activeOrdersCount > 0 ? activeOrdersCount : undefined,
-        badgeColor: "bg-purple-600 text-white",
-      },
-      {
-        id: "shipments",
-        label: "Shipments",
-        icon: Truck,
-        badge: metrics.inTransit > 0 ? metrics.inTransit : undefined,
-        badgeColor: "bg-[#2563EB] text-white",
-      },
-      { id: "payments", label: "Payments", icon: CreditCard },
-    ];
+    {
+      label: "MAIN",
+      items: [
+        { id: "dashboard", label: "Dashboard", icon: LayoutGrid },
+      ],
+    },
+    {
+      label: "OPERATIONS",
+      items: [
+        {
+          id: "requests",
+          label: "Requests",
+          icon: FileText,
+          badge: metrics.awaitingAction > 0 ? metrics.awaitingAction : undefined,
+          badgeColor: "bg-[#ED2025] text-white",
+        },
+        {
+          id: "orders",
+          label: "Orders",
+          icon: CheckSquare,
+          badge: activeOrdersCount > 0 ? activeOrdersCount : undefined,
+          badgeColor: "bg-purple-600 text-white",
+        },
+        {
+          id: "shipments",
+          label: "Shipments",
+          icon: Truck,
+          badge: metrics.inTransit > 0 ? metrics.inTransit : undefined,
+          badgeColor: "bg-[#2563EB] text-white",
+        },
+      ],
+    },
+    {
+      label: "FINANCE",
+      items: [
+        {
+          id: "payments",
+          label: "Payments",
+          icon: CreditCard,
+          badge: awaitingPaymentCount > 0 ? awaitingPaymentCount : undefined,
+          badgeColor: "bg-amber-500 text-white",
+        },
+      ],
+    },
+  ];
 
   return (
     <aside
@@ -87,9 +114,13 @@ export function PortalSidebar({ collapsed = false, onToggleCollapse }: PortalSid
         }`}
     >
       {/* Top Section */}
-      <div>
+      <div className="flex flex-col flex-1 min-h-0">
         {/* Brand Header */}
-        <div className="h-16 px-5 flex items-center justify-between border-b border-[#1E2538]/60">
+        <div
+          className={`h-16 flex items-center justify-between border-b border-[#1E2538]/60 shrink-0 ${
+            collapsed ? "px-3" : "px-5"
+          }`}
+        >
           <Link
             href="/customer/dashboard"
             className="flex items-center gap-3 cursor-pointer group"
@@ -124,53 +155,55 @@ export function PortalSidebar({ collapsed = false, onToggleCollapse }: PortalSid
           )}
         </div>
 
-        {/* Navigation Links */}
-        <div className="px-3 py-2 space-y-6">
-          {/* Main Section */}
-          <div>
-            {!collapsed && (
-              <div className="px-3 pb-2 text-[10px] font-bold text-slate-500 uppercase tracking-widest">
-                Main
-              </div>
-            )}
-            <nav className="space-y-1">
-              {navItems.map((item) => {
-                const Icon = item.icon;
-                const isActive = activeTab === item.id;
-                const href = `/customer/${item.id}`;
-                return (
-                  <Link
-                    key={item.id}
-                    href={href}
-                    className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold transition-all group ${isActive
-                      ? "bg-[#1E2538] text-white shadow-inner font-bold"
-                      : "text-slate-400 hover:text-white hover:bg-[#151C2C]"
-                      }`}
-                  >
-                    <div className="flex items-center gap-3">
+        {/* Navigation Groups */}
+        <div className="flex-1 overflow-y-auto px-3 py-4 space-y-6 custom-scrollbar">
+          {navGroups.map((group) => (
+            <div key={group.label} className="space-y-1">
+              {!collapsed && (
+                <h3 className="px-3 text-[10px] font-bold tracking-wider text-slate-500 uppercase">
+                  {group.label}
+                </h3>
+              )}
+              <nav className="space-y-0.5">
+                {group.items.map((item) => {
+                  const Icon = item.icon;
+                  const isActive = activeTab === item.id;
+                  const href = `/customer/${item.id}`;
+                  return (
+                    <Link
+                      key={item.id}
+                      href={href}
+                      title={collapsed ? item.label : undefined}
+                      className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition-all group ${isActive
+                        ? "bg-[#1E2538] text-white shadow-inner font-bold"
+                        : "text-slate-400 hover:text-white hover:bg-[#151C2C]"
+                        } ${collapsed ? "justify-center" : ""}`}
+                    >
                       <Icon
-                        className={`w-4 h-4 transition-colors ${isActive
+                        className={`w-4 h-4 shrink-0 transition-colors ${isActive
                           ? "text-[#ED2025]"
                           : "text-slate-400 group-hover:text-white"
                           }`}
                       />
-                      {!collapsed && <span>{item.label}</span>}
-                    </div>
+                      {!collapsed && (
+                        <span className="flex-1 text-left truncate">{item.label}</span>
+                      )}
 
-                    {!collapsed && item.badge && (
-                      <span
-                        suppressHydrationWarning
-                        className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${item.badgeColor || "bg-slate-700 text-white"
-                          }`}
-                      >
-                        {item.badge}
-                      </span>
-                    )}
-                  </Link>
-                );
-              })}
-            </nav>
-          </div>
+                      {!collapsed && item.badge !== undefined && (
+                        <span
+                          suppressHydrationWarning
+                          className={`text-[10px] font-bold px-2 py-0.5 rounded-full shrink-0 ${item.badgeColor || "bg-slate-700 text-white"
+                            }`}
+                        >
+                          {item.badge}
+                        </span>
+                      )}
+                    </Link>
+                  );
+                })}
+              </nav>
+            </div>
+          ))}
         </div>
       </div>
 
@@ -237,6 +270,7 @@ export function PortalSidebar({ collapsed = false, onToggleCollapse }: PortalSid
               </Link>
               <Link
                 href="/admin/dashboard"
+                onClick={() => setShowUserMenu(false)}
                 className="w-full flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-blue-500/15 text-blue-400 hover:text-blue-300 transition-colors font-medium"
               >
                 <ArrowRightLeft className="w-3.5 h-3.5 text-blue-400" />
@@ -244,6 +278,7 @@ export function PortalSidebar({ collapsed = false, onToggleCollapse }: PortalSid
               </Link>
               <Link
                 href="/login"
+                onClick={() => setShowUserMenu(false)}
                 className="w-full flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-red-500/10 text-red-400 hover:text-red-300 transition-colors"
               >
                 <LogOut className="w-3.5 h-3.5" />

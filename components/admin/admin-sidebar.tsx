@@ -48,7 +48,16 @@ export function AdminSidebar({ collapsed, onToggleCollapse }: AdminSidebarProps)
     return pathname.startsWith(path);
   };
 
-  const navGroups = [
+  const navGroups: {
+    label: string;
+    items: {
+      name: string;
+      href: string;
+      icon: React.ElementType;
+      badge?: number;
+      badgeColor?: string;
+    }[];
+  }[] = [
     {
       label: "MAIN",
       items: [
@@ -62,6 +71,7 @@ export function AdminSidebar({ collapsed, onToggleCollapse }: AdminSidebarProps)
           href: "/admin/requests",
           icon: FileText,
           badge: adminMetrics.totalActive > 0 ? adminMetrics.totalActive : undefined,
+          badgeColor: "bg-[#ED2025] text-white",
         },
         {
           name: "Customers",
@@ -83,13 +93,19 @@ export function AdminSidebar({ collapsed, onToggleCollapse }: AdminSidebarProps)
           href: "/admin/shipments",
           icon: Truck,
           badge: adminMetrics.shipped > 0 ? adminMetrics.shipped : undefined,
+          badgeColor: "bg-[#2563EB] text-white",
         },
+      ],
+    },
+    {
+      label: "FINANCE",
+      items: [
         {
           name: "Payments",
           href: "/admin/payments",
           icon: CreditCard,
           badge: adminMetrics.awaitingPayment > 0 ? adminMetrics.awaitingPayment : undefined,
-          badgeVariant: "amber",
+          badgeColor: "bg-amber-500 text-white",
         },
       ],
     },
@@ -111,7 +127,11 @@ export function AdminSidebar({ collapsed, onToggleCollapse }: AdminSidebarProps)
         }`}
     >
       {/* Brand Header */}
-      <div className="h-16 flex items-center justify-between px-4 border-b border-slate-800 shrink-0">
+      <div
+        className={`h-16 flex items-center justify-between border-b border-slate-800 shrink-0 ${
+          collapsed ? "px-2.5" : "px-4"
+        }`}
+      >
         {!collapsed ? (
           <Link href="/admin/dashboard" className="flex items-center gap-3">
             <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#ED2025] to-[#B91C1C] flex items-center justify-center shadow-md shadow-red-900/30">
@@ -127,7 +147,7 @@ export function AdminSidebar({ collapsed, onToggleCollapse }: AdminSidebarProps)
             </div>
           </Link>
         ) : (
-          <Link href="/admin/dashboard" className="mx-auto">
+          <Link href="/admin/dashboard" className="flex items-center">
             <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-[#ED2025] to-[#B91C1C] flex items-center justify-center shadow-md">
               <span className="text-white font-black text-sm">P</span>
             </div>
@@ -179,11 +199,9 @@ export function AdminSidebar({ collapsed, onToggleCollapse }: AdminSidebarProps)
                     {!collapsed && item.badge !== undefined && (
                       <span
                         suppressHydrationWarning
-                        className={`text-[10px] font-bold px-1.5 py-0.2 rounded-full ${active
-                          ? "bg-white/20 text-white"
-                          : item.badgeVariant === "amber"
-                            ? "bg-amber-500/20 text-amber-300"
-                            : "bg-slate-800 text-slate-300"
+                        className={`text-[10px] font-bold px-2 py-0.5 rounded-full shrink-0 ${active
+                          ? "bg-white/25 text-white"
+                          : item.badgeColor || "bg-slate-800 text-slate-300"
                           }`}
                       >
                         {item.badge}
