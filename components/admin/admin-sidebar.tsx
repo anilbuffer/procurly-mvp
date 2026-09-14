@@ -182,25 +182,25 @@ export function AdminSidebar({ collapsed, onToggleCollapse }: AdminSidebarProps)
                     key={item.name}
                     href={item.href}
                     title={collapsed ? item.name : undefined}
-                    className={`group flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-medium transition-all ${active
-                      ? "bg-[#ED2025] text-white shadow-md shadow-red-900/20 font-semibold"
-                      : "text-slate-400 hover:text-slate-100 hover:bg-slate-800/70"
+                    className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition-all group ${active
+                      ? "bg-[#1E2538] text-white shadow-inner font-bold"
+                      : "text-slate-400 hover:text-white hover:bg-[#151C2C]"
                       } ${collapsed ? "justify-center" : ""}`}
                   >
                     <Icon
-                      className={`w-4 h-4 shrink-0 transition-transform group-hover:scale-110 ${active ? "text-white" : "text-slate-400 group-hover:text-slate-200"
+                      className={`w-4 h-4 shrink-0 transition-colors ${active
+                        ? "text-[#ED2025]"
+                        : "text-slate-400 group-hover:text-white"
                         }`}
                     />
                     {!collapsed && (
-                      <span className="flex-1 truncate">{item.name}</span>
+                      <span className="flex-1 truncate text-left">{item.name}</span>
                     )}
 
                     {!collapsed && item.badge !== undefined && (
                       <span
                         suppressHydrationWarning
-                        className={`text-[10px] font-bold px-2 py-0.5 rounded-full shrink-0 ${active
-                          ? "bg-white/25 text-white"
-                          : item.badgeColor || "bg-slate-800 text-slate-300"
+                        className={`text-[10px] font-bold px-2 py-0.5 rounded-full shrink-0 ${item.badgeColor || "bg-slate-700 text-white"
                           }`}
                       >
                         {item.badge}
