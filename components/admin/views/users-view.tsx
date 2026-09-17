@@ -14,6 +14,7 @@ export function UsersView() {
   // Form State
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
   const [role, setRole] = useState<StaffRole>("Procurement");
   const [department, setDepartment] = useState("Strategic Sourcing");
   const [title, setTitle] = useState("Sourcing Specialist");
@@ -22,6 +23,7 @@ export function UsersView() {
     setEditingUser(null);
     setName("");
     setEmail("");
+    setPhone("");
     setRole("Procurement");
     setDepartment("Strategic Sourcing");
     setTitle("Sourcing Specialist");
@@ -32,6 +34,7 @@ export function UsersView() {
     setEditingUser(user);
     setName(user.name);
     setEmail(user.email);
+    setPhone(user.phone || "");
     setRole(user.role);
     setDepartment(user.department);
     setTitle(user.title);
@@ -45,6 +48,7 @@ export function UsersView() {
       updateStaffUser(editingUser.id, {
         name,
         email,
+        phone,
         role,
         department,
         title,
@@ -54,6 +58,7 @@ export function UsersView() {
         id: `user-staff-${Date.now()}`,
         name,
         email,
+        phone,
         role,
         department,
         title,
@@ -200,16 +205,29 @@ export function UsersView() {
                 />
               </div>
 
-              <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">Email Address</label>
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="e.g. liam.cooper@procurly.io"
-                  required
-                  className="w-full text-xs p-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#ED2025]/30 focus:border-[#ED2025]"
-                />
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 mb-1">Email Address</label>
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="e.g. liam.cooper@procurly.io"
+                    required
+                    className="w-full text-xs p-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#ED2025]/30 focus:border-[#ED2025]"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 mb-1">Phone Number</label>
+                  <input
+                    type="tel"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    placeholder="e.g. +64 21 000 0000"
+                    className="w-full text-xs p-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#ED2025]/30 focus:border-[#ED2025]"
+                  />
+                </div>
               </div>
 
               <div className="grid grid-cols-2 gap-3">

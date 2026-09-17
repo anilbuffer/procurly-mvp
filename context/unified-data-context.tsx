@@ -58,7 +58,7 @@ interface UnifiedDataContextType {
   // Actions - Requests
   getRequestById: (idOrNumber: string) => PartRequest | undefined;
   submitCustomerRequest: (data: Partial<PartRequest>) => PartRequest;
-  updateRequestStatus: (requestId: string, status: RequestStatus) => void;
+  updateRequestStatus: (requestId: string, status: RequestStatus, invoiceNumber?: string) => void;
   assignStaff: (requestId: string, staffName: string, staffRole: string) => void;
 
   // Actions - Sourcing & Quotes
@@ -101,7 +101,7 @@ interface UnifiedDataContextType {
     requestId: string,
     shipment: {
       carrier: string;
-      trackingNumber: string;
+      trackingNumber?: string;
       estimatedDelivery: string;
       origin?: string;
       destination?: string;
@@ -447,7 +447,7 @@ export function UnifiedDataProvider({ children }: { children: React.ReactNode })
 
   // ─── Actions: Update Status & Assignment ────────────────
   const updateRequestStatus = useCallback(
-    (requestId: string, status: RequestStatus) => {
+    (requestId: string, status: RequestStatus, invoiceNumber?: string) => {
       let targetReqNumber = requestId;
       setRequests((prev) =>
         prev.map((r) => {
@@ -499,7 +499,7 @@ export function UnifiedDataProvider({ children }: { children: React.ReactNode })
                 updatedPayment = {
                   id: `pay-${r.requestNumber}`,
                   requestId: r.id,
-                  invoiceNumber: `INV-2026-${r.requestNumber.replace(/[^0-9]/g, "")}`,
+                  invoiceNumber: invoiceNumber || `INV-2026-${r.requestNumber.replace(/[^0-9]/g, "")}`,
                   amount: amt,
                   currency: "NZD",
                   status: paymentStatus as "Paid" | "Unpaid",
@@ -521,7 +521,7 @@ export function UnifiedDataProvider({ children }: { children: React.ReactNode })
                 updatedPayment = {
                   id: `pay-${r.requestNumber}`,
                   requestId: r.id,
-                  invoiceNumber: `INV-2026-${r.requestNumber.replace(/[^0-9]/g, "")}`,
+                  invoiceNumber: invoiceNumber || `INV-2026-${r.requestNumber.replace(/[^0-9]/g, "")}`,
                   amount: amt,
                   currency: "NZD",
                   status: "Unpaid",
@@ -551,11 +551,9 @@ export function UnifiedDataProvider({ children }: { children: React.ReactNode })
               actionType = "none";
             } else if (status === "Shipped") {
               if (!updatedShipment) {
-                const tracking = `NZ${Math.floor(100000000 + Math.random() * 900000000)}`;
                 const initialMilestone: ShipmentMilestone = "Received At Shipping Facility";
                 updatedShipment = {
                   id: `ship-${Date.now()}`,
-                  trackingNumber: tracking,
                   carrier: "Autohub Express Air Cargo",
                   currentMilestone: initialMilestone,
                   origin: "Nagoya Consolidation Hub, Japan",
@@ -573,7 +571,7 @@ export function UnifiedDataProvider({ children }: { children: React.ReactNode })
                   ],
                 };
               }
-              actionRequired = `Consignment in transit: ${updatedShipment.carrier} (${updatedShipment.trackingNumber})`;
+              actionRequired = `Consignment in transit: ${updatedShipment.carrier}`;
               actionType = "view_details";
             } else if (status === "Delivered") {
               if (updatedShipment) {
@@ -1266,9 +1264,9 @@ export function UnifiedDataProvider({ children }: { children: React.ReactNode })
   const createShipment = useCallback(
     (
       requestId: string,
-      shipmentData: {
+      shipment: {
         carrier: string;
-        trackingNumber: string;
+        trackingNumber?: string;
         estimatedDelivery: string;
         origin?: string;
         destination?: string;
@@ -1283,18 +1281,18 @@ export function UnifiedDataProvider({ children }: { children: React.ReactNode })
               status: "Shipped", // Top-level status is SHIPPED
               shipment: {
                 id: `ship-${Date.now()}`,
-                trackingNumber: shipmentData.trackingNumber,
-                carrier: shipmentData.carrier,
+                carrier: shipment.carrier,
+                trackingNumber: shipment.trackingNumber,
                 currentMilestone: initialMilestone,
-                origin: shipmentData.origin || "Nagoya Consolidation Hub, Japan",
-                destination: shipmentData.destination || r.deliveryAddress.label,
-                estimatedDelivery: shipmentData.estimatedDelivery,
+                origin: shipment.origin || "Nagoya Consolidation Hub, Japan",
+                destination: shipment.destination || r.deliveryAddress.label,
+                estimatedDelivery: shipment.estimatedDelivery,
                 dispatchedAt: new Date().toISOString(),
                 lastUpdated: "Just now",
                 milestonesHistory: [
                   {
                     milestone: initialMilestone,
-                    location: shipmentData.origin || "Nagoya Hub, Japan",
+                    location: shipment.origin || "Nagoya Hub, Japan",
                     timestamp: new Date().toISOString(),
                     description: "Package received, scanned, and allocated for airfreight consolidation.",
                     isCompleted: true,
@@ -1336,7 +1334,7 @@ export function UnifiedDataProvider({ children }: { children: React.ReactNode })
                   },
                 ],
               },
-              actionRequired: `Shipment created: ${shipmentData.carrier} (${shipmentData.trackingNumber})`,
+              actionRequired: `Shipment created: ${shipment.carrier} (${shipment.trackingNumber || "TBD"})`,
               actionType: "view_details",
               lastUpdated: "Just now",
               activity: [
@@ -1345,7 +1343,7 @@ export function UnifiedDataProvider({ children }: { children: React.ReactNode })
                   timestamp: new Date().toISOString(),
                   timeLabel: "Just now",
                   title: "Shipment created",
-                  description: `Consignment created with ${shipmentData.carrier} (Tracking: ${shipmentData.trackingNumber}). Status: SHIPPED.`,
+                  description: `Consignment created with ${shipment.carrier} (Tracking: ${shipment.trackingNumber || "TBD"}). Status: SHIPPED.`,
                   actor: currentStaffUser.name,
                   type: "shipment",
                 },
@@ -1364,7 +1362,7 @@ export function UnifiedDataProvider({ children }: { children: React.ReactNode })
             id: `notif-${Date.now()}`,
             type: "Shipment Updated",
             title: `Shipment Created: ${target.requestNumber}`,
-            description: `${shipmentData.carrier} tracking #${shipmentData.trackingNumber} generated.`,
+            description: `${shipment.carrier} tracking #${shipment.trackingNumber || "TBD"} generated.`,
             timestamp: "Just now",
             read: false,
             requestId: target.id,

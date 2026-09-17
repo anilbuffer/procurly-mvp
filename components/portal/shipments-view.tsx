@@ -40,7 +40,6 @@ export function ShipmentsView() {
   const searchParams = useSearchParams();
   const { requests, setSelectedRequest, setActiveTab } = usePortal();
 
-  const [copiedTracking, setCopiedTracking] = useState<string | null>(null);
   const [searchFilter, setSearchFilter] = useState("");
   const [milestoneFilter, setMilestoneFilter] = useState<string>("All");
 
@@ -82,7 +81,6 @@ export function ShipmentsView() {
         const matchMake = (req.vehicle?.make || "").toLowerCase().includes(q);
         const matchModel = (req.vehicle?.model || "").toLowerCase().includes(q);
         const matchVin = (req.vehicle?.vin || "").toLowerCase().includes(q);
-        const matchTrack = (sh?.trackingNumber || "").toLowerCase().includes(q);
         const matchCarrier = (sh?.carrier || "").toLowerCase().includes(q);
         const matchOrigin = (sh?.origin || "").toLowerCase().includes(q);
         const matchDest = (sh?.destination || req.deliveryAddress?.label || "").toLowerCase().includes(q);
@@ -93,7 +91,6 @@ export function ShipmentsView() {
           matchMake ||
           matchModel ||
           matchVin ||
-          matchTrack ||
           matchCarrier ||
           matchOrigin ||
           matchDest
@@ -122,12 +119,6 @@ export function ShipmentsView() {
   const handleBackToList = () => {
     setSelectedReqId(null);
     router.push("/customer/shipments");
-  };
-
-  const handleCopy = (code: string) => {
-    navigator.clipboard.writeText(code);
-    setCopiedTracking(code);
-    setTimeout(() => setCopiedTracking(null), 2000);
   };
 
   const getMilestoneBadge = (milestone: ShipmentMilestone) => {
@@ -204,10 +195,6 @@ export function ShipmentsView() {
               Shipments /{" "}
               <span className="font-mono font-bold text-slate-900">
                 {selectedReq.requestNumber}
-              </span>{" "}
-              •{" "}
-              <span className="font-mono font-semibold text-slate-700">
-                {sh.trackingNumber}
               </span>
             </div>
           </div>
@@ -260,7 +247,7 @@ export function ShipmentsView() {
             </div>
 
             {/* Quick Metrics Badges */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 text-xs">
               <div className="bg-slate-50 p-3 rounded-xl border border-slate-200">
                 <span className="text-[10px] text-slate-400 uppercase font-bold block">
                   Carrier
@@ -268,28 +255,6 @@ export function ShipmentsView() {
                 <span className="font-bold text-slate-900 truncate block" title={sh.carrier}>
                   {sh.carrier}
                 </span>
-              </div>
-
-              <div className="bg-slate-50 p-3 rounded-xl border border-slate-200">
-                <span className="text-[10px] text-slate-400 uppercase font-bold block">
-                  Tracking Code
-                </span>
-                <div className="flex items-center gap-1.5">
-                  <span className="font-mono font-bold text-slate-900 truncate">
-                    {sh.trackingNumber}
-                  </span>
-                  <button
-                    onClick={() => handleCopy(sh.trackingNumber)}
-                    className="text-slate-400 hover:text-slate-700 p-1 cursor-pointer"
-                    title="Copy tracking number"
-                  >
-                    {copiedTracking === sh.trackingNumber ? (
-                      <Check className="w-3.5 h-3.5 text-emerald-600" />
-                    ) : (
-                      <Copy className="w-3.5 h-3.5" />
-                    )}
-                  </button>
-                </div>
               </div>
 
               <div className="bg-emerald-50 p-3 rounded-xl border border-emerald-200">
@@ -639,7 +604,7 @@ export function ShipmentsView() {
             type="text"
             value={searchFilter}
             onChange={(e) => setSearchFilter(e.target.value)}
-            placeholder="Search tracking, req, vehicle, carrier..."
+            placeholder="Search req, vehicle, carrier..."
             className="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 placeholder:text-slate-400 focus:outline-hidden focus:ring-2 focus:ring-[#ED2025]/20 focus:border-[#ED2025] transition-all"
           />
           {searchFilter && (
@@ -681,7 +646,6 @@ export function ShipmentsView() {
             <table className="w-full text-left border-collapse text-xs">
               <thead>
                 <tr className="border-b border-slate-100 bg-slate-50/70 text-[11px] font-bold text-slate-500 uppercase tracking-wider">
-                  <th className="py-3.5 px-6">Tracking Number</th>
                   <th className="py-3.5 px-4">Request ID</th>
                   <th className="py-3.5 px-4">Vehicle</th>
                   <th className="py-3.5 px-4">Part Details</th>
@@ -694,7 +658,6 @@ export function ShipmentsView() {
               <tbody className="divide-y divide-slate-100 text-slate-700">
                 {filteredRequests.map((req) => {
                   const sh = req.shipment || {
-                    trackingNumber: `NZ-TRK-${req.requestNumber.replace("PR-", "")}`,
                     carrier: "Air Cargo Express",
                     currentMilestone: req.status === "Delivered" ? "Delivered" : "In Transit",
                     origin: "International Hub",
@@ -712,29 +675,6 @@ export function ShipmentsView() {
                       className="hover:bg-slate-50/80 cursor-pointer transition-colors group"
                       title="Click row to view shipment details"
                     >
-                      {/* Tracking Number */}
-                      <td className="py-4 px-6 whitespace-nowrap">
-                        <div className="flex items-center gap-2">
-                          <span className="font-mono font-black text-slate-900 group-hover:text-[#ED2025] transition-colors">
-                            {sh.trackingNumber}
-                          </span>
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleCopy(sh.trackingNumber);
-                            }}
-                            className="text-slate-400 hover:text-slate-700 p-0.5 rounded transition-colors cursor-pointer"
-                            title="Copy tracking number"
-                          >
-                            {copiedTracking === sh.trackingNumber ? (
-                              <Check className="w-3.5 h-3.5 text-emerald-600" />
-                            ) : (
-                              <Copy className="w-3.5 h-3.5" />
-                            )}
-                          </button>
-                        </div>
-                      </td>
-
                       {/* Request ID */}
                       <td className="py-4 px-4 font-mono font-bold text-slate-700 whitespace-nowrap">
                         {req.requestNumber}

@@ -717,12 +717,6 @@ export function RequestDetailsModal() {
                   <h3 className="text-base font-bold text-slate-900">
                     {req.shipment.carrier}
                   </h3>
-                  <div className="flex items-center gap-2 text-xs">
-                    <span className="text-slate-500">Tracking Code:</span>
-                    <span className="font-mono font-bold text-slate-900 bg-slate-100 px-2 py-0.5 rounded">
-                      {req.shipment.trackingNumber}
-                    </span>
-                  </div>
                 </div>
 
                 <div className="text-right">

@@ -53,7 +53,6 @@ export function ShipmentsView() {
         (r.requestNumber || "").toLowerCase().includes(q) ||
         (r.customerName || "").toLowerCase().includes(q) ||
         (r.part?.name || "").toLowerCase().includes(q) ||
-        (r.shipment?.trackingNumber && r.shipment.trackingNumber.toLowerCase().includes(q)) ||
         (r.shipment?.carrier && r.shipment.carrier.toLowerCase().includes(q))
       );
     });
@@ -154,7 +153,6 @@ export function ShipmentsView() {
                 <th className="py-3 px-4">Customer</th>
                 <th className="py-3 px-4">Part</th>
                 <th className="py-3 px-4">Carrier</th>
-                <th className="py-3 px-4">Tracking Number</th>
                 <th className="py-3 px-4">Shipment Status</th>
                 <th className="py-3 px-4">Estimated Delivery</th>
                 <th className="py-3 px-4">Last Updated</th>
@@ -189,9 +187,6 @@ export function ShipmentsView() {
                       </td>
                       <td className="py-3.5 px-4 text-slate-700 font-semibold">
                         {req.shipment?.carrier || "Standard Freight"}
-                      </td>
-                      <td className="py-3.5 px-4 font-mono font-bold text-[#2B4499]">
-                        {req.shipment?.trackingNumber || "PENDING"}
                       </td>
                       <td className="py-3.5 px-4">
                         {req.shipment?.currentMilestone ? (

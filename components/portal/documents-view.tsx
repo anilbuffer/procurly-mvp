@@ -89,10 +89,9 @@ export function DocumentsView() {
       // 3. Customs / Waybill if Shipped / Delivered / Completed
       if (req.shipment || ["Shipped", "Delivered", "Completed"].includes(req.status)) {
         const carrier = req.shipment?.carrier || "DHL Express Airfreight";
-        const tracking = req.shipment?.trackingNumber || `AWB-${req.requestNumber.replace(/[^0-9]/g, "")}`;
         list.push({
           id: `customs-${req.id}`,
-          title: `NZ Customs MPI Clearance & Consignment (${carrier} - ${tracking})`,
+          title: `NZ Customs MPI Clearance & Consignment (${carrier})`,
           category: "Customs & Compliance",
           date: req.shipment?.dispatchedAt ? req.shipment.dispatchedAt.split("T")[0] : "07 Sep 2026",
           size: "412 KB",

@@ -241,9 +241,9 @@ export interface MilestoneLog {
 
 export interface ShipmentDetails {
   id?: string;
-  trackingNumber: string;
   carrier: string;
   carrierWebsite?: string;
+  trackingNumber?: string;
   currentMilestone: ShipmentMilestone;
   origin: string;
   destination: string;
@@ -311,6 +311,7 @@ export interface StaffUser {
   avatarUrl?: string;
   department: string;
   title: string;
+  phone?: string;
 }
 
 // ─── Unified Part Request (Shared by Admin & Customer) ───────

@@ -40,10 +40,8 @@ export function ShipmentTab({ request: initialRequest }: ShipmentTabProps) {
 
   // Create Shipment Form
   const [carrier, setCarrier] = useState("DHL Global Forwarding");
-  const [trackingNumber, setTrackingNumber] = useState(
-    "NZ" + Math.floor(100000000 + Math.random() * 900000000)
-  );
   const [estimatedDelivery, setEstimatedDelivery] = useState("2026-09-18");
+  const [trackingNumber, setTrackingNumber] = useState("AWB-9988776655");
   const [origin, setOrigin] = useState("Nagoya Consolidation Hub, Japan");
   const [destination, setDestination] = useState(request.deliveryAddress.label);
 
@@ -201,13 +199,6 @@ export function ShipmentTab({ request: initialRequest }: ShipmentTabProps) {
             </div>
 
             <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs">
-              <span className="text-slate-400 block text-[11px]">Tracking Number</span>
-              <span className="font-mono font-bold text-[#2B4499] text-sm">
-                {shipment.trackingNumber}
-              </span>
-            </div>
-
-            <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs">
               <span className="text-slate-400 block text-[11px]">Origin & Transit</span>
               <span className="font-medium text-slate-800 line-clamp-1">{shipment.origin}</span>
             </div>
@@ -332,7 +323,7 @@ export function ShipmentTab({ request: initialRequest }: ShipmentTabProps) {
                     value={trackingNumber}
                     onChange={(e) => setTrackingNumber(e.target.value)}
                     required
-                    className="w-full text-xs p-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#ED2025]/30 focus:border-[#ED2025] font-mono"
+                    className="w-full text-xs p-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#ED2025]/30 focus:border-[#ED2025]"
                   />
                 </div>
 
@@ -390,7 +381,7 @@ export function ShipmentTab({ request: initialRequest }: ShipmentTabProps) {
           <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-200 animate-in zoom-in-95">
             <h3 className="text-base font-bold text-slate-900 mb-1">Advance Shipping Milestone</h3>
             <p className="text-xs text-slate-500 mb-4">
-              Select the milestone achieved for tracking {shipment?.trackingNumber}.
+              Select the milestone achieved for this shipment.
             </p>
 
             <form onSubmit={handleAdvanceMilestone} className="space-y-4">

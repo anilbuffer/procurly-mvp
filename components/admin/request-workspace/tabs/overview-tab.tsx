@@ -38,6 +38,10 @@ export function OverviewTab({ request }: OverviewTabProps) {
   const [showStatusModal, setShowStatusModal] = useState(false);
   const [newStatus, setNewStatus] = useState<RequestStatus>(request.status);
 
+  // Invoice prompt modal state
+  const [showInvoiceModal, setShowInvoiceModal] = useState(false);
+  const [invoiceNumberInput, setInvoiceNumberInput] = useState("");
+
   // Assign staff modal state
   const [showAssignModal, setShowAssignModal] = useState(false);
   const [selectedStaffId, setSelectedStaffId] = useState(
@@ -50,8 +54,19 @@ export function OverviewTab({ request }: OverviewTabProps) {
   const [isCustomerVisible, setIsCustomerVisible] = useState(false);
 
   const handleStatusChange = () => {
-    updateRequestStatus(request.id, newStatus);
-    setShowStatusModal(false);
+    if (newStatus === "Approved" || newStatus === "Awaiting Payment") {
+      setShowStatusModal(false);
+      setShowInvoiceModal(true);
+    } else {
+      updateRequestStatus(request.id, newStatus);
+      setShowStatusModal(false);
+    }
+  };
+
+  const handleInvoiceSubmit = () => {
+    updateRequestStatus(request.id, newStatus, invoiceNumberInput);
+    setShowInvoiceModal(false);
+    setInvoiceNumberInput("");
   };
 
   const handleAssignStaff = () => {
@@ -521,6 +536,49 @@ export function OverviewTab({ request }: OverviewTabProps) {
                 className="px-4 py-2 text-xs font-semibold bg-[#ED2025] hover:bg-[#C8101E] disabled:opacity-50 text-white rounded-xl shadow-xs"
               >
                 Save Note
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL: Invoice Number Prompt */}
+      {showInvoiceModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs p-4">
+          <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-200 animate-in zoom-in-95">
+            <h3 className="text-base font-bold text-slate-900 mb-1">Enter Invoice Number</h3>
+            <p className="text-xs text-slate-500 mb-4">
+              Please provide the real invoice number from your accounting software.
+            </p>
+            <div className="space-y-4 mb-6">
+              <div>
+                <label className="block text-xs font-bold text-slate-700 mb-1">
+                  Invoice Number
+                </label>
+                <input
+                  type="text"
+                  value={invoiceNumberInput}
+                  onChange={(e) => setInvoiceNumberInput(e.target.value)}
+                  placeholder="e.g. XERO-9982"
+                  className="w-full text-xs p-3 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#ED2025]/30 focus:border-[#ED2025]"
+                />
+              </div>
+            </div>
+            <div className="flex justify-end gap-2">
+              <button
+                type="button"
+                onClick={() => setShowInvoiceModal(false)}
+                className="px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-xl"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleInvoiceSubmit}
+                disabled={!invoiceNumberInput.trim()}
+                className="px-4 py-2 text-xs font-semibold bg-[#ED2025] hover:bg-[#C8101E] disabled:opacity-50 text-white rounded-xl shadow-xs"
+              >
+                Confirm Status Change
               </button>
             </div>
           </div>
