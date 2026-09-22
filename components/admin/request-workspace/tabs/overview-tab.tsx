@@ -287,9 +287,17 @@ export function OverviewTab({ request }: OverviewTabProps) {
                 <span className="font-semibold text-slate-800">{request.part.preference}</span>
               </div>
             </div>
-            <div>
-              <span className="text-slate-400 block text-[11px]">Condition Requirement</span>
-              <span className="font-medium text-slate-700">{request.part.condition}</span>
+            <div className="grid grid-cols-2 gap-2">
+              <div>
+                <span className="text-slate-400 block text-[11px]">Condition Requirement</span>
+                <span className="font-medium text-slate-700">{request.part.condition}</span>
+              </div>
+              {request.supporting?.freightPreference && (
+                <div>
+                  <span className="text-slate-400 block text-[11px]">Freight Preference</span>
+                  <span className="font-bold text-[#ED2025]">{request.supporting.freightPreference}</span>
+                </div>
+              )}
             </div>
           </div>
         </div>

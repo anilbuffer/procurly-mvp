@@ -13,6 +13,7 @@ import {
   Truck,
   AlertTriangle,
 } from "lucide-react";
+import Link from "next/link";
 import { usePortal } from "@/context/portal-context";
 import { PartRequest, RequestStatus } from "@/types/portal";
 
@@ -30,6 +31,12 @@ export function RequestsView() {
   } = usePortal();
 
   const [statusFilter, setStatusFilter] = useState<string>("All");
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const ITEMS_PER_PAGE = 10;
+
+  React.useEffect(() => {
+    setCurrentPage(1);
+  }, [statusFilter, searchQuery]);
 
   const filteredRequests = useMemo(() => {
     return requests.filter((r) => {
@@ -69,6 +76,12 @@ export function RequestsView() {
     });
   }, [requests, statusFilter, searchQuery]);
 
+  const totalPages = Math.ceil(filteredRequests.length / ITEMS_PER_PAGE);
+  const paginatedRequests = useMemo(() => {
+    const start = (currentPage - 1) * ITEMS_PER_PAGE;
+    return filteredRequests.slice(start, start + ITEMS_PER_PAGE);
+  }, [filteredRequests, currentPage]);
+
   const getStatusBadge = (status: RequestStatus) => {
     switch (status) {
       case "Submitted":
@@ -98,46 +111,52 @@ export function RequestsView() {
     <div className="space-y-6">
       {/* Top Controls Bar */}
       <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 flex flex-col md:flex-row md:items-center justify-between gap-4">
-        {/* Status Tabs Covering 9 Canonical Stages */}
-        <div className="flex flex-wrap items-center gap-1.5 text-xs font-bold">
-          {[
-            "All",
-            "Awaiting Action",
-            "Submitted",
-            "Sourcing",
-            "Quoted",
-            "Approved",
-            "Awaiting Payment",
-            "Ordered",
-            "Shipped",
-            "Delivered",
-            "Completed",
-          ].map((tab) => {
-            const isActive = statusFilter === tab;
-            return (
-              <button
-                key={tab}
-                onClick={() => setStatusFilter(tab)}
-                className={`px-3 py-1.5 rounded-xl transition-all ${
-                  isActive
-                    ? "bg-[#0C101A] text-white shadow-sm"
-                    : "bg-slate-100 hover:bg-slate-200/70 text-slate-600"
-                }`}
-              >
+        {/* Status Filter Select */}
+        <div className="flex items-center gap-3">
+          <label htmlFor="status-filter" className="text-xs font-bold text-slate-500 uppercase tracking-wider shrink-0">
+            Filter Status:
+          </label>
+          <select
+            id="status-filter"
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+            className="text-[13px] font-bold text-slate-700 bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 outline-none focus:border-[#ED2025] focus:ring-1 focus:ring-[#ED2025] transition-all min-w-[180px] cursor-pointer appearance-none"
+            style={{
+              backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke-width='2.5' stroke='%2364748b'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E")`,
+              backgroundRepeat: "no-repeat",
+              backgroundPosition: "right 14px center",
+              backgroundSize: "14px",
+              paddingRight: "40px",
+            }}
+          >
+            {[
+              "All",
+              "Awaiting Action",
+              "Submitted",
+              "Sourcing",
+              "Quoted",
+              "Approved",
+              "Awaiting Payment",
+              "Ordered",
+              "Shipped",
+              "Delivered",
+              "Completed",
+            ].map((tab) => (
+              <option key={tab} value={tab}>
                 {tab}
-              </button>
-            );
-          })}
+              </option>
+            ))}
+          </select>
         </div>
 
         {/* Action button */}
-        <button
-          onClick={() => setIsNewRequestModalOpen(true)}
+        <Link
+          href="/customer/requests/new"
           className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#ED2025] hover:bg-[#d11a1f] text-white font-bold text-xs uppercase tracking-wider rounded-xl shadow-md transition-all shrink-0"
         >
           <Plus className="w-4 h-4 stroke-[3]" />
           <span>New Parts Request</span>
-        </button>
+        </Link>
       </div>
 
       {/* Requests Table */}
@@ -163,7 +182,7 @@ export function RequestsView() {
                   </td>
                 </tr>
               ) : (
-                filteredRequests.map((req) => (
+                paginatedRequests.map((req) => (
                   <tr
                     key={req.id}
                     onClick={() => setSelectedRequest(req)}
@@ -192,6 +211,11 @@ export function RequestsView() {
                       <p className="text-[11px] text-slate-500">
                         Qty: {req.part.quantity} • {req.part.condition}
                       </p>
+                      {req.supporting?.freightPreference && (
+                        <p className="text-[11px] text-[#0ea5e9] font-medium mt-0.5">
+                          Freight: {req.supporting.freightPreference}
+                        </p>
+                      )}
                     </td>
 
                     {/* Date */}
@@ -256,6 +280,34 @@ export function RequestsView() {
             </tbody>
           </table>
         </div>
+
+        {/* Pagination Footer */}
+        {totalPages > 1 && (
+          <div className="flex items-center justify-between border-t border-slate-100 bg-slate-50/50 px-6 py-4">
+            <span className="text-[11px] font-medium text-slate-500 uppercase tracking-wider">
+              Showing {(currentPage - 1) * ITEMS_PER_PAGE + 1} to {Math.min(currentPage * ITEMS_PER_PAGE, filteredRequests.length)} of {filteredRequests.length} requests
+            </span>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                disabled={currentPage === 1}
+                className="px-3 py-1.5 text-[11px] font-bold uppercase tracking-wider text-slate-600 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 hover:text-slate-900 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+              >
+                Previous
+              </button>
+              <span className="text-[11px] font-bold text-slate-600 px-3 uppercase tracking-wider">
+                Page {currentPage} of {totalPages}
+              </span>
+              <button
+                onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                disabled={currentPage === totalPages}
+                className="px-3 py-1.5 text-[11px] font-bold uppercase tracking-wider text-slate-600 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 hover:text-slate-900 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+              >
+                Next
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

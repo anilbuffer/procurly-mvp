@@ -26,6 +26,7 @@ import { PaymentTab } from "./tabs/payment-tab";
 import { ShipmentTab } from "./tabs/shipment-tab";
 import { DocumentsTab } from "./tabs/documents-tab";
 import { ActivityTab } from "./tabs/activity-tab";
+import { QAMediaTab } from "./tabs/qa-media-tab";
 
 import { useUnifiedData } from "@/context/unified-data-context";
 
@@ -107,13 +108,15 @@ export function RequestDetailWorkspace({
       case "sourcing":
         return <SourcingTab request={request} />;
       case "quote":
-        return <QuoteTab request={request} />;
+        return <QuoteTab request={request} onNavigateToTab={(tab) => setActiveTab(tab as any)} />;
       case "payment":
         return <PaymentTab request={request} onNavigateToTab={(tab) => setActiveTab(tab as any)} />;
       case "shipment":
         return <ShipmentTab request={request} />;
       case "documents":
         return <DocumentsTab request={request} />;
+      case "qa":
+        return <QAMediaTab request={request} />;
       case "activity":
         return <ActivityTab request={request} />;
       default:
@@ -147,6 +150,10 @@ export function RequestDetailWorkspace({
       id: "documents",
       label: "Documents",
       badge: ((request.documents?.length || 0) + (request.supporting.photos?.length || 0)) || undefined,
+    },
+    {
+      id: "qa",
+      label: "QA Media",
     },
     {
       id: "activity",

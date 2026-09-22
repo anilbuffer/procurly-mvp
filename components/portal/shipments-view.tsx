@@ -43,6 +43,13 @@ export function ShipmentsView() {
   const [searchFilter, setSearchFilter] = useState("");
   const [milestoneFilter, setMilestoneFilter] = useState<string>("All");
 
+  const [currentPage, setCurrentPage] = useState(1);
+  const ITEMS_PER_PAGE = 10;
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [milestoneFilter, searchFilter]);
+
   // Read initial shipment ID from URL if provided (e.g. ?id=PR-2026-004)
   const initialId = searchParams ? searchParams.get("id") : null;
   const [selectedReqId, setSelectedReqId] = useState<string | null>(initialId);
@@ -100,6 +107,12 @@ export function ShipmentsView() {
       return true;
     });
   }, [shippedRequests, milestoneFilter, searchFilter]);
+
+  const totalPages = Math.ceil(filteredRequests.length / ITEMS_PER_PAGE);
+  const paginatedShipments = useMemo(() => {
+    const start = (currentPage - 1) * ITEMS_PER_PAGE;
+    return filteredRequests.slice(start, start + ITEMS_PER_PAGE);
+  }, [filteredRequests, currentPage]);
 
   // Selected request object if viewing details
   const selectedReq = useMemo(() => {
@@ -207,17 +220,7 @@ export function ShipmentsView() {
               <FileText className="w-3.5 h-3.5 text-slate-500" />
               <span>Full Request Audit Log</span>
             </button>
-            {sh.carrierWebsite && (
-              <a
-                href={sh.carrierWebsite}
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs rounded-xl transition-colors shadow-xs"
-              >
-                <span>Carrier Portal</span>
-                <ExternalLink className="w-3.5 h-3.5" />
-              </a>
-            )}
+
           </div>
         </div>
 
@@ -656,7 +659,7 @@ export function ShipmentsView() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 text-slate-700">
-                {filteredRequests.map((req) => {
+                {paginatedShipments.map((req) => {
                   const sh = req.shipment || {
                     carrier: "Air Cargo Express",
                     currentMilestone: req.status === "Delivered" ? "Delivered" : "In Transit",
@@ -747,6 +750,34 @@ export function ShipmentsView() {
               </tbody>
             </table>
           </div>
+
+          {/* Pagination Footer */}
+          {totalPages > 1 && (
+            <div className="flex items-center justify-between border-t border-slate-100 bg-slate-50/50 px-6 py-4">
+              <span className="text-[11px] font-medium text-slate-500 uppercase tracking-wider">
+                Showing {(currentPage - 1) * ITEMS_PER_PAGE + 1} to {Math.min(currentPage * ITEMS_PER_PAGE, filteredRequests.length)} of {filteredRequests.length} shipments
+              </span>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                  disabled={currentPage === 1}
+                  className="px-3 py-1.5 text-[11px] font-bold uppercase tracking-wider text-slate-600 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 hover:text-slate-900 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                >
+                  Previous
+                </button>
+                <span className="text-[11px] font-bold text-slate-600 px-3 uppercase tracking-wider">
+                  Page {currentPage} of {totalPages}
+                </span>
+                <button
+                  onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                  disabled={currentPage === totalPages}
+                  className="px-3 py-1.5 text-[11px] font-bold uppercase tracking-wider text-slate-600 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 hover:text-slate-900 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                >
+                  Next
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       )}
     </div>

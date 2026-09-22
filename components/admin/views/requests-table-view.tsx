@@ -27,6 +27,9 @@ export function RequestsTableView() {
   const selectedRequestId = searchParams.get("id");
   const selectedRequest = selectedRequestId ? getRequestById(selectedRequestId) : null;
 
+  const [currentPage, setCurrentPage] = useState(1);
+  const ITEMS_PER_PAGE = 10;
+
   // Filter & Search State (Section 6)
   const [searchQuery, setSearchQuery] = useState("");
   const initialStatusParam = searchParams.get("status") || "All";
@@ -87,6 +90,14 @@ export function RequestsTableView() {
       });
   }, [requests, searchQuery, statusFilter, paymentFilter, customerFilter, sortBy]);
 
+  const totalPages = Math.max(1, Math.ceil(filteredRequests.length / ITEMS_PER_PAGE));
+  const validCurrentPage = Math.min(currentPage, totalPages);
+
+  const currentRequests = filteredRequests.slice(
+    (validCurrentPage - 1) * ITEMS_PER_PAGE,
+    validCurrentPage * ITEMS_PER_PAGE
+  );
+
   // If a request is active, render the Central Request Detail Workspace!
   if (selectedRequest) {
     return (
@@ -126,6 +137,7 @@ export function RequestsTableView() {
                 setStatusFilter("All");
                 setPaymentFilter("All");
                 setCustomerFilter("All");
+                setCurrentPage(1);
               }}
               className="px-3 py-2 text-xs font-semibold text-slate-500 hover:text-slate-800 bg-slate-100 hover:bg-slate-200 rounded-xl transition-colors flex items-center gap-1.5 self-start md:self-auto"
             >
@@ -249,7 +261,7 @@ export function RequestsTableView() {
                   </td>
                 </tr>
               ) : (
-                filteredRequests.map((req) => (
+                currentRequests.map((req) => (
                   <tr
                     key={req.id}
                     onClick={() => router.push(`/admin/requests?id=${req.id}`)}
@@ -303,6 +315,34 @@ export function RequestsTableView() {
             </tbody>
           </table>
         </div>
+
+        {/* Pagination Footer */}
+        {filteredRequests.length > 0 && (
+          <div className="flex items-center justify-between border-t border-slate-100 bg-slate-50/50 px-6 py-4">
+            <span className="text-[11px] font-medium text-slate-500 uppercase tracking-wider">
+              Showing {(validCurrentPage - 1) * ITEMS_PER_PAGE + 1} to {Math.min(validCurrentPage * ITEMS_PER_PAGE, filteredRequests.length)} of {filteredRequests.length} requests
+            </span>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                disabled={validCurrentPage === 1}
+                className="px-3 py-1.5 text-[11px] font-bold uppercase tracking-wider text-slate-600 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 hover:text-slate-900 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+              >
+                Previous
+              </button>
+              <span className="text-[11px] font-bold text-slate-600 px-3 uppercase tracking-wider">
+                Page {validCurrentPage} of {totalPages}
+              </span>
+              <button
+                onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                disabled={validCurrentPage === totalPages}
+                className="px-3 py-1.5 text-[11px] font-bold uppercase tracking-wider text-slate-600 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 hover:text-slate-900 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+              >
+                Next
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

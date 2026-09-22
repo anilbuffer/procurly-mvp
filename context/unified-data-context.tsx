@@ -26,7 +26,7 @@ import {
   Quotation,
   CustomerStatus,
 } from "@/types/shared";
-import { AdminMetrics } from "@/types/admin";
+import { AdminMetrics, AdminSettings } from "@/types/admin";
 import {
   INITIAL_SHARED_REQUESTS,
   MOCK_CUSTOMERS,
@@ -54,6 +54,7 @@ interface UnifiedDataContextType {
   activeStaffRole: StaffRole;
   currentStaffUser: StaffUser;
   adminMetrics: AdminMetrics;
+  adminSettings: AdminSettings;
 
   // Actions - Requests
   getRequestById: (idOrNumber: string) => PartRequest | undefined;
@@ -70,7 +71,9 @@ interface UnifiedDataContextType {
     requestId: string,
     params: {
       sellPrice: number;
-      freight: number;
+      freight?: number;
+      airFreightCost?: number;
+      seaFreightCost?: number;
       notes: string;
       terms?: string;
       estimatedTransitDays?: number;
@@ -124,6 +127,7 @@ interface UnifiedDataContextType {
   addStaffUser: (user: StaffUser) => void;
   updateStaffUser: (userId: string, updated: Partial<StaffUser>) => void;
   switchStaffRole: (role: StaffRole) => void;
+  updateAdminSettings: (settings: AdminSettings) => void;
 
   // Notifications
   markNotificationAsRead: (id: string) => void;
@@ -143,6 +147,11 @@ export function UnifiedDataProvider({ children }: { children: React.ReactNode })
   const [staffUsers, setStaffUsers] = useState<StaffUser[]>(MOCK_STAFF_USERS);
   const [notifications, setNotifications] = useState<PortalNotification[]>(INITIAL_NOTIFICATIONS);
   const [activeStaffRole, setActiveStaffRole] = useState<StaffRole>("Administrator");
+  const [adminSettings, setAdminSettings] = useState<AdminSettings>({
+    baseMarginPercent: 20,
+    defaultAirFreight: 85,
+    defaultSeaFreight: 45,
+  });
   const [isHydrated, setIsHydrated] = useState(false);
 
   // Hydrate state from localStorage after mount to eliminate SSR hydration mismatches
@@ -481,7 +490,7 @@ export function UnifiedDataProvider({ children }: { children: React.ReactNode })
                   quantity: r.part.quantity,
                   unitPrice: totalAmt - 70,
                   subtotal: totalAmt - 70,
-                  freightCost: 70,
+                  airFreightCost: 110, seaFreightCost: 70,
                   freightNote: "Standard consolidated air delivery",
                   gstAmount: Number(((totalAmt * 15) / 115).toFixed(2)),
                   totalAmount: totalAmt,
@@ -804,19 +813,22 @@ export function UnifiedDataProvider({ children }: { children: React.ReactNode })
   );
 
   // ─── Actions: Customer Quote ─────────────────────────────
-  // Enforces ONE manual flat freight value (No comparison engine)
+  // Supports Air and Sea Freight
   const createCustomerQuote = useCallback(
     (
       requestId: string,
       params: {
         sellPrice: number;
-        freight: number;
+        freight?: number;
+        airFreightCost?: number;
+        seaFreightCost?: number;
         notes: string;
         terms?: string;
         estimatedTransitDays?: number;
       }
     ) => {
-      const totalAmount = params.sellPrice + params.freight;
+      const activeFreight = params.seaFreightCost ?? params.freight ?? 45;
+      const totalAmount = params.sellPrice + activeFreight;
       const gstAmount = Number(((totalAmount * 15) / 115).toFixed(2));
 
       setRequests((prev) =>
@@ -828,6 +840,8 @@ export function UnifiedDataProvider({ children }: { children: React.ReactNode })
               date: new Date().toISOString().split("T")[0],
               sellPrice: params.sellPrice,
               freight: params.freight,
+              airFreightCost: params.airFreightCost,
+              seaFreightCost: params.seaFreightCost,
               totalAmount,
               estimatedTransitDays: params.estimatedTransitDays || 5,
               notes: params.notes,
@@ -846,7 +860,9 @@ export function UnifiedDataProvider({ children }: { children: React.ReactNode })
               quantity: r.part.quantity,
               unitPrice: params.sellPrice,
               subtotal: params.sellPrice,
-              freightCost: params.freight, // Single flat freight value
+              freightCost: params.freight,
+              airFreightCost: params.airFreightCost,
+              seaFreightCost: params.seaFreightCost,
               freightNote: "Standard consolidated delivery to workshop",
               gstAmount,
               totalAmount,
@@ -874,7 +890,7 @@ export function UnifiedDataProvider({ children }: { children: React.ReactNode })
                   timestamp: new Date().toISOString(),
                   timeLabel: "Just now",
                   title: `Customer quote v${nextVer} created`,
-                  description: `Quote created for NZ$${totalAmount.toFixed(2)} (Part: $${params.sellPrice}, Freight: $${params.freight}) and sent to ${r.customerName}.`,
+                  description: `Quote created for NZ$${totalAmount.toFixed(2)} (Part: $${params.sellPrice}, Sea Freight: $${activeFreight}) and sent to ${r.customerName}.`,
                   actor: currentStaffUser.name,
                   type: "quote",
                 },
@@ -1626,6 +1642,10 @@ export function UnifiedDataProvider({ children }: { children: React.ReactNode })
     }
   }, []);
 
+  const updateAdminSettings = useCallback((settings: AdminSettings) => {
+    setAdminSettings(settings);
+  }, []);
+
   // ─── Notifications ───────────────────────────────────────
   const markNotificationAsRead = useCallback((id: string) => {
     setNotifications((prev) =>
@@ -1672,6 +1692,7 @@ export function UnifiedDataProvider({ children }: { children: React.ReactNode })
         activeStaffRole,
         currentStaffUser,
         adminMetrics,
+        adminSettings,
         getRequestById,
         submitCustomerRequest,
         updateRequestStatus,
@@ -1701,6 +1722,7 @@ export function UnifiedDataProvider({ children }: { children: React.ReactNode })
         addStaffUser,
         updateStaffUser,
         switchStaffRole,
+        updateAdminSettings,
         markNotificationAsRead,
         markAllNotificationsAsRead,
         resetToMockDefaults,

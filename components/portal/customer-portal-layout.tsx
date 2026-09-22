@@ -6,6 +6,7 @@ import { PortalHeader } from "./portal-header";
 import { NewRequestModal } from "./new-request-modal";
 import { RequestDetailsModal } from "./request-details-modal";
 import { PaymentModal } from "./payment-modal";
+import { usePortal } from "@/context/portal-context";
 
 interface CustomerPortalLayoutProps {
   children?: React.ReactNode;
@@ -13,6 +14,7 @@ interface CustomerPortalLayoutProps {
 
 export function CustomerPortalLayout({ children }: CustomerPortalLayoutProps) {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const { selectedRequest } = usePortal();
 
   return (
     <div className="min-h-screen bg-[#F8FAFC] flex font-sans text-slate-900">
@@ -32,14 +34,13 @@ export function CustomerPortalLayout({ children }: CustomerPortalLayoutProps) {
         <PortalHeader />
 
         {/* Dynamic Page Content */}
-        <main className="flex-1 p-6 sm:p-8 max-w-7xl mx-auto w-full">
-          {children}
+        <main className="flex-1 p-6 sm:p-8 max-w-7xl mx-auto w-full flex flex-col">
+          {selectedRequest ? <RequestDetailsModal /> : children}
         </main>
       </div>
 
       {/* Interactive Global Modals */}
       <NewRequestModal />
-      <RequestDetailsModal />
       <PaymentModal />
     </div>
   );

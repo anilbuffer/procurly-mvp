@@ -9,9 +9,7 @@ export type RequestStatus =
   | "Ordered"
   | "Shipped"
   | "Delivered"
-  | "Completed"
-  | "Logistics Exception"
-  | "Payment Disputed";
+  | "Completed";
 
 export type PaymentStatus = "Unpaid" | "Paid";
 
@@ -70,6 +68,7 @@ export interface SupportingInfo {
   notes?: string;
   photos: string[];
   documents: string[];
+  freightPreference?: "Air Express" | "Sea Freight" | "No Preference";
 }
 
 export interface SavedAddress {
@@ -109,6 +108,8 @@ export interface SupplierQuotation {
   availability: SupplierAvailability;
   supplierCost: number; // NZD
   supplierFreight: number; // NZD
+  airFreightCost?: number; // NZD
+  seaFreightCost?: number; // NZD
   leadTimeDays: number;
   condition: SupplierCondition;
   notes: string;
@@ -140,7 +141,9 @@ export interface CostCalculation {
   autohubMarginPercent: number;
   autohubMarginAmount: number;
   customerSellPrice: number;
-  customerFreight: number; // Single flat freight value entered manually by staff
+  customerFreight?: number;
+  airFreightCost?: number;
+  seaFreightCost?: number;
   totalCustomerQuote: number;
 }
 
@@ -148,7 +151,9 @@ export interface CustomerQuoteVersion {
   version: number;
   date: string;
   sellPrice: number;
-  freight: number; // Single flat freight value
+  freight?: number; // Legacy
+  airFreightCost?: number;
+  seaFreightCost?: number;
   totalAmount: number;
   estimatedTransitDays: number;
   notes: string;
@@ -168,7 +173,9 @@ export interface Quotation {
   unitPrice: number;
   subtotal: number;
   gstAmount: number;
-  freightCost: number; // Single flat freight value entered manually by staff
+  freightCost?: number; // Legacy fallback
+  airFreightCost?: number;
+  seaFreightCost?: number;
   freightNote?: string;
   totalAmount: number;
   currency: string;
@@ -190,6 +197,7 @@ export interface QuoteAcceptanceAudit {
   partVerified: boolean;
   addressVerified: boolean;
   freightCost?: number;
+  selectedFreightType?: "Air" | "Sea";
 }
 
 // ─── Payment ───────────────────────────────────────────────
@@ -331,6 +339,10 @@ export interface PartRequest {
   dateSubmitted: string;
   lastUpdated?: string;
   status: RequestStatus;
+  specs?: {
+    weight?: number;
+    dimensions?: string;
+  };
 
   // Assignment
   assignedStaff?: string;

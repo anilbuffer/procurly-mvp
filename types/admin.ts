@@ -17,6 +17,7 @@ export type RequestDetailTab =
   | "payment"
   | "shipment"
   | "documents"
+  | "qa"
   | "activity";
 
 export interface RequestFilterOptions {
@@ -37,4 +38,10 @@ export interface AdminMetrics {
   shipped: number;
   delivered: number;
   totalActive: number;
+}
+
+export interface AdminSettings {
+  baseMarginPercent: number;
+  defaultAirFreight: number;
+  defaultSeaFreight: number;
 }

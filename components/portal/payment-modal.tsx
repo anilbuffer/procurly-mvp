@@ -283,7 +283,7 @@ export function PaymentModal() {
         <div className="px-6 py-4 border-t border-slate-100 flex items-center justify-between bg-slate-50">
           <button
             onClick={() => setIsPaymentModalOpen(false)}
-            className="px-4 py-2 text-xs font-bold text-slate-600 hover:text-slate-900"
+            className="px-4 py-2 text-xs font-bold text-slate-600 rounded-lg border border-slate-200 bg-white hover:bg-slate-200 hover:text-slate-900"
           >
             {isPaid ? "Close" : "Cancel"}
           </button>
@@ -291,7 +291,7 @@ export function PaymentModal() {
           {!isPaid && (
             <button
               onClick={handleProcessPayment}
-              className="px-6 py-2.5 bg-[#ED2025] hover:bg-[#d11a1f] text-white font-bold text-xs uppercase tracking-wider rounded-xl shadow-md shadow-red-500/20 transition-all active:scale-95 flex items-center gap-2"
+              className="px-4 py-2.5 bg-[#ED2025] hover:bg-[#d11a1f] text-white font-bold text-xs uppercase tracking-wider rounded-lg border border-slate-200 shadow-md shadow-red-500/20 transition-all active:scale-95 flex items-center gap-2"
             >
               <span>Record Settlement (Mark as Paid)</span>
               <ArrowRight className="w-4 h-4" />

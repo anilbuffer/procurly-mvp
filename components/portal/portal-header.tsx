@@ -69,7 +69,7 @@ export function PortalHeader() {
             <ChevronRight className="w-3 h-3 text-slate-400" />
             <span className="text-[#ED2025] font-semibold">{getTabTitle()}</span>
           </nav>
-          <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
+          <h1 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">
             {getTabTitle()}
           </h1>
         </div>

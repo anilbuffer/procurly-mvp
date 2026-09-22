@@ -3,6 +3,7 @@
 import React from "react";
 import { useRouter } from "next/navigation";
 import { CheckSquare, Truck, ArrowRight, ShieldCheck, Clock, CheckCircle2 } from "lucide-react";
+import Link from "next/link";
 import { usePortal } from "@/context/portal-context";
 
 export function OrdersView() {
@@ -21,6 +22,15 @@ export function OrdersView() {
       r.status === "Sourcing" ||
       r.supplierOrder !== undefined
   );
+
+  const [currentPage, setCurrentPage] = React.useState(1);
+  const ITEMS_PER_PAGE = 10;
+
+  const totalPages = Math.ceil(orderRequests.length / ITEMS_PER_PAGE);
+  const paginatedOrders = React.useMemo(() => {
+    const start = (currentPage - 1) * ITEMS_PER_PAGE;
+    return orderRequests.slice(start, start + ITEMS_PER_PAGE);
+  }, [orderRequests, currentPage]);
 
   const getStatusColors = (status: string) => {
     switch (status) {
@@ -78,12 +88,12 @@ export function OrdersView() {
           <CheckSquare className="w-10 h-10 text-slate-300 mx-auto mb-3" />
           <p className="font-bold text-slate-500">No active procurement orders</p>
           <p className="text-xs text-slate-400 mt-1">Submit a new parts request to get started.</p>
-          <button
-            onClick={() => setIsNewRequestModalOpen(true)}
-            className="mt-4 px-5 py-2 bg-[#ED2025] hover:bg-[#d11a1f] text-white font-bold text-xs uppercase tracking-wider rounded-xl transition-colors"
+          <Link
+            href="/customer/requests/new"
+            className="mt-4 inline-flex items-center gap-2 px-5 py-2 bg-[#ED2025] hover:bg-[#d11a1f] text-white font-bold text-xs uppercase tracking-wider rounded-xl transition-colors"
           >
             New Parts Request →
-          </button>
+          </Link>
         </div>
       ) : (
         <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
@@ -102,7 +112,7 @@ export function OrdersView() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 text-slate-700">
-                {orderRequests.map((req) => (
+                {paginatedOrders.map((req) => (
                   <tr
                     key={req.id}
                     onClick={() => setSelectedRequest(req)}
@@ -119,8 +129,15 @@ export function OrdersView() {
                     <td className="py-4 px-4 font-semibold text-slate-800 whitespace-nowrap">
                       {req.vehicle.year} {req.vehicle.make} {req.vehicle.model}
                     </td>
-                    <td className="py-4 px-4 font-medium text-slate-700 max-w-[200px] truncate" title={req.part.name}>
-                      {req.part.name}
+                    <td className="py-4 px-4 max-w-[200px]">
+                      <p className="font-medium text-slate-700 truncate" title={req.part.name}>
+                        {req.part.name}
+                      </p>
+                      {req.supporting?.freightPreference && (
+                        <p className="text-[11px] text-[#0ea5e9] font-medium mt-0.5">
+                          Freight: {req.supporting.freightPreference}
+                        </p>
+                      )}
                     </td>
                     <td className="py-4 px-4 font-medium text-slate-600 whitespace-nowrap">
                       {req.supplierOrder?.supplierName ||
@@ -128,7 +145,7 @@ export function OrdersView() {
                         "Autohub Network"}
                     </td>
                     <td className="py-4 px-4">
-                      <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${getStatusColors(req.status)}`}>
+                      <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider whitespace-nowrap ${getStatusColors(req.status)}`}>
                         {req.status}
                       </span>
                     </td>
@@ -164,6 +181,34 @@ export function OrdersView() {
               </tbody>
             </table>
           </div>
+
+          {/* Pagination Footer */}
+          {totalPages > 1 && (
+            <div className="flex items-center justify-between border-t border-slate-100 bg-slate-50/50 px-6 py-4">
+              <span className="text-[11px] font-medium text-slate-500 uppercase tracking-wider">
+                Showing {(currentPage - 1) * ITEMS_PER_PAGE + 1} to {Math.min(currentPage * ITEMS_PER_PAGE, orderRequests.length)} of {orderRequests.length} orders
+              </span>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                  disabled={currentPage === 1}
+                  className="px-3 py-1.5 text-[11px] font-bold uppercase tracking-wider text-slate-600 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 hover:text-slate-900 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                >
+                  Previous
+                </button>
+                <span className="text-[11px] font-bold text-slate-600 px-3 uppercase tracking-wider">
+                  Page {currentPage} of {totalPages}
+                </span>
+                <button
+                  onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                  disabled={currentPage === totalPages}
+                  className="px-3 py-1.5 text-[11px] font-bold uppercase tracking-wider text-slate-600 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 hover:text-slate-900 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                >
+                  Next
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       )}
     </div>

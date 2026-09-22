@@ -30,6 +30,7 @@ export function PortalSidebar({ collapsed = false, onToggleCollapse }: PortalSid
     metrics,
     requests,
     activeCustomer,
+    setSelectedRequest,
   } = usePortal();
   const [showUserMenu, setShowUserMenu] = React.useState(false);
   const userMenuRef = React.useRef<HTMLDivElement>(null);
@@ -173,6 +174,7 @@ export function PortalSidebar({ collapsed = false, onToggleCollapse }: PortalSid
                     <Link
                       key={item.id}
                       href={href}
+                      onClick={() => setSelectedRequest(null)}
                       title={collapsed ? item.label : undefined}
                       className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition-all group ${isActive
                         ? "bg-[#1E2538] text-white shadow-inner font-bold"

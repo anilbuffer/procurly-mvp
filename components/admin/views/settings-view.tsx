@@ -16,11 +16,12 @@ import {
 import { useUnifiedData } from "@/context/unified-data-context";
 
 export function AdminSettingsView() {
-  const { resetToMockDefaults } = useUnifiedData();
+  const { adminSettings, updateAdminSettings, resetToMockDefaults } = useUnifiedData();
 
   // Settings State (Section 30)
-  const [defaultMargin, setDefaultMargin] = useState(20);
-  const [defaultFreight, setDefaultFreight] = useState(85);
+  const [defaultMargin, setDefaultMargin] = useState(adminSettings.baseMarginPercent || 20);
+  const [defaultAirFreight, setDefaultAirFreight] = useState(adminSettings.defaultAirFreight || 185);
+  const [defaultSeaFreight, setDefaultSeaFreight] = useState(adminSettings.defaultSeaFreight || 65);
   const [taxRate, setTaxRate] = useState(15);
   const [refPrefix, setRefPrefix] = useState("AH-P-");
   const [m365Connected, setM365Connected] = useState(true);
@@ -32,6 +33,12 @@ export function AdminSettingsView() {
 
   const handleSave = (e: React.FormEvent) => {
     e.preventDefault();
+    updateAdminSettings({
+      ...adminSettings,
+      baseMarginPercent: defaultMargin,
+      defaultAirFreight: defaultAirFreight,
+      defaultSeaFreight: defaultSeaFreight,
+    });
     setSavedSuccess(true);
     setTimeout(() => setSavedSuccess(false), 3000);
   };
@@ -92,17 +99,33 @@ export function AdminSettingsView() {
 
             <div>
               <label className="block font-bold text-slate-700 mb-1">
-                Default Manual Freight (NZD)
+                Default Airfreight (NZD)
               </label>
               <input
                 type="number"
                 min="0"
-                value={defaultFreight}
-                onChange={(e) => setDefaultFreight(Number(e.target.value))}
+                value={defaultAirFreight}
+                onChange={(e) => setDefaultAirFreight(Number(e.target.value))}
                 className="w-full text-xs p-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#ED2025]/30 focus:border-[#ED2025]"
               />
               <span className="text-[10px] text-slate-400 mt-1 block">
-                Single flat freight rule for customer quotes (No comparison engine).
+                Default cost for Priority Airfreight.
+              </span>
+            </div>
+
+            <div>
+              <label className="block font-bold text-slate-700 mb-1">
+                Default Ocean Freight (NZD)
+              </label>
+              <input
+                type="number"
+                min="0"
+                value={defaultSeaFreight}
+                onChange={(e) => setDefaultSeaFreight(Number(e.target.value))}
+                className="w-full text-xs p-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#ED2025]/30 focus:border-[#ED2025]"
+              />
+              <span className="text-[10px] text-slate-400 mt-1 block">
+                Default cost for Ocean Consolidation.
               </span>
             </div>
 

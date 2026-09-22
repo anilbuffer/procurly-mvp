@@ -66,6 +66,18 @@ export function PaymentsView() {
     .filter((r) => r.payment?.status !== "Paid")
     .reduce((sum, r) => sum + getAmount(r), 0);
 
+  const [currentPage, setCurrentPage] = React.useState(1);
+  const ITEMS_PER_PAGE = 10;
+  React.useEffect(() => {
+    setCurrentPage(1);
+  }, [filterStatus]);
+
+  const totalPages = Math.ceil(filtered.length / ITEMS_PER_PAGE);
+  const paginatedPayments = React.useMemo(() => {
+    const start = (currentPage - 1) * ITEMS_PER_PAGE;
+    return filtered.slice(start, start + ITEMS_PER_PAGE);
+  }, [filtered, currentPage]);
+
   const handleOpenPaymentModal = (req: PartRequest) => {
     setPaymentRequest(req);
     setIsPaymentModalOpen(true);
@@ -157,7 +169,7 @@ export function PaymentsView() {
                   </td>
                 </tr>
               ) : (
-                filtered.map((req) => {
+                paginatedPayments.map((req) => {
                   const pay = req.payment;
                   const isPaid = pay?.status === "Paid";
                   const paymentStatus: "Unpaid" | "Paid" = isPaid ? "Paid" : "Unpaid";
@@ -225,6 +237,34 @@ export function PaymentsView() {
             </tbody>
           </table>
         </div>
+
+        {/* Pagination Footer */}
+        {totalPages > 1 && (
+          <div className="flex items-center justify-between border-t border-slate-100 bg-slate-50/50 px-6 py-4">
+            <span className="text-[11px] font-medium text-slate-500 uppercase tracking-wider">
+              Showing {(currentPage - 1) * ITEMS_PER_PAGE + 1} to {Math.min(currentPage * ITEMS_PER_PAGE, filtered.length)} of {filtered.length} invoices
+            </span>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                disabled={currentPage === 1}
+                className="px-3 py-1.5 text-[11px] font-bold uppercase tracking-wider text-slate-600 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 hover:text-slate-900 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+              >
+                Previous
+              </button>
+              <span className="text-[11px] font-bold text-slate-600 px-3 uppercase tracking-wider">
+                Page {currentPage} of {totalPages}
+              </span>
+              <button
+                onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                disabled={currentPage === totalPages}
+                className="px-3 py-1.5 text-[11px] font-bold uppercase tracking-wider text-slate-600 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 hover:text-slate-900 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+              >
+                Next
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

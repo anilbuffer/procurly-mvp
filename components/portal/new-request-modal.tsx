@@ -267,6 +267,22 @@ export function NewRequestModal() {
     setStep(1);
   };
 
+  const handleNextStep = () => {
+    if (step === 1) {
+      if (!vehicle.make || !vehicle.model || !vehicle.year || !vehicle.vin || !vehicle.registration) {
+        alert("Please fill in all mandatory vehicle fields (Make, Model, Year, VIN, and Registration).");
+        return;
+      }
+    }
+    if (step === 2) {
+      if (!part.name || !part.quantity) {
+        alert("Please fill in all mandatory part fields.");
+        return;
+      }
+    }
+    setStep((step + 1) as 1 | 2 | 3 | 4);
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const created = submitNewRequest({
@@ -386,13 +402,12 @@ export function NewRequestModal() {
                     key={s.num}
                     type="button"
                     onClick={() => setStep(s.num as 1 | 2 | 3 | 4)}
-                    className={`p-3 text-center flex items-center justify-center gap-2 border-b-2 font-bold transition-all ${
-                      isActive
+                    className={`p-3 text-center flex items-center justify-center gap-2 border-b-2 font-bold transition-all ${isActive
                         ? "border-[#ED2025] text-[#ED2025] bg-white shadow-xs"
                         : isPassed
-                        ? "border-emerald-500 text-emerald-700 bg-emerald-50/30"
-                        : "border-transparent text-slate-400 hover:text-slate-600"
-                    }`}
+                          ? "border-emerald-500 text-emerald-700 bg-emerald-50/30"
+                          : "border-transparent text-slate-400 hover:text-slate-600"
+                      }`}
                   >
                     <Icon className="w-3.5 h-3.5" />
                     <span className="hidden sm:inline">{s.label}</span>
@@ -503,10 +518,11 @@ export function NewRequestModal() {
 
                     <div>
                       <label className="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-1">
-                        Registration (Optional)
+                        Registration *
                       </label>
                       <input
                         type="text"
+                        required
                         value={vehicle.registration || ""}
                         onChange={(e) =>
                           setVehicle({ ...vehicle, registration: e.target.value })
@@ -806,11 +822,10 @@ export function NewRequestModal() {
                         <div
                           key={addr.id}
                           onClick={() => setSelectedAddress(addr)}
-                          className={`p-3.5 rounded-xl border-2 cursor-pointer transition-all flex items-start justify-between ${
-                            isSelected
+                          className={`p-3.5 rounded-xl border-2 cursor-pointer transition-all flex items-start justify-between ${isSelected
                               ? "border-[#ED2025] bg-red-50/10"
                               : "border-slate-200 hover:border-slate-300 bg-white"
-                          }`}
+                            }`}
                         >
                           <div className="space-y-1">
                             <div className="flex items-center gap-2">
@@ -833,11 +848,10 @@ export function NewRequestModal() {
                           </div>
 
                           <div
-                            className={`w-5 h-5 rounded-full border flex items-center justify-center ${
-                              isSelected
+                            className={`w-5 h-5 rounded-full border flex items-center justify-center ${isSelected
                                 ? "border-[#ED2025] bg-[#ED2025] text-white"
                                 : "border-slate-300"
-                            }`}
+                              }`}
                           >
                             {isSelected && <Check className="w-3 h-3" />}
                           </div>
@@ -877,7 +891,7 @@ export function NewRequestModal() {
                 {step < 4 ? (
                   <button
                     type="button"
-                    onClick={() => setStep((step + 1) as 1 | 2 | 3 | 4)}
+                    onClick={handleNextStep}
                     className="inline-flex items-center gap-1.5 px-5 py-2.5 bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs uppercase tracking-wider rounded-xl transition-all"
                   >
                     <span>Continue</span>

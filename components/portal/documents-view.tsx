@@ -147,6 +147,18 @@ For formal queries contact ops@procurly.autohub.co.nz
       d.ref.toLowerCase().includes(docSearch.toLowerCase())
   );
 
+  const [currentPage, setCurrentPage] = React.useState(1);
+  const ITEMS_PER_PAGE = 10;
+  React.useEffect(() => {
+    setCurrentPage(1);
+  }, [docSearch]);
+
+  const totalPages = Math.ceil(filtered.length / ITEMS_PER_PAGE);
+  const paginatedDocs = React.useMemo(() => {
+    const start = (currentPage - 1) * ITEMS_PER_PAGE;
+    return filtered.slice(start, start + ITEMS_PER_PAGE);
+  }, [filtered, currentPage]);
+
   return (
     <div className="space-y-6 relative">
       {/* Toast Feedback */}
@@ -192,7 +204,7 @@ For formal queries contact ops@procurly.autohub.co.nz
       </div>
 
       <div className="bg-white rounded-2xl border border-slate-200 shadow-sm divide-y divide-slate-100 text-xs">
-        {filtered.map((d) => (
+        {paginatedDocs.map((d) => (
           <div
             key={d.id}
             className="p-4 flex items-center justify-between hover:bg-slate-50/80 transition-colors"
@@ -248,6 +260,34 @@ For formal queries contact ops@procurly.autohub.co.nz
           </div>
         ))}
       </div>
+
+      {/* Pagination Footer */}
+      {totalPages > 1 && (
+        <div className="flex items-center justify-between bg-slate-50/50 rounded-2xl px-6 py-4 border border-slate-200 shadow-sm">
+          <span className="text-[11px] font-medium text-slate-500 uppercase tracking-wider">
+            Showing {(currentPage - 1) * ITEMS_PER_PAGE + 1} to {Math.min(currentPage * ITEMS_PER_PAGE, filtered.length)} of {filtered.length} docs
+          </span>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+              disabled={currentPage === 1}
+              className="px-3 py-1.5 text-[11px] font-bold uppercase tracking-wider text-slate-600 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 hover:text-slate-900 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+            >
+              Previous
+            </button>
+            <span className="text-[11px] font-bold text-slate-600 px-3 uppercase tracking-wider">
+              Page {currentPage} of {totalPages}
+            </span>
+            <button
+              onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+              disabled={currentPage === totalPages}
+              className="px-3 py-1.5 text-[11px] font-bold uppercase tracking-wider text-slate-600 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 hover:text-slate-900 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+            >
+              Next
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -13,6 +13,8 @@ import {
   DollarSign,
   Truck,
   ArrowRight,
+  Plane,
+  Anchor,
 } from "lucide-react";
 import {
   PartRequest,
@@ -43,7 +45,11 @@ export function SourcingTab({ request }: SourcingTabProps) {
   const [supplierPartRef, setSupplierPartRef] = useState("");
   const [availability, setAvailability] = useState<SupplierAvailability>("In Stock");
   const [supplierCost, setSupplierCost] = useState<number>(250);
-  const [supplierFreight, setSupplierFreight] = useState<number>(35);
+  const defaultAirCost = request.specs?.weight ? request.specs.weight * 12.5 : 850;
+  const defaultSeaCost = request.specs?.weight ? request.specs.weight * 4.2 : 250;
+
+  const [airFreightInput, setAirFreightInput] = useState<number>(defaultAirCost);
+  const [oceanFreightInput, setOceanFreightInput] = useState<number>(defaultSeaCost);
   const [leadTimeDays, setLeadTimeDays] = useState<number>(5);
   const [condition, setCondition] = useState<SupplierCondition>("Genuine");
   const [notes, setNotes] = useState("");
@@ -54,7 +60,8 @@ export function SourcingTab({ request }: SourcingTabProps) {
     setSupplierPartRef("");
     setAvailability("In Stock");
     setSupplierCost(250);
-    setSupplierFreight(35);
+    setAirFreightInput(defaultAirCost);
+    setOceanFreightInput(defaultSeaCost);
     setLeadTimeDays(5);
     setCondition("Genuine");
     setNotes("");
@@ -67,7 +74,8 @@ export function SourcingTab({ request }: SourcingTabProps) {
     setSupplierPartRef(quote.supplierPartRef);
     setAvailability(quote.availability);
     setSupplierCost(quote.supplierCost);
-    setSupplierFreight(quote.supplierFreight);
+    setAirFreightInput(quote.airFreightCost ?? quote.supplierFreight);
+    setOceanFreightInput(quote.seaFreightCost ?? defaultSeaCost);
     setLeadTimeDays(quote.leadTimeDays);
     setCondition(quote.condition);
     setNotes(quote.notes);
@@ -87,7 +95,9 @@ export function SourcingTab({ request }: SourcingTabProps) {
         supplierPartRef: supplierPartRef || "REF-" + Math.floor(1000 + Math.random() * 9000),
         availability,
         supplierCost: Number(supplierCost),
-        supplierFreight: Number(supplierFreight),
+        supplierFreight: Number(airFreightInput),
+        airFreightCost: Number(airFreightInput),
+        seaFreightCost: Number(oceanFreightInput),
         leadTimeDays: Number(leadTimeDays),
         condition,
         notes,
@@ -101,7 +111,9 @@ export function SourcingTab({ request }: SourcingTabProps) {
         supplierPartRef: supplierPartRef || "REF-" + Math.floor(1000 + Math.random() * 9000),
         availability,
         supplierCost: Number(supplierCost),
-        supplierFreight: Number(supplierFreight),
+        supplierFreight: Number(airFreightInput),
+        airFreightCost: Number(airFreightInput),
+        seaFreightCost: Number(oceanFreightInput),
         leadTimeDays: Number(leadTimeDays),
         condition,
         notes,
@@ -166,32 +178,31 @@ export function SourcingTab({ request }: SourcingTabProps) {
                   <th className="py-3 px-4">Availability</th>
                   <th className="py-3 px-4">Lead Time</th>
                   <th className="py-3 px-4 text-right">Supplier Cost</th>
-                  <th className="py-3 px-4 text-right">Supplier Freight</th>
-                  <th className="py-3 px-4 text-right">Total (NZD)</th>
+                  <th className="py-3 px-4 text-right">Air Freight</th>
+                  <th className="py-3 px-4 text-right">Ocean Freight</th>
+                  <th className="py-3 px-4 text-right">Total (Air)</th>
                   <th className="py-3 px-4 text-center">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
                 {supplierQuotations.map((quote) => {
-                  const total = quote.supplierCost + quote.supplierFreight;
+                  const total = quote.supplierCost + (quote.airFreightCost ?? quote.supplierFreight);
                   const isSelected = quote.isSelected;
 
                   return (
                     <tr
                       key={quote.id}
-                      className={`hover:bg-slate-50/70 transition-colors ${
-                        isSelected ? "bg-red-50/20 font-medium" : ""
-                      }`}
+                      className={`hover:bg-slate-50/70 transition-colors ${isSelected ? "bg-red-50/20 font-medium" : ""
+                        }`}
                     >
                       <td className="py-3 px-4">
                         <button
                           type="button"
                           onClick={() => selectSupplierQuotation(request.id, quote.id)}
-                          className={`px-2.5 py-1 rounded-full text-[11px] font-bold flex items-center gap-1 transition-all ${
-                            isSelected
-                              ? "bg-[#ED2025] text-white shadow-xs"
-                              : "bg-slate-100 text-slate-600 hover:bg-slate-200"
-                          }`}
+                          className={`px-2.5 py-1 rounded-full text-[11px] font-bold flex items-center gap-1 transition-all ${isSelected
+                            ? "bg-[#ED2025] text-white shadow-xs"
+                            : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                            }`}
                         >
                           {isSelected ? (
                             <>
@@ -210,13 +221,12 @@ export function SourcingTab({ request }: SourcingTabProps) {
                             if (supRec && supRec.status !== "Active") {
                               return (
                                 <span
-                                  className={`text-[9px] px-1.5 py-0.5 rounded font-bold border ${
-                                    supRec.status === "Suspended"
-                                      ? "bg-amber-50 text-amber-800 border-amber-200"
-                                      : supRec.status === "Preferred"
+                                  className={`text-[9px] px-1.5 py-0.5 rounded font-bold border ${supRec.status === "Suspended"
+                                    ? "bg-amber-50 text-amber-800 border-amber-200"
+                                    : supRec.status === "Preferred"
                                       ? "bg-purple-50 text-purple-800 border-purple-200"
                                       : "bg-slate-100 text-slate-500 border-slate-200"
-                                  }`}
+                                    }`}
                                 >
                                   {supRec.status}
                                 </span>
@@ -234,22 +244,20 @@ export function SourcingTab({ request }: SourcingTabProps) {
                       </td>
                       <td className="py-3 px-4">
                         <span
-                          className={`inline-block px-2 py-0.5 rounded text-[10px] font-bold ${
-                            quote.condition === "Genuine"
-                              ? "bg-blue-50 text-blue-700"
-                              : "bg-slate-100 text-slate-700"
-                          }`}
+                          className={`inline-block px-2 py-0.5 rounded text-[10px] font-bold ${quote.condition === "Genuine"
+                            ? "bg-blue-50 text-blue-700"
+                            : "bg-slate-100 text-slate-700"
+                            }`}
                         >
                           {quote.condition}
                         </span>
                       </td>
                       <td className="py-3 px-4">
                         <span
-                          className={`inline-block px-2 py-0.5 rounded text-[10px] font-semibold ${
-                            quote.availability === "In Stock"
-                              ? "bg-emerald-50 text-emerald-700"
-                              : "bg-amber-50 text-amber-700"
-                          }`}
+                          className={`inline-block px-2 py-0.5 rounded text-[10px] font-semibold ${quote.availability === "In Stock"
+                            ? "bg-emerald-50 text-emerald-700"
+                            : "bg-amber-50 text-amber-700"
+                            }`}
                         >
                           {quote.availability}
                         </span>
@@ -261,7 +269,10 @@ export function SourcingTab({ request }: SourcingTabProps) {
                         NZ${quote.supplierCost.toFixed(2)}
                       </td>
                       <td className="py-3 px-4 text-right font-mono text-slate-600">
-                        NZ${quote.supplierFreight.toFixed(2)}
+                        NZ${(quote.airFreightCost ?? quote.supplierFreight).toFixed(2)}
+                      </td>
+                      <td className="py-3 px-4 text-right font-mono text-slate-600">
+                        NZ${(quote.seaFreightCost ?? 0).toFixed(2)}
                       </td>
                       <td className="py-3 px-4 text-right font-mono font-bold text-slate-900">
                         NZ${total.toFixed(2)}
@@ -305,12 +316,12 @@ export function SourcingTab({ request }: SourcingTabProps) {
                     Active Selection: {selectedQuote.supplierName} ({selectedQuote.supplierPartRef})
                   </h4>
                   <p className="text-[11px] text-slate-500">
-                    Landed cost NZ${(selectedQuote.supplierCost + selectedQuote.supplierFreight).toFixed(2)} • {selectedQuote.leadTimeDays} Days Lead Time. Ready to configure Customer Quote.
+                    Landed cost NZ${(selectedQuote.supplierCost + (selectedQuote.airFreightCost ?? selectedQuote.supplierFreight)).toFixed(2)} (Air) • {selectedQuote.leadTimeDays} Days Lead Time. Ready to configure Customer Quote.
                   </p>
                 </div>
               </div>
               <span className="text-xs font-mono font-bold text-slate-800 bg-white px-3 py-1.5 rounded-xl border border-slate-200 shadow-xs">
-                Base Cost: NZ${(selectedQuote.supplierCost + selectedQuote.supplierFreight).toFixed(2)}
+                Base Cost: NZ${selectedQuote.supplierCost.toFixed(2)}
               </span>
             </div>
           )}
@@ -320,7 +331,7 @@ export function SourcingTab({ request }: SourcingTabProps) {
       {/* MODAL: Add/Edit Supplier Quote */}
       {showAddModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs p-4">
-          <div className="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 animate-in zoom-in-95">
+          <div className="bg-white rounded-2xl max-w-xl w-full p-6 shadow-2xl border border-slate-200 animate-in zoom-in-95">
             <h3 className="text-base font-bold text-slate-900 mb-1">
               {editingQuoteId ? "Edit Supplier Quotation" : "Add Supplier Quotation"}
             </h3>
@@ -329,15 +340,15 @@ export function SourcingTab({ request }: SourcingTabProps) {
             </p>
 
             <form onSubmit={handleSaveQuote} className="space-y-4">
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-2 gap-4">
                 <div className="col-span-2">
-                  <label className="block text-xs font-bold text-slate-700 mb-1">
+                  <label className="block text-sm font-semibold text-slate-700 mb-1">
                     Select Supplier
                   </label>
                   <select
                     value={supplierId}
                     onChange={(e) => setSupplierId(e.target.value)}
-                    className="w-full text-xs p-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#ED2025]/30 focus:border-[#ED2025]"
+                    className="w-full text-sm p-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#ED2025]/30 focus:border-[#ED2025]"
                   >
                     {suppliers.map((s) => (
                       <option key={s.id} value={s.id}>
@@ -359,7 +370,7 @@ export function SourcingTab({ request }: SourcingTabProps) {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">
+                  <label className="block text-sm font-semibold text-slate-700 mb-1">
                     Supplier Part Ref #
                   </label>
                   <input
@@ -368,18 +379,18 @@ export function SourcingTab({ request }: SourcingTabProps) {
                     onChange={(e) => setSupplierPartRef(e.target.value)}
                     placeholder="e.g. NAP-48069-TY"
                     required
-                    className="w-full text-xs p-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#ED2025]/30 focus:border-[#ED2025]"
+                    className="w-full text-sm p-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#ED2025]/30 focus:border-[#ED2025]"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">
+                  <label className="block text-sm font-semibold text-slate-700 mb-1">
                     Condition
                   </label>
                   <select
                     value={condition}
                     onChange={(e) => setCondition(e.target.value as SupplierCondition)}
-                    className="w-full text-xs p-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#ED2025]/30 focus:border-[#ED2025]"
+                    className="w-full text-sm p-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#ED2025]/30 focus:border-[#ED2025]"
                   >
                     <option value="Genuine">Genuine OEM</option>
                     <option value="Aftermarket">Tier 1 Aftermarket</option>
@@ -388,8 +399,39 @@ export function SourcingTab({ request }: SourcingTabProps) {
                   </select>
                 </div>
 
+                <div className="col-span-2 mt-2">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-semibold text-slate-700 mb-1">
+                        Air Express (NZD)
+                      </label>
+                      <input
+                        type="number"
+                        step="0.01"
+                        min="0"
+                        value={airFreightInput}
+                        onChange={(e) => setAirFreightInput(Number(e.target.value))}
+                        className="w-full text-sm p-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#ED2025]/30 focus:border-[#ED2025]"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-semibold text-slate-700 mb-1">
+                        Ocean Freight (NZD)
+                      </label>
+                      <input
+                        type="number"
+                        step="0.01"
+                        min="0"
+                        value={oceanFreightInput}
+                        onChange={(e) => setOceanFreightInput(Number(e.target.value))}
+                        className="w-full text-sm p-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#ED2025]/30 focus:border-[#ED2025]"
+                      />
+                    </div>
+                  </div>
+                </div>
+
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">
+                  <label className="block text-sm font-semibold text-slate-700 mb-1">
                     Supplier Cost (NZD)
                   </label>
                   <input
@@ -399,33 +441,20 @@ export function SourcingTab({ request }: SourcingTabProps) {
                     value={supplierCost}
                     onChange={(e) => setSupplierCost(Number(e.target.value))}
                     required
-                    className="w-full text-xs p-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#ED2025]/30 focus:border-[#ED2025]"
+                    className="w-full text-sm p-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#ED2025]/30 focus:border-[#ED2025]"
                   />
                 </div>
 
-                <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">
-                    Supplier Freight (NZD)
-                  </label>
-                  <input
-                    type="number"
-                    step="0.01"
-                    min="0"
-                    value={supplierFreight}
-                    onChange={(e) => setSupplierFreight(Number(e.target.value))}
-                    required
-                    className="w-full text-xs p-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#ED2025]/30 focus:border-[#ED2025]"
-                  />
-                </div>
+
 
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">
+                  <label className="block text-sm font-semibold text-slate-700 mb-1">
                     Availability
                   </label>
                   <select
                     value={availability}
                     onChange={(e) => setAvailability(e.target.value as SupplierAvailability)}
-                    className="w-full text-xs p-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#ED2025]/30 focus:border-[#ED2025]"
+                    className="w-full text-sm p-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#ED2025]/30 focus:border-[#ED2025]"
                   >
                     <option value="In Stock">In Stock</option>
                     <option value="Available">Available (1-2 days)</option>
@@ -435,7 +464,7 @@ export function SourcingTab({ request }: SourcingTabProps) {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">
+                  <label className="block text-sm font-semibold text-slate-700 mb-1">
                     Lead Time (Days)
                   </label>
                   <input
@@ -444,13 +473,13 @@ export function SourcingTab({ request }: SourcingTabProps) {
                     value={leadTimeDays}
                     onChange={(e) => setLeadTimeDays(Number(e.target.value))}
                     required
-                    className="w-full text-xs p-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#ED2025]/30 focus:border-[#ED2025]"
+                    className="w-full text-sm p-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#ED2025]/30 focus:border-[#ED2025]"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">
+                <label className="block text-sm font-semibold text-slate-700 mb-1">
                   Supplier Notes
                 </label>
                 <textarea
@@ -458,21 +487,21 @@ export function SourcingTab({ request }: SourcingTabProps) {
                   onChange={(e) => setNotes(e.target.value)}
                   rows={2}
                   placeholder="Packaging details, warranty cover, warehouse location..."
-                  className="w-full text-xs p-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#ED2025]/30 focus:border-[#ED2025]"
+                  className="w-full text-sm p-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#ED2025]/30 focus:border-[#ED2025]"
                 />
               </div>
 
-              <div className="flex justify-end gap-2 pt-2 border-t border-slate-100">
+              <div className="flex justify-end gap-3 pt-3 border-t border-slate-100">
                 <button
                   type="button"
                   onClick={() => setShowAddModal(false)}
-                  className="px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-xl"
+                  className="px-4 py-2 text-sm font-semibold text-slate-600 border border-slate-200 bg-slate-50 hover:bg-slate-100 rounded-xl"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 text-xs font-semibold bg-[#ED2025] hover:bg-[#C8101E] text-white rounded-xl shadow-xs"
+                  className="px-4 py-2 text-sm font-semibold bg-[#ED2025] hover:bg-[#C8101E] text-white rounded-xl shadow-xs"
                 >
                   {editingQuoteId ? "Save Changes" : "Add Supplier Quote"}
                 </button>

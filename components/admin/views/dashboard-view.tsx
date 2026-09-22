@@ -15,6 +15,9 @@ import {
   ExternalLink,
   ChevronRight,
   AlertTriangle,
+  Box,
+  Inbox,
+  FileCheck,
 } from "lucide-react";
 import { useUnifiedData } from "@/context/unified-data-context";
 import { StatusBadge, PaymentStatusBadge } from "../status-badge";
@@ -22,6 +25,9 @@ import { StatusBadge, PaymentStatusBadge } from "../status-badge";
 export function AdminDashboardView() {
   const router = useRouter();
   const { requests, adminMetrics } = useUnifiedData();
+
+  const [currentPage, setCurrentPage] = React.useState(1);
+  const ITEMS_PER_PAGE = 10;
 
   // "What requires action right now?"
   // Requests that need attention:
@@ -41,67 +47,39 @@ export function AdminDashboardView() {
       (r.status === "Ordered" && !r.shipment)
   );
 
-  const summaryCards = [
-    {
-      title: "NEW REQUESTS",
-      count: adminMetrics.newRequests,
-      statusFilter: "Submitted",
-      bgClass: "bg-sky-50 text-sky-700 border-sky-200",
-    },
-    {
-      title: "SOURCING",
-      count: adminMetrics.sourcing,
-      statusFilter: "Sourcing",
-      bgClass: "bg-purple-50 text-purple-700 border-purple-200",
-    },
-    {
-      title: "QUOTED",
-      count: adminMetrics.quoted,
-      statusFilter: "Quoted",
-      bgClass: "bg-amber-50 text-amber-800 border-amber-200",
-    },
-    {
-      title: "AWAITING PAYMENT",
-      count: adminMetrics.awaitingPayment,
-      statusFilter: "Awaiting Payment",
-      bgClass: "bg-orange-50 text-orange-800 border-orange-200",
-    },
-    {
-      title: "READY TO ORDER",
-      count: adminMetrics.readyToOrder,
-      statusFilter: "Approved",
-      bgClass: "bg-blue-50 text-blue-700 border-blue-200",
-    },
-    {
-      title: "SHIPPED",
-      count: adminMetrics.shipped,
-      statusFilter: "Shipped",
-      bgClass: "bg-cyan-50 text-cyan-800 border-cyan-200",
-    },
-    {
-      title: "DELIVERED",
-      count: adminMetrics.delivered,
-      statusFilter: "Delivered",
-      bgClass: "bg-green-50 text-green-700 border-green-200",
-    },
-  ];
+  const totalPages = Math.max(1, Math.ceil(attentionRequests.length / ITEMS_PER_PAGE));
+  const currentAttentionRequests = attentionRequests.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE
+  );
 
   return (
     <div className="space-y-6">
       {/* SECTION 5: Summary Cards */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-3">
-        {summaryCards.map((card) => (
+      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3">
+        {[
+          { label: "NEW REQUESTS", value: requests.filter((r) => r.status === "Submitted").length, link: "/admin/requests?status=Submitted", icon: Inbox, color: "text-blue-600" },
+          { label: "SOURCING", value: requests.filter((r) => r.status === "Sourcing").length, link: "/admin/requests?status=Sourcing", icon: Search, color: "text-amber-600" },
+          { label: "QUOTED", value: requests.filter((r) => r.status === "Quoted").length, link: "/admin/requests?status=Quoted", icon: FileCheck, color: "text-purple-600" },
+          { label: "AWAITING PAYMENT", value: requests.filter((r) => r.status === "Awaiting Payment").length, link: "/admin/requests?status=Awaiting Payment", icon: CreditCard, color: "text-red-600" },
+          { label: "READY TO ORDER", value: requests.filter((r) => r.status === "Approved").length, link: "/admin/requests?status=Approved", icon: ShoppingBag, color: "text-emerald-600" },
+          { label: "SHIPPED", value: requests.filter((r) => r.status === "Shipped").length, link: "/admin/requests?status=Shipped", icon: Truck, color: "text-sky-600" },
+          { label: "DELIVERED", value: requests.filter((r) => r.status === "Delivered").length, link: "/admin/requests?status=Delivered", icon: CheckCircle2, color: "text-slate-600" },
+        ].map((stat, idx) => (
           <Link
-            key={card.title}
-            href={`/admin/requests?status=${encodeURIComponent(card.statusFilter)}`}
-            className={`p-3.5 rounded-2xl border shadow-xs hover:scale-[1.02] transition-all text-left block ${card.bgClass}`}
+            key={idx}
+            href={stat.link}
+            className="bg-white rounded-xl border border-slate-200 p-4 shadow-xs hover:border-slate-300 hover:shadow-sm transition-all flex flex-col justify-between gap-3 group"
           >
-            <span className="block text-[10px] font-bold tracking-wider uppercase opacity-80 line-clamp-1">
-              {card.title}
-            </span>
-            <span className="font-mono text-2xl sm:text-3xl font-black mt-1 block">
-              {card.count}
-            </span>
+            <div className="flex items-start justify-between gap-2">
+              <span className="text-[10px] font-bold text-slate-500 group-hover:text-slate-700 transition-colors tracking-wider uppercase leading-tight">
+                {stat.label}
+              </span>
+              <stat.icon className={`w-4 h-4 ${stat.color} shrink-0 opacity-80 group-hover:opacity-100 transition-opacity`} />
+            </div>
+            <div className="text-2xl font-black text-slate-900">
+              {stat.value < 10 ? `0${stat.value}` : stat.value}
+            </div>
           </Link>
         ))}
       </div>
@@ -148,7 +126,7 @@ export function AdminDashboardView() {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
-              {attentionRequests.map((req) => (
+              {currentAttentionRequests.map((req) => (
                 <tr
                   key={req.id}
                   onClick={() => router.push(`/admin/requests?id=${req.id}`)}
@@ -193,6 +171,34 @@ export function AdminDashboardView() {
             </tbody>
           </table>
         </div>
+
+        {/* Pagination Footer */}
+        {attentionRequests.length > 0 && (
+          <div className="flex items-center justify-between border-t border-slate-100 bg-slate-50/50 px-6 py-4">
+            <span className="text-[11px] font-medium text-slate-500 uppercase tracking-wider">
+              Showing {(currentPage - 1) * ITEMS_PER_PAGE + 1} to {Math.min(currentPage * ITEMS_PER_PAGE, attentionRequests.length)} of {attentionRequests.length} requests
+            </span>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                disabled={currentPage === 1}
+                className="px-3 py-1.5 text-[11px] font-bold uppercase tracking-wider text-slate-600 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 hover:text-slate-900 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+              >
+                Previous
+              </button>
+              <span className="text-[11px] font-bold text-slate-600 px-3 uppercase tracking-wider">
+                Page {currentPage} of {totalPages}
+              </span>
+              <button
+                onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                disabled={currentPage === totalPages}
+                className="px-3 py-1.5 text-[11px] font-bold uppercase tracking-wider text-slate-600 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 hover:text-slate-900 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+              >
+                Next
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

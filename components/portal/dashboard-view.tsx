@@ -11,6 +11,7 @@ import {
   ShieldCheck,
   ChevronRight,
 } from "lucide-react";
+import Link from "next/link";
 import { usePortal } from "@/context/portal-context";
 import { PartRequest, RequestStatus } from "@/types/portal";
 
@@ -27,6 +28,11 @@ export function DashboardView() {
     setPaymentRequest,
     activeCustomer,
   } = usePortal();
+
+  // Pagination state
+  const [currentPage, setCurrentPage] = React.useState(1);
+  const ITEMS_PER_PAGE = 5;
+  const totalPages = Math.max(1, Math.ceil(requests.length / ITEMS_PER_PAGE));
 
   // Action required items from requests
   const actionItems = requests.filter(
@@ -98,13 +104,13 @@ export function DashboardView() {
         </div>
 
         {/* New Parts Request Button */}
-        <button
-          onClick={() => setIsNewRequestModalOpen(true)}
+        <Link
+          href="/customer/requests/new"
           className="inline-flex items-center justify-center gap-2 bg-[#ED2025] hover:bg-[#d11a1f] text-white font-bold text-xs uppercase tracking-wider py-3.5 px-6 rounded-xl shadow-md shadow-red-500/20 hover:shadow-lg hover:shadow-red-500/30 transition-all transform active:scale-95 shrink-0"
         >
           <Plus className="w-4 h-4 stroke-[3]" />
           <span>New Parts Request</span>
-        </button>
+        </Link>
       </div>
 
       {/* 2. KPI Summary Cards (4 Interactive Nav Cards) */}
@@ -322,13 +328,13 @@ export function DashboardView() {
               </div>
               <p className="text-sm font-bold text-slate-700">No requests found</p>
               <p className="text-xs text-slate-500 mt-1">Submit your first parts procurement request to get started.</p>
-              <button
-                onClick={() => setIsNewRequestModalOpen(true)}
+              <Link
+                href="/customer/requests/new"
                 className="mt-4 inline-flex items-center gap-2 px-4 py-2 bg-[#ED2025] text-white rounded-xl text-xs font-bold shadow-sm hover:bg-[#d11a1f] transition-all"
               >
                 <Plus className="w-4 h-4" />
                 <span>New Parts Request</span>
-              </button>
+              </Link>
             </div>
           ) : (
             <table className="w-full text-left border-collapse">
@@ -344,7 +350,7 @@ export function DashboardView() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 text-xs text-slate-700">
-                {requests.slice(0, 6).map((req) => (
+                {requests.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE).map((req) => (
                   <tr
                     key={req.id}
                     onClick={() => setSelectedRequest(req)}
@@ -400,6 +406,34 @@ export function DashboardView() {
             </table>
           )}
         </div>
+
+        {/* Pagination Footer */}
+        {requests.length > 0 && totalPages > 1 && (
+          <div className="flex items-center justify-between border-t border-slate-100 bg-slate-50/50 px-6 py-4">
+            <span className="text-[11px] font-medium text-slate-500 uppercase tracking-wider">
+              Showing {(currentPage - 1) * ITEMS_PER_PAGE + 1} to {Math.min(currentPage * ITEMS_PER_PAGE, requests.length)} of {requests.length} requests
+            </span>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                disabled={currentPage === 1}
+                className="px-3 py-1.5 text-[11px] font-bold uppercase tracking-wider text-slate-600 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 hover:text-slate-900 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+              >
+                Previous
+              </button>
+              <span className="text-[11px] font-bold text-slate-600 px-3 uppercase tracking-wider">
+                Page {currentPage} of {totalPages}
+              </span>
+              <button
+                onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                disabled={currentPage === totalPages}
+                className="px-3 py-1.5 text-[11px] font-bold uppercase tracking-wider text-slate-600 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 hover:text-slate-900 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+              >
+                Next
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
