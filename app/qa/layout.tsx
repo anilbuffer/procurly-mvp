@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, Suspense } from "react";
 import { QASidebar } from "@/components/qa/qa-sidebar";
 import { QAHeader } from "@/components/qa/qa-header";
 
@@ -14,10 +14,12 @@ export default function QALayout({
   return (
     <div className="min-h-screen bg-[#F7F8FA] text-slate-900 flex font-sans antialiased">
       {/* QA Sidebar */}
-      <QASidebar
-        collapsed={collapsed}
-        onToggleCollapse={() => setCollapsed(!collapsed)}
-      />
+      <Suspense fallback={<div className="w-64 bg-slate-900 min-h-screen"></div>}>
+        <QASidebar
+          collapsed={collapsed}
+          onToggleCollapse={() => setCollapsed(!collapsed)}
+        />
+      </Suspense>
 
       {/* Main Content Area */}
       <div

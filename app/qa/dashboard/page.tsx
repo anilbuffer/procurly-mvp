@@ -1,8 +1,12 @@
 "use client";
 
-import React from "react";
+import React, { Suspense } from "react";
 import { QADashboardView } from "@/components/qa/qa-dashboard-view";
 
 export default function QADashboardPage() {
-  return <QADashboardView />;
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <QADashboardView />
+    </Suspense>
+  );
 }
