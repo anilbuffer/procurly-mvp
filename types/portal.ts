@@ -26,6 +26,8 @@ export type {
   InternalNote,
   RequestActivity,
   PartRequest,
+  NotificationType,
+  PortalNotification,
 } from "./shared";
 
 export type PortalTab =
@@ -36,36 +38,6 @@ export type PortalTab =
   | "payments"
   | "settings";
 
-export type NotificationType =
-  | "Registration Approval"
-  | "Request Submitted"
-  | "Information Required"
-  | "Status Update"
-  | "Quote Available"
-  | "Quote Accepted"
-  | "Quote Sent"
-  | "Quote Rejected"
-  | "Payment Received"
-  | "Payment Updated"
-  | "Order Placed"
-  | "Shipment Dispatched"
-  | "Shipment Arrived"
-  | "Shipment Updated"
-  | "Delivery Out"
-  | "Delivered"
-  | "New Request"
-  | "Customer Registration"
-  | "General";
-
-export interface PortalNotification {
-  id: string;
-  type: NotificationType;
-  title: string;
-  description: string;
-  timestamp: string;
-  read: boolean;
-  requestId?: string;
-}
 
 export interface RequestMessage {
   id: string;

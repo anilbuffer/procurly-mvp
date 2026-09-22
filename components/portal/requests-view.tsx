@@ -213,7 +213,7 @@ export function RequestsView() {
                       </p>
                       {req.supporting?.freightPreference && (
                         <p className="text-[11px] text-[#0ea5e9] font-medium mt-0.5">
-                          Freight: {req.supporting.freightPreference}
+                          Freight: {req.supporting.freightPreference === "Sea Freight" ? "Ocean Freight" : req.supporting.freightPreference}
                         </p>
                       )}
                     </td>

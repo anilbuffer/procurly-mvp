@@ -40,6 +40,9 @@ export type AuthMode = "login" | "register" | "mfa" | "forgot_password" | "chang
  */
 export function getPortalRoute(targetEmail: string): string {
   const normalized = (targetEmail || "").toLowerCase().trim();
+  if (normalized.includes("qa")) {
+    return "/qa/dashboard";
+  }
   if (
     normalized.includes("procurly.io") ||
     normalized.includes("sarah") ||
@@ -343,9 +346,8 @@ export function LoginView() {
                 variant="success"
                 icon={<CheckCircle2 className="w-4 h-4 text-emerald-600" />}
                 title="Credentials verified"
-                description={`Secure direct session initialized. Redirecting to ${
-                  getPortalRoute(email) === "/procurement" ? "Procurement Portal" : "Customer Portal"
-                } workspace...`}
+                description={`Secure direct session initialized. Redirecting to ${getPortalRoute(email) === "/procurement" ? "Procurement Portal" : "Customer Portal"
+                  } workspace...`}
               />
             )}
 
@@ -451,32 +453,19 @@ export function LoginView() {
                   Click card to prefill or Launch
                 </span>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs">
                 {/* 1. Customer Portal: James Wilson */}
                 <div
-                  className={`group relative p-3 rounded-xl border transition-all ${
-                    email === "james.wilson@spmotors.co.nz"
-                      ? "border-blue-500 bg-blue-50/50 ring-1 ring-blue-500/30 shadow-xs"
-                      : "border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50/50"
-                  }`}
+                  className={`group relative p-3 rounded-xl border transition-all ${email === "james.wilson@spmotors.co.nz"
+                    ? "border-blue-500 bg-blue-50/50 ring-1 ring-blue-500/30 shadow-xs"
+                    : "border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50/50"
+                    }`}
                 >
                   <div className="flex items-center justify-between mb-1.5">
                     <span className="text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded bg-blue-100 text-blue-800 font-sans">
                       Customer Portal
                     </span>
-                    <button
-                      type="button"
-                      onClick={() =>
-                        handleLaunchDemoUser(
-                          "james.wilson@spmotors.co.nz",
-                          "Procurly2026!"
-                        )
-                      }
-                      className="text-[10px] font-bold text-blue-600 hover:text-blue-800 inline-flex items-center gap-0.5 hover:underline cursor-pointer"
-                    >
-                      <span>Launch</span>
-                      <ArrowRight className="w-3 h-3" />
-                    </button>
+
                   </div>
                   <button
                     type="button"
@@ -499,29 +488,16 @@ export function LoginView() {
 
                 {/* 2. Unified Admin Portal: Sarah Jenkins (Procurement) / David Vance (Admin) */}
                 <div
-                  className={`group relative p-3 rounded-xl border transition-all ${
-                    email.includes("procurly.io")
-                      ? "border-[#ED2025] bg-red-50/50 ring-1 ring-[#ED2025]/30 shadow-xs"
-                      : "border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50/50"
-                  }`}
+                  className={`group relative p-3 rounded-xl border transition-all ${email === "sarah.jenkins@procurly.io"
+                    ? "border-[#ED2025] bg-red-50/50 ring-1 ring-[#ED2025]/30 shadow-xs"
+                    : "border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50/50"
+                    }`}
                 >
                   <div className="flex items-center justify-between mb-1.5">
                     <span className="text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded bg-red-100 text-[#ED2025] font-sans">
                       Admin Portal
                     </span>
-                    <button
-                      type="button"
-                      onClick={() =>
-                        handleLaunchDemoUser(
-                          "sarah.jenkins@procurly.io",
-                          "AdminSecure2026!"
-                        )
-                      }
-                      className="text-[10px] font-bold text-[#ED2025] hover:text-[#C8101E] inline-flex items-center gap-0.5 hover:underline cursor-pointer"
-                    >
-                      <span>Launch</span>
-                      <ArrowRight className="w-3 h-3" />
-                    </button>
+
                   </div>
                   <button
                     type="button"
@@ -538,6 +514,38 @@ export function LoginView() {
                     </p>
                     <p className="text-[10px] text-slate-500 truncate">
                       sarah.jenkins@procurly.io
+                    </p>
+                  </button>
+                </div>
+
+                {/* 3. QA Portal: QA Tester */}
+                <div
+                  className={`group relative p-3 rounded-xl border transition-all ${email === "qa@procurly.io"
+                    ? "border-emerald-500 bg-emerald-50/50 ring-1 ring-emerald-500/30 shadow-xs"
+                    : "border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50/50"
+                    }`}
+                >
+                  <div className="flex items-center justify-between mb-1.5">
+                    <span className="text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800 font-sans">
+                      QA Portal
+                    </span>
+
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() =>
+                      handleSelectDemoUser(
+                        "qa@procurly.io",
+                        "QATesting2026!"
+                      )
+                    }
+                    className="w-full text-left cursor-pointer"
+                  >
+                    <p className="font-bold text-slate-900 truncate">
+                      QA Tester
+                    </p>
+                    <p className="text-[10px] text-slate-500 truncate">
+                      qa@procurly.io
                     </p>
                   </button>
                 </div>
@@ -575,6 +583,13 @@ export function LoginView() {
                   className="text-xs font-semibold text-slate-700 hover:text-[#ED2025] inline-flex items-center gap-1 px-3.5 py-1.5 rounded-xl bg-slate-100 hover:bg-red-50 border border-slate-200 hover:border-red-200 transition-colors"
                 >
                   <span>Unified Admin Portal →</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => router.push("/qa/dashboard")}
+                  className="text-xs font-semibold text-slate-700 hover:text-emerald-700 inline-flex items-center gap-1 px-3.5 py-1.5 rounded-xl bg-slate-100 hover:bg-emerald-50 border border-slate-200 hover:border-emerald-200 transition-colors"
+                >
+                  <span>QA Portal →</span>
                 </button>
               </div>
             </div>
@@ -894,9 +909,8 @@ export function LoginView() {
                 variant="success"
                 icon={<CheckCircle2 className="w-4 h-4 text-[#059669]" />}
                 title="Identity verified"
-                description={`Authentication successful. Redirecting to ${
-                  getPortalRoute(email) === "/procurement" ? "Procurement Portal" : "Customer Portal"
-                } workspace...`}
+                description={`Authentication successful. Redirecting to ${getPortalRoute(email) === "/procurement" ? "Procurement Portal" : "Customer Portal"
+                  } workspace...`}
               />
             )}
 

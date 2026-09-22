@@ -50,6 +50,8 @@ interface PortalContextType {
     reference?: string
   ) => void;
   sendMessage: (requestId: string, text: string) => void;
+  approveQA: (requestId: string, notes?: string) => void;
+  rejectQA: (requestId: string, reason: string) => void;
   activeCustomer: CustomerRecord;
   setActiveCustomerId: (id: string) => void;
   availableCustomers: CustomerRecord[];
@@ -76,6 +78,8 @@ export function PortalProvider({ children }: { children: React.ReactNode }) {
     markPaymentPaid,
     markNotificationAsRead: sharedMarkRead,
     markAllNotificationsAsRead: sharedMarkAllRead,
+    approveQA: sharedApproveQA,
+    rejectQA: sharedRejectQA,
   } = useUnifiedData();
 
   // Active customer management (default SP Motors Ltd, customizable for testing)
@@ -332,6 +336,8 @@ export function PortalProvider({ children }: { children: React.ReactNode }) {
         rejectQuote,
         submitPayment,
         sendMessage,
+        approveQA: sharedApproveQA,
+        rejectQA: sharedRejectQA,
         activeCustomer,
         setActiveCustomerId,
         availableCustomers: customers,

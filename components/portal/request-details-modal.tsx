@@ -48,10 +48,12 @@ export function RequestDetailsModal() {
     setPaymentRequest,
     setActiveTab: setPortalTab,
     activeCustomer,
+    approveQA,
+    rejectQA
   } = usePortal();
 
-  // Navigation tabs: overview | quote | shipment (in-app messaging removed for MVP)
-  const [activeTab, setActiveTab] = useState<"overview" | "quote" | "shipment">("overview");
+  // Navigation tabs: overview | quote | shipment | qa
+  const [activeTab, setActiveTab] = useState<"overview" | "quote" | "shipment" | "qa">("overview");
   const [showDirectContactModal, setShowDirectContactModal] = useState(false);
   const [copiedContact, setCopiedContact] = useState<string | null>(null);
 
@@ -76,6 +78,8 @@ export function RequestDetailsModal() {
       setActiveTab("quote");
     } else if ((req.status === "Shipped" || req.status === "Delivered") && req.shipment) {
       setActiveTab("shipment");
+    } else if (req.status === "QA Review" && req.qaDetails) {
+      setActiveTab("qa");
     } else {
       setActiveTab("overview");
     }
@@ -261,6 +265,22 @@ export function RequestDetailsModal() {
             </button>
           )}
 
+          {req.qaDetails && (
+            <button
+              onClick={() => setActiveTab("qa")}
+              className={`py-3 px-4 border-b-2 flex items-center gap-2 transition-colors ${activeTab === "qa"
+                ? "border-[#ED2025] text-[#ED2025]"
+                : "border-transparent hover:text-slate-900"
+                }`}
+            >
+              <ShieldCheck className="w-3.5 h-3.5" />
+              <span>QA Review</span>
+              {req.status === "QA Review" && (
+                <span className="w-2 h-2 rounded-full bg-[#ED2025]" />
+              )}
+            </button>
+          )}
+
           <div className="ml-auto py-2 flex items-center">
             <button
               type="button"
@@ -421,7 +441,7 @@ export function RequestDetailsModal() {
                     {req.supporting?.freightPreference && (
                       <p className="text-slate-800 mt-2 pt-2 border-t border-slate-200/60 font-semibold inline-flex items-center gap-1.5">
                         <Truck className="w-3.5 h-3.5 text-[#0ea5e9]" />
-                        <span>Freight Preference: <span className="text-[#0ea5e9]">{req.supporting.freightPreference}</span></span>
+                        <span>Freight Preference: <span className="text-[#0ea5e9]">{req.supporting.freightPreference === "Sea Freight" ? "Ocean Freight" : req.supporting.freightPreference}</span></span>
                       </p>
                     )}
                   </div>
@@ -457,6 +477,13 @@ export function RequestDetailsModal() {
                       OEM Ref: {req.quotation.oemNumber} • Supplier Hub:{" "}
                       {req.quotation.supplierLocation}
                     </p>
+                    {req.supporting?.freightPreference && (
+                      <div className="mt-1">
+                        <span className="text-[10px] font-bold text-[#ED2025] bg-red-50 px-2 py-0.5 rounded border border-red-100 inline-flex items-center gap-1">
+                          Freight Preference: {req.supporting.freightPreference === "Sea Freight" ? "Ocean Freight" : req.supporting.freightPreference}
+                        </span>
+                      </div>
+                    )}
                   </div>
                   <div className="text-right">
                     <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
@@ -895,6 +922,104 @@ export function RequestDetailsModal() {
                     <ExternalLink className="w-3.5 h-3.5" />
                   </button>
                 </div>
+              </div>
+            </div>
+          )}
+
+          {/* TAB 4: QA REVIEW */}
+          {activeTab === "qa" && req.qaDetails && (
+            <div className="space-y-6">
+              <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
+                <div className="flex items-center justify-between mb-4 pb-4 border-b border-slate-100">
+                  <div>
+                    <h3 className="text-lg font-bold text-slate-900 flex items-center gap-2">
+                      <ShieldCheck className="w-5 h-5 text-[#ED2025]" />
+                      Quality Assurance Review
+                    </h3>
+                    <p className="text-xs text-slate-500 mt-1">
+                      Uploaded by {req.qaDetails.uploadedBy} on {req.qaDetails.uploadedAt}
+                    </p>
+                  </div>
+                  {req.qaDetails.status === "Review" && (
+                    <span className="px-3 py-1 rounded-full bg-amber-50 text-amber-700 text-xs font-bold border border-amber-200">
+                      Pending Your Approval
+                    </span>
+                  )}
+                  {req.qaDetails.status === "Approved" && (
+                    <span className="px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 text-xs font-bold border border-emerald-200">
+                      Approved
+                    </span>
+                  )}
+                  {req.qaDetails.status === "Rejected" && (
+                    <span className="px-3 py-1 rounded-full bg-red-50 text-red-700 text-xs font-bold border border-red-200">
+                      Rejected
+                    </span>
+                  )}
+                </div>
+
+                <div className="mb-6">
+                  <h4 className="text-xs font-bold text-slate-700 uppercase tracking-wider mb-3">
+                    Inspection Photos / Videos
+                  </h4>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                    {req.qaDetails.photos?.map((photo, i) => (
+                      <div key={i} className="aspect-video bg-slate-100 rounded-xl overflow-hidden border border-slate-200">
+                        <img
+                          src={photo}
+                          alt={`QA Photo ${i + 1}`}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="mb-6">
+                  <h4 className="text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">
+                    QA Operator Notes
+                  </h4>
+                  <p className="text-sm text-slate-800 bg-slate-50 p-4 rounded-xl border border-slate-100">
+                    {req.qaDetails.notes}
+                  </p>
+                </div>
+
+                {req.qaDetails.status === "Review" ? (
+                  <div className="pt-6 border-t border-slate-100 flex items-center justify-end gap-3">
+                    <button
+                      onClick={() => {
+                        const reason = window.prompt("Reason for rejecting part:");
+                        if (reason) {
+                          rejectQA(req.id, reason);
+                          setSelectedRequest(null);
+                        }
+                      }}
+                      className="px-5 py-2.5 text-sm font-bold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-xl transition-colors"
+                    >
+                      Reject Part
+                    </button>
+                    <button
+                      onClick={() => {
+                        approveQA(req.id);
+                        setActiveTab("overview");
+                      }}
+                      className="px-6 py-2.5 text-sm font-bold text-white bg-[#ED2025] hover:bg-[#d11a1f] rounded-xl shadow-md transition-colors flex items-center gap-2"
+                    >
+                      <CheckCircle2 className="w-4 h-4" />
+                      Approve & Dispatch
+                    </button>
+                  </div>
+                ) : (
+                  req.qaDetails.customerNotes && (
+                    <div className="mt-4 pt-4 border-t border-slate-100">
+                      <h4 className="text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">
+                        Your Notes
+                      </h4>
+                      <p className="text-sm text-slate-800 bg-slate-50 p-4 rounded-xl border border-slate-100">
+                        {req.qaDetails.customerNotes}
+                      </p>
+                    </div>
+                  )
+                )}
               </div>
             </div>
           )}

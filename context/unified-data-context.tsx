@@ -36,12 +36,12 @@ import {
 } from "@/lib/shared-mock-data";
 
 // ─── Storage Keys ──────────────────────────────────────────
-const STORAGE_REQUESTS = "procurly_shared_requests_v2";
-const STORAGE_CUSTOMERS = "procurly_shared_customers_v2";
-const STORAGE_SUPPLIERS = "procurly_shared_suppliers_v2";
-const STORAGE_STAFF = "procurly_shared_staff_v2";
-const STORAGE_NOTIFICATIONS = "procurly_shared_notifications_v2";
-const STORAGE_ACTIVE_ROLE = "procurly_active_staff_role_v2";
+const STORAGE_REQUESTS = "procurly_shared_requests_v3";
+const STORAGE_CUSTOMERS = "procurly_shared_customers_v3";
+const STORAGE_SUPPLIERS = "procurly_shared_suppliers_v3";
+const STORAGE_STAFF = "procurly_shared_staff_v3";
+const STORAGE_NOTIFICATIONS = "procurly_shared_notifications_v3";
+const STORAGE_ACTIVE_ROLE = "procurly_active_staff_role_v3";
 
 interface UnifiedDataContextType {
   // State
@@ -113,6 +113,11 @@ interface UnifiedDataContextType {
   updateShipmentMilestone: (requestId: string, nextMilestone: ShipmentMilestone, note?: string) => void;
   recordDelivery: (requestId: string, confirmationNotes?: string) => void;
   completeRequest: (requestId: string) => void;
+
+  // Actions - QA Verification
+  submitQAMedia: (requestId: string, qaData: { photos: string[]; videos?: string[]; notes: string }) => void;
+  approveQA: (requestId: string, customerNotes?: string) => void;
+  rejectQA: (requestId: string, customerNotes: string) => void;
 
   // Actions - Notes & Documents
   addInternalNote: (requestId: string, text: string, isCustomerVisible?: boolean) => void;
@@ -600,6 +605,18 @@ export function UnifiedDataProvider({ children }: { children: React.ReactNode })
             } else if (status === "Completed") {
               actionRequired = "Request completed & archived";
               actionType = "none";
+            } else if (status === "QA Pending") {
+              actionRequired = "QA Verification Required";
+              actionType = "view_details";
+            } else if (status === "QA Review") {
+              actionRequired = "Review QA Media";
+              actionType = "view_details";
+            } else if (status === "QA Approved") {
+              actionRequired = "QA Approved. Ready for dispatch.";
+              actionType = "none";
+            } else if (status === "Ready for Dispatch") {
+              actionRequired = "Awaiting shipment";
+              actionType = "none";
             }
 
             return {
@@ -645,6 +662,136 @@ export function UnifiedDataProvider({ children }: { children: React.ReactNode })
       ]);
     },
     [currentStaffUser]
+  );
+
+  const submitQAMedia = useCallback(
+    (requestId: string, qaData: { photos: string[]; videos?: string[]; notes: string }) => {
+      setRequests((prev) =>
+        prev.map((r) => {
+          if (r.id === requestId || r.requestNumber === requestId) {
+            return {
+              ...r,
+              status: "QA Review",
+              actionRequired: "Review QA Media",
+              actionType: "view_details",
+              qaDetails: {
+                status: "Review",
+                photos: qaData.photos,
+                videos: qaData.videos,
+                notes: qaData.notes,
+                uploadedAt: "Just now",
+                uploadedBy: currentStaffUser.name,
+              },
+              lastUpdated: "Just now",
+              activity: [
+                {
+                  id: `act-${Date.now()}`,
+                  timestamp: new Date().toISOString(),
+                  timeLabel: "Just now",
+                  title: "QA Media Uploaded",
+                  description: "Quality assurance media and notes submitted for customer review.",
+                  actor: currentStaffUser.name,
+                  type: "status",
+                },
+                ...(r.activity || []),
+              ],
+            };
+          }
+          return r;
+        })
+      );
+      
+      // Notify customer
+      setNotifications((prev) => [
+        {
+          id: `notif-${Date.now()}`,
+          type: "QA Review Required",
+          title: "QA Review Required",
+          description: `QA media uploaded for your order. Please review and approve.`,
+          timestamp: "Just now",
+          read: false,
+          requestId,
+        },
+        ...prev,
+      ]);
+    },
+    [currentStaffUser]
+  );
+
+  const approveQA = useCallback(
+    (requestId: string, customerNotes?: string) => {
+      setRequests((prev) =>
+        prev.map((r) => {
+          if (r.id === requestId || r.requestNumber === requestId) {
+            return {
+              ...r,
+              status: "QA Approved",
+              actionRequired: "QA Approved. Ready for dispatch.",
+              actionType: "none",
+              qaDetails: {
+                ...r.qaDetails!,
+                status: "Approved",
+                customerReviewedAt: "Just now",
+                customerNotes,
+              },
+              lastUpdated: "Just now",
+              activity: [
+                {
+                  id: `act-${Date.now()}`,
+                  timestamp: new Date().toISOString(),
+                  timeLabel: "Just now",
+                  title: "QA Approved",
+                  description: "QA was approved by customer. Ready for dispatch.",
+                  actor: "Customer", // Ideally passed in
+                  type: "status",
+                },
+                ...(r.activity || []),
+              ],
+            };
+          }
+          return r;
+        })
+      );
+    },
+    []
+  );
+
+  const rejectQA = useCallback(
+    (requestId: string, customerNotes: string) => {
+      setRequests((prev) =>
+        prev.map((r) => {
+          if (r.id === requestId || r.requestNumber === requestId) {
+            return {
+              ...r,
+              status: "QA Pending", // return to pending for re-upload or return
+              actionRequired: "QA Rejected by Customer",
+              actionType: "view_details",
+              qaDetails: {
+                ...r.qaDetails!,
+                status: "Rejected",
+                customerReviewedAt: "Just now",
+                customerNotes,
+              },
+              lastUpdated: "Just now",
+              activity: [
+                {
+                  id: `act-${Date.now()}`,
+                  timestamp: new Date().toISOString(),
+                  timeLabel: "Just now",
+                  title: "QA Rejected",
+                  description: `QA rejected: ${customerNotes}`,
+                  actor: "Customer",
+                  type: "status",
+                },
+                ...(r.activity || []),
+              ],
+            };
+          }
+          return r;
+        })
+      );
+    },
+    []
   );
 
   const assignStaff = useCallback(
@@ -1712,6 +1859,9 @@ export function UnifiedDataProvider({ children }: { children: React.ReactNode })
         updateShipmentMilestone,
         recordDelivery,
         completeRequest,
+        submitQAMedia,
+        approveQA,
+        rejectQA,
         addInternalNote,
         addDocument,
         addCustomer,

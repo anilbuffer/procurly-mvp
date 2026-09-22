@@ -76,33 +76,43 @@ export function QuoteTab({ request, onNavigateToTab }: QuoteTabProps) {
           </h3>
           <div className="space-y-3.5 text-xs">
             <div className="flex justify-between items-center border-b border-slate-100 pb-3">
-              <span className="text-slate-500">Make & Model:</span>
-              <span className="font-bold text-slate-900">{request.vehicle.year} {request.vehicle.make} {request.vehicle.model}</span>
+              <span className="text-slate-500 text-[10px] font-bold uppercase tracking-wider">Make</span>
+              <span className="font-bold text-slate-900">{request.vehicle.make}</span>
             </div>
             <div className="flex justify-between items-center border-b border-slate-100 pb-3">
-              <span className="text-slate-500">VIN / Chassis:</span>
+              <span className="text-slate-500 text-[10px] font-bold uppercase tracking-wider">Model</span>
+              <span className="font-bold text-slate-900">{request.vehicle.model}</span>
+            </div>
+            <div className="flex justify-between items-center border-b border-slate-100 pb-3">
+              <span className="text-slate-500 text-[10px] font-bold uppercase tracking-wider">Model Year</span>
+              <span className="font-bold text-slate-900">{request.vehicle.year}</span>
+            </div>
+            <div className="flex justify-between items-center border-b border-slate-100 pb-3">
+              <span className="text-slate-500 text-[10px] font-bold uppercase tracking-wider">VIN / Chassis Number (Mandatory)</span>
               <span className="font-bold text-slate-900 font-mono tracking-wide">{request.vehicle.vin}</span>
             </div>
             <div className="flex justify-between items-center border-b border-slate-100 pb-3">
-              <span className="text-slate-500">Registration Plate:</span>
-              <span className="font-bold text-slate-900">{request.vehicle.registration || "NO PLATE"}</span>
+              <span className="text-slate-500 text-[10px] font-bold uppercase tracking-wider">NZ Registration Plate (Optional)</span>
+              <span className="font-bold text-slate-900">{request.vehicle.registration || "N/A"}</span>
             </div>
-            <div className="flex justify-between items-center border-b border-slate-100 pb-3">
-              <span className="text-slate-500">Engine Spec:</span>
-              <span className="font-bold text-slate-900">{request.vehicle.engine || "Standard factory spec"}</span>
-            </div>
-            <div className="flex justify-between items-center border-b border-slate-100 pb-3">
-              <span className="text-slate-500">Variant:</span>
-              <span className="font-bold text-slate-900">{request.vehicle.variant || "Standard"}</span>
-            </div>
-            <div className="flex justify-between items-center border-b border-slate-100 pb-3">
-              <span className="text-slate-500">Transmission:</span>
-              <span className="font-bold text-slate-900">{request.vehicle.transmission || "Automatic"}</span>
-            </div>
-            <div className="flex justify-between items-center">
-              <span className="text-slate-500">Drivetrain:</span>
-              <span className="font-bold text-slate-900">{request.vehicle.driveConfig || "RWD"}</span>
-            </div>
+            {request.vehicle.engine && (
+              <div className="flex justify-between items-center border-b border-slate-100 pb-3">
+                <span className="text-slate-500 text-[10px] font-bold uppercase tracking-wider">Engine Code / Displacement</span>
+                <span className="font-bold text-slate-900">{request.vehicle.engine}</span>
+              </div>
+            )}
+            {request.vehicle.transmission && (
+              <div className="flex justify-between items-center border-b border-slate-100 pb-3">
+                <span className="text-slate-500 text-[10px] font-bold uppercase tracking-wider">Transmission</span>
+                <span className="font-bold text-slate-900">{request.vehicle.transmission}</span>
+              </div>
+            )}
+            {request.vehicle.driveConfig && (
+              <div className="flex justify-between items-center border-b border-slate-100 pb-3">
+                <span className="text-slate-500 text-[10px] font-bold uppercase tracking-wider">Drive Configuration</span>
+                <span className="font-bold text-slate-900">{request.vehicle.driveConfig}</span>
+              </div>
+            )}
           </div>
         </div>
 
@@ -131,12 +141,12 @@ export function QuoteTab({ request, onNavigateToTab }: QuoteTabProps) {
               <span className="text-slate-500">Preference:</span>
               <span className="font-bold text-slate-900">{request.part.preference}</span>
             </div>
-            {request.supporting?.freightPreference && (
               <div className="flex justify-between items-center border-b border-slate-100 pb-3">
                 <span className="text-slate-500">Freight Preference:</span>
-                <span className="font-bold text-[#ED2025]">{request.supporting.freightPreference}</span>
+                <span className="font-bold text-[#ED2025] bg-red-50 px-2 py-0.5 rounded border border-red-100">
+                  {request.supporting?.freightPreference === "Sea Freight" ? "Ocean Freight" : (request.supporting?.freightPreference || "Not Specified")}
+                </span>
               </div>
-            )}
             <div className="flex justify-between items-center">
               <span className="text-slate-500">Quantity:</span>
               <span className="font-bold text-slate-900">{request.part.quantity || 1} unit(s)</span>
@@ -295,7 +305,14 @@ export function QuoteTab({ request, onNavigateToTab }: QuoteTabProps) {
 
           {/* Freight Selection */}
           <div className="mb-8">
-            <div className="text-xs font-bold text-slate-800 uppercase tracking-widest mb-4">SELECT YOUR FREIGHT TRANSIT OPTION:</div>
+            <div className="flex justify-between items-center mb-4">
+              <div className="text-xs font-bold text-slate-800 uppercase tracking-widest">SELECT YOUR FREIGHT TRANSIT OPTION:</div>
+              {request.supporting?.freightPreference && (
+                <div className="text-[11px] font-bold text-[#ED2025] bg-red-50 px-2 py-1 rounded border border-red-100">
+                  Customer Preference: {request.supporting.freightPreference === "Sea Freight" ? "Ocean Freight" : request.supporting.freightPreference}
+                </div>
+              )}
+            </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {/* Air Freight */}
               <div

@@ -7,6 +7,10 @@ export type RequestStatus =
   | "Approved"
   | "Awaiting Payment"
   | "Ordered"
+  | "QA Pending"
+  | "QA Review"
+  | "QA Approved"
+  | "Ready for Dispatch"
   | "Shipped"
   | "Delivered"
   | "Completed";
@@ -21,7 +25,7 @@ export type ShipmentMilestone =
   | "Out For Delivery"
   | "Delivered";
 
-export type StaffRole = "Administrator" | "Procurement" | "Operations" | "Finance";
+export type StaffRole = "Administrator" | "Procurement" | "Operations" | "Finance" | "QA Operator";
 
 export type CustomerStatus = "Pending Approval" | "Active" | "Suspended";
 
@@ -237,6 +241,19 @@ export interface SupplierOrder {
   documents: string[];
 }
 
+// ─── QA Verification ─────────────────────────────────────────
+
+export interface QADetails {
+  status: "Pending" | "Review" | "Approved" | "Rejected";
+  photos: string[];
+  videos?: string[];
+  notes?: string;
+  uploadedAt?: string;
+  uploadedBy?: string;
+  customerReviewedAt?: string;
+  customerNotes?: string;
+}
+
 // ─── Shipment ──────────────────────────────────────────────
 
 export interface MilestoneLog {
@@ -366,6 +383,9 @@ export interface PartRequest {
   // Supplier Order
   supplierOrder?: SupplierOrder;
 
+  // QA Verification
+  qaDetails?: QADetails;
+
   // Shipment & Delivery
   shipment?: ShipmentDetails;
 
@@ -384,15 +404,25 @@ export interface PartRequest {
 
 export type NotificationType =
   | "New Request"
+  | "Request Submitted"
+  | "Information Required"
   | "Status Update"
+  | "Quote Available"
   | "Quote Sent"
   | "Quote Accepted"
   | "Quote Rejected"
   | "Payment Received"
   | "Payment Updated"
   | "Order Placed"
+  | "QA Review Required"
+  | "QA Approved"
+  | "Shipment Dispatched"
+  | "Shipment Arrived"
   | "Shipment Updated"
+  | "Delivery Out"
+  | "Delivered"
   | "Customer Registration"
+  | "Registration Approval"
   | "General";
 
 export interface PortalNotification {

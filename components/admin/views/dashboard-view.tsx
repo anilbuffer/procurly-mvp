@@ -150,6 +150,11 @@ export function AdminDashboardView() {
                   <td className="py-3.5 px-4 text-slate-800">
                     <span className="font-medium line-clamp-1">{req.part.name}</span>
                     <span className="text-[10px] text-slate-400">Qty: {req.part.quantity}</span>
+                    {req.supporting?.freightPreference && (
+                      <span className="text-[10px] font-medium text-[#ED2025] block mt-0.5">
+                        Freight: {req.supporting.freightPreference === "Sea Freight" ? "Ocean Freight" : req.supporting.freightPreference}
+                      </span>
+                    )}
                   </td>
                   <td className="py-3.5 px-4">
                     <StatusBadge status={req.status} size="sm" />

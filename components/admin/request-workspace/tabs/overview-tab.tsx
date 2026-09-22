@@ -217,43 +217,61 @@ export function OverviewTab({ request }: OverviewTabProps) {
               {request.vehicle.registration || "NO PLATE"}
             </span>
           </div>
-          <div className="grid grid-cols-2 gap-y-2.5 gap-x-4 text-xs">
+          <div className="grid grid-cols-2 gap-y-3 gap-x-4 text-xs">
             <div>
-              <span className="text-slate-400 block text-[11px]">Make & Model</span>
+              <span className="text-slate-400 block text-[10px] font-bold uppercase tracking-wider mb-0.5">Make</span>
               <span className="font-bold text-slate-900">
-                {request.vehicle.year} {request.vehicle.make} {request.vehicle.model}
+                {request.vehicle.make}
               </span>
             </div>
             <div>
-              <span className="text-slate-400 block text-[11px]">VIN / Chassis</span>
+              <span className="text-slate-400 block text-[10px] font-bold uppercase tracking-wider mb-0.5">Model</span>
+              <span className="font-bold text-slate-900">
+                {request.vehicle.model}
+              </span>
+            </div>
+            <div>
+              <span className="text-slate-400 block text-[10px] font-bold uppercase tracking-wider mb-0.5">Model Year</span>
+              <span className="font-bold text-slate-900">
+                {request.vehicle.year}
+              </span>
+            </div>
+            <div>
+              <span className="text-slate-400 block text-[10px] font-bold uppercase tracking-wider mb-0.5">VIN / Chassis Number (Mandatory)</span>
               <span className="font-mono font-semibold text-slate-800 break-all">
                 {request.vehicle.vin}
               </span>
             </div>
             <div>
-              <span className="text-slate-400 block text-[11px]">Engine Spec</span>
+              <span className="text-slate-400 block text-[10px] font-bold uppercase tracking-wider mb-0.5">NZ Registration Plate (Optional)</span>
               <span className="font-medium text-slate-700">
-                {request.vehicle.engine || "Standard factory spec"}
+                {request.vehicle.registration || "N/A"}
               </span>
             </div>
-            <div>
-              <span className="text-slate-400 block text-[11px]">Variant</span>
-              <span className="font-medium text-slate-700">
-                {request.vehicle.variant || "Standard"}
-              </span>
-            </div>
-            <div>
-              <span className="text-slate-400 block text-[11px]">Transmission</span>
-              <span className="font-medium text-slate-700">
-                {request.vehicle.transmission || "Automatic"}
-              </span>
-            </div>
-            <div>
-              <span className="text-slate-400 block text-[11px]">Drivetrain</span>
-              <span className="font-medium text-slate-700">
-                {request.vehicle.driveConfig || "RWD"}
-              </span>
-            </div>
+            {request.vehicle.engine && (
+              <div>
+                <span className="text-slate-400 block text-[10px] font-bold uppercase tracking-wider mb-0.5">Engine Code / Displacement</span>
+                <span className="font-medium text-slate-700">
+                  {request.vehicle.engine}
+                </span>
+              </div>
+            )}
+            {request.vehicle.transmission && (
+              <div>
+                <span className="text-slate-400 block text-[10px] font-bold uppercase tracking-wider mb-0.5">Transmission</span>
+                <span className="font-medium text-slate-700">
+                  {request.vehicle.transmission}
+                </span>
+              </div>
+            )}
+            {request.vehicle.driveConfig && (
+              <div>
+                <span className="text-slate-400 block text-[10px] font-bold uppercase tracking-wider mb-0.5">Drive Configuration</span>
+                <span className="font-medium text-slate-700">
+                  {request.vehicle.driveConfig}
+                </span>
+              </div>
+            )}
           </div>
         </div>
 
@@ -292,12 +310,12 @@ export function OverviewTab({ request }: OverviewTabProps) {
                 <span className="text-slate-400 block text-[11px]">Condition Requirement</span>
                 <span className="font-medium text-slate-700">{request.part.condition}</span>
               </div>
-              {request.supporting?.freightPreference && (
-                <div>
-                  <span className="text-slate-400 block text-[11px]">Freight Preference</span>
-                  <span className="font-bold text-[#ED2025]">{request.supporting.freightPreference}</span>
-                </div>
-              )}
+            <div>
+              <span className="text-slate-400 block text-[11px]">Freight Preference</span>
+              <span className="font-bold text-[#ED2025] bg-red-50 px-2 py-0.5 rounded border border-red-100 inline-block mt-0.5">
+                {request.supporting?.freightPreference === "Sea Freight" ? "Ocean Freight" : (request.supporting?.freightPreference || "Not Specified")}
+              </span>
+            </div>
             </div>
           </div>
         </div>
