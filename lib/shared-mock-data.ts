@@ -374,7 +374,8 @@ export const INITIAL_SHARED_REQUESTS: PartRequest[] = [
       vehicleVerified: true,
       partVerified: true,
       addressVerified: true,
-      airFreightCost: 125, seaFreightCost: 85,
+      freightCost: 85,
+      selectedFreightType: "Sea",
     },
     payment: {
       id: "pay-123",
