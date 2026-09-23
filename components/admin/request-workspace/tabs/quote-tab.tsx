@@ -9,7 +9,10 @@ import {
   Anchor,
   Box,
   Check,
-  Building2
+  Building2,
+  ShieldCheck,
+  Clock,
+  Globe
 } from "lucide-react";
 import { PartRequest, SupplierQuotation } from "@/types/shared";
 import { useUnifiedData } from "@/context/unified-data-context";
@@ -43,6 +46,7 @@ export function QuoteTab({ request, onNavigateToTab }: QuoteTabProps) {
 
   const [advisoryNote, setAdvisoryNote] = useState<string>("Genuine OEM specification part sourced directly from Japan authorized dealer network.");
   const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [showActionDetailsModal, setShowActionDetailsModal] = useState(false);
 
   const combinedCost = basePartCost + freightCost;
   const marginAmount = combinedCost * (targetMargin / 100);
@@ -52,7 +56,10 @@ export function QuoteTab({ request, onNavigateToTab }: QuoteTabProps) {
   const marginMultiplier = 1 + (targetMargin / 100);
 
   const handleIssueQuote = () => {
-    if (!selectedQuote) return;
+    if (!selectedQuote) {
+      alert("Please add and select a supplier quote from the Sourcing tab before issuing a quote to the customer.");
+      return;
+    }
     createCustomerQuote(request.id, {
       sellPrice: basePartCost * marginMultiplier,
       airFreightCost: selectedFreight === "air" ? defaultAir * marginMultiplier : selectedFreight === "custom" ? freightCost * marginMultiplier : 0,
@@ -63,9 +70,9 @@ export function QuoteTab({ request, onNavigateToTab }: QuoteTabProps) {
     });
     setShowSuccessModal(true);
     
-    // Simulate Email Notification
+    // Show Action Details Modal instead of alert
     setTimeout(() => {
-      alert(`📧 EMAIL NOTIFICATION: To Customer\nSubject: Updated Quote Available\n\nAn updated quotation for your requested part (${request.part.name}) is now available for review and approval in your portal.`);
+      setShowActionDetailsModal(true);
     }, 500);
   };
 
@@ -169,6 +176,37 @@ export function QuoteTab({ request, onNavigateToTab }: QuoteTabProps) {
 
       {/* RIGHT COLUMN: Quotation & Admin Tools */}
       <div className="lg:col-span-2 space-y-6">
+
+        {/* AUDIT TRAIL: SHOWN IF ACCEPTED */}
+        {request.quoteAcceptance && (
+          <div className="bg-emerald-50 rounded-2xl border border-emerald-200 p-6 shadow-sm">
+            <h3 className="text-xs font-bold text-emerald-900 uppercase flex items-center gap-2 mb-4 tracking-wider">
+              <ShieldCheck className="w-4 h-4 text-emerald-600" />
+              Customer Acceptance Audit Trail
+            </h3>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs">
+              <div>
+                <span className="text-emerald-700/80 block text-[10px] font-bold uppercase mb-1">Accepted By</span>
+                <span className="font-bold text-emerald-950">{request.quoteAcceptance.acceptedBy}</span>
+                <span className="block text-[10px] text-emerald-700">{request.quoteAcceptance.userRole}</span>
+              </div>
+              <div>
+                <span className="text-emerald-700/80 block text-[10px] font-bold uppercase mb-1 flex items-center gap-1"><Clock className="w-3 h-3"/> Timestamp</span>
+                <span className="font-bold text-emerald-950">{request.quoteAcceptance.acceptedAt}</span>
+              </div>
+              <div>
+                <span className="text-emerald-700/80 block text-[10px] font-bold uppercase mb-1 flex items-center gap-1"><Globe className="w-3 h-3"/> IP Address</span>
+                <span className="font-bold text-emerald-950 font-mono">{request.quoteAcceptance.ipAddress || "Not Recorded"}</span>
+              </div>
+              <div>
+                <span className="text-emerald-700/80 block text-[10px] font-bold uppercase mb-1">Terms & Conditions</span>
+                <span className="font-bold text-emerald-950">
+                  {request.quoteAcceptance.termsAccepted ? "Explicitly Accepted" : "Not Recorded"}
+                </span>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* SUPPLIER QUOTES RECORDED (Admin Context) */}
         <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-[0_2px_12px_-4px_rgba(0,0,0,0.05)]">
@@ -376,10 +414,15 @@ export function QuoteTab({ request, onNavigateToTab }: QuoteTabProps) {
           <div className="flex w-100 sm:flex-row items-center gap-3">
             <button
               onClick={handleIssueQuote}
-              className="w-full sm:w-full bg-[#E61932] hover:bg-[#CC162C] text-white font-bold py-3.5 px-6 rounded-xl flex items-center justify-center gap-2 transition-colors shadow-md text-sm shadow-red-500/20"
+              disabled={!selectedQuote}
+              className={`w-full sm:w-full font-bold py-3.5 px-6 rounded-xl flex items-center justify-center gap-2 transition-colors shadow-md text-sm ${
+                !selectedQuote
+                  ? 'bg-slate-200 text-slate-400 cursor-not-allowed shadow-none border border-slate-300'
+                  : 'bg-[#E61932] hover:bg-[#CC162C] text-white shadow-red-500/20'
+              }`}
             >
               <Check className="w-4 h-4" />
-              Issue Quote to Customer
+              {selectedQuote ? "Issue Quote to Customer" : "Add a Supplier Quote First"}
             </button>
           </div>
         </div>
@@ -402,6 +445,50 @@ export function QuoteTab({ request, onNavigateToTab }: QuoteTabProps) {
             >
               Continue
             </button>
+          </div>
+        </div>
+      )}
+
+      {/* ACTION DETAILS MODAL */}
+      {showActionDetailsModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4">
+          <div className="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 animate-in zoom-in-95">
+            <div className="flex justify-between items-start mb-5">
+              <div>
+                <h3 className="text-lg font-bold text-slate-900 flex items-center gap-2">
+                  <span className="text-xl">📧</span> Action Details: Email Notification
+                </h3>
+                <p className="text-xs text-slate-500 mt-1">A simulated notification sent to the customer.</p>
+              </div>
+            </div>
+            
+            <div className="bg-slate-50 rounded-xl p-5 border border-slate-200 space-y-4">
+              <div>
+                <span className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">To</span>
+                <div className="font-medium text-sm text-slate-900">{request.customerName} (Customer)</div>
+              </div>
+              
+              <div>
+                <span className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Subject</span>
+                <div className="font-bold text-sm text-slate-900">Updated Quote Available</div>
+              </div>
+              
+              <div className="border-t border-slate-200 pt-4">
+                <span className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-2">Message Body</span>
+                <p className="text-sm text-slate-700 whitespace-pre-wrap leading-relaxed">
+                  An updated quotation for your requested part ({request.part.name}) is now available for review and approval in your portal.
+                </p>
+              </div>
+            </div>
+            
+            <div className="mt-6 flex justify-end">
+              <button
+                onClick={() => setShowActionDetailsModal(false)}
+                className="bg-slate-900 hover:bg-slate-800 text-white font-bold py-2.5 px-6 rounded-xl transition-colors shadow-sm text-sm"
+              >
+                Close
+              </button>
+            </div>
           </div>
         </div>
       )}

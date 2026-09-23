@@ -332,7 +332,7 @@ export function SourcingTab({ request }: SourcingTabProps) {
       {/* MODAL: Add/Edit Supplier Quote */}
       {showAddModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs p-4">
-          <div className="bg-white rounded-2xl max-w-xl w-full p-6 shadow-2xl border border-slate-200 animate-in zoom-in-95">
+          <div className="bg-white rounded-2xl max-w-2xl w-full p-6 shadow-2xl border border-slate-200 animate-in zoom-in-95">
             <h3 className="text-base font-bold text-slate-900 mb-1">
               {editingQuoteId ? "Edit Supplier Quotation" : "Add Supplier Quotation"}
             </h3>
@@ -342,6 +342,7 @@ export function SourcingTab({ request }: SourcingTabProps) {
 
             <form onSubmit={handleSaveQuote} className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
+
                 <div className="col-span-2">
                   <label className="block text-sm font-semibold text-slate-700 mb-1">
                     Select Supplier
@@ -445,8 +446,6 @@ export function SourcingTab({ request }: SourcingTabProps) {
                   />
                 </div>
 
-
-
                 <div>
                   <label className="block text-sm font-semibold text-slate-700 mb-1">
                     Availability
@@ -463,7 +462,7 @@ export function SourcingTab({ request }: SourcingTabProps) {
                   </select>
                 </div>
 
-                <div>
+                <div className="col-span-2">
                   <label className="block text-sm font-semibold text-slate-700 mb-1">
                     Lead Time (Days)
                   </label>
@@ -485,7 +484,7 @@ export function SourcingTab({ request }: SourcingTabProps) {
                 <textarea
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
-                  rows={2}
+                  rows={4}
                   placeholder="Packaging details, warranty cover, warehouse location..."
                   className="w-full text-sm p-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#ED2025]/30 focus:border-[#ED2025]"
                 />
