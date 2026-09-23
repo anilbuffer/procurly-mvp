@@ -62,7 +62,7 @@ export function QASidebar({ collapsed, onToggleCollapse }: QASidebarProps) {
           href: "/qa/dashboard?filter=pending",
           icon: Camera,
           badge: pendingQACount > 0 ? pendingQACount : undefined,
-          badgeColor: "bg-[#ED2025] text-white",
+          badgeColor: "bg-[#B30D12] text-white",
         },
         {
           name: "Awaiting Approval",
@@ -83,12 +83,14 @@ export function QASidebar({ collapsed, onToggleCollapse }: QASidebarProps) {
       <div className={`h-16 flex items-center justify-between border-b border-slate-800 shrink-0 ${collapsed ? "px-2.5" : "px-4"}`}>
         {!collapsed ? (
           <Link href="/qa/dashboard" className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#ED2025] to-[#B91C1C] flex items-center justify-center shadow-md shadow-red-900/30">
-              <span className="text-white font-black text-sm tracking-wider">QA</span>
+            <div className="w-8 h-8 rounded-lg border-2 border-white bg-[#C40E14] flex items-center justify-center shadow-sm">
+              <span className="text-white font-black text-sm tracking-tighter leading-none shrink-0">A</span>
             </div>
             <div>
               <div className="flex items-center gap-1.5">
-                <span className="font-black text-white text-base tracking-tight">PROCURly</span>
+                <span className="font-black italic text-white uppercase text-base tracking-tight leading-none font-sans">
+                  PROCUR<span className="not-italic">LY</span>
+                </span>
               </div>
               <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block -mt-1">
                 QA Portal
@@ -97,8 +99,8 @@ export function QASidebar({ collapsed, onToggleCollapse }: QASidebarProps) {
           </Link>
         ) : (
           <Link href="/qa/dashboard" className="flex items-center">
-            <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-[#ED2025] to-[#B91C1C] flex items-center justify-center shadow-md">
-              <span className="text-white font-black text-sm">QA</span>
+            <div className="w-9 h-9 rounded-lg border-2 border-white bg-[#C40E14] flex items-center justify-center shadow-sm">
+              <span className="text-white font-black text-sm tracking-tighter leading-none shrink-0">A</span>
             </div>
           </Link>
         )}
@@ -152,7 +154,7 @@ export function QASidebar({ collapsed, onToggleCollapse }: QASidebarProps) {
                   >
                     <Icon
                       className={`w-4 h-4 shrink-0 transition-colors ${active
-                        ? "text-[#ED2025]"
+                        ? "text-[#B30D12]"
                         : "text-slate-400 group-hover:text-white"
                         }`}
                     />
@@ -191,7 +193,7 @@ export function QASidebar({ collapsed, onToggleCollapse }: QASidebarProps) {
                 className="w-8 h-8 rounded-full object-cover shrink-0 shadow-md ring-1 ring-white/10"
               />
             ) : (
-              <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-[#ED2025] to-red-600 flex items-center justify-center text-white font-black text-xs shrink-0 shadow-md">
+              <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-[#B30D12] to-red-600 flex items-center justify-center text-white font-black text-xs shrink-0 shadow-md">
                 QA
               </div>
             )}

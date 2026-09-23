@@ -304,7 +304,7 @@ export function NewRequestModal() {
         {/* Modal Header */}
         <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/70">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-[#ED2025] to-[#B91C1C] flex items-center justify-center shadow-md shadow-red-500/20 text-white font-black text-sm">
+            <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-[#B30D12] to-[#B91C1C] flex items-center justify-center shadow-md shadow-red-500/20 text-white font-black text-sm">
               +
             </div>
             <div>
@@ -337,7 +337,7 @@ export function NewRequestModal() {
               </span>
               <h3 className="text-2xl font-black text-slate-900 tracking-tight">
                 Request Number:{" "}
-                <span className="text-[#ED2025] font-mono font-black">
+                <span className="text-[#B30D12] font-mono font-black">
                   {submittedRequestNumber}
                 </span>
               </h3>
@@ -377,7 +377,7 @@ export function NewRequestModal() {
             <div className="flex justify-center gap-3 pt-2">
               <button
                 onClick={handleClose}
-                className="px-6 py-2.5 bg-[#ED2025] hover:bg-[#d11a1f] text-white font-bold text-xs uppercase tracking-wider rounded-xl shadow-md transition-all"
+                className="px-6 py-2.5 bg-[#B30D12] hover:bg-[#9B0A0F] text-white font-bold text-xs uppercase tracking-wider rounded-xl shadow-md transition-all"
               >
                 Return to Dashboard
               </button>
@@ -403,7 +403,7 @@ export function NewRequestModal() {
                     type="button"
                     onClick={() => setStep(s.num as 1 | 2 | 3 | 4)}
                     className={`p-3 text-center flex items-center justify-center gap-2 border-b-2 font-bold transition-all ${isActive
-                        ? "border-[#ED2025] text-[#ED2025] bg-white shadow-xs"
+                        ? "border-[#B30D12] text-[#B30D12] bg-white shadow-xs"
                         : isPassed
                           ? "border-emerald-500 text-emerald-700 bg-emerald-50/30"
                           : "border-transparent text-slate-400 hover:text-slate-600"
@@ -421,7 +421,7 @@ export function NewRequestModal() {
               {step === 1 && (
                 <div className="space-y-4">
                   <div className="flex items-center gap-2 text-xs text-slate-500 font-medium">
-                    <Car className="w-4 h-4 text-[#ED2025]" />
+                    <Car className="w-4 h-4 text-[#B30D12]" />
                     <span>Enter complete vehicle identification details for exact fitment</span>
                   </div>
 
@@ -439,7 +439,7 @@ export function NewRequestModal() {
                           const models = POPULAR_MAKES_AND_MODELS[newMake] || ["Other Model"];
                           setVehicle({ ...vehicle, make: newMake, model: models[0] });
                         }}
-                        className="w-full text-xs p-2.5 rounded-lg border border-slate-200 focus:ring-2 focus:ring-[#ED2025]/20 focus:border-[#ED2025] outline-none bg-white font-medium cursor-pointer"
+                        className="w-full text-xs p-2.5 rounded-lg border border-slate-200 focus:ring-2 focus:ring-[#B30D12]/20 focus:border-[#B30D12] outline-none bg-white font-medium cursor-pointer"
                       >
                         {Object.keys(POPULAR_MAKES_AND_MODELS).map((mk) => (
                           <option key={mk} value={mk}>
@@ -460,7 +460,7 @@ export function NewRequestModal() {
                         onChange={(e) =>
                           setVehicle({ ...vehicle, model: e.target.value })
                         }
-                        className="w-full text-xs p-2.5 rounded-lg border border-slate-200 focus:ring-2 focus:ring-[#ED2025]/20 focus:border-[#ED2025] outline-none bg-white font-medium cursor-pointer"
+                        className="w-full text-xs p-2.5 rounded-lg border border-slate-200 focus:ring-2 focus:ring-[#B30D12]/20 focus:border-[#B30D12] outline-none bg-white font-medium cursor-pointer"
                       >
                         {(
                           POPULAR_MAKES_AND_MODELS[vehicle.make] || [
@@ -488,7 +488,7 @@ export function NewRequestModal() {
                             year: parseInt(e.target.value) || 2024,
                           })
                         }
-                        className="w-full text-xs p-2.5 rounded-lg border border-slate-200 focus:ring-2 focus:ring-[#ED2025]/20 focus:border-[#ED2025] outline-none bg-white font-medium cursor-pointer"
+                        className="w-full text-xs p-2.5 rounded-lg border border-slate-200 focus:ring-2 focus:ring-[#B30D12]/20 focus:border-[#B30D12] outline-none bg-white font-medium cursor-pointer"
                       >
                         {AVAILABLE_YEARS.map((yr) => (
                           <option key={yr} value={yr}>
@@ -511,7 +511,7 @@ export function NewRequestModal() {
                         onChange={(e) =>
                           setVehicle({ ...vehicle, vin: e.target.value })
                         }
-                        className="w-full text-xs p-2.5 rounded-lg border border-slate-200 font-mono focus:ring-2 focus:ring-[#ED2025]/20 focus:border-[#ED2025] outline-none"
+                        className="w-full text-xs p-2.5 rounded-lg border border-slate-200 font-mono focus:ring-2 focus:ring-[#B30D12]/20 focus:border-[#B30D12] outline-none"
                         placeholder="e.g. GDH201-0012845"
                       />
                     </div>
@@ -527,7 +527,7 @@ export function NewRequestModal() {
                         onChange={(e) =>
                           setVehicle({ ...vehicle, registration: e.target.value })
                         }
-                        className="w-full text-xs p-2.5 rounded-lg border border-slate-200 font-mono uppercase focus:ring-2 focus:ring-[#ED2025]/20 focus:border-[#ED2025] outline-none"
+                        className="w-full text-xs p-2.5 rounded-lg border border-slate-200 font-mono uppercase focus:ring-2 focus:ring-[#B30D12]/20 focus:border-[#B30D12] outline-none"
                         placeholder="e.g. MTB842"
                       />
                     </div>
@@ -544,7 +544,7 @@ export function NewRequestModal() {
                         onChange={(e) =>
                           setVehicle({ ...vehicle, engine: e.target.value })
                         }
-                        className="w-full text-xs p-2.5 rounded-lg border border-slate-200 focus:ring-2 focus:ring-[#ED2025]/20 focus:border-[#ED2025] outline-none"
+                        className="w-full text-xs p-2.5 rounded-lg border border-slate-200 focus:ring-2 focus:ring-[#B30D12]/20 focus:border-[#B30D12] outline-none"
                         placeholder="e.g. 1GD-FTV 2.8L"
                       />
                     </div>
@@ -559,7 +559,7 @@ export function NewRequestModal() {
                         onChange={(e) =>
                           setVehicle({ ...vehicle, variant: e.target.value })
                         }
-                        className="w-full text-xs p-2.5 rounded-lg border border-slate-200 focus:ring-2 focus:ring-[#ED2025]/20 focus:border-[#ED2025] outline-none"
+                        className="w-full text-xs p-2.5 rounded-lg border border-slate-200 focus:ring-2 focus:ring-[#B30D12]/20 focus:border-[#B30D12] outline-none"
                         placeholder="e.g. GL / DX / SR5"
                       />
                     </div>
@@ -576,7 +576,7 @@ export function NewRequestModal() {
                         onChange={(e) =>
                           setVehicle({ ...vehicle, transmission: e.target.value })
                         }
-                        className="w-full text-xs p-2.5 rounded-lg border border-slate-200 focus:ring-2 focus:ring-[#ED2025]/20 focus:border-[#ED2025] outline-none"
+                        className="w-full text-xs p-2.5 rounded-lg border border-slate-200 focus:ring-2 focus:ring-[#B30D12]/20 focus:border-[#B30D12] outline-none"
                         placeholder="e.g. 6-Speed Automatic"
                       />
                     </div>
@@ -590,7 +590,7 @@ export function NewRequestModal() {
                         onChange={(e) =>
                           setVehicle({ ...vehicle, driveConfig: e.target.value })
                         }
-                        className="w-full text-xs p-2.5 rounded-lg border border-slate-200 focus:ring-2 focus:ring-[#ED2025]/20 focus:border-[#ED2025] outline-none"
+                        className="w-full text-xs p-2.5 rounded-lg border border-slate-200 focus:ring-2 focus:ring-[#B30D12]/20 focus:border-[#B30D12] outline-none"
                       >
                         <option value="4WD">4WD / All-Wheel Drive</option>
                         <option value="RWD">RWD / Rear-Wheel Drive</option>
@@ -605,7 +605,7 @@ export function NewRequestModal() {
               {step === 2 && (
                 <div className="space-y-4">
                   <div className="flex items-center gap-2 text-xs text-slate-500 font-medium">
-                    <Package className="w-4 h-4 text-[#ED2025]" />
+                    <Package className="w-4 h-4 text-[#B30D12]" />
                     <span>Specify part requirements, preference, and condition</span>
                   </div>
 
@@ -618,7 +618,7 @@ export function NewRequestModal() {
                       required
                       value={part.name}
                       onChange={(e) => setPart({ ...part, name: e.target.value })}
-                      className="w-full text-xs p-2.5 rounded-lg border border-slate-200 focus:ring-2 focus:ring-[#ED2025]/20 focus:border-[#ED2025] outline-none"
+                      className="w-full text-xs p-2.5 rounded-lg border border-slate-200 focus:ring-2 focus:ring-[#B30D12]/20 focus:border-[#B30D12] outline-none"
                       placeholder="e.g. Left Front Lower Control Arm Assembly"
                     />
                   </div>
@@ -634,7 +634,7 @@ export function NewRequestModal() {
                         onChange={(e) =>
                           setPart({ ...part, partNumber: e.target.value })
                         }
-                        className="w-full text-xs p-2.5 rounded-lg border border-slate-200 font-mono focus:ring-2 focus:ring-[#ED2025]/20 focus:border-[#ED2025] outline-none"
+                        className="w-full text-xs p-2.5 rounded-lg border border-slate-200 font-mono focus:ring-2 focus:ring-[#B30D12]/20 focus:border-[#B30D12] outline-none"
                         placeholder="e.g. 48069-26150"
                       />
                     </div>
@@ -654,7 +654,7 @@ export function NewRequestModal() {
                             quantity: parseInt(e.target.value) || 1,
                           })
                         }
-                        className="w-full text-xs p-2.5 rounded-lg border border-slate-200 focus:ring-2 focus:ring-[#ED2025]/20 focus:border-[#ED2025] outline-none"
+                        className="w-full text-xs p-2.5 rounded-lg border border-slate-200 focus:ring-2 focus:ring-[#B30D12]/20 focus:border-[#B30D12] outline-none"
                       />
                     </div>
                   </div>
@@ -672,7 +672,7 @@ export function NewRequestModal() {
                             preference: e.target.value as PartPreference,
                           })
                         }
-                        className="w-full text-xs p-2.5 rounded-lg border border-slate-200 focus:ring-2 focus:ring-[#ED2025]/20 focus:border-[#ED2025] outline-none"
+                        className="w-full text-xs p-2.5 rounded-lg border border-slate-200 focus:ring-2 focus:ring-[#B30D12]/20 focus:border-[#B30D12] outline-none"
                       >
                         <option value="Genuine OEM">Genuine OEM Factory</option>
                         <option value="OEM Supplier Tier 1">
@@ -697,7 +697,7 @@ export function NewRequestModal() {
                             condition: e.target.value as PartCondition,
                           })
                         }
-                        className="w-full text-xs p-2.5 rounded-lg border border-slate-200 focus:ring-2 focus:ring-[#ED2025]/20 focus:border-[#ED2025] outline-none"
+                        className="w-full text-xs p-2.5 rounded-lg border border-slate-200 focus:ring-2 focus:ring-[#B30D12]/20 focus:border-[#B30D12] outline-none"
                       >
                         <option value="Brand New OEM">Brand New OEM</option>
                         <option value="Brand New Certified Aftermarket">
@@ -719,7 +719,7 @@ export function NewRequestModal() {
               {step === 3 && (
                 <div className="space-y-4">
                   <div className="flex items-center gap-2 text-xs text-slate-500 font-medium">
-                    <FileText className="w-4 h-4 text-[#ED2025]" />
+                    <FileText className="w-4 h-4 text-[#B30D12]" />
                     <span>Upload photos, parts diagrams, and workshop notes</span>
                   </div>
 
@@ -732,7 +732,7 @@ export function NewRequestModal() {
                       value={notes}
                       onChange={(e) => setNotes(e.target.value)}
                       placeholder="Add any specific details, urgency, or fitment notes..."
-                      className="w-full text-xs p-2.5 rounded-lg border border-slate-200 focus:ring-2 focus:ring-[#ED2025]/20 focus:border-[#ED2025] outline-none"
+                      className="w-full text-xs p-2.5 rounded-lg border border-slate-200 focus:ring-2 focus:ring-[#B30D12]/20 focus:border-[#B30D12] outline-none"
                     />
                   </div>
 
@@ -741,11 +741,11 @@ export function NewRequestModal() {
                     <label className="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-1">
                       Multiple Photos (Damage / Existing Part)
                     </label>
-                    <div className="border-2 border-dashed border-slate-200 hover:border-[#ED2025]/60 rounded-xl p-4 text-center cursor-pointer transition-colors bg-slate-50/50">
+                    <div className="border-2 border-dashed border-slate-200 hover:border-[#B30D12]/60 rounded-xl p-4 text-center cursor-pointer transition-colors bg-slate-50/50">
                       <UploadCloud className="w-6 h-6 text-slate-400 mx-auto mb-1" />
                       <p className="text-xs text-slate-600 font-medium">
                         Drag photos here or{" "}
-                        <span className="text-[#ED2025] font-bold">browse</span>
+                        <span className="text-[#B30D12] font-bold">browse</span>
                       </p>
                       <p className="text-[10px] text-slate-400">
                         PNG, JPG or WEBP up to 10MB
@@ -811,7 +811,7 @@ export function NewRequestModal() {
               {step === 4 && (
                 <div className="space-y-4">
                   <div className="flex items-center gap-2 text-xs text-slate-500 font-medium">
-                    <MapPin className="w-4 h-4 text-[#ED2025]" />
+                    <MapPin className="w-4 h-4 text-[#B30D12]" />
                     <span>Select saved delivery workshop address before submitting</span>
                   </div>
 
@@ -823,7 +823,7 @@ export function NewRequestModal() {
                           key={addr.id}
                           onClick={() => setSelectedAddress(addr)}
                           className={`p-3.5 rounded-xl border-2 cursor-pointer transition-all flex items-start justify-between ${isSelected
-                              ? "border-[#ED2025] bg-red-50/10"
+                              ? "border-[#B30D12] bg-red-50/10"
                               : "border-slate-200 hover:border-slate-300 bg-white"
                             }`}
                         >
@@ -849,7 +849,7 @@ export function NewRequestModal() {
 
                           <div
                             className={`w-5 h-5 rounded-full border flex items-center justify-center ${isSelected
-                                ? "border-[#ED2025] bg-[#ED2025] text-white"
+                                ? "border-[#B30D12] bg-[#B30D12] text-white"
                                 : "border-slate-300"
                               }`}
                           >
@@ -900,7 +900,7 @@ export function NewRequestModal() {
                 ) : (
                   <button
                     type="submit"
-                    className="inline-flex items-center gap-1.5 px-6 py-2.5 bg-[#ED2025] hover:bg-[#d11a1f] text-white font-bold text-xs uppercase tracking-wider rounded-xl shadow-md shadow-red-500/30 hover:shadow-lg transition-all transform active:scale-95"
+                    className="inline-flex items-center gap-1.5 px-6 py-2.5 bg-[#B30D12] hover:bg-[#9B0A0F] text-white font-bold text-xs uppercase tracking-wider rounded-xl shadow-md shadow-red-500/30 hover:shadow-lg transition-all transform active:scale-95"
                   >
                     <Check className="w-4 h-4 stroke-[3]" />
                     <span>Generate Request & Submit</span>

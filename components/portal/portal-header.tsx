@@ -67,7 +67,7 @@ export function PortalHeader() {
               Customer Portal
             </Link>
             <ChevronRight className="w-3 h-3 text-slate-400" />
-            <span className="text-[#ED2025] font-semibold">{getTabTitle()}</span>
+            <span className="text-[#B30D12] font-semibold">{getTabTitle()}</span>
           </nav>
           <h1 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">
             {getTabTitle()}
@@ -92,7 +92,7 @@ export function PortalHeader() {
                 }
               }}
               placeholder="Search requests, orders or shipments..."
-              className="w-full pl-10 pr-12 py-2 text-xs bg-slate-100/80 hover:bg-slate-100 focus:bg-white text-slate-900 placeholder:text-slate-400 border border-slate-200/80 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#ED2025]/30 focus:border-[#ED2025] transition-all"
+              className="w-full pl-10 pr-12 py-2 text-xs bg-slate-100/80 hover:bg-slate-100 focus:bg-white text-slate-900 placeholder:text-slate-400 border border-slate-200/80 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#B30D12]/30 focus:border-[#B30D12] transition-all"
             />
             <div className="absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none">
               <kbd className="hidden sm:inline-flex items-center gap-0.5 px-1.5 py-0.5 text-[10px] font-mono font-semibold text-slate-400 bg-white border border-slate-200 rounded shadow-xs">

@@ -82,7 +82,7 @@ export function DocumentsTab({ request }: DocumentsTabProps) {
         <button
           type="button"
           onClick={() => setShowUploadModal(true)}
-          className="px-3.5 py-2 bg-[#ED2025] hover:bg-[#C8101E] text-white rounded-xl text-xs font-bold transition-all shadow-xs flex items-center gap-1.5 self-start sm:self-auto"
+          className="px-3.5 py-2 bg-[#B30D12] hover:bg-[#C8101E] text-white rounded-xl text-xs font-bold transition-all shadow-xs flex items-center gap-1.5 self-start sm:self-auto"
         >
           <Upload className="w-4 h-4" />
           Upload Document
@@ -100,7 +100,7 @@ export function DocumentsTab({ request }: DocumentsTabProps) {
           <button
             type="button"
             onClick={() => setShowUploadModal(true)}
-            className="px-4 py-2 bg-[#ED2025] text-white rounded-xl text-xs font-semibold shadow-xs"
+            className="px-4 py-2 bg-[#B30D12] text-white rounded-xl text-xs font-semibold shadow-xs"
           >
             Upload First Document
           </button>
@@ -200,7 +200,7 @@ export function DocumentsTab({ request }: DocumentsTabProps) {
                   onChange={(e) => setDocName(e.target.value)}
                   placeholder="e.g. Fitment_Verification_Toyota_Hiace.pdf"
                   required
-                  className="w-full text-xs p-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#ED2025]/30 focus:border-[#ED2025]"
+                  className="w-full text-xs p-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#B30D12]/30 focus:border-[#B30D12]"
                 />
               </div>
 
@@ -212,7 +212,7 @@ export function DocumentsTab({ request }: DocumentsTabProps) {
                   <select
                     value={docType}
                     onChange={(e) => setDocType(e.target.value as any)}
-                    className="w-full text-xs p-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#ED2025]/30 focus:border-[#ED2025]"
+                    className="w-full text-xs p-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#B30D12]/30 focus:border-[#B30D12]"
                   >
                     <option value="Customer">Customer Supporting</option>
                     <option value="Supplier">Supplier Spec / Quote</option>
@@ -229,7 +229,7 @@ export function DocumentsTab({ request }: DocumentsTabProps) {
                     type="text"
                     value={docSize}
                     onChange={(e) => setDocSize(e.target.value)}
-                    className="w-full text-xs p-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#ED2025]/30 focus:border-[#ED2025]"
+                    className="w-full text-xs p-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#B30D12]/30 focus:border-[#B30D12]"
                   />
                 </div>
               </div>
@@ -244,7 +244,7 @@ export function DocumentsTab({ request }: DocumentsTabProps) {
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 text-xs font-bold bg-[#ED2025] hover:bg-[#C8101E] text-white rounded-xl shadow-xs flex items-center gap-1.5"
+                  className="px-4 py-2 text-xs font-bold bg-[#B30D12] hover:bg-[#C8101E] text-white rounded-xl shadow-xs flex items-center gap-1.5"
                 >
                   <Upload className="w-3.5 h-3.5" />
                   Save Document

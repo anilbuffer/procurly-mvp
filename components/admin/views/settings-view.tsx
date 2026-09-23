@@ -75,7 +75,7 @@ export function AdminSettingsView() {
         {/* 1. Pricing & Quotation Defaults */}
         <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-xs">
           <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wider mb-4 flex items-center gap-2">
-            <Percent className="w-4 h-4 text-[#ED2025]" />
+            <Percent className="w-4 h-4 text-[#B30D12]" />
             Procurement &amp; Quotation Calculation Defaults
           </h3>
 
@@ -90,7 +90,7 @@ export function AdminSettingsView() {
                 max="100"
                 value={defaultMargin}
                 onChange={(e) => setDefaultMargin(Number(e.target.value))}
-                className="w-full text-xs p-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#ED2025]/30 focus:border-[#ED2025]"
+                className="w-full text-xs p-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#B30D12]/30 focus:border-[#B30D12]"
               />
               <span className="text-[10px] text-slate-400 mt-1 block">
                 Applied automatically in the Quote Tab on supplier landed costs.
@@ -106,7 +106,7 @@ export function AdminSettingsView() {
                 min="0"
                 value={defaultAirFreight}
                 onChange={(e) => setDefaultAirFreight(Number(e.target.value))}
-                className="w-full text-xs p-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#ED2025]/30 focus:border-[#ED2025]"
+                className="w-full text-xs p-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#B30D12]/30 focus:border-[#B30D12]"
               />
               <span className="text-[10px] text-slate-400 mt-1 block">
                 Default cost for Priority Airfreight.
@@ -122,7 +122,7 @@ export function AdminSettingsView() {
                 min="0"
                 value={defaultSeaFreight}
                 onChange={(e) => setDefaultSeaFreight(Number(e.target.value))}
-                className="w-full text-xs p-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#ED2025]/30 focus:border-[#ED2025]"
+                className="w-full text-xs p-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#B30D12]/30 focus:border-[#B30D12]"
               />
               <span className="text-[10px] text-slate-400 mt-1 block">
                 Default cost for Ocean Consolidation.
@@ -139,7 +139,7 @@ export function AdminSettingsView() {
                 max="100"
                 value={taxRate}
                 onChange={(e) => setTaxRate(Number(e.target.value))}
-                className="w-full text-xs p-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#ED2025]/30 focus:border-[#ED2025]"
+                className="w-full text-xs p-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#B30D12]/30 focus:border-[#B30D12]"
               />
               <span className="text-[10px] text-slate-400 mt-1 block">
                 New Zealand Goods &amp; Services Tax (Default 15%).
@@ -154,7 +154,7 @@ export function AdminSettingsView() {
                 type="text"
                 value={refPrefix}
                 onChange={(e) => setRefPrefix(e.target.value)}
-                className="w-full text-xs p-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#ED2025]/30 focus:border-[#ED2025] font-mono"
+                className="w-full text-xs p-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#B30D12]/30 focus:border-[#B30D12] font-mono"
               />
               <span className="text-[10px] text-slate-400 mt-1 block">
                 Format: <code className="font-bold text-slate-700">{refPrefix}000123</code>
@@ -251,7 +251,7 @@ export function AdminSettingsView() {
 
           <button
             type="submit"
-            className="px-6 py-2.5 bg-[#ED2025] hover:bg-[#C8101E] text-white rounded-xl text-xs font-bold shadow-xs transition-colors flex items-center gap-2 self-end sm:self-auto"
+            className="px-6 py-2.5 bg-[#B30D12] hover:bg-[#C8101E] text-white rounded-xl text-xs font-bold shadow-xs transition-colors flex items-center gap-2 self-end sm:self-auto"
           >
             <Save className="w-4 h-4" />
             Save Configuration

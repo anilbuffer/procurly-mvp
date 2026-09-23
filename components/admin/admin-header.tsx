@@ -134,7 +134,7 @@ export function AdminHeader() {
             {requestedIdParam && (
               <>
                 <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
-                <span className="text-[#ED2025] font-semibold">
+                <span className="text-[#B30D12] font-semibold">
                   {requestedIdParam}
                 </span>
               </>
@@ -143,7 +143,7 @@ export function AdminHeader() {
           <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight flex items-center gap-3">
             <span>{getSectionTitle()}</span>
             {requestedIdParam && (
-              <span className="text-xs px-2.5 py-0.5 rounded-md bg-red-50 text-[#ED2025] font-mono font-bold border border-red-200">
+              <span className="text-xs px-2.5 py-0.5 rounded-md bg-red-50 text-[#B30D12] font-mono font-bold border border-red-200">
                 Workspace
               </span>
             )}
@@ -162,7 +162,7 @@ export function AdminHeader() {
               onChange={(e) => setGlobalSearch(e.target.value)}
               onFocus={() => setIsSearchFocused(true)}
               placeholder="Search Request #, Customer, Vehicle, Part..."
-              className="w-full pl-10 pr-12 py-2 text-xs bg-slate-100/90 hover:bg-slate-100 focus:bg-white text-slate-900 placeholder:text-slate-400 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#ED2025]/30 focus:border-[#ED2025] transition-all shadow-xs"
+              className="w-full pl-10 pr-12 py-2 text-xs bg-slate-100/90 hover:bg-slate-100 focus:bg-white text-slate-900 placeholder:text-slate-400 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#B30D12]/30 focus:border-[#B30D12] transition-all shadow-xs"
             />
             <div className="absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none">
               <kbd className="hidden sm:inline-flex items-center px-1.5 py-0.5 text-[10px] font-mono font-semibold text-slate-400 bg-white border border-slate-200 rounded shadow-xs">
@@ -190,7 +190,7 @@ export function AdminHeader() {
                       >
                         <div>
                           <div className="flex items-center gap-2">
-                            <span className="font-mono text-xs font-bold text-[#ED2025]">
+                            <span className="font-mono text-xs font-bold text-[#B30D12]">
                               {r.requestNumber}
                             </span>
                             <span className="text-xs font-semibold text-slate-800">

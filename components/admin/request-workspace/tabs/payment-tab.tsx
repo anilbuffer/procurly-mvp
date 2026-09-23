@@ -217,7 +217,7 @@ export function PaymentTab({ request: initialRequest, onNavigateToTab }: Payment
                 onClick={() => setShowOrderModal(true)}
                 className={`px-5 py-2.5 rounded-xl text-xs font-bold transition-all shadow-xs flex items-center gap-2 ${
                   isPaid
-                    ? "bg-[#ED2025] hover:bg-[#C8101E] text-white shadow-red-900/20"
+                    ? "bg-[#B30D12] hover:bg-[#C8101E] text-white shadow-red-900/20"
                     : "bg-slate-200 text-slate-400 cursor-not-allowed"
                 }`}
               >
@@ -240,7 +240,7 @@ export function PaymentTab({ request: initialRequest, onNavigateToTab }: Payment
         <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-xs">
           <div className="flex items-center justify-between pb-3 mb-3 border-b border-slate-100">
             <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wider flex items-center gap-2">
-              <ShoppingBag className="w-4 h-4 text-[#ED2025]" />
+              <ShoppingBag className="w-4 h-4 text-[#B30D12]" />
               Active Supplier Order (PO)
             </h3>
             <span className="text-xs font-mono font-bold text-slate-700 bg-slate-100 px-2 py-0.5 rounded">
@@ -350,7 +350,7 @@ export function PaymentTab({ request: initialRequest, onNavigateToTab }: Payment
                     value={orderSupplierName}
                     onChange={(e) => setOrderSupplierName(e.target.value)}
                     required
-                    className="w-full text-xs p-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#ED2025]/30 focus:border-[#ED2025]"
+                    className="w-full text-xs p-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#B30D12]/30 focus:border-[#B30D12]"
                   />
                 </div>
 
@@ -363,7 +363,7 @@ export function PaymentTab({ request: initialRequest, onNavigateToTab }: Payment
                     value={orderSupplierRef}
                     onChange={(e) => setOrderSupplierRef(e.target.value)}
                     required
-                    className="w-full text-xs p-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#ED2025]/30 focus:border-[#ED2025] font-mono"
+                    className="w-full text-xs p-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#B30D12]/30 focus:border-[#B30D12] font-mono"
                   />
                 </div>
 
@@ -377,7 +377,7 @@ export function PaymentTab({ request: initialRequest, onNavigateToTab }: Payment
                     value={orderCost}
                     onChange={(e) => setOrderCost(Number(e.target.value))}
                     required
-                    className="w-full text-xs p-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#ED2025]/30 focus:border-[#ED2025]"
+                    className="w-full text-xs p-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#B30D12]/30 focus:border-[#B30D12]"
                   />
                 </div>
               </div>
@@ -390,7 +390,7 @@ export function PaymentTab({ request: initialRequest, onNavigateToTab }: Payment
                   value={orderNotes}
                   onChange={(e) => setOrderNotes(e.target.value)}
                   rows={2}
-                  className="w-full text-xs p-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#ED2025]/30 focus:border-[#ED2025]"
+                  className="w-full text-xs p-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#B30D12]/30 focus:border-[#B30D12]"
                 />
               </div>
 
@@ -404,7 +404,7 @@ export function PaymentTab({ request: initialRequest, onNavigateToTab }: Payment
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 text-xs font-bold bg-[#ED2025] hover:bg-[#C8101E] text-white rounded-xl shadow-xs flex items-center gap-1.5"
+                  className="px-4 py-2 text-xs font-bold bg-[#B30D12] hover:bg-[#C8101E] text-white rounded-xl shadow-xs flex items-center gap-1.5"
                 >
                   <ShoppingBag className="w-3.5 h-3.5" />
                   Confirm Order Release

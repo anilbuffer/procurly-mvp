@@ -142,7 +142,7 @@ export function SourcingTab({ request }: SourcingTabProps) {
         <button
           type="button"
           onClick={handleOpenAdd}
-          className="px-3.5 py-2 bg-[#ED2025] hover:bg-[#C8101E] text-white rounded-xl text-xs font-semibold transition-colors shadow-xs flex items-center gap-1.5 self-start sm:self-auto"
+          className="px-3.5 py-2 bg-[#B30D12] hover:bg-[#C8101E] text-white rounded-xl text-xs font-semibold transition-colors shadow-xs flex items-center gap-1.5 self-start sm:self-auto"
         >
           <Plus className="w-4 h-4" />
           Add Supplier Quote
@@ -160,7 +160,7 @@ export function SourcingTab({ request }: SourcingTabProps) {
           <button
             type="button"
             onClick={handleOpenAdd}
-            className="px-4 py-2 bg-[#ED2025] text-white rounded-xl text-xs font-semibold shadow-xs"
+            className="px-4 py-2 bg-[#B30D12] text-white rounded-xl text-xs font-semibold shadow-xs"
           >
             Add First Supplier Quote
           </button>
@@ -201,7 +201,7 @@ export function SourcingTab({ request }: SourcingTabProps) {
                           type="button"
                           onClick={() => selectSupplierQuotation(request.id, quote.id)}
                           className={`px-2.5 py-1 rounded-full text-[11px] font-bold flex items-center gap-1 transition-all ${isSelected
-                            ? "bg-[#ED2025] text-white shadow-xs"
+                            ? "bg-[#B30D12] text-white shadow-xs"
                             : "bg-slate-100 text-slate-600 hover:bg-slate-200"
                             }`}
                         >
@@ -350,7 +350,7 @@ export function SourcingTab({ request }: SourcingTabProps) {
                   <select
                     value={supplierId}
                     onChange={(e) => setSupplierId(e.target.value)}
-                    className="w-full text-sm p-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#ED2025]/30 focus:border-[#ED2025]"
+                    className="w-full text-sm p-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#B30D12]/30 focus:border-[#B30D12]"
                   >
                     {suppliers.map((s) => (
                       <option key={s.id} value={s.id}>
@@ -381,7 +381,7 @@ export function SourcingTab({ request }: SourcingTabProps) {
                     onChange={(e) => setSupplierPartRef(e.target.value)}
                     placeholder="e.g. NAP-48069-TY"
                     required
-                    className="w-full text-sm p-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#ED2025]/30 focus:border-[#ED2025]"
+                    className="w-full text-sm p-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#B30D12]/30 focus:border-[#B30D12]"
                   />
                 </div>
 
@@ -392,7 +392,7 @@ export function SourcingTab({ request }: SourcingTabProps) {
                   <select
                     value={condition}
                     onChange={(e) => setCondition(e.target.value as SupplierCondition)}
-                    className="w-full text-sm p-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#ED2025]/30 focus:border-[#ED2025]"
+                    className="w-full text-sm p-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#B30D12]/30 focus:border-[#B30D12]"
                   >
                     <option value="Genuine">Genuine OEM</option>
                     <option value="Aftermarket">Tier 1 Aftermarket</option>
@@ -413,7 +413,7 @@ export function SourcingTab({ request }: SourcingTabProps) {
                         min="0"
                         value={airFreightInput}
                         onChange={(e) => setAirFreightInput(e.target.value === "" ? "" : Number(e.target.value))}
-                        className="w-full text-sm p-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#ED2025]/30 focus:border-[#ED2025]"
+                        className="w-full text-sm p-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#B30D12]/30 focus:border-[#B30D12]"
                       />
                     </div>
                     <div>
@@ -426,7 +426,7 @@ export function SourcingTab({ request }: SourcingTabProps) {
                         min="0"
                         value={oceanFreightInput}
                         onChange={(e) => setOceanFreightInput(e.target.value === "" ? "" : Number(e.target.value))}
-                        className="w-full text-sm p-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#ED2025]/30 focus:border-[#ED2025]"
+                        className="w-full text-sm p-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#B30D12]/30 focus:border-[#B30D12]"
                       />
                     </div>
                   </div>
@@ -442,7 +442,7 @@ export function SourcingTab({ request }: SourcingTabProps) {
                     onChange={(e) => setSupplierCost(e.target.value)}
                     required
                     placeholder="e.g. 250 or TBA"
-                    className="w-full text-sm p-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#ED2025]/30 focus:border-[#ED2025]"
+                    className="w-full text-sm p-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#B30D12]/30 focus:border-[#B30D12]"
                   />
                 </div>
 
@@ -453,7 +453,7 @@ export function SourcingTab({ request }: SourcingTabProps) {
                   <select
                     value={availability}
                     onChange={(e) => setAvailability(e.target.value as SupplierAvailability)}
-                    className="w-full text-sm p-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#ED2025]/30 focus:border-[#ED2025]"
+                    className="w-full text-sm p-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#B30D12]/30 focus:border-[#B30D12]"
                   >
                     <option value="In Stock">In Stock</option>
                     <option value="Available">Available (1-2 days)</option>
@@ -472,7 +472,7 @@ export function SourcingTab({ request }: SourcingTabProps) {
                     value={leadTimeDays}
                     onChange={(e) => setLeadTimeDays(e.target.value === "" ? "" : Number(e.target.value))}
                     required
-                    className="w-full text-sm p-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#ED2025]/30 focus:border-[#ED2025]"
+                    className="w-full text-sm p-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#B30D12]/30 focus:border-[#B30D12]"
                   />
                 </div>
               </div>
@@ -486,7 +486,7 @@ export function SourcingTab({ request }: SourcingTabProps) {
                   onChange={(e) => setNotes(e.target.value)}
                   rows={4}
                   placeholder="Packaging details, warranty cover, warehouse location..."
-                  className="w-full text-sm p-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#ED2025]/30 focus:border-[#ED2025]"
+                  className="w-full text-sm p-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#B30D12]/30 focus:border-[#B30D12]"
                 />
               </div>
 
@@ -500,7 +500,7 @@ export function SourcingTab({ request }: SourcingTabProps) {
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 text-sm font-semibold bg-[#ED2025] hover:bg-[#C8101E] text-white rounded-xl shadow-xs"
+                  className="px-4 py-2 text-sm font-semibold bg-[#B30D12] hover:bg-[#C8101E] text-white rounded-xl shadow-xs"
                 >
                   {editingQuoteId ? "Save Changes" : "Add Supplier Quote"}
                 </button>

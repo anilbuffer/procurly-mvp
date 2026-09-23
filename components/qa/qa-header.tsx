@@ -102,7 +102,7 @@ export function QAHeader() {
               onChange={(e) => setGlobalSearch(e.target.value)}
               onFocus={() => setIsSearchFocused(true)}
               placeholder="Search Request #, Vehicle, Part..."
-              className="w-full pl-10 pr-12 py-2 text-xs bg-slate-100/90 hover:bg-slate-100 focus:bg-white text-slate-900 placeholder:text-slate-400 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500/30 focus:border-[#ED2025] transition-all shadow-xs"
+              className="w-full pl-10 pr-12 py-2 text-xs bg-slate-100/90 hover:bg-slate-100 focus:bg-white text-slate-900 placeholder:text-slate-400 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500/30 focus:border-[#B30D12] transition-all shadow-xs"
             />
             <div className="absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none">
               <kbd className="hidden sm:inline-flex items-center px-1.5 py-0.5 text-[10px] font-mono font-semibold text-slate-400 bg-white border border-slate-200 rounded shadow-xs">
@@ -129,7 +129,7 @@ export function QAHeader() {
                       >
                         <div>
                           <div className="flex items-center gap-2">
-                            <span className="font-mono text-xs font-bold text-[#ED2025]">
+                            <span className="font-mono text-xs font-bold text-[#B30D12]">
                               {r.requestNumber}
                             </span>
                           </div>

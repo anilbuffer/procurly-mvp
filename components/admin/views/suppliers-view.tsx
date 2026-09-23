@@ -188,7 +188,7 @@ export function SuppliersView() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search Supplier Name, Country, Specialization..."
-            className="w-full px-3.5 py-2 text-xs bg-slate-100/80 hover:bg-slate-100 focus:bg-white text-slate-900 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#ED2025]/30 focus:border-[#ED2025]"
+            className="w-full px-3.5 py-2 text-xs bg-slate-100/80 hover:bg-slate-100 focus:bg-white text-slate-900 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#B30D12]/30 focus:border-[#B30D12]"
           />
         </div>
 
@@ -212,7 +212,7 @@ export function SuppliersView() {
         <button
           type="button"
           onClick={handleOpenAdd}
-          className="px-3.5 py-2 bg-[#ED2025] hover:bg-[#C8101E] text-white rounded-xl text-xs font-bold transition-all shadow-xs flex items-center gap-1.5 self-start sm:self-auto shrink-0"
+          className="px-3.5 py-2 bg-[#B30D12] hover:bg-[#C8101E] text-white rounded-xl text-xs font-bold transition-all shadow-xs flex items-center gap-1.5 self-start sm:self-auto shrink-0"
         >
           <Plus className="w-4 h-4" />
           Add Supplier
@@ -287,7 +287,7 @@ export function SuppliersView() {
                       <select
                         value={s.status}
                         onChange={(e) => updateSupplierStatus(s.id, e.target.value as SupplierStatus)}
-                        className="text-[11px] font-medium py-1 px-2 rounded-lg border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 focus:ring-1 focus:ring-[#ED2025] cursor-pointer"
+                        className="text-[11px] font-medium py-1 px-2 rounded-lg border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 focus:ring-1 focus:ring-[#B30D12] cursor-pointer"
                         title="Change Supplier Operational Status"
                       >
                         <option value="Active">Active</option>
@@ -384,7 +384,7 @@ export function SuppliersView() {
                       className="p-3 bg-white border border-slate-200 rounded-xl flex items-center justify-between text-xs"
                     >
                       <div>
-                        <span className="font-mono font-bold text-[#ED2025] mr-2">{reqNum}</span>
+                        <span className="font-mono font-bold text-[#B30D12] mr-2">{reqNum}</span>
                         <span className="font-semibold text-slate-800">
                           {quote.supplierPartRef}
                         </span>
@@ -441,7 +441,7 @@ export function SuppliersView() {
                   onChange={(e) => setName(e.target.value)}
                   placeholder="e.g. Osaka Auto Spares Ltd"
                   required
-                  className="w-full text-xs p-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#ED2025]/30 focus:border-[#ED2025]"
+                  className="w-full text-xs p-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#B30D12]/30 focus:border-[#B30D12]"
                 />
               </div>
 
@@ -455,7 +455,7 @@ export function SuppliersView() {
                     value={contact}
                     onChange={(e) => setContact(e.target.value)}
                     required
-                    className="w-full text-xs p-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#ED2025]/30 focus:border-[#ED2025]"
+                    className="w-full text-xs p-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#B30D12]/30 focus:border-[#B30D12]"
                   />
                 </div>
 
@@ -468,7 +468,7 @@ export function SuppliersView() {
                     value={country}
                     onChange={(e) => setCountry(e.target.value)}
                     required
-                    className="w-full text-xs p-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#ED2025]/30 focus:border-[#ED2025]"
+                    className="w-full text-xs p-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#B30D12]/30 focus:border-[#B30D12]"
                   />
                 </div>
 
@@ -481,7 +481,7 @@ export function SuppliersView() {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
-                    className="w-full text-xs p-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#ED2025]/30 focus:border-[#ED2025]"
+                    className="w-full text-xs p-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#B30D12]/30 focus:border-[#B30D12]"
                   />
                 </div>
 
@@ -494,7 +494,7 @@ export function SuppliersView() {
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
                     required
-                    className="w-full text-xs p-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#ED2025]/30 focus:border-[#ED2025]"
+                    className="w-full text-xs p-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#B30D12]/30 focus:border-[#B30D12]"
                   />
                 </div>
 
@@ -508,7 +508,7 @@ export function SuppliersView() {
                     onChange={(e) => setCategory(e.target.value)}
                     placeholder="e.g. Genuine Japanese OEM"
                     required
-                    className="w-full text-xs p-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#ED2025]/30 focus:border-[#ED2025]"
+                    className="w-full text-xs p-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#B30D12]/30 focus:border-[#B30D12]"
                   />
                 </div>
 
@@ -521,7 +521,7 @@ export function SuppliersView() {
                     value={specializations}
                     onChange={(e) => setSpecializations(e.target.value)}
                     placeholder="e.g. Toyota, Nissan, Brake Rotors"
-                    className="w-full text-xs p-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#ED2025]/30 focus:border-[#ED2025]"
+                    className="w-full text-xs p-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#B30D12]/30 focus:border-[#B30D12]"
                   />
                 </div>
               </div>
@@ -536,7 +536,7 @@ export function SuppliersView() {
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 text-xs font-bold bg-[#ED2025] hover:bg-[#C8101E] text-white rounded-xl shadow-xs"
+                  className="px-4 py-2 text-xs font-bold bg-[#B30D12] hover:bg-[#C8101E] text-white rounded-xl shadow-xs"
                 >
                   {editingSupplier ? "Save Changes" : "Create Supplier"}
                 </button>

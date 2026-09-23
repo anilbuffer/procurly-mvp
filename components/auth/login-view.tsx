@@ -396,7 +396,7 @@ export function LoginView() {
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="••••••••••••"
                     required
-                    className="w-full h-12 bg-white text-slate-900 text-sm font-medium placeholder:text-slate-400 border border-slate-300 rounded-lg transition-all pl-11 pr-11 focus:outline-none focus:border-[#ED2025] focus:ring-2 focus:ring-[#ED2025]/20"
+                    className="w-full h-12 bg-white text-slate-900 text-sm font-medium placeholder:text-slate-400 border border-slate-300 rounded-lg transition-all pl-11 pr-11 focus:outline-none focus:border-[#B30D12] focus:ring-2 focus:ring-[#B30D12]/20"
                   />
                   <button
                     type="button"
@@ -489,12 +489,12 @@ export function LoginView() {
                 {/* 2. Unified Admin Portal: Sarah Jenkins (Procurement) / David Vance (Admin) */}
                 <div
                   className={`group relative p-3 rounded-xl border transition-all ${email === "sarah.jenkins@procurly.io"
-                    ? "border-[#ED2025] bg-red-50/50 ring-1 ring-[#ED2025]/30 shadow-xs"
+                    ? "border-[#B30D12] bg-red-50/50 ring-1 ring-[#B30D12]/30 shadow-xs"
                     : "border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50/50"
                     }`}
                 >
                   <div className="flex items-center justify-between mb-1.5">
-                    <span className="text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded bg-red-100 text-[#ED2025] font-sans">
+                    <span className="text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded bg-red-100 text-[#B30D12] font-sans">
                       Admin Portal
                     </span>
 
@@ -563,7 +563,7 @@ export function LoginView() {
                     setRegError(null);
                     setRegSubmitted(false);
                   }}
-                  className="font-bold text-[#ED2025] hover:underline"
+                  className="font-bold text-[#B30D12] hover:underline"
                 >
                   Register your business account →
                 </button>
@@ -580,7 +580,7 @@ export function LoginView() {
                 <button
                   type="button"
                   onClick={() => router.push("/admin/dashboard")}
-                  className="text-xs font-semibold text-slate-700 hover:text-[#ED2025] inline-flex items-center gap-1 px-3.5 py-1.5 rounded-xl bg-slate-100 hover:bg-red-50 border border-slate-200 hover:border-red-200 transition-colors"
+                  className="text-xs font-semibold text-slate-700 hover:text-[#B30D12] inline-flex items-center gap-1 px-3.5 py-1.5 rounded-xl bg-slate-100 hover:bg-red-50 border border-slate-200 hover:border-red-200 transition-colors"
                 >
                   <span>Unified Admin Portal →</span>
                 </button>
@@ -779,7 +779,7 @@ export function LoginView() {
                       onChange={(e) => setRegPassword(e.target.value)}
                       placeholder="Minimum 6 characters"
                       required
-                      className="w-full h-12 bg-white text-slate-900 text-sm font-medium placeholder:text-slate-400 border border-slate-300 rounded-lg transition-all pl-11 pr-11 focus:outline-none focus:border-[#ED2025] focus:ring-2 focus:ring-[#ED2025]/20"
+                      className="w-full h-12 bg-white text-slate-900 text-sm font-medium placeholder:text-slate-400 border border-slate-300 rounded-lg transition-all pl-11 pr-11 focus:outline-none focus:border-[#B30D12] focus:ring-2 focus:ring-[#B30D12]/20"
                     />
                     <button
                       type="button"
@@ -1125,7 +1125,7 @@ export function LoginView() {
                       onChange={(e) => setCurrentPassword(e.target.value)}
                       placeholder="Current password or recovery PIN"
                       required
-                      className="w-full h-12 bg-white text-slate-900 text-sm font-medium border border-slate-300 rounded-lg pl-11 pr-11 focus:outline-none focus:border-[#ED2025] focus:ring-2 focus:ring-[#ED2025]/20"
+                      className="w-full h-12 bg-white text-slate-900 text-sm font-medium border border-slate-300 rounded-lg pl-11 pr-11 focus:outline-none focus:border-[#B30D12] focus:ring-2 focus:ring-[#B30D12]/20"
                     />
                     <button
                       type="button"
@@ -1160,7 +1160,7 @@ export function LoginView() {
                       onChange={(e) => setNewPassword(e.target.value)}
                       placeholder="Create new password"
                       required
-                      className="w-full h-12 bg-white text-slate-900 text-sm font-medium border border-slate-300 rounded-lg pl-11 pr-11 focus:outline-none focus:border-[#ED2025] focus:ring-2 focus:ring-[#ED2025]/20"
+                      className="w-full h-12 bg-white text-slate-900 text-sm font-medium border border-slate-300 rounded-lg pl-11 pr-11 focus:outline-none focus:border-[#B30D12] focus:ring-2 focus:ring-[#B30D12]/20"
                     />
                     <button
                       type="button"
@@ -1195,7 +1195,7 @@ export function LoginView() {
                       onChange={(e) => setConfirmPassword(e.target.value)}
                       placeholder="Repeat new password"
                       required
-                      className="w-full h-12 bg-white text-slate-900 text-sm font-medium border border-slate-300 rounded-lg pl-11 pr-11 focus:outline-none focus:border-[#ED2025] focus:ring-2 focus:ring-[#ED2025]/20"
+                      className="w-full h-12 bg-white text-slate-900 text-sm font-medium border border-slate-300 rounded-lg pl-11 pr-11 focus:outline-none focus:border-[#B30D12] focus:ring-2 focus:ring-[#B30D12]/20"
                     />
                     <button
                       type="button"

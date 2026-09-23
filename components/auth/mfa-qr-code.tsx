@@ -168,7 +168,7 @@ export function MfaQrCode({
               <button
                 type="button"
                 onClick={onRefresh}
-                className="mt-2 inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold rounded-md bg-[#ED2025] text-white hover:bg-[#D81419] transition-colors shadow-sm"
+                className="mt-2 inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold rounded-md bg-[#B30D12] text-white hover:bg-[#D81419] transition-colors shadow-sm"
               >
                 <RefreshCw className="w-3 h-3" />
                 <span>Regenerate</span>

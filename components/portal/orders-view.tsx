@@ -101,7 +101,7 @@ export function OrdersView() {
           <p className="text-xs text-slate-400 mt-1">Submit a new parts request to get started.</p>
           <Link
             href="/customer/requests/new"
-            className="mt-4 inline-flex items-center gap-2 px-5 py-2 bg-[#ED2025] hover:bg-[#d11a1f] text-white font-bold text-xs uppercase tracking-wider rounded-xl transition-colors"
+            className="mt-4 inline-flex items-center gap-2 px-5 py-2 bg-[#B30D12] hover:bg-[#9B0A0F] text-white font-bold text-xs uppercase tracking-wider rounded-xl transition-colors"
           >
             New Parts Request →
           </Link>
@@ -129,7 +129,7 @@ export function OrdersView() {
                     onClick={() => setSelectedRequest(req)}
                     className="hover:bg-slate-50 cursor-pointer transition-colors group"
                   >
-                    <td className="py-4 px-6 font-mono font-bold text-slate-900 group-hover:text-[#ED2025]">
+                    <td className="py-4 px-6 font-mono font-bold text-slate-900 group-hover:text-[#B30D12]">
                       {req.requestNumber}
                     </td>
                     <td className="py-4 px-4 font-mono font-bold text-slate-700 whitespace-nowrap">

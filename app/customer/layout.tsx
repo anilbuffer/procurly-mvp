@@ -8,7 +8,7 @@ function CustomerLoadingFallback() {
   return (
     <div className="min-h-screen bg-[#F8FAFC] flex items-center justify-center">
       <div className="flex flex-col items-center gap-4">
-        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#ED2025] to-[#B91C1C] flex items-center justify-center shadow-md animate-pulse">
+        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#B30D12] to-[#B91C1C] flex items-center justify-center shadow-md animate-pulse">
           <span className="text-white font-black text-lg">P</span>
         </div>
         <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Loading Customer Portal…</p>

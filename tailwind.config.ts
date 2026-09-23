@@ -11,14 +11,14 @@ const config: Config = {
       colors: {
         brand: {
           red: {
-            DEFAULT: "#ED2025",
+            DEFAULT: "#B30D12",
             50: "#fdf2f2",
             100: "#fde8e8",
             200: "#fbd5d5",
             300: "#f8b4b4",
             400: "#f98080",
-            500: "#ED2025",
-            600: "#d11a1f",
+            500: "#B30D12",
+            600: "#9B0A0F",
             700: "#b5151a",
             800: "#9b1116",
             900: "#771d1d",

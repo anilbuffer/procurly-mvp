@@ -54,7 +54,7 @@ export function QAUploadModal({ requestId, onClose }: QAUploadModalProps) {
         <div className="sticky top-0 z-10 bg-white border-b border-slate-100 px-6 py-4 flex items-center justify-between">
           <div>
             <h2 className="text-xl font-black text-slate-900 flex items-center gap-2">
-              <Camera className="w-5 h-5 text-[#ED2025]" />
+              <Camera className="w-5 h-5 text-[#B30D12]" />
               Upload QA Media
             </h2>
             <p className="text-sm font-medium text-slate-500 mt-1">
@@ -71,7 +71,7 @@ export function QAUploadModal({ requestId, onClose }: QAUploadModalProps) {
 
         <form onSubmit={(e) => handleSubmit(e, false)} className="p-6 space-y-6">
           <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden relative">
-            <div className="absolute top-0 left-0 w-1.5 h-full bg-[#ED2025]"></div>
+            <div className="absolute top-0 left-0 w-1.5 h-full bg-[#B30D12]"></div>
             <div className="p-5">
               <div className="flex items-start justify-between mb-4">
                 <div>
@@ -118,9 +118,9 @@ export function QAUploadModal({ requestId, onClose }: QAUploadModalProps) {
             <label className="block text-sm font-bold text-slate-900 mb-2">
               Media Upload (Drag & Drop)
             </label>
-            <div className="border-2 border-dashed border-slate-200 rounded-2xl p-8 text-center hover:border-[#ED2025] hover:bg-red-50/50 transition-colors cursor-pointer group">
+            <div className="border-2 border-dashed border-slate-200 rounded-2xl p-8 text-center hover:border-[#B30D12] hover:bg-red-50/50 transition-colors cursor-pointer group">
               <div className="w-12 h-12 rounded-full bg-slate-100 group-hover:bg-red-100 flex items-center justify-center mx-auto mb-3 transition-colors">
-                <UploadCloud className="w-6 h-6 text-slate-400 group-hover:text-[#ED2025] transition-colors" />
+                <UploadCloud className="w-6 h-6 text-slate-400 group-hover:text-[#B30D12] transition-colors" />
               </div>
               <p className="text-sm font-bold text-slate-700 mb-1">Click or drag photos/videos here</p>
               <p className="text-xs text-slate-500">Supports JPG, PNG, MP4 (Max 50MB per file)</p>
@@ -135,7 +135,7 @@ export function QAUploadModal({ requestId, onClose }: QAUploadModalProps) {
               required
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
-              className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-red-500/30 focus:border-[#ED2025] text-sm min-h-[100px]"
+              className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-red-500/30 focus:border-[#B30D12] text-sm min-h-[100px]"
               placeholder="E.g., Factory seal intact. No visible damage on outer casing. Serial numbers match invoice."
             />
           </div>
@@ -181,7 +181,7 @@ export function QAUploadModal({ requestId, onClose }: QAUploadModalProps) {
               <button
                 type="submit"
                 disabled={isUploading || notes.trim() === ""}
-                className="px-6 py-2.5 text-sm font-bold text-white bg-[#ED2025] hover:bg-[#d11a1f] rounded-xl shadow-md transition-colors flex items-center gap-2 disabled:opacity-50"
+                className="px-6 py-2.5 text-sm font-bold text-white bg-[#B30D12] hover:bg-[#9B0A0F] rounded-xl shadow-md transition-colors flex items-center gap-2 disabled:opacity-50"
               >
                 {isUploading && !isLoggingIssue ? (
                   <>

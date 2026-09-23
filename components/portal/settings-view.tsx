@@ -96,7 +96,7 @@ export function SettingsView() {
         <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 space-y-4 text-xs">
           <div className="flex items-center justify-between border-b pb-3">
             <div className="flex items-center gap-2">
-              <Building2 className="w-4 h-4 text-[#ED2025]" />
+              <Building2 className="w-4 h-4 text-[#B30D12]" />
               <h3 className="font-bold text-slate-900">Trade Profile</h3>
             </div>
             <span className="px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold text-[10px]">
@@ -143,7 +143,7 @@ export function SettingsView() {
         <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 space-y-4 text-xs flex flex-col justify-between">
           <div>
             <div className="flex items-center gap-2 border-b pb-3 mb-3">
-              <Bell className="w-4 h-4 text-[#ED2025]" />
+              <Bell className="w-4 h-4 text-[#B30D12]" />
               <h3 className="font-bold text-slate-900">Notification Channels</h3>
             </div>
 
@@ -158,7 +158,7 @@ export function SettingsView() {
                 <input
                   type="checkbox"
                   defaultChecked
-                  className="w-4 h-4 text-[#ED2025] rounded"
+                  className="w-4 h-4 text-[#B30D12] rounded"
                 />
               </label>
 
@@ -172,7 +172,7 @@ export function SettingsView() {
                 <input
                   type="checkbox"
                   defaultChecked
-                  className="w-4 h-4 text-[#ED2025] rounded"
+                  className="w-4 h-4 text-[#B30D12] rounded"
                 />
               </label>
 
@@ -186,7 +186,7 @@ export function SettingsView() {
                 <input
                   type="checkbox"
                   defaultChecked
-                  className="w-4 h-4 text-[#ED2025] rounded"
+                  className="w-4 h-4 text-[#B30D12] rounded"
                 />
               </label>
             </div>
@@ -207,7 +207,7 @@ export function SettingsView() {
       <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 space-y-4 text-xs">
         <div className="flex items-center justify-between border-b pb-3">
           <div className="flex items-center gap-2">
-            <KeyRound className="w-4 h-4 text-[#ED2025]" />
+            <KeyRound className="w-4 h-4 text-[#B30D12]" />
             <h3 className="font-bold text-slate-900">Security & Account Credentials</h3>
           </div>
           <span className="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold text-[10px]">
@@ -221,7 +221,7 @@ export function SettingsView() {
               <span className="font-bold text-slate-900">Password & Authentication</span>
               <Link
                 href="/login?mode=change_password"
-                className="px-3 py-1 bg-[#ED2025] hover:bg-[#d11a1f] text-white font-bold text-xs uppercase tracking-wider rounded-lg transition-colors inline-flex items-center gap-1"
+                className="px-3 py-1 bg-[#B30D12] hover:bg-[#9B0A0F] text-white font-bold text-xs uppercase tracking-wider rounded-lg transition-colors inline-flex items-center gap-1"
               >
                 <span>Change Password →</span>
               </Link>
@@ -244,7 +244,7 @@ export function SettingsView() {
             <div className="pt-1">
               <Link
                 href="/login?mode=mfa"
-                className="text-xs font-bold text-[#ED2025] hover:underline inline-flex items-center gap-1"
+                className="text-xs font-bold text-[#B30D12] hover:underline inline-flex items-center gap-1"
               >
                 <span>Configure Authenticator QR Code →</span>
               </Link>
@@ -257,12 +257,12 @@ export function SettingsView() {
       <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 space-y-4 text-xs">
         <div className="flex items-center justify-between border-b pb-3">
           <div className="flex items-center gap-2">
-            <MapPin className="w-4 h-4 text-[#ED2025]" />
+            <MapPin className="w-4 h-4 text-[#B30D12]" />
             <h3 className="font-bold text-slate-900">Saved Workshop Delivery Depots</h3>
           </div>
           <button
             onClick={() => setIsAddModalOpen(true)}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#ED2025] hover:bg-[#d11a1f] text-white font-bold text-xs uppercase tracking-wider rounded-lg transition-colors"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#B30D12] hover:bg-[#9B0A0F] text-white font-bold text-xs uppercase tracking-wider rounded-lg transition-colors"
           >
             <Plus className="w-3.5 h-3.5" />
             <span>Add Depot Address</span>
@@ -308,7 +308,7 @@ export function SettingsView() {
           <div className="bg-white rounded-2xl max-w-lg w-full border border-slate-200 shadow-2xl p-6 space-y-4">
             <div className="flex items-center justify-between border-b pb-3">
               <div className="flex items-center gap-2">
-                <MapPin className="w-4 h-4 text-[#ED2025]" />
+                <MapPin className="w-4 h-4 text-[#B30D12]" />
                 <h3 className="font-bold text-slate-900 text-sm">Add Workshop Delivery Depot</h3>
               </div>
               <button
@@ -331,7 +331,7 @@ export function SettingsView() {
                     placeholder="e.g. North Shore Workshop Bay 3"
                     value={formData.label}
                     onChange={(e) => setFormData({ ...formData, label: e.target.value })}
-                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-[#ED2025]"
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-[#B30D12]"
                   />
                 </div>
                 <div>
@@ -345,7 +345,7 @@ export function SettingsView() {
                     onChange={(e) =>
                       setFormData({ ...formData, businessName: e.target.value })
                     }
-                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-[#ED2025]"
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-[#B30D12]"
                   />
                 </div>
               </div>
@@ -359,7 +359,7 @@ export function SettingsView() {
                     onChange={(e) =>
                       setFormData({ ...formData, recipientName: e.target.value })
                     }
-                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-[#ED2025]"
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-[#B30D12]"
                   />
                 </div>
                 <div>
@@ -368,7 +368,7 @@ export function SettingsView() {
                     type="text"
                     value={formData.phone}
                     onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-[#ED2025]"
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-[#B30D12]"
                   />
                 </div>
               </div>
@@ -383,7 +383,7 @@ export function SettingsView() {
                   onChange={(e) =>
                     setFormData({ ...formData, streetAddress: e.target.value })
                   }
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-[#ED2025]"
+                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-[#B30D12]"
                 />
               </div>
 
@@ -395,7 +395,7 @@ export function SettingsView() {
                     placeholder="Rosedale"
                     value={formData.suburb}
                     onChange={(e) => setFormData({ ...formData, suburb: e.target.value })}
-                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-[#ED2025]"
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-[#B30D12]"
                   />
                 </div>
                 <div>
@@ -405,7 +405,7 @@ export function SettingsView() {
                     required
                     value={formData.city}
                     onChange={(e) => setFormData({ ...formData, city: e.target.value })}
-                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-[#ED2025]"
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-[#B30D12]"
                   />
                 </div>
                 <div>
@@ -417,7 +417,7 @@ export function SettingsView() {
                     onChange={(e) =>
                       setFormData({ ...formData, postalCode: e.target.value })
                     }
-                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-[#ED2025]"
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-[#B30D12]"
                   />
                 </div>
               </div>
@@ -429,7 +429,7 @@ export function SettingsView() {
                   onChange={(e) =>
                     setFormData({ ...formData, isDefault: e.target.checked })
                   }
-                  className="w-4 h-4 text-[#ED2025] rounded"
+                  className="w-4 h-4 text-[#B30D12] rounded"
                 />
                 <span className="font-semibold text-slate-700">
                   Set as default delivery address for new parts requests
@@ -446,7 +446,7 @@ export function SettingsView() {
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 rounded-xl bg-[#ED2025] hover:bg-[#d11a1f] text-white font-bold shadow-md shadow-[#ED2025]/20"
+                  className="px-4 py-2 rounded-xl bg-[#B30D12] hover:bg-[#9B0A0F] text-white font-bold shadow-md shadow-[#B30D12]/20"
                 >
                   Save Depot Address
                 </button>

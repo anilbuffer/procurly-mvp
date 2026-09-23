@@ -71,7 +71,7 @@ export function AdminSidebar({ collapsed, onToggleCollapse }: AdminSidebarProps)
             href: "/admin/requests",
             icon: FileText,
             badge: adminMetrics.totalActive > 0 ? adminMetrics.totalActive : undefined,
-            badgeColor: "bg-[#ED2025] text-white",
+            badgeColor: "bg-[#B30D12] text-white",
           },
           {
             name: "Customers",
@@ -133,12 +133,14 @@ export function AdminSidebar({ collapsed, onToggleCollapse }: AdminSidebarProps)
       >
         {!collapsed ? (
           <Link href="/admin/dashboard" className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#ED2025] to-[#B91C1C] flex items-center justify-center shadow-md shadow-red-900/30">
-              <span className="text-white font-black text-sm tracking-wider">P</span>
+            <div className="w-8 h-8 rounded-lg border-2 border-white bg-[#C40E14] flex items-center justify-center shadow-sm">
+              <span className="text-white font-black text-sm tracking-tighter leading-none shrink-0">A</span>
             </div>
             <div>
               <div className="flex items-center gap-1.5">
-                <span className="font-black text-white text-base tracking-tight">PROCURly</span>
+                <span className="font-black italic text-white uppercase text-base tracking-tight leading-none font-sans">
+                  PROCUR<span className="not-italic">LY</span>
+                </span>
               </div>
               <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block -mt-1">
                 Admin Portal
@@ -147,8 +149,8 @@ export function AdminSidebar({ collapsed, onToggleCollapse }: AdminSidebarProps)
           </Link>
         ) : (
           <Link href="/admin/dashboard" className="flex items-center">
-            <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-[#ED2025] to-[#B91C1C] flex items-center justify-center shadow-md">
-              <span className="text-white font-black text-sm">P</span>
+            <div className="w-9 h-9 rounded-lg border-2 border-white bg-[#C40E14] flex items-center justify-center shadow-sm">
+              <span className="text-white font-black text-sm tracking-tighter leading-none shrink-0">A</span>
             </div>
           </Link>
         )}
@@ -189,7 +191,7 @@ export function AdminSidebar({ collapsed, onToggleCollapse }: AdminSidebarProps)
                   >
                     <Icon
                       className={`w-4 h-4 shrink-0 transition-colors ${active
-                        ? "text-[#ED2025]"
+                        ? "text-[#B30D12]"
                         : "text-slate-400 group-hover:text-white"
                         }`}
                     />
@@ -231,7 +233,7 @@ export function AdminSidebar({ collapsed, onToggleCollapse }: AdminSidebarProps)
                 className="w-8 h-8 rounded-full object-cover shrink-0 shadow-md ring-1 ring-white/10"
               />
             ) : (
-              <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-[#ED2025] to-orange-500 flex items-center justify-center text-white font-black text-xs shrink-0 shadow-md">
+              <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-[#B30D12] to-orange-500 flex items-center justify-center text-white font-black text-xs shrink-0 shadow-md">
                 {(currentStaffUser?.name || "Admin")
                   .split(" ")
                   .map((n) => n[0])

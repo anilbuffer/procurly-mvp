@@ -121,7 +121,7 @@ export function RequestsTableView() {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search Request # (e.g. AutoHub-P-123), Customer, Vehicle, Part..."
-              className="w-full pl-10 pr-4 py-2 text-xs bg-slate-100/80 hover:bg-slate-100 focus:bg-white text-slate-900 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#ED2025]/30 focus:border-[#ED2025] transition-all"
+              className="w-full pl-10 pr-4 py-2 text-xs bg-slate-100/80 hover:bg-slate-100 focus:bg-white text-slate-900 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#B30D12]/30 focus:border-[#B30D12] transition-all"
             />
           </div>
 
@@ -157,7 +157,7 @@ export function RequestsTableView() {
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="w-full text-xs p-2 rounded-xl border border-slate-200 bg-slate-50 font-medium text-slate-800 focus:outline-none focus:ring-1 focus:ring-[#ED2025]"
+              className="w-full text-xs p-2 rounded-xl border border-slate-200 bg-slate-50 font-medium text-slate-800 focus:outline-none focus:ring-1 focus:ring-[#B30D12]"
             >
               <option value="All">All Statuses</option>
               <option value="Submitted">Submitted</option>
@@ -186,7 +186,7 @@ export function RequestsTableView() {
             <select
               value={paymentFilter}
               onChange={(e) => setPaymentFilter(e.target.value)}
-              className="w-full text-xs p-2 rounded-xl border border-slate-200 bg-slate-50 font-medium text-slate-800 focus:outline-none focus:ring-1 focus:ring-[#ED2025]"
+              className="w-full text-xs p-2 rounded-xl border border-slate-200 bg-slate-50 font-medium text-slate-800 focus:outline-none focus:ring-1 focus:ring-[#B30D12]"
             >
               <option value="All">All Payment States</option>
               <option value="Paid">Paid</option>
@@ -202,7 +202,7 @@ export function RequestsTableView() {
             <select
               value={customerFilter}
               onChange={(e) => setCustomerFilter(e.target.value)}
-              className="w-full text-xs p-2 rounded-xl border border-slate-200 bg-slate-50 font-medium text-slate-800 focus:outline-none focus:ring-1 focus:ring-[#ED2025]"
+              className="w-full text-xs p-2 rounded-xl border border-slate-200 bg-slate-50 font-medium text-slate-800 focus:outline-none focus:ring-1 focus:ring-[#B30D12]"
             >
               <option value="All">All Customers</option>
               {customerNames.map((name) => (
@@ -221,7 +221,7 @@ export function RequestsTableView() {
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value as any)}
-              className="w-full text-xs p-2 rounded-xl border border-slate-200 bg-slate-50 font-medium text-slate-800 focus:outline-none focus:ring-1 focus:ring-[#ED2025]"
+              className="w-full text-xs p-2 rounded-xl border border-slate-200 bg-slate-50 font-medium text-slate-800 focus:outline-none focus:ring-1 focus:ring-[#B30D12]"
             >
               <option value="newest">Newest First</option>
               <option value="oldest">Oldest First</option>
@@ -273,7 +273,7 @@ export function RequestsTableView() {
                     onClick={() => router.push(`/admin/requests?id=${req.id}`)}
                     className="hover:bg-slate-50/80 cursor-pointer transition-colors group"
                   >
-                    <td className="py-3.5 px-4 font-mono font-bold text-[#ED2025]">
+                    <td className="py-3.5 px-4 font-mono font-bold text-[#B30D12]">
                       {req.requestNumber}
                     </td>
                     <td className="py-3.5 px-4">
@@ -292,7 +292,7 @@ export function RequestsTableView() {
                       <span className="font-medium line-clamp-1">{req.part.name}</span>
                       <span className="text-[10px] text-slate-400">Qty: {req.part.quantity}</span>
                       {req.supporting?.freightPreference && (
-                        <span className="text-[10px] font-medium text-[#ED2025] block mt-0.5">
+                        <span className="text-[10px] font-medium text-[#B30D12] block mt-0.5">
                           Freight: {req.supporting.freightPreference === "Sea Freight" ? "Ocean Freight" : req.supporting.freightPreference}
                         </span>
                       )}
@@ -315,7 +315,7 @@ export function RequestsTableView() {
                       {req.lastUpdated}
                     </td>
                     <td className="py-3.5 px-4 text-center">
-                      <span className="inline-flex items-center gap-1 px-3 py-1 bg-white group-hover:bg-red-50 text-slate-700 group-hover:text-[#ED2025] font-semibold text-xs rounded-xl border border-slate-200 group-hover:border-red-200 shadow-xs transition-colors">
+                      <span className="inline-flex items-center gap-1 px-3 py-1 bg-white group-hover:bg-red-50 text-slate-700 group-hover:text-[#B30D12] font-semibold text-xs rounded-xl border border-slate-200 group-hover:border-red-200 shadow-xs transition-colors">
                         View
                         <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
                       </span>

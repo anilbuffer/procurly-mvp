@@ -142,7 +142,7 @@ export function InvoiceTab({ request: initialRequest, onNavigateToTab }: Invoice
                   <button
                     type="submit"
                     disabled={isMarking || !fileAttached}
-                    className="w-full py-3 rounded-xl text-sm font-bold shadow-sm transition-all flex items-center justify-center gap-2 bg-[#ED2025] hover:bg-[#C8101E] disabled:opacity-50 disabled:cursor-not-allowed text-white"
+                    className="w-full py-3 rounded-xl text-sm font-bold shadow-sm transition-all flex items-center justify-center gap-2 bg-[#B30D12] hover:bg-[#C8101E] disabled:opacity-50 disabled:cursor-not-allowed text-white"
                   >
                     {isMarking ? (
                       <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>

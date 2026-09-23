@@ -49,7 +49,7 @@ export function AuthStateSimulator({
           className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-500 hover:text-slate-800 transition-colors"
           aria-expanded={isExpanded}
         >
-          <Sliders className="w-3.5 h-3.5 text-[#ED2025]" />
+          <Sliders className="w-3.5 h-3.5 text-[#B30D12]" />
           <span>Test 10 Auth States (QA Controls)</span>
           {isExpanded ? (
             <ChevronUp className="w-3.5 h-3.5 text-slate-400" />
@@ -79,7 +79,7 @@ export function AuthStateSimulator({
                   className={clsx(
                     "flex items-center justify-between text-left px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all",
                     isActive
-                      ? "bg-[#ED2025] text-white shadow-2xs font-semibold"
+                      ? "bg-[#B30D12] text-white shadow-2xs font-semibold"
                       : "bg-slate-50 text-slate-700 hover:bg-slate-100 hover:text-slate-900 border border-slate-200/60"
                   )}
                 >

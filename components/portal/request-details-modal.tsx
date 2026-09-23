@@ -210,7 +210,7 @@ export function RequestDetailsModal() {
                       className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold transition-all ${isPast
                         ? "bg-emerald-500 text-white"
                         : isCurrent
-                          ? "bg-[#ED2025] text-white ring-4 ring-red-500/20 animate-pulse"
+                          ? "bg-[#B30D12] text-white ring-4 ring-red-500/20 animate-pulse"
                           : "bg-slate-700 text-slate-400"
                         }`}
                     >
@@ -245,7 +245,7 @@ export function RequestDetailsModal() {
           <button
             onClick={() => setActiveTab("overview")}
             className={`py-3 px-4 border-b-2 flex items-center gap-2 transition-colors ${activeTab === "overview"
-              ? "border-[#ED2025] text-[#ED2025]"
+              ? "border-[#B30D12] text-[#B30D12]"
               : "border-transparent hover:text-slate-900"
               }`}
           >
@@ -257,14 +257,14 @@ export function RequestDetailsModal() {
             <button
               onClick={() => setActiveTab("quote")}
               className={`py-3 px-4 border-b-2 flex items-center gap-2 transition-colors ${activeTab === "quote"
-                ? "border-[#ED2025] text-[#ED2025]"
+                ? "border-[#B30D12] text-[#B30D12]"
                 : "border-transparent hover:text-slate-900"
                 }`}
             >
               <FileCheck2 className="w-3.5 h-3.5" />
               <span>Quotation & Pricing</span>
               {req.status === "Quoted" && (
-                <span className="w-2 h-2 rounded-full bg-[#ED2025]" />
+                <span className="w-2 h-2 rounded-full bg-[#B30D12]" />
               )}
             </button>
           )}
@@ -273,7 +273,7 @@ export function RequestDetailsModal() {
             <button
               onClick={() => setActiveTab("shipment")}
               className={`py-3 px-4 border-b-2 flex items-center gap-2 transition-colors ${activeTab === "shipment"
-                ? "border-[#ED2025] text-[#ED2025]"
+                ? "border-[#B30D12] text-[#B30D12]"
                 : "border-transparent hover:text-slate-900"
                 }`}
             >
@@ -286,14 +286,14 @@ export function RequestDetailsModal() {
             <button
               onClick={() => setActiveTab("qa")}
               className={`py-3 px-4 border-b-2 flex items-center gap-2 transition-colors ${activeTab === "qa"
-                ? "border-[#ED2025] text-[#ED2025]"
+                ? "border-[#B30D12] text-[#B30D12]"
                 : "border-transparent hover:text-slate-900"
                 }`}
             >
               <ShieldCheck className="w-3.5 h-3.5" />
               <span>QA Review</span>
               {req.status === "QA Review" && (
-                <span className="w-2 h-2 rounded-full bg-[#ED2025]" />
+                <span className="w-2 h-2 rounded-full bg-[#B30D12]" />
               )}
             </button>
           )}
@@ -304,7 +304,7 @@ export function RequestDetailsModal() {
               onClick={() => setShowDirectContactModal(true)}
               className="px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition-colors inline-flex items-center gap-1.5"
             >
-              <Phone className="w-3.5 h-3.5 text-[#ED2025]" />
+              <Phone className="w-3.5 h-3.5 text-[#B30D12]" />
               <span>Contact Operations (Email / Teams / Phone)</span>
             </button>
           </div>
@@ -332,7 +332,7 @@ export function RequestDetailsModal() {
                   {req.status === "Quoted" && (
                     <button
                       onClick={() => setActiveTab("quote")}
-                      className="px-4 py-1.5 bg-[#ED2025] hover:bg-[#d11a1f] text-white font-bold text-xs uppercase tracking-wider rounded-lg shadow-sm whitespace-nowrap"
+                      className="px-4 py-1.5 bg-[#B30D12] hover:bg-[#9B0A0F] text-white font-bold text-xs uppercase tracking-wider rounded-lg shadow-sm whitespace-nowrap"
                     >
                       Review Quote →
                     </button>
@@ -343,7 +343,7 @@ export function RequestDetailsModal() {
                         setPaymentRequest(req);
                         setIsPaymentModalOpen(true);
                       }}
-                      className="px-4 py-1.5 bg-[#ED2025] hover:bg-[#d11a1f] text-white font-bold text-xs uppercase tracking-wider rounded-lg shadow-sm whitespace-nowrap"
+                      className="px-4 py-1.5 bg-[#B30D12] hover:bg-[#9B0A0F] text-white font-bold text-xs uppercase tracking-wider rounded-lg shadow-sm whitespace-nowrap"
                     >
                       Record Settlement (Unpaid) →
                     </button>
@@ -356,7 +356,7 @@ export function RequestDetailsModal() {
                 {/* Vehicle Specifications */}
                 <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-3">
                   <div className="flex items-center gap-2 text-xs font-bold text-slate-900">
-                    <Car className="w-4 h-4 text-[#ED2025]" />
+                    <Car className="w-4 h-4 text-[#B30D12]" />
                     <span>Vehicle Information</span>
                   </div>
                   <div className="space-y-2 text-xs">
@@ -396,7 +396,7 @@ export function RequestDetailsModal() {
                 {/* Part Requirements */}
                 <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-3">
                   <div className="flex items-center gap-2 text-xs font-bold text-slate-900">
-                    <Package className="w-4 h-4 text-[#ED2025]" />
+                    <Package className="w-4 h-4 text-[#B30D12]" />
                     <span>Part Specifications</span>
                   </div>
                   <div className="space-y-2 text-xs">
@@ -438,7 +438,7 @@ export function RequestDetailsModal() {
               <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200/80 grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <div className="flex items-center gap-2 text-xs font-bold text-slate-900 mb-2">
-                    <MapPin className="w-4 h-4 text-[#ED2025]" />
+                    <MapPin className="w-4 h-4 text-[#B30D12]" />
                     <span>Delivery Address & Logistics</span>
                   </div>
                   <div className="text-xs text-slate-600 space-y-0.5">
@@ -466,7 +466,7 @@ export function RequestDetailsModal() {
 
                 <div>
                   <div className="flex items-center gap-2 text-xs font-bold text-slate-900 mb-2">
-                    <FileText className="w-4 h-4 text-[#ED2025]" />
+                    <FileText className="w-4 h-4 text-[#B30D12]" />
                     <span>Customer Notes</span>
                   </div>
                   <p className="text-xs text-slate-600 italic bg-white p-3 rounded-lg border border-slate-200">
@@ -496,7 +496,7 @@ export function RequestDetailsModal() {
                     </p>
                     {req.supporting?.freightPreference && (
                       <div className="mt-1">
-                        <span className="text-[10px] font-bold text-[#ED2025] bg-red-50 px-2 py-0.5 rounded border border-red-100 inline-flex items-center gap-1">
+                        <span className="text-[10px] font-bold text-[#B30D12] bg-red-50 px-2 py-0.5 rounded border border-red-100 inline-flex items-center gap-1">
                           Freight Preference: {req.supporting.freightPreference === "Sea Freight" ? "Ocean Freight" : req.supporting.freightPreference}
                         </span>
                       </div>
@@ -528,17 +528,17 @@ export function RequestDetailsModal() {
                     <div
                       onClick={() => setSelectedFreightType("Air")}
                       className={`p-4 rounded-xl border-2 cursor-pointer transition-all ${selectedFreightType === "Air"
-                        ? "border-[#ED2025] bg-red-50/10"
+                        ? "border-[#B30D12] bg-red-50/10"
                         : "border-slate-200 hover:border-slate-300 bg-white"
                         }`}
                     >
                       <div className="flex items-center justify-between mb-2">
                         <div className="flex items-center gap-2">
-                          <Send className="w-4 h-4 text-[#ED2025]" />
+                          <Send className="w-4 h-4 text-[#B30D12]" />
                           <span className="text-xs font-bold text-slate-900">Air Express</span>
                         </div>
                         {selectedFreightType === "Air" && (
-                          <div className="w-4 h-4 rounded-full bg-[#ED2025] text-white flex items-center justify-center">
+                          <div className="w-4 h-4 rounded-full bg-[#B30D12] text-white flex items-center justify-center">
                             <Check className="w-3 h-3" />
                           </div>
                         )}
@@ -555,17 +555,17 @@ export function RequestDetailsModal() {
                     <div
                       onClick={() => setSelectedFreightType("Sea")}
                       className={`p-4 rounded-xl border-2 cursor-pointer transition-all ${selectedFreightType === "Sea"
-                        ? "border-[#ED2025] bg-red-50/10"
+                        ? "border-[#B30D12] bg-red-50/10"
                         : "border-slate-200 hover:border-slate-300 bg-white"
                         }`}
                     >
                       <div className="flex items-center justify-between mb-2">
                         <div className="flex items-center gap-2">
-                          <Truck className="w-4 h-4 text-[#ED2025]" />
+                          <Truck className="w-4 h-4 text-[#B30D12]" />
                           <span className="text-xs font-bold text-slate-900">Sea Freight</span>
                         </div>
                         {selectedFreightType === "Sea" && (
-                          <div className="w-4 h-4 rounded-full bg-[#ED2025] text-white flex items-center justify-center">
+                          <div className="w-4 h-4 rounded-full bg-[#B30D12] text-white flex items-center justify-center">
                             <Check className="w-3 h-3" />
                           </div>
                         )}
@@ -583,9 +583,9 @@ export function RequestDetailsModal() {
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         {req.quoteAcceptance?.selectedFreightType === "Air" ? (
-                          <Send className="w-4 h-4 text-[#ED2025]" />
+                          <Send className="w-4 h-4 text-[#B30D12]" />
                         ) : (
-                          <Truck className="w-4 h-4 text-[#ED2025]" />
+                          <Truck className="w-4 h-4 text-[#B30D12]" />
                         )}
                         <span className="text-xs font-bold text-slate-900">
                           Selected Freight: {req.quoteAcceptance?.selectedFreightType || "Sea"}
@@ -643,7 +643,7 @@ export function RequestDetailsModal() {
                             setPaymentRequest(req);
                             setIsPaymentModalOpen(true);
                           }}
-                          className="px-4 py-2 bg-[#ED2025] hover:bg-[#d11a1f] text-white font-bold text-xs uppercase tracking-wider rounded-xl shadow-sm inline-flex items-center gap-1.5"
+                          className="px-4 py-2 bg-[#B30D12] hover:bg-[#9B0A0F] text-white font-bold text-xs uppercase tracking-wider rounded-xl shadow-sm inline-flex items-center gap-1.5"
                         >
                           <DollarSign className="w-3.5 h-3.5" />
                           <span>Record Settlement (Status: Unpaid) →</span>
@@ -682,7 +682,7 @@ export function RequestDetailsModal() {
                       </button>
                       <button
                         onClick={() => setIsAcceptingQuote(true)}
-                        className="px-6 py-2.5 bg-[#ED2025] hover:bg-[#d11a1f] text-white font-bold text-xs uppercase tracking-wider rounded-xl shadow-md shadow-red-500/25 transition-all"
+                        className="px-6 py-2.5 bg-[#B30D12] hover:bg-[#9B0A0F] text-white font-bold text-xs uppercase tracking-wider rounded-xl shadow-md shadow-red-500/25 transition-all"
                       >
                         Accept Quote →
                       </button>
@@ -709,7 +709,7 @@ export function RequestDetailsModal() {
                           type="checkbox"
                           checked={verifyVehicle}
                           onChange={(e) => setVerifyVehicle(e.target.checked)}
-                          className="w-4 h-4 rounded text-[#ED2025] focus:ring-0"
+                          className="w-4 h-4 rounded text-[#B30D12] focus:ring-0"
                         />
                         <span>
                           <strong>Verify Vehicle Information:</strong> {req.vehicle.year}{" "}
@@ -724,7 +724,7 @@ export function RequestDetailsModal() {
                           type="checkbox"
                           checked={verifyPart}
                           onChange={(e) => setVerifyPart(e.target.checked)}
-                          className="w-4 h-4 rounded text-[#ED2025] focus:ring-0"
+                          className="w-4 h-4 rounded text-[#B30D12] focus:ring-0"
                         />
                         <span>
                           <strong>Verify Part Information:</strong> {req.part.name} (Qty:{" "}
@@ -738,7 +738,7 @@ export function RequestDetailsModal() {
                           type="checkbox"
                           checked={verifyAddress}
                           onChange={(e) => setVerifyAddress(e.target.checked)}
-                          className="w-4 h-4 rounded text-[#ED2025] focus:ring-0"
+                          className="w-4 h-4 rounded text-[#B30D12] focus:ring-0"
                         />
                         <span>
                           <strong>Verify Delivery Address:</strong>{" "}
@@ -753,10 +753,10 @@ export function RequestDetailsModal() {
                           type="checkbox"
                           checked={acceptTerms}
                           onChange={(e) => setAcceptTerms(e.target.checked)}
-                          className="w-4 h-4 rounded text-[#ED2025] focus:ring-0 cursor-pointer"
+                          className="w-4 h-4 rounded text-[#B30D12] focus:ring-0 cursor-pointer"
                         />
                         <span>
-                          <strong>Accept Procurement Terms:</strong> I agree to the <button type="button" onClick={() => setShowTermsModal(true)} className="text-[#ED2025] hover:underline cursor-pointer">Particular Terms of Trade</button> and Privacy Policy
+                          <strong>Accept Procurement Terms:</strong> I agree to the <button type="button" onClick={() => setShowTermsModal(true)} className="text-[#B30D12] hover:underline cursor-pointer">Particular Terms of Trade</button> and Privacy Policy
                         </span>
                       </label>
                     </div>
@@ -773,7 +773,7 @@ export function RequestDetailsModal() {
                           !verifyVehicle || !verifyPart || !verifyAddress || !acceptTerms
                         }
                         onClick={handleConfirmAcceptance}
-                        className="px-6 py-2.5 bg-[#ED2025] hover:bg-[#d31318] disabled:bg-[#ED2025]/20 text-white font-bold text-sm uppercase rounded-xl shadow-md transition-all"
+                        className="px-6 py-2.5 bg-[#B30D12] hover:bg-[#d31318] disabled:bg-[#B30D12]/20 text-white font-bold text-sm uppercase rounded-xl shadow-md transition-all"
                       >
                         Confirm Acceptance & Record Order
                       </button>
@@ -857,7 +857,7 @@ export function RequestDetailsModal() {
                           className={`absolute -left-6 top-0.5 w-4 h-4 rounded-full border-2 flex items-center justify-center ${m.isCompleted
                             ? "bg-emerald-500 border-emerald-500 text-white"
                             : isCurrent
-                              ? "bg-[#ED2025] border-[#ED2025] text-white animate-pulse"
+                              ? "bg-[#B30D12] border-[#B30D12] text-white animate-pulse"
                               : "bg-white border-slate-300"
                             }`}
                         >
@@ -868,7 +868,7 @@ export function RequestDetailsModal() {
                           <div className="flex items-center gap-2">
                             <span
                               className={`text-xs font-bold ${isCurrent
-                                ? "text-[#ED2025]"
+                                ? "text-[#B30D12]"
                                 : m.isCompleted
                                   ? "text-slate-900"
                                   : "text-slate-500"
@@ -900,7 +900,7 @@ export function RequestDetailsModal() {
                       setSelectedRequest(null);
                       router.push(`/customer/shipments?id=${encodeURIComponent(id)}`);
                     }}
-                    className="inline-flex items-center gap-1.5 font-bold text-[#ED2025] hover:underline cursor-pointer"
+                    className="inline-flex items-center gap-1.5 font-bold text-[#B30D12] hover:underline cursor-pointer"
                   >
                     <span>Open in Full Shipments View</span>
                     <ExternalLink className="w-3.5 h-3.5" />
@@ -917,7 +917,7 @@ export function RequestDetailsModal() {
                 <div className="flex items-center justify-between mb-4 pb-4 border-b border-slate-100">
                   <div>
                     <h3 className="text-lg font-bold text-slate-900 flex items-center gap-2">
-                      <ShieldCheck className="w-5 h-5 text-[#ED2025]" />
+                      <ShieldCheck className="w-5 h-5 text-[#B30D12]" />
                       Quality Assurance Review
                     </h3>
                     <p className="text-xs text-slate-500 mt-1">
@@ -986,7 +986,7 @@ export function RequestDetailsModal() {
                         approveQA(req.id);
                         setActiveTab("overview");
                       }}
-                      className="px-6 py-2.5 text-sm font-bold text-white bg-[#ED2025] hover:bg-[#d11a1f] rounded-xl shadow-md transition-colors flex items-center gap-2"
+                      className="px-6 py-2.5 text-sm font-bold text-white bg-[#B30D12] hover:bg-[#9B0A0F] rounded-xl shadow-md transition-colors flex items-center gap-2"
                     >
                       <CheckCircle2 className="w-4 h-4" />
                       Approve & Dispatch
@@ -1017,7 +1017,7 @@ export function RequestDetailsModal() {
           <div className="bg-white w-full max-w-xl rounded-2xl shadow-2xl border border-slate-200 overflow-hidden space-y-4 p-6">
             <div className="flex items-center justify-between border-b pb-3">
               <div className="flex items-center gap-2.5">
-                <div className="w-9 h-9 rounded-xl bg-red-50 text-[#ED2025] flex items-center justify-center font-bold">
+                <div className="w-9 h-9 rounded-xl bg-red-50 text-[#B30D12] flex items-center justify-center font-bold">
                   <Headphones className="w-5 h-5" />
                 </div>
                 <div>
@@ -1047,7 +1047,7 @@ export function RequestDetailsModal() {
               <div className="p-3.5 rounded-xl border border-slate-200 bg-slate-50/70 hover:bg-slate-50 space-y-2">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <Mail className="w-4 h-4 text-[#ED2025]" />
+                    <Mail className="w-4 h-4 text-[#B30D12]" />
                     <span className="font-bold text-slate-900">Email Operations</span>
                   </div>
                   <span className="text-[10px] font-bold text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded">
@@ -1064,7 +1064,7 @@ export function RequestDetailsModal() {
                     )}&body=${encodeURIComponent(
                       `Hi Autohub Operations Team,\n\nRegarding request ${req.requestNumber} (${req.part.name}):\n\n[Please enter your inquiry here]\n\nTrade Customer: SP Motors Auckland\nContact: James Wilson`
                     )}`}
-                    className="px-3 py-1.5 bg-[#ED2025] hover:bg-[#d11a1f] text-white font-bold text-xs uppercase tracking-wider rounded-lg transition-colors inline-flex items-center gap-1.5"
+                    className="px-3 py-1.5 bg-[#B30D12] hover:bg-[#9B0A0F] text-white font-bold text-xs uppercase tracking-wider rounded-lg transition-colors inline-flex items-center gap-1.5"
                   >
                     <Mail className="w-3.5 h-3.5" />
                     <span>Open Email Draft →</span>
@@ -1187,7 +1187,7 @@ export function RequestDetailsModal() {
                   setTermsAcceptedAt(new Date().toLocaleString("en-NZ", { timeZone: "Pacific/Auckland" }));
                   setShowTermsModal(false);
                 }}
-                className="px-6 py-2.5 bg-[#ED2025] hover:bg-[#d11a1f] text-white font-bold text-xs uppercase tracking-wider rounded-xl shadow-md transition-all"
+                className="px-6 py-2.5 bg-[#B30D12] hover:bg-[#9B0A0F] text-white font-bold text-xs uppercase tracking-wider rounded-xl shadow-md transition-all"
               >
                 Acknowledge & Close
               </button>

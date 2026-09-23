@@ -271,7 +271,7 @@ export function PaymentModal() {
                     value={bankReference}
                     onChange={(e) => setBankReference(e.target.value)}
                     placeholder="e.g. ANZ-TX-98124912"
-                    className="w-full text-xs p-2.5 rounded-lg border border-slate-200 outline-none focus:border-[#ED2025]"
+                    className="w-full text-xs p-2.5 rounded-lg border border-slate-200 outline-none focus:border-[#B30D12]"
                   />
                 </div>
               </div>
@@ -291,7 +291,7 @@ export function PaymentModal() {
           {!isPaid && (
             <button
               onClick={handleProcessPayment}
-              className="px-4 py-2.5 bg-[#ED2025] hover:bg-[#d11a1f] text-white font-bold text-xs uppercase tracking-wider rounded-lg border border-slate-200 shadow-md shadow-red-500/20 transition-all active:scale-95 flex items-center gap-2"
+              className="px-4 py-2.5 bg-[#B30D12] hover:bg-[#9B0A0F] text-white font-bold text-xs uppercase tracking-wider rounded-lg border border-slate-200 shadow-md shadow-red-500/20 transition-all active:scale-95 flex items-center gap-2"
             >
               <span>Record Settlement (Mark as Paid)</span>
               <ArrowRight className="w-4 h-4" />

@@ -31,7 +31,7 @@ export function QAMediaTab({ request }: QAMediaTabProps) {
     <div className="space-y-6">
       <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-xs">
         <div className="flex items-center gap-3 mb-6">
-          <Camera className="w-5 h-5 text-[#ED2025]" />
+          <Camera className="w-5 h-5 text-[#B30D12]" />
           <div>
             <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider">
               Supplier QA Media (Photos / Videos)
@@ -46,11 +46,11 @@ export function QAMediaTab({ request }: QAMediaTabProps) {
         <div
           onDragOver={handleDragOver}
           onDrop={handleDrop}
-          className="border-2 border-dashed border-slate-200 hover:border-[#ED2025]/60 rounded-xl p-8 text-center cursor-pointer transition-colors bg-slate-50/50 mb-6"
+          className="border-2 border-dashed border-slate-200 hover:border-[#B30D12]/60 rounded-xl p-8 text-center cursor-pointer transition-colors bg-slate-50/50 mb-6"
         >
           <UploadCloud className="w-8 h-8 text-slate-400 mx-auto mb-2" />
           <p className="text-sm text-slate-600 font-medium">
-            Drag photos/videos here or <span className="text-[#ED2025] font-bold">browse files</span>
+            Drag photos/videos here or <span className="text-[#B30D12] font-bold">browse files</span>
           </p>
           <p className="text-[10px] text-slate-400 mt-1 uppercase tracking-wider">
             Supports JPG, PNG, MP4 up to 50MB

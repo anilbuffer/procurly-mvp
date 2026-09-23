@@ -26,7 +26,7 @@ export function QADetailsModal({ requestId, onClose }: QADetailsModalProps) {
         <div className="sticky top-0 z-10 bg-white border-b border-slate-100 px-6 py-4 flex items-center justify-between">
           <div>
             <h2 className="text-xl font-black text-slate-900 flex items-center gap-2">
-              <FileText className="w-5 h-5 text-[#ED2025]" />
+              <FileText className="w-5 h-5 text-[#B30D12]" />
               QA Inspection Details
             </h2>
             <p className="text-sm font-medium text-slate-500 mt-1">
@@ -74,7 +74,7 @@ export function QADetailsModal({ requestId, onClose }: QADetailsModalProps) {
               req.status === "QA Review" ? "bg-amber-100 text-amber-700" :
               req.status === "QA Hold" ? "bg-purple-100 text-purple-700" :
               req.status === "QA Approved" ? "bg-emerald-100 text-emerald-700" :
-              "bg-red-100 text-[#ED2025]"
+              "bg-red-100 text-[#B30D12]"
             }`}>
               {req.status === "QA Review" && <Clock className="w-4 h-4" />}
               {req.status === "QA Hold" && <AlertCircle className="w-4 h-4" />}
@@ -116,7 +116,7 @@ export function QADetailsModal({ requestId, onClose }: QADetailsModalProps) {
               {qa.customerNotes && (
                 <div>
                   <h3 className="text-sm font-bold text-slate-900 mb-2">Admin Feedback</h3>
-                  <div className={`border rounded-xl p-4 text-sm ${qa.status === "Rejected" ? "bg-red-50 border-red-100 text-[#ED2025]" : "bg-emerald-50 border-emerald-100 text-emerald-800"}`}>
+                  <div className={`border rounded-xl p-4 text-sm ${qa.status === "Rejected" ? "bg-red-50 border-red-100 text-[#B30D12]" : "bg-emerald-50 border-emerald-100 text-emerald-800"}`}>
                     <p className="whitespace-pre-wrap">{qa.customerNotes}</p>
                     <div className="mt-2 text-xs font-medium opacity-70">
                       Reviewed on: {qa.customerReviewedAt}
@@ -152,7 +152,7 @@ export function QADetailsModal({ requestId, onClose }: QADetailsModalProps) {
                 <textarea
                   value={adminNotes}
                   onChange={(e) => setAdminNotes(e.target.value)}
-                  className="w-full px-3 py-2 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#ED2025]/30 text-sm"
+                  className="w-full px-3 py-2 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#B30D12]/30 text-sm"
                   placeholder="Enter notes for this QA review..."
                 />
               </div>

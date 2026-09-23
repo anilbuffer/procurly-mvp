@@ -21,7 +21,7 @@ export function UserProfileCard() {
     switch (role) {
       case "admin":
         return (
-          <span className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-semibold rounded-full bg-[#ED2025]/10 text-[#ED2025] border border-[#ED2025]/20">
+          <span className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-semibold rounded-full bg-[#B30D12]/10 text-[#B30D12] border border-[#B30D12]/20">
             <ShieldCheck className="w-3.5 h-3.5" />
             Administrator
           </span>
@@ -78,7 +78,7 @@ export function UserProfileCard() {
   return (
     <div className="bg-white rounded-2xl shadow-sm border border-slate-200/80 overflow-hidden transition-all hover:shadow-md">
       {/* Top Banner with Brand Gradient */}
-      <div className="h-16 bg-gradient-to-r from-[#263b9f] to-[#ED2025] relative" />
+      <div className="h-16 bg-gradient-to-r from-[#263b9f] to-[#B30D12] relative" />
 
       <div className="px-6 pb-6 pt-0 relative">
         {/* Avatar & Header */}
@@ -121,7 +121,7 @@ export function UserProfileCard() {
             </span>
             <button
               onClick={logout}
-              className="text-xs text-slate-400 hover:text-[#ED2025] transition-colors flex items-center gap-1"
+              className="text-xs text-slate-400 hover:text-[#B30D12] transition-colors flex items-center gap-1"
             >
               <LogOut className="w-3 h-3" />
               Sign out

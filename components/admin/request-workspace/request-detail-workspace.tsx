@@ -238,7 +238,7 @@ export function RequestDetailWorkspace({
           <button
             type="button"
             onClick={() => setShowNoteModal(true)}
-            className="px-3 py-1.5 bg-[#ED2025] hover:bg-[#C8101E] text-white rounded-xl text-xs font-semibold transition-colors shadow-xs flex items-center gap-1.5"
+            className="px-3 py-1.5 bg-[#B30D12] hover:bg-[#C8101E] text-white rounded-xl text-xs font-semibold transition-colors shadow-xs flex items-center gap-1.5"
           >
             <Plus className="w-3.5 h-3.5" />
             Add Note
@@ -251,7 +251,7 @@ export function RequestDetailWorkspace({
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-5 mb-5 border-b border-slate-100">
           <div>
             <div className="flex items-center gap-3 flex-wrap">
-              <span className="font-mono text-xl sm:text-2xl font-black text-[#ED2025]">
+              <span className="font-mono text-xl sm:text-2xl font-black text-[#B30D12]">
                 {request.requestNumber}
               </span>
               <StatusBadge status={request.status} size="lg" />
@@ -349,7 +349,7 @@ export function RequestDetailWorkspace({
             <select
               value={request.status}
               onChange={(e) => handleStageSelect(e.target.value as RequestStatus)}
-              className="text-xs font-bold bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1 text-slate-700 outline-none focus:border-[#ED2025] cursor-pointer"
+              className="text-xs font-bold bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1 text-slate-700 outline-none focus:border-[#B30D12] cursor-pointer"
               title="Quickly jump or update stage status"
             >
               {LIFECYCLE_STAGES.map((s, idx) => (
@@ -363,7 +363,7 @@ export function RequestDetailWorkspace({
               <button
                 type="button"
                 onClick={handleAdvanceStage}
-                className="inline-flex items-center gap-1 px-3 py-1 bg-slate-900 hover:bg-[#ED2025] text-white text-xs font-bold rounded-lg transition-colors shadow-xs"
+                className="inline-flex items-center gap-1 px-3 py-1 bg-slate-900 hover:bg-[#B30D12] text-white text-xs font-bold rounded-lg transition-colors shadow-xs"
                 title={`Advance to ${LIFECYCLE_STAGES[currentStageIndex + 1]}`}
               >
                 <span>Advance to {LIFECYCLE_STAGES[currentStageIndex + 1]} →</span>
@@ -395,7 +395,7 @@ export function RequestDetailWorkspace({
                     className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold transition-all ${isCompleted
                         ? "bg-emerald-500 text-white shadow-xs group-hover:scale-110"
                         : isCurrent
-                          ? "bg-[#ED2025] text-white ring-4 ring-red-100 animate-pulse shadow-md group-hover:scale-110"
+                          ? "bg-[#B30D12] text-white ring-4 ring-red-100 animate-pulse shadow-md group-hover:scale-110"
                           : "bg-white border-2 border-slate-300 text-slate-400 group-hover:border-slate-500 group-hover:text-slate-600"
                       }`}
                   >
@@ -403,7 +403,7 @@ export function RequestDetailWorkspace({
                   </div>
                   <span
                     className={`text-[11px] mt-2 whitespace-nowrap font-medium text-center transition-colors ${isCurrent
-                        ? "font-bold text-[#ED2025]"
+                        ? "font-bold text-[#B30D12]"
                         : isCompleted
                           ? "text-slate-800 font-semibold group-hover:text-slate-950"
                           : "text-slate-400 group-hover:text-slate-700"
@@ -428,7 +428,7 @@ export function RequestDetailWorkspace({
               type="button"
               onClick={() => setActiveTab(tab.id)}
               className={`flex items-center gap-2 py-3 px-4 text-xs font-bold border-b-2 whitespace-nowrap transition-all ${isActive
-                  ? "border-[#ED2025] text-[#ED2025]"
+                  ? "border-[#B30D12] text-[#B30D12]"
                   : "border-transparent text-slate-500 hover:text-slate-800 hover:border-slate-300"
                 }`}
             >
@@ -436,7 +436,7 @@ export function RequestDetailWorkspace({
               {tab.badge !== undefined && (
                 <span
                   className={`text-[10px] font-bold px-1.5 py-0.2 rounded-full ${isActive
-                      ? "bg-red-50 text-[#ED2025]"
+                      ? "bg-red-50 text-[#B30D12]"
                       : "bg-slate-100 text-slate-600"
                     }`}
                 >
@@ -463,7 +463,7 @@ export function RequestDetailWorkspace({
                 <label
                   key={st}
                   className={`flex items-center justify-between p-2.5 rounded-xl border cursor-pointer text-xs font-medium transition-all ${newStatus === st
-                    ? "bg-red-50 border-[#ED2025] text-[#ED2025] font-bold"
+                    ? "bg-red-50 border-[#B30D12] text-[#B30D12] font-bold"
                     : "border-slate-200 hover:bg-slate-50 text-slate-700"
                     }`}
                 >
@@ -473,7 +473,7 @@ export function RequestDetailWorkspace({
                       name="status_choice"
                       checked={newStatus === st}
                       onChange={() => setNewStatus(st)}
-                      className="accent-[#ED2025]"
+                      className="accent-[#B30D12]"
                     />
                     <span>{st}</span>
                   </div>
@@ -492,7 +492,7 @@ export function RequestDetailWorkspace({
               <button
                 type="button"
                 onClick={handleStatusChange}
-                className="px-4 py-2 text-xs font-semibold bg-[#ED2025] hover:bg-[#C8101E] text-white rounded-xl shadow-xs"
+                className="px-4 py-2 text-xs font-semibold bg-[#B30D12] hover:bg-[#C8101E] text-white rounded-xl shadow-xs"
               >
                 Update Status
               </button>
@@ -514,7 +514,7 @@ export function RequestDetailWorkspace({
                 <label
                   key={staff.id}
                   className={`flex items-center justify-between p-3 rounded-xl border cursor-pointer text-xs transition-all ${selectedStaffId === staff.id
-                    ? "bg-red-50 border-[#ED2025] text-slate-900 font-bold"
+                    ? "bg-red-50 border-[#B30D12] text-slate-900 font-bold"
                     : "border-slate-200 hover:bg-slate-50 text-slate-700"
                     }`}
                 >
@@ -524,7 +524,7 @@ export function RequestDetailWorkspace({
                       name="assign_choice"
                       checked={selectedStaffId === staff.id}
                       onChange={() => setSelectedStaffId(staff.id)}
-                      className="accent-[#ED2025]"
+                      className="accent-[#B30D12]"
                     />
                     <div>
                       <span className="block font-bold">{staff.name}</span>
@@ -548,7 +548,7 @@ export function RequestDetailWorkspace({
               <button
                 type="button"
                 onClick={handleAssignStaff}
-                className="px-4 py-2 text-xs font-semibold bg-[#ED2025] hover:bg-[#C8101E] text-white rounded-xl shadow-xs"
+                className="px-4 py-2 text-xs font-semibold bg-[#B30D12] hover:bg-[#C8101E] text-white rounded-xl shadow-xs"
               >
                 Confirm Assignment
               </button>
@@ -575,7 +575,7 @@ export function RequestDetailWorkspace({
                   onChange={(e) => setNoteText(e.target.value)}
                   rows={4}
                   placeholder="Type note details here..."
-                  className="w-full text-xs p-3 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#ED2025]/30 focus:border-[#ED2025]"
+                  className="w-full text-xs p-3 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#B30D12]/30 focus:border-[#B30D12]"
                 />
               </div>
               <label className="flex items-center gap-2 cursor-pointer text-xs text-slate-700">
@@ -583,7 +583,7 @@ export function RequestDetailWorkspace({
                   type="checkbox"
                   checked={isCustomerVisible}
                   onChange={(e) => setIsCustomerVisible(e.target.checked)}
-                  className="rounded border-slate-300 accent-[#ED2025]"
+                  className="rounded border-slate-300 accent-[#B30D12]"
                 />
                 <span>Make visible to customer in Customer Portal</span>
               </label>
@@ -600,7 +600,7 @@ export function RequestDetailWorkspace({
                 type="button"
                 onClick={handleAddNote}
                 disabled={!noteText.trim()}
-                className="px-4 py-2 text-xs font-semibold bg-[#ED2025] hover:bg-[#C8101E] disabled:opacity-50 text-white rounded-xl shadow-xs"
+                className="px-4 py-2 text-xs font-semibold bg-[#B30D12] hover:bg-[#C8101E] disabled:opacity-50 text-white rounded-xl shadow-xs"
               >
                 Save Note
               </button>

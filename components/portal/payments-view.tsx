@@ -192,7 +192,7 @@ export function PaymentsView() {
                       <td className="py-4 px-4 font-mono">
                         <button
                           onClick={() => setSelectedRequest(req)}
-                          className="text-slate-700 hover:text-[#ED2025] font-bold hover:underline"
+                          className="text-slate-700 hover:text-[#B30D12] font-bold hover:underline"
                           title="Click to view full request details"
                         >
                           {req.requestNumber}
@@ -224,7 +224,7 @@ export function PaymentsView() {
                         {paymentStatus === "Unpaid" ? (
                           <button
                             onClick={() => handleOpenPaymentModal(req)}
-                            className="px-3.5 py-1.5 bg-[#ED2025] hover:bg-[#d11a1f] text-white font-bold text-xs uppercase tracking-wider rounded-lg shadow-xs transition-all"
+                            className="px-3.5 py-1.5 bg-[#B30D12] hover:bg-[#9B0A0F] text-white font-bold text-xs uppercase tracking-wider rounded-lg shadow-xs transition-all"
                           >
                             Record Payment →
                           </button>

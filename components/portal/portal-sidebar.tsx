@@ -77,7 +77,7 @@ export function PortalSidebar({ collapsed = false, onToggleCollapse }: PortalSid
           label: "Requests",
           icon: FileText,
           badge: metrics.awaitingAction > 0 ? metrics.awaitingAction : undefined,
-          badgeColor: "bg-[#ED2025] text-white",
+          badgeColor: "bg-[#B30D12] text-white",
         },
         {
           id: "orders",
@@ -126,13 +126,13 @@ export function PortalSidebar({ collapsed = false, onToggleCollapse }: PortalSid
             href="/customer/dashboard"
             className="flex items-center gap-3 cursor-pointer group"
           >
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#ED2025] to-[#B91C1C] flex items-center justify-center shadow-md shadow-[#ED2025]/30">
-              <span className="text-white font-black text-lg tracking-wider">P</span>
+            <div className="w-9 h-9 rounded-xl border-2 border-white bg-[#C40E14] flex items-center justify-center shadow-sm">
+              <span className="text-white font-black text-lg tracking-tighter leading-none shrink-0">A</span>
             </div>
             {!collapsed && (
               <div className="flex flex-col">
-                <span className="text-white font-black text-lg tracking-tight leading-none group-hover:text-red-400 transition-colors">
-                  PROCUR<span className="text-[#ED2025]">ly</span>
+                <span className="font-black italic tracking-tight text-white uppercase leading-none font-sans text-lg group-hover:text-red-400 transition-colors">
+                  PROCUR<span className="not-italic">LY</span>
                 </span>
                 <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider mt-1">
                   Customer Portal
@@ -183,7 +183,7 @@ export function PortalSidebar({ collapsed = false, onToggleCollapse }: PortalSid
                     >
                       <Icon
                         className={`w-4 h-4 shrink-0 transition-colors ${isActive
-                          ? "text-[#ED2025]"
+                          ? "text-[#B30D12]"
                           : "text-slate-400 group-hover:text-white"
                           }`}
                       />

@@ -187,7 +187,7 @@ For formal queries contact ops@procurly.autohub.co.nz
             placeholder="Search documents or request ID..."
             value={docSearch}
             onChange={(e) => setDocSearch(e.target.value)}
-            className="w-full px-3.5 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-[#ED2025]"
+            className="w-full px-3.5 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-[#B30D12]"
           />
         </div>
       </div>
@@ -238,7 +238,7 @@ For formal queries contact ops@procurly.autohub.co.nz
                         if (target) setSelectedRequest(target);
                         else setActiveTab("requests");
                       }}
-                      className="font-mono text-[#ED2025] font-bold hover:underline"
+                      className="font-mono text-[#B30D12] font-bold hover:underline"
                       title="Open linked request details"
                     >
                       {d.ref}

@@ -156,7 +156,7 @@ export function QuoteTab({ request, onNavigateToTab }: QuoteTabProps) {
             </div>
             <div className="flex justify-between items-center border-b border-slate-100 pb-3">
               <span className="text-slate-500">Freight Preference:</span>
-              <span className="font-bold text-[#ED2025] bg-red-50 px-2 py-0.5 rounded border border-red-100">
+              <span className="font-bold text-[#B30D12] bg-red-50 px-2 py-0.5 rounded border border-red-100">
                 {request.supporting?.freightPreference === "Sea Freight" ? "Ocean Freight" : (request.supporting?.freightPreference || "Not Specified")}
               </span>
             </div>
@@ -320,7 +320,7 @@ export function QuoteTab({ request, onNavigateToTab }: QuoteTabProps) {
             <div className="flex justify-between items-center mb-4">
               <div className="text-xs font-bold text-slate-800 uppercase tracking-widest">SELECT YOUR FREIGHT TRANSIT OPTION:</div>
               {request.supporting?.freightPreference && (
-                <div className="text-[11px] font-bold text-[#ED2025] bg-red-50 px-2 py-1 rounded border border-red-100">
+                <div className="text-[11px] font-bold text-[#B30D12] bg-red-50 px-2 py-1 rounded border border-red-100">
                   Customer Preference: {request.supporting.freightPreference === "Sea Freight" ? "Ocean Freight" : request.supporting.freightPreference}
                 </div>
               )}

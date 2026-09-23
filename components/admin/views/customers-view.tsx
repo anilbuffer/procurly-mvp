@@ -81,7 +81,7 @@ export function CustomersView() {
         <button
           type="button"
           onClick={() => setShowAddModal(true)}
-          className="px-3.5 py-2 bg-[#ED2025] hover:bg-[#C8101E] text-white rounded-xl text-xs font-bold transition-all shadow-xs flex items-center gap-1.5 self-start sm:self-auto"
+          className="px-3.5 py-2 bg-[#B30D12] hover:bg-[#C8101E] text-white rounded-xl text-xs font-bold transition-all shadow-xs flex items-center gap-1.5 self-start sm:self-auto"
         >
           <Plus className="w-4 h-4" />
           Add Customer
@@ -270,7 +270,7 @@ export function CustomersView() {
                       className="p-3 bg-white border border-slate-200 rounded-xl flex items-center justify-between text-xs"
                     >
                       <div>
-                        <span className="font-mono font-bold text-[#ED2025] mr-2">
+                        <span className="font-mono font-bold text-[#B30D12] mr-2">
                           {req.requestNumber}
                         </span>
                         <span className="font-semibold text-slate-800">
@@ -322,7 +322,7 @@ export function CustomersView() {
                   onChange={(e) => setBusinessName(e.target.value)}
                   placeholder="e.g. Apex Mechanical Ltd"
                   required
-                  className="w-full text-xs p-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#ED2025]/30 focus:border-[#ED2025]"
+                  className="w-full text-xs p-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#B30D12]/30 focus:border-[#B30D12]"
                 />
               </div>
 
@@ -336,7 +336,7 @@ export function CustomersView() {
                   onChange={(e) => setContactName(e.target.value)}
                   placeholder="e.g. Craig Watson"
                   required
-                  className="w-full text-xs p-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#ED2025]/30 focus:border-[#ED2025]"
+                  className="w-full text-xs p-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#B30D12]/30 focus:border-[#B30D12]"
                 />
               </div>
 
@@ -350,7 +350,7 @@ export function CustomersView() {
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="e.g. craig@apexmech.co.nz"
                   required
-                  className="w-full text-xs p-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#ED2025]/30 focus:border-[#ED2025]"
+                  className="w-full text-xs p-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#B30D12]/30 focus:border-[#B30D12]"
                 />
               </div>
 
@@ -364,7 +364,7 @@ export function CustomersView() {
                   onChange={(e) => setPhone(e.target.value)}
                   placeholder="e.g. +64 9 489 1234"
                   required
-                  className="w-full text-xs p-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#ED2025]/30 focus:border-[#ED2025]"
+                  className="w-full text-xs p-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#B30D12]/30 focus:border-[#B30D12]"
                 />
               </div>
 
@@ -378,7 +378,7 @@ export function CustomersView() {
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 text-xs font-bold bg-[#ED2025] hover:bg-[#C8101E] text-white rounded-xl shadow-xs"
+                  className="px-4 py-2 text-xs font-bold bg-[#B30D12] hover:bg-[#C8101E] text-white rounded-xl shadow-xs"
                 >
                   Create Customer
                 </button>

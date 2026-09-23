@@ -113,7 +113,7 @@ export function NotificationCenter() {
         {unreadNotificationsCount > 0 && (
           <span
             suppressHydrationWarning
-            className="absolute -top-1 -right-1 w-5 h-5 bg-[#ED2025] text-white font-black text-[11px] rounded-full flex items-center justify-center shadow-md shadow-red-500/30 border-2 border-white animate-pulse"
+            className="absolute -top-1 -right-1 w-5 h-5 bg-[#B30D12] text-white font-black text-[11px] rounded-full flex items-center justify-center shadow-md shadow-red-500/30 border-2 border-white animate-pulse"
           >
             {unreadNotificationsCount}
           </span>
@@ -129,7 +129,7 @@ export function NotificationCenter() {
               <div className="flex items-center gap-2">
                 <h3 className="text-sm font-bold text-slate-900">Notifications</h3>
                 {unreadNotificationsCount > 0 && (
-                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-red-100 text-[#ED2025]">
+                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-red-100 text-[#B30D12]">
                     {unreadNotificationsCount} new
                   </span>
                 )}
@@ -141,7 +141,7 @@ export function NotificationCenter() {
             {unreadNotificationsCount > 0 && (
               <button
                 onClick={markAllNotificationsAsRead}
-                className="text-[11px] font-semibold text-[#ED2025] hover:underline flex items-center gap-1"
+                className="text-[11px] font-semibold text-[#B30D12] hover:underline flex items-center gap-1"
               >
                 <Check className="w-3 h-3" />
                 Mark all read
@@ -187,7 +187,7 @@ export function NotificationCenter() {
                     </p>
                   </div>
                   {!n.read && (
-                    <span className="w-2 h-2 rounded-full bg-[#ED2025] shrink-0 mt-1.5" />
+                    <span className="w-2 h-2 rounded-full bg-[#B30D12] shrink-0 mt-1.5" />
                   )}
                 </div>
               ))

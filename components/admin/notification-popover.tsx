@@ -41,13 +41,13 @@ export function NotificationPopover() {
         type="button"
         onClick={() => setIsOpen(!isOpen)}
         aria-label="Notifications"
-        className="relative p-2 text-slate-500 hover:text-slate-900 bg-white hover:bg-slate-100 border border-slate-200 rounded-xl transition-all shadow-xs focus:outline-none focus:ring-2 focus:ring-[#ED2025]/30"
+        className="relative p-2 text-slate-500 hover:text-slate-900 bg-white hover:bg-slate-100 border border-slate-200 rounded-xl transition-all shadow-xs focus:outline-none focus:ring-2 focus:ring-[#B30D12]/30"
       >
         <Bell className="w-4 h-4" />
         {unreadNotificationsCount > 0 && (
           <span
             suppressHydrationWarning
-            className="absolute -top-1 -right-1 flex h-4 min-w-[16px] items-center justify-center rounded-full bg-[#ED2025] px-1 text-[10px] font-bold text-white shadow-xs animate-in zoom-in-50 duration-200"
+            className="absolute -top-1 -right-1 flex h-4 min-w-[16px] items-center justify-center rounded-full bg-[#B30D12] px-1 text-[10px] font-bold text-white shadow-xs animate-in zoom-in-50 duration-200"
           >
             {unreadNotificationsCount}
           </span>
@@ -63,7 +63,7 @@ export function NotificationPopover() {
                 Notifications
               </span>
               {unreadNotificationsCount > 0 && (
-                <span className="bg-red-50 text-[#ED2025] text-[11px] font-bold px-1.5 py-0.2 rounded">
+                <span className="bg-red-50 text-[#B30D12] text-[11px] font-bold px-1.5 py-0.2 rounded">
                   {unreadNotificationsCount} unread
                 </span>
               )}
@@ -72,7 +72,7 @@ export function NotificationPopover() {
               <button
                 type="button"
                 onClick={markAllNotificationsAsRead}
-                className="text-[11px] font-medium text-slate-500 hover:text-[#ED2025] transition-colors flex items-center gap-1"
+                className="text-[11px] font-medium text-slate-500 hover:text-[#B30D12] transition-colors flex items-center gap-1"
               >
                 <Check className="w-3 h-3" />
                 Mark all read
@@ -99,7 +99,7 @@ export function NotificationPopover() {
                   <div className="flex items-start justify-between gap-2">
                     <div className="flex items-center gap-1.5">
                       {!n.read && (
-                        <span className="w-1.5 h-1.5 rounded-full bg-[#ED2025] shrink-0" />
+                        <span className="w-1.5 h-1.5 rounded-full bg-[#B30D12] shrink-0" />
                       )}
                       <h4 className="text-xs font-semibold text-slate-900 line-clamp-1">
                         {n.title}
