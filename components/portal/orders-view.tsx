@@ -34,20 +34,29 @@ export function OrdersView() {
 
   const getStatusColors = (status: string) => {
     switch (status) {
-      case "Ordered":
-        return "bg-blue-50 text-blue-700 border border-blue-200";
+      // In-Process States
+      case "Submitted":
       case "Sourcing":
-        return "bg-purple-50 text-purple-700 border border-purple-200";
+      case "Quoted":
       case "Approved":
-        return "bg-emerald-50 text-emerald-700 border border-emerald-200";
-      case "Awaiting Payment":
-        return "bg-orange-50 text-orange-800 border border-orange-200";
+      case "Ordered":
+      case "QA Review":
+      case "Ready for Dispatch":
       case "Shipped":
-        return "bg-cyan-50 text-cyan-800 border border-cyan-200";
+        return "bg-blue-50 text-blue-700 border border-blue-200";
+      
+      // Waiting / Attention States
+      case "Awaiting Payment":
+      case "QA Pending":
+      case "QA Hold":
+        return "bg-red-50 text-red-700 border border-red-200";
+      
+      // Completed States
+      case "QA Approved":
       case "Delivered":
-        return "bg-teal-50 text-teal-700 border border-teal-200";
       case "Completed":
-        return "bg-slate-100 text-slate-700 border border-slate-200";
+        return "bg-green-50 text-green-700 border border-green-200";
+        
       default:
         return "bg-slate-100 text-slate-700 border border-slate-200";
     }

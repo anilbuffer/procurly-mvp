@@ -81,23 +81,22 @@ export function NewRequestPage() {
 
   // Form states
   const [vehicle, setVehicle] = useState<VehicleInfo>({
-    make: "Toyota",
-    model: "Hilux GR Sport",
-    year: 2024,
-    vin: "MR0HA3CD600129",
-    registration: "SPM442",
-    engine: "1GD-FTV 2.8L Turbo Diesel",
-    variant: "Widebody Edition",
-    transmission: "6-Speed Automatic",
-    driveConfig: "4WD",
+    make: "",
+    model: "",
+    year: "",
+    vin: "",
+    registration: "",
+    engine: "",
+    variant: "",
+    transmission: "",
+    driveConfig: "",
   });
 
   const [part, setPart] = useState<PartInfo>({
-    name: "Front Brake Caliper Assembly (RHS)",
-    partNumber: "47730-0K310",
+    name: "",
+    partNumber: "",
     quantity: 1,
-    preference: "Genuine OEM",
-    condition: "Brand New OEM",
+    condition: "New",
   });
 
   const [notes, setNotes] = useState("");
@@ -166,67 +165,62 @@ export function NewRequestPage() {
             </h2>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div>
               <label className="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-1">
                 Make *
               </label>
-              <select
+              <input
+                type="text"
                 required
                 value={vehicle.make}
-                onChange={(e) => {
-                  const newMake = e.target.value;
-                  const models = POPULAR_MAKES_AND_MODELS[newMake] || ["Other Model"];
-                  setVehicle({ ...vehicle, make: newMake, model: models[0] });
-                }}
-                className="w-full text-xs p-2.5 rounded-lg border border-slate-200 focus:ring-2 focus:ring-[#ED2025]/20 focus:border-[#ED2025] outline-none bg-white font-medium cursor-pointer"
-              >
-                {Object.keys(POPULAR_MAKES_AND_MODELS).map((mk) => (
-                  <option key={mk} value={mk}>
-                    {mk}
-                  </option>
-                ))}
-              </select>
+                onChange={(e) => setVehicle({ ...vehicle, make: e.target.value })}
+                className="w-full text-xs p-2.5 rounded-lg border border-slate-200 focus:ring-2 focus:ring-[#ED2025]/20 focus:border-[#ED2025] outline-none bg-white"
+                placeholder="e.g. Toyota"
+              />
             </div>
 
             <div>
               <label className="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-1">
                 Model *
               </label>
-              <select
+              <input
+                type="text"
                 required
                 value={vehicle.model}
                 onChange={(e) => setVehicle({ ...vehicle, model: e.target.value })}
-                className="w-full text-xs p-2.5 rounded-lg border border-slate-200 focus:ring-2 focus:ring-[#ED2025]/20 focus:border-[#ED2025] outline-none bg-white font-medium cursor-pointer"
-              >
-                {(POPULAR_MAKES_AND_MODELS[vehicle.make] || ["Other / Custom Model"]).map(
-                  (mdl) => (
-                    <option key={mdl} value={mdl}>
-                      {mdl}
-                    </option>
-                  )
-                )}
-              </select>
+                className="w-full text-xs p-2.5 rounded-lg border border-slate-200 focus:ring-2 focus:ring-[#ED2025]/20 focus:border-[#ED2025] outline-none bg-white"
+                placeholder="e.g. Hilux"
+              />
+            </div>
+
+            <div>
+              <label className="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-1">
+                Model Variant
+              </label>
+              <input
+                type="text"
+                value={vehicle.variant || ""}
+                onChange={(e) => setVehicle({ ...vehicle, variant: e.target.value })}
+                className="w-full text-xs p-2.5 rounded-lg border border-slate-200 focus:ring-2 focus:ring-[#ED2025]/20 focus:border-[#ED2025] outline-none"
+                placeholder="e.g. SR5, VXR, Nismo"
+              />
             </div>
 
             <div>
               <label className="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-1">
                 Model Year *
               </label>
-              <select
+              <input
+                type="number"
                 required
                 value={vehicle.year}
                 onChange={(e) =>
-                  setVehicle({ ...vehicle, year: parseInt(e.target.value) || 2024 })
+                  setVehicle({ ...vehicle, year: parseInt(e.target.value) || "" })
                 }
-                className="w-full text-xs p-2.5 rounded-lg border border-slate-200 focus:ring-2 focus:ring-[#ED2025]/20 focus:border-[#ED2025] outline-none bg-white font-medium cursor-pointer"
-              >
-                {AVAILABLE_YEARS.map((yr) => (
-                  <option key={yr} value={yr}>
-                    {yr}
-                  </option>
-                ))}
-              </select>
+                className="w-full text-xs p-2.5 rounded-lg border border-slate-200 focus:ring-2 focus:ring-[#ED2025]/20 focus:border-[#ED2025] outline-none bg-white"
+                placeholder="e.g. 2024"
+              />
             </div>
           </div>
 
@@ -281,12 +275,13 @@ export function NewRequestPage() {
                 Transmission
               </label>
               <select
-                value={vehicle.transmission || "Automatic"}
+                value={vehicle.transmission || ""}
                 onChange={(e) =>
                   setVehicle({ ...vehicle, transmission: e.target.value })
                 }
                 className="w-full text-xs p-2.5 rounded-lg border border-slate-200 focus:ring-2 focus:ring-[#ED2025]/20 focus:border-[#ED2025] outline-none bg-white"
               >
+                <option value="" disabled>Select Transmission</option>
                 <option value="Automatic">Automatic</option>
                 <option value="Manual">Manual</option>
                 <option value="CVT">CVT</option>
@@ -298,12 +293,13 @@ export function NewRequestPage() {
                 Drive Configuration
               </label>
               <select
-                value={vehicle.driveConfig || "4WD"}
+                value={vehicle.driveConfig || ""}
                 onChange={(e) =>
                   setVehicle({ ...vehicle, driveConfig: e.target.value })
                 }
                 className="w-full text-xs p-2.5 rounded-lg border border-slate-200 focus:ring-2 focus:ring-[#ED2025]/20 focus:border-[#ED2025] outline-none bg-white"
               >
+                <option value="" disabled>Select Drive Config</option>
                 <option value="4WD (Selectable/Low)">4WD (Selectable/Low)</option>
                 <option value="AWD">AWD</option>
                 <option value="RWD">RWD</option>
@@ -354,7 +350,7 @@ export function NewRequestPage() {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-1">
                 OEM Part Number (If Known)
@@ -370,25 +366,7 @@ export function NewRequestPage() {
 
             <div>
               <label className="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-1">
-                Genuine vs Aftermarket
-              </label>
-              <select
-                value={part.preference}
-                onChange={(e) =>
-                  setPart({ ...part, preference: e.target.value as PartPreference })
-                }
-                className="w-full text-xs p-2.5 rounded-lg border border-slate-200 focus:ring-2 focus:ring-[#ED2025]/20 focus:border-[#ED2025] outline-none bg-white"
-              >
-                <option value="Genuine OEM">Genuine OEM Factory Only</option>
-                <option value="OEM Supplier Tier 1">OEM Supplier Tier 1</option>
-                <option value="Quality Aftermarket">Quality Aftermarket</option>
-                <option value="Any Suitable Alternative">Any Suitable Alternative</option>
-              </select>
-            </div>
-
-            <div>
-              <label className="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-1">
-                Condition Requirement
+                Condition Request
               </label>
               <select
                 value={part.condition}
@@ -397,10 +375,8 @@ export function NewRequestPage() {
                 }
                 className="w-full text-xs p-2.5 rounded-lg border border-slate-200 focus:ring-2 focus:ring-[#ED2025]/20 focus:border-[#ED2025] outline-none bg-white"
               >
-                <option value="Brand New OEM">Brand New Genuine</option>
-                <option value="Brand New Certified Aftermarket">Brand New Certified Aftermarket</option>
-                <option value="Used Grade A">Used Grade A (Inspected)</option>
-                <option value="Remanufactured">Remanufactured / Reconditioned</option>
+                <option value="New">New</option>
+                <option value="Used">Used</option>
               </select>
             </div>
           </div>
@@ -436,7 +412,7 @@ export function NewRequestPage() {
                 <span className="font-bold text-[13px] text-slate-900">Air Express</span>
               </div>
               <p className="text-xs text-slate-500 mt-1 leading-relaxed">
-                Priority air freight — fastest transit, typically 3–7 business days door-to-door.
+                Priority air freight — fastest transit, typically 7–10 business days door-to-door.
               </p>
               {freightPreference === "Air Express" && (
                 <div className="absolute top-3 right-3 text-[#0ea5e9]">
@@ -461,7 +437,7 @@ export function NewRequestPage() {
                 <span className="font-bold text-[13px] text-slate-900">Sea Freight</span>
               </div>
               <p className="text-xs text-slate-500 mt-1 leading-relaxed">
-                Consolidated sea freight — cost-effective option, typically 14–25 business days.
+                Consolidated sea freight — cost-effective option, typically 25–40 business days.
               </p>
               {freightPreference === "Sea Freight" && (
                 <div className="absolute top-3 right-3 text-[#0ea5e9]">
@@ -502,7 +478,7 @@ export function NewRequestPage() {
           <div className="flex items-center gap-2 border-b border-slate-100 pb-3">
             <FileText className="w-5 h-5 text-[#ED2025]" />
             <h2 className="text-[13px] font-bold text-slate-900 uppercase tracking-wide">
-              4. Supporting Information & Files
+              4. Supporting Photos
             </h2>
           </div>
 
@@ -522,7 +498,7 @@ export function NewRequestPage() {
           <div className="grid grid-cols-1 gap-4">
             <div>
               <label className="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-1">
-                Supporting Files
+                Supporting Photos
               </label>
               <label className="block border-2 border-dashed border-slate-200 hover:border-[#ED2025]/60 rounded-lg p-5 text-center cursor-pointer transition-colors bg-slate-50/50">
                 <input

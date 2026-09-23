@@ -23,34 +23,29 @@ export function StatusBadge({ status, size = "md", className = "" }: StatusBadge
 
   const getStyle = (s: string) => {
     switch (s) {
+      // In-Process States
       case "Submitted":
-        return "bg-sky-50 text-sky-700 border-sky-200 ring-sky-600/10";
       case "Sourcing":
-        return "bg-purple-50 text-purple-700 border-purple-200 ring-purple-600/10";
       case "Quoted":
-        return "bg-amber-50 text-amber-800 border-amber-200 ring-amber-600/10";
       case "Approved":
-        return "bg-emerald-50 text-emerald-700 border-emerald-200 ring-emerald-600/10";
-      case "Awaiting Payment":
-        return "bg-orange-50 text-orange-800 border-orange-200 ring-orange-600/10";
       case "Ordered":
-        return "bg-blue-50 text-blue-700 border-blue-200 ring-blue-600/10";
-      case "QA Pending":
-        return "bg-rose-50 text-rose-700 border-rose-200 ring-rose-600/10";
       case "QA Review":
-        return "bg-amber-50 text-amber-700 border-amber-200 ring-amber-600/10";
-      case "QA Hold":
-        return "bg-purple-50 text-purple-700 border-purple-200 ring-purple-600/10";
-      case "QA Approved":
-        return "bg-emerald-50 text-emerald-700 border-emerald-200 ring-emerald-600/10";
       case "Ready for Dispatch":
-        return "bg-teal-50 text-teal-700 border-teal-200 ring-teal-600/10";
       case "Shipped":
-        return "bg-cyan-50 text-cyan-800 border-cyan-200 ring-cyan-600/10";
+        return "bg-blue-50 text-blue-700 border-blue-200 ring-blue-600/10";
+      
+      // Waiting / Attention States
+      case "Awaiting Payment":
+      case "QA Pending":
+      case "QA Hold":
+        return "bg-red-50 text-red-700 border-red-200 ring-red-600/10";
+      
+      // Completed States
+      case "QA Approved":
       case "Delivered":
-        return "bg-green-50 text-green-700 border-green-200 ring-green-600/10";
       case "Completed":
-        return "bg-slate-100 text-slate-700 border-slate-200 ring-slate-600/10";
+        return "bg-green-50 text-green-700 border-green-200 ring-green-600/10";
+        
       default:
         return "bg-slate-50 text-slate-700 border-slate-200 ring-slate-600/10";
     }

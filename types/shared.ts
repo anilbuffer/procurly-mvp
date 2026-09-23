@@ -40,7 +40,7 @@ export type CustomerResponse =
 export interface VehicleInfo {
   make: string;
   model: string;
-  year: number;
+  year: number | string;
   vin: string;
   registration?: string;
   engine?: string;
@@ -56,6 +56,8 @@ export type PartPreference =
   | "Any Suitable Alternative";
 
 export type PartCondition =
+  | "New"
+  | "Used"
   | "Brand New OEM"
   | "Brand New Certified Aftermarket"
   | "Used Grade A"
@@ -65,8 +67,8 @@ export interface PartInfo {
   name: string;
   partNumber?: string;
   quantity: number;
-  preference: PartPreference;
-  condition: PartCondition;
+  preference?: PartPreference;
+  condition: PartCondition | string;
 }
 
 export interface SupportingInfo {
