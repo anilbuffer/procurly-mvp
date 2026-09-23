@@ -142,20 +142,20 @@ export function QuoteTab({ request, onNavigateToTab }: QuoteTabProps) {
               <span className="text-slate-500">Preference:</span>
               <span className="font-bold text-slate-900">{request.part.preference}</span>
             </div>
-              <div className="flex justify-between items-center border-b border-slate-100 pb-3">
-                <span className="text-slate-500">Freight Preference:</span>
-                <span className="font-bold text-[#ED2025] bg-red-50 px-2 py-0.5 rounded border border-red-100">
-                  {request.supporting?.freightPreference === "Sea Freight" ? "Ocean Freight" : (request.supporting?.freightPreference || "Not Specified")}
-                </span>
-              </div>
+            <div className="flex justify-between items-center border-b border-slate-100 pb-3">
+              <span className="text-slate-500">Freight Preference:</span>
+              <span className="font-bold text-[#ED2025] bg-red-50 px-2 py-0.5 rounded border border-red-100">
+                {request.supporting?.freightPreference === "Sea Freight" ? "Ocean Freight" : (request.supporting?.freightPreference || "Not Specified")}
+              </span>
+            </div>
             <div className="flex justify-between items-center">
               <span className="text-slate-500">Quantity:</span>
               <span className="font-bold text-slate-900">{request.part.quantity || 1} unit(s)</span>
             </div>
           </div>
 
-          <div className="mt-5 bg-slate-50 rounded-xl p-4 border border-slate-100 shadow-inner">
-            <div className="text-[11px] font-bold text-slate-700 mb-1">Customer Workshop Notes:</div>
+          <div className="mt-5 bg-slate-50 rounded-xl p-4 border border-slate-200">
+            <div className="text-[13px] font-bold text-slate-700 mb-1">Customer Workshop Notes:</div>
             <div className="text-xs text-slate-600 leading-relaxed">{request.supporting?.notes || "No additional notes provided."}</div>
           </div>
         </div>
@@ -237,7 +237,7 @@ export function QuoteTab({ request, onNavigateToTab }: QuoteTabProps) {
         {/* The Beautiful Landed Cost Schedule */}
         <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-[0_4px_24px_-8px_rgba(0,0,0,0.08)] relative overflow-hidden">
           {/* Header */}
-          <div className="flex justify-between items-start mb-8 border-b border-slate-100 pb-6">
+          <div className="flex justify-between items-start mb-5 border-b border-slate-100 pb-5">
             <div>
               <div className="flex items-center gap-3 mb-2">
                 <span className="text-[10px] font-bold text-blue-700 bg-blue-50 border border-blue-200 px-2.5 py-0.5 rounded-md uppercase tracking-widest">
@@ -371,15 +371,13 @@ export function QuoteTab({ request, onNavigateToTab }: QuoteTabProps) {
           <div className="flex w-100 sm:flex-row items-center gap-3">
             <button
               onClick={handleIssueQuote}
-              className="w-full sm:w-auto bg-[#E61932] hover:bg-[#CC162C] text-white font-bold py-3.5 px-6 rounded-xl flex items-center justify-center gap-2 transition-colors shadow-md text-sm shadow-red-500/20"
+              className="w-full sm:w-full bg-[#E61932] hover:bg-[#CC162C] text-white font-bold py-3.5 px-6 rounded-xl flex items-center justify-center gap-2 transition-colors shadow-md text-sm shadow-red-500/20"
             >
               <Check className="w-4 h-4" />
               Issue Quote to Customer
             </button>
           </div>
         </div>
-
-
       </div>
 
       {/* SUCCESS MODAL */}

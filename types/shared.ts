@@ -202,6 +202,7 @@ export interface QuoteAcceptanceAudit {
   userRole: string;
   termsAccepted: boolean;
   termsAcceptedAt?: string;
+  ipAddress?: string;
   vehicleVerified: boolean;
   partVerified: boolean;
   addressVerified: boolean;

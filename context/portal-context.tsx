@@ -237,7 +237,7 @@ export function PortalProvider({ children }: { children: React.ReactNode }) {
   };
 
   const acceptQuote = (requestId: string, acceptanceAudit: QuoteAcceptanceAudit) => {
-    acceptCustomerQuote(requestId, acceptanceAudit.acceptedBy);
+    acceptCustomerQuote(requestId, acceptanceAudit);
 
     // Keep local activity log updated
     const target = requests.find((r) => r.id === requestId);

@@ -53,7 +53,7 @@ export function PaymentTab({ request: initialRequest, onNavigateToTab }: Payment
 
   const payment = request.payment;
   const isPaid = payment?.status === "Paid";
-  const amount = payment?.amount || request.quotedValue || request.costCalculation?.totalCustomerQuote || 410.0;
+  const amount = payment?.amount || request.quotedValue || request.customerQuote?.totalAmount || request.costCalculation?.totalCustomerQuote || 410.0;
 
   const handleMarkPaid = (e: React.FormEvent) => {
     e.preventDefault();
@@ -210,7 +210,7 @@ export function PaymentTab({ request: initialRequest, onNavigateToTab }: Payment
           </div>
 
           <div>
-            {!request.supplierOrder ? (
+            {!request.supplierOrder || !isPaid ? (
               <button
                 type="button"
                 disabled={!isPaid}
@@ -236,7 +236,7 @@ export function PaymentTab({ request: initialRequest, onNavigateToTab }: Payment
       </div>
 
       {/* Supplier Order Details Card (If order has already been placed) */}
-      {request.supplierOrder && (
+      {request.supplierOrder && isPaid && (
         <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-xs">
           <div className="flex items-center justify-between pb-3 mb-3 border-b border-slate-100">
             <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wider flex items-center gap-2">

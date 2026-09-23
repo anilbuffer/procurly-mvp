@@ -131,6 +131,7 @@ export function RequestDetailsModal() {
       userRole: `Authorized Representative (${activeCustomer?.businessName || req.customerName || "Trade Customer"})`,
       termsAccepted: true, // Static acceptance verified
       termsAcceptedAt: termsAcceptedAt || new Date().toLocaleString("en-NZ", { timeZone: "Pacific/Auckland" }),
+      ipAddress: "112.213.120.14", // Mocked for MVP
       vehicleVerified: true,
       partVerified: true,
       addressVerified: true,
@@ -616,7 +617,7 @@ export function RequestDetailsModal() {
                     <div className="mt-2 pt-3 border-t border-emerald-200/60 text-[11px] text-emerald-700 flex flex-col gap-1.5">
                       <div className="flex items-center gap-1.5">
                         <CheckCircle2 className="w-3.5 h-3.5 shrink-0" />
-                        <span>Particular Terms of Trade digitally accepted by customer on {req.quoteAcceptance.termsAcceptedAt || req.quoteAcceptance.acceptedAt}.</span>
+                        <span>Particular Terms of Trade digitally accepted by customer on {req.quoteAcceptance.termsAcceptedAt || req.quoteAcceptance.acceptedAt} {req.quoteAcceptance.ipAddress && `(IP: ${req.quoteAcceptance.ipAddress})`}.</span>
                       </div>
                       <div className="flex items-center gap-1.5">
                         <CheckCircle2 className="w-3.5 h-3.5 shrink-0" />

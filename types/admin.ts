@@ -14,6 +14,7 @@ export type RequestDetailTab =
   | "overview"
   | "sourcing"
   | "quote"
+  | "invoice"
   | "payment"
   | "shipment"
   | "documents"

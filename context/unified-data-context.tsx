@@ -25,6 +25,7 @@ import {
   CustomerQuoteVersion,
   Quotation,
   CustomerStatus,
+  QuoteAcceptanceAudit,
 } from "@/types/shared";
 import { AdminMetrics, AdminSettings } from "@/types/admin";
 import {
@@ -79,7 +80,7 @@ interface UnifiedDataContextType {
       estimatedTransitDays?: number;
     }
   ) => void;
-  acceptCustomerQuote: (requestId: string, acceptedByName?: string) => void;
+  acceptCustomerQuote: (requestId: string, audit: QuoteAcceptanceAudit) => void;
   rejectCustomerQuote: (requestId: string, reason: string) => void;
   requestMoreInfo: (requestId: string, query: string) => void;
 
@@ -1068,9 +1069,10 @@ export function UnifiedDataProvider({ children }: { children: React.ReactNode })
         estimatedTransitDays?: number;
       }
     ) => {
-      const activeFreight = params.seaFreightCost ?? params.freight ?? 45;
-      const totalAmount = params.sellPrice + activeFreight;
-      const gstAmount = Number(((totalAmount * 15) / 115).toFixed(2));
+      const activeFreight = params.seaFreightCost || params.airFreightCost || params.freight || 0;
+      const subtotal = params.sellPrice + activeFreight;
+      const gstAmount = Number((subtotal * 0.15).toFixed(2));
+      const totalAmount = subtotal + gstAmount;
 
       setRequests((prev) =>
         prev.map((r) => {
@@ -1166,12 +1168,12 @@ export function UnifiedDataProvider({ children }: { children: React.ReactNode })
   // ─── Actions: Customer Approval ──────────────────────────
   // Sets Customer Response = Accepted and moves status to Approved (Stage 4)
   const acceptCustomerQuote = useCallback(
-    (requestId: string, acceptedByName?: string) => {
+    (requestId: string, audit: QuoteAcceptanceAudit) => {
       setRequests((prev) =>
         prev.map((r) => {
           if (r.id === requestId || r.requestNumber === requestId) {
             const amount = r.quotedValue || r.customerQuote?.totalAmount || 410.0;
-            const actor = acceptedByName || r.contactName || "Customer";
+            const actor = audit.acceptedBy || r.contactName || "Customer";
 
             return {
               ...r,
@@ -1181,14 +1183,17 @@ export function UnifiedDataProvider({ children }: { children: React.ReactNode })
               actionType: "upload_invoice",
               lastUpdated: "Just now",
               quoteAcceptance: {
-                acceptedAt: "Just now",
+                acceptedAt: audit.acceptedAt || "Just now",
                 acceptedBy: actor,
-                userRole: "Customer",
-                termsAccepted: true,
-                vehicleVerified: true,
-                partVerified: true,
-                addressVerified: true,
-                freightCost: r.customerQuote?.freightCost,
+                userRole: audit.userRole || "Customer",
+                termsAccepted: audit.termsAccepted,
+                termsAcceptedAt: audit.termsAcceptedAt,
+                ipAddress: audit.ipAddress,
+                vehicleVerified: audit.vehicleVerified,
+                partVerified: audit.partVerified,
+                addressVerified: audit.addressVerified,
+                freightCost: audit.freightCost || r.customerQuote?.freightCost,
+                selectedFreightType: audit.selectedFreightType,
               },
               payment: {
                 id: `pay-${r.requestNumber}`,
