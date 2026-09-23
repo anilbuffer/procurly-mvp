@@ -184,17 +184,6 @@ export function RequestDetailWorkspace({
             Back to Requests
           </Link>
         )}
-
-        <div className="flex items-center gap-2">
-          <Link
-            href={`/customer/requests?request=${request.id}`}
-            target="_blank"
-            className="inline-flex items-center gap-1.5 text-xs font-medium text-slate-500 hover:text-slate-800 bg-slate-100 hover:bg-slate-200 px-3 py-1.5 rounded-xl transition-colors"
-          >
-            <ExternalLink className="w-3.5 h-3.5" />
-            View in Customer Portal
-          </Link>
-        </div>
       </div>
 
       {/* REQUEST SUMMARY HEADER CARD (Section 7) */}
@@ -237,9 +226,8 @@ export function RequestDetailWorkspace({
                 Payment Status
               </span>
               <span
-                className={`font-bold text-xs ${
-                  request.payment?.status === "Paid" ? "text-emerald-600" : "text-rose-600"
-                }`}
+                className={`font-bold text-xs ${request.payment?.status === "Paid" ? "text-emerald-600" : "text-rose-600"
+                  }`}
               >
                 {request.payment?.status === "Paid" ? "PAID" : "UNPAID"}
               </span>
@@ -344,24 +332,22 @@ export function RequestDetailWorkspace({
                   title={`Click to view relevant tab for ${stage}`}
                 >
                   <div
-                    className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold transition-all ${
-                      isCompleted
+                    className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold transition-all ${isCompleted
                         ? "bg-emerald-500 text-white shadow-xs group-hover:scale-110"
                         : isCurrent
-                        ? "bg-[#ED2025] text-white ring-4 ring-red-100 animate-pulse shadow-md group-hover:scale-110"
-                        : "bg-white border-2 border-slate-300 text-slate-400 group-hover:border-slate-500 group-hover:text-slate-600"
-                    }`}
+                          ? "bg-[#ED2025] text-white ring-4 ring-red-100 animate-pulse shadow-md group-hover:scale-110"
+                          : "bg-white border-2 border-slate-300 text-slate-400 group-hover:border-slate-500 group-hover:text-slate-600"
+                      }`}
                   >
                     {isCompleted ? <CheckCircle2 className="w-4 h-4" /> : idx + 1}
                   </div>
                   <span
-                    className={`text-[11px] mt-2 whitespace-nowrap font-medium text-center transition-colors ${
-                      isCurrent
+                    className={`text-[11px] mt-2 whitespace-nowrap font-medium text-center transition-colors ${isCurrent
                         ? "font-bold text-[#ED2025]"
                         : isCompleted
-                        ? "text-slate-800 font-semibold group-hover:text-slate-950"
-                        : "text-slate-400 group-hover:text-slate-700"
-                    }`}
+                          ? "text-slate-800 font-semibold group-hover:text-slate-950"
+                          : "text-slate-400 group-hover:text-slate-700"
+                      }`}
                   >
                     {stage}
                   </span>
@@ -381,20 +367,18 @@ export function RequestDetailWorkspace({
               key={tab.id}
               type="button"
               onClick={() => setActiveTab(tab.id)}
-              className={`flex items-center gap-2 py-3 px-4 text-xs font-bold border-b-2 whitespace-nowrap transition-all ${
-                isActive
+              className={`flex items-center gap-2 py-3 px-4 text-xs font-bold border-b-2 whitespace-nowrap transition-all ${isActive
                   ? "border-[#ED2025] text-[#ED2025]"
                   : "border-transparent text-slate-500 hover:text-slate-800 hover:border-slate-300"
-              }`}
+                }`}
             >
               <span>{tab.label}</span>
               {tab.badge !== undefined && (
                 <span
-                  className={`text-[10px] font-bold px-1.5 py-0.2 rounded-full ${
-                    isActive
+                  className={`text-[10px] font-bold px-1.5 py-0.2 rounded-full ${isActive
                       ? "bg-red-50 text-[#ED2025]"
                       : "bg-slate-100 text-slate-600"
-                  }`}
+                    }`}
                 >
                   {tab.badge}
                 </span>

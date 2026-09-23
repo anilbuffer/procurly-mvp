@@ -44,7 +44,9 @@ export function AdminDashboardView() {
       r.status === "Awaiting Payment" ||
       r.status === "Approved" ||
       r.payment?.status === "Unpaid" ||
-      (r.status === "Ordered" && !r.shipment)
+      (r.status === "Ordered" && !r.shipment) ||
+      r.status === "QA Review" ||
+      r.status === "QA Hold"
   );
 
   const totalPages = Math.max(1, Math.ceil(attentionRequests.length / ITEMS_PER_PAGE));
@@ -56,12 +58,13 @@ export function AdminDashboardView() {
   return (
     <div className="space-y-6">
       {/* SECTION 5: Summary Cards */}
-      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3">
+      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-3">
         {[
           { label: "NEW REQUESTS", value: requests.filter((r) => r.status === "Submitted").length, link: "/admin/requests?status=Submitted", icon: Inbox, color: "text-blue-600" },
           { label: "SOURCING", value: requests.filter((r) => r.status === "Sourcing").length, link: "/admin/requests?status=Sourcing", icon: Search, color: "text-amber-600" },
           { label: "QUOTED", value: requests.filter((r) => r.status === "Quoted").length, link: "/admin/requests?status=Quoted", icon: FileCheck, color: "text-purple-600" },
           { label: "AWAITING PAYMENT", value: requests.filter((r) => r.status === "Awaiting Payment").length, link: "/admin/requests?status=Awaiting Payment", icon: CreditCard, color: "text-red-600" },
+          { label: "QA REVIEW", value: requests.filter((r) => r.status === "QA Review" || r.status === "QA Hold").length, link: "/qa/dashboard", icon: AlertTriangle, color: "text-rose-600" },
           { label: "READY TO ORDER", value: requests.filter((r) => r.status === "Approved").length, link: "/admin/requests?status=Approved", icon: ShoppingBag, color: "text-emerald-600" },
           { label: "SHIPPED", value: requests.filter((r) => r.status === "Shipped").length, link: "/admin/requests?status=Shipped", icon: Truck, color: "text-sky-600" },
           { label: "DELIVERED", value: requests.filter((r) => r.status === "Delivered").length, link: "/admin/requests?status=Delivered", icon: CheckCircle2, color: "text-slate-600" },

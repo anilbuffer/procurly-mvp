@@ -39,14 +39,14 @@ export function DashboardView() {
     (r) =>
       r.actionType === "review_quote" ||
       r.actionType === "pay_now" ||
-      r.actionType === "view_details" ||
+      (r.actionType === "view_details" && !r.status.startsWith("QA")) ||
       r.status === "Quoted" ||
       (r.status === "Approved" && r.payment?.status !== "Paid") ||
       (r.status === "Awaiting Payment" && r.payment?.status !== "Paid")
   );
 
-  // Status badge styling helper (covers all 9 canonical workflow statuses)
-  const getStatusBadge = (status: RequestStatus) => {
+  // Status badge styling helper (covers all workflow statuses)
+  const getStatusBadge = (status: RequestStatus | string) => {
     switch (status) {
       case "Submitted":
         return "bg-sky-50 text-sky-700 border border-sky-200";
@@ -60,6 +60,15 @@ export function DashboardView() {
         return "bg-orange-50 text-orange-800 border border-orange-200";
       case "Ordered":
         return "bg-blue-50 text-blue-700 border border-blue-200";
+      case "QA Pending":
+        return "bg-red-50 text-[#ED2025] border border-red-200";
+      case "QA Review":
+        return "bg-amber-50 text-amber-600 border border-amber-200";
+      case "QA Hold":
+        return "bg-purple-50 text-purple-700 border border-purple-200";
+      case "QA Approved":
+      case "Ready for Dispatch":
+        return "bg-emerald-50 text-emerald-700 border border-emerald-200";
       case "Shipped":
         return "bg-cyan-50 text-cyan-800 border border-cyan-200";
       case "Delivered":

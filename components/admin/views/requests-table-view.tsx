@@ -169,6 +169,11 @@ export function RequestsTableView() {
               <option value="Shipped">Shipped</option>
               <option value="Delivered">Delivered</option>
               <option value="Completed">Completed</option>
+              <option value="QA Pending">QA Pending</option>
+              <option value="QA Review">QA Review</option>
+              <option value="QA Hold">QA Hold</option>
+              <option value="QA Approved">QA Approved</option>
+              <option value="Ready for Dispatch">Ready for Dispatch</option>
             </select>
           </div>
 
