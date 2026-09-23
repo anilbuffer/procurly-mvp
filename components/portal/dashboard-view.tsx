@@ -10,6 +10,11 @@ import {
   ArrowRight,
   ShieldCheck,
   ChevronRight,
+  Rocket,
+  Search,
+  FileCheck,
+  CreditCard,
+  Package,
 } from "lucide-react";
 import Link from "next/link";
 import { usePortal } from "@/context/portal-context";
@@ -27,6 +32,8 @@ export function DashboardView() {
     setIsPaymentModalOpen,
     setPaymentRequest,
     activeCustomer,
+    simulateZeroState,
+    setSimulateZeroState,
   } = usePortal();
 
   // Pagination state
@@ -95,8 +102,88 @@ export function DashboardView() {
 
   return (
     <div className="space-y-6">
-      {/* 1. Welcome Card */}
-      <div className="bg-white rounded-2xl border border-slate-200/90 shadow-sm p-6 sm:p-8 flex flex-col md:flex-row md:items-center justify-between gap-6">
+      {requests.length === 0 ? (
+        <>
+          {/* Welcome Card tailored for empty state */}
+          <div className="bg-white rounded-2xl border border-slate-200/90 shadow-sm p-8 sm:p-12 flex flex-col items-center text-center relative overflow-hidden">
+            <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-b from-red-50 to-white/0 pointer-events-none" />
+            
+            <div className="w-20 h-20 bg-red-50 text-[#ED2025] rounded-full flex items-center justify-center mb-6 shadow-sm border border-red-100 relative z-10">
+              <Rocket className="w-10 h-10" />
+            </div>
+            
+            <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight mb-3 relative z-10">
+              Welcome to your Procurly Portal, {activeCustomer.businessName}!
+            </h1>
+            <p className="text-slate-500 max-w-2xl mx-auto mb-8 relative z-10 text-sm sm:text-base">
+              Your procurement dashboard is currently empty. Start by submitting your first parts request, and we'll handle the sourcing, quoting, and logistics.
+            </p>
+            
+            <div className="flex flex-col sm:flex-row items-center gap-4 relative z-10">
+              <Link
+                href="/customer/requests/new"
+                className="inline-flex items-center justify-center gap-2 bg-[#ED2025] hover:bg-[#d11a1f] text-white font-bold uppercase tracking-wider py-3.5 px-8 rounded-xl shadow-lg shadow-red-500/30 hover:shadow-xl hover:shadow-red-500/40 transition-all transform hover:-translate-y-0.5 active:scale-95"
+              >
+                <Plus className="w-5 h-5 stroke-[3]" />
+                <span>Create Your First Request</span>
+              </Link>
+              
+              <button
+                onClick={() => setSimulateZeroState(false)}
+                className="inline-flex items-center justify-center gap-2 bg-white hover:bg-slate-50 text-slate-700 font-bold uppercase tracking-wider py-3.5 px-8 rounded-xl border border-slate-200 shadow-sm hover:shadow transition-all transform hover:-translate-y-0.5 active:scale-95"
+              >
+                <span>View Mock Data</span>
+              </button>
+            </div>
+          </div>
+
+          {/* How it works steps */}
+          <div className="bg-white rounded-2xl border border-slate-200/90 shadow-sm p-8">
+            <h2 className="text-xl font-extrabold text-slate-900 mb-8 text-center tracking-tight">How Procurly Works</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+               <div className="text-center space-y-4">
+                 <div className="w-14 h-14 mx-auto bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center border border-blue-100 shadow-sm">
+                   <Search className="w-7 h-7" />
+                 </div>
+                 <div>
+                   <h3 className="font-bold text-slate-900 mb-1.5">1. We Source</h3>
+                   <p className="text-xs text-slate-500 leading-relaxed px-4">You submit a request, and our experts find the exact parts you need.</p>
+                 </div>
+               </div>
+               <div className="text-center space-y-4">
+                 <div className="w-14 h-14 mx-auto bg-amber-50 text-amber-600 rounded-2xl flex items-center justify-center border border-amber-100 shadow-sm">
+                   <FileCheck className="w-7 h-7" />
+                 </div>
+                 <div>
+                   <h3 className="font-bold text-slate-900 mb-1.5">2. We Quote</h3>
+                   <p className="text-xs text-slate-500 leading-relaxed px-4">Receive a detailed quote for your approval, with complete transparency.</p>
+                 </div>
+               </div>
+               <div className="text-center space-y-4">
+                 <div className="w-14 h-14 mx-auto bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center border border-emerald-100 shadow-sm">
+                   <CreditCard className="w-7 h-7" />
+                 </div>
+                 <div>
+                   <h3 className="font-bold text-slate-900 mb-1.5">3. You Approve</h3>
+                   <p className="text-xs text-slate-500 leading-relaxed px-4">Approve the quote and pay securely through your dashboard.</p>
+                 </div>
+               </div>
+               <div className="text-center space-y-4">
+                 <div className="w-14 h-14 mx-auto bg-sky-50 text-sky-600 rounded-2xl flex items-center justify-center border border-sky-100 shadow-sm">
+                   <Package className="w-7 h-7" />
+                 </div>
+                 <div>
+                   <h3 className="font-bold text-slate-900 mb-1.5">4. We Deliver</h3>
+                   <p className="text-xs text-slate-500 leading-relaxed px-4">Track your parts as they make their way to your specified address.</p>
+                 </div>
+               </div>
+            </div>
+          </div>
+        </>
+      ) : (
+        <>
+          {/* 1. Welcome Card */}
+          <div className="bg-white rounded-2xl border border-slate-200/90 shadow-sm p-6 sm:p-8 flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div className="space-y-2">
           {/* Approved Trade Customer Pill */}
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 text-blue-800 border border-blue-200 text-xs font-bold tracking-wide">
@@ -113,14 +200,22 @@ export function DashboardView() {
           </p>
         </div>
 
-        {/* New Parts Request Button */}
-        <Link
-          href="/customer/requests/new"
-          className="inline-flex items-center justify-center gap-2 bg-[#ED2025] hover:bg-[#d11a1f] text-white font-bold text-xs uppercase tracking-wider py-3.5 px-6 rounded-xl shadow-md shadow-red-500/20 hover:shadow-lg hover:shadow-red-500/30 transition-all transform active:scale-95 shrink-0"
-        >
-          <Plus className="w-4 h-4 stroke-[3]" />
-          <span>New Parts Request</span>
-        </Link>
+        {/* Buttons */}
+        <div className="flex flex-col sm:flex-row gap-3 shrink-0">
+          <button
+            onClick={() => setSimulateZeroState(true)}
+            className="inline-flex items-center justify-center gap-2 bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold text-xs uppercase tracking-wider py-3.5 px-6 rounded-xl transition-all active:scale-95"
+          >
+            <span>Preview Empty State</span>
+          </button>
+          <Link
+            href="/customer/requests/new"
+            className="inline-flex items-center justify-center gap-2 bg-[#ED2025] hover:bg-[#d11a1f] text-white font-bold text-xs uppercase tracking-wider py-3.5 px-6 rounded-xl shadow-md shadow-red-500/20 hover:shadow-lg hover:shadow-red-500/30 transition-all transform active:scale-95"
+          >
+            <Plus className="w-4 h-4 stroke-[3]" />
+            <span>New Parts Request</span>
+          </Link>
+        </div>
       </div>
 
       {/* 2. KPI Summary Cards (4 Interactive Nav Cards) */}
@@ -445,6 +540,8 @@ export function DashboardView() {
           </div>
         )}
       </div>
+        </>
+      )}
     </div>
   );
 }

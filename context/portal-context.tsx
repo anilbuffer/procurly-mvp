@@ -61,6 +61,8 @@ interface PortalContextType {
     inProcurement: number;
     inTransit: number;
   };
+  simulateZeroState: boolean;
+  setSimulateZeroState: (val: boolean) => void;
 }
 
 const PortalContext = createContext<PortalContextType | undefined>(undefined);
@@ -88,8 +90,14 @@ export function PortalProvider({ children }: { children: React.ReactNode }) {
     return customers.find((c) => c.id === activeCustomerId) || customers[1] || customers[0];
   }, [customers, activeCustomerId]);
 
+  const [simulateZeroState, setSimulateZeroState] = useState(true);
+
   // Normalize shared requests for customer components (ensuring quotation alias is always present)
   const requests: PartRequest[] = useMemo(() => {
+    if (simulateZeroState) {
+      return [];
+    }
+    
     return sharedRequests.map((r) => {
       const q = r.customerQuote || r.quotation;
       return {
@@ -98,7 +106,7 @@ export function PortalProvider({ children }: { children: React.ReactNode }) {
         quotedValue: r.quotedValue || q?.totalAmount,
       } as PartRequest;
     });
-  }, [sharedRequests]);
+  }, [sharedRequests, simulateZeroState]);
 
   // Derive active tab from URL pathname: /customer/[tab]
   const activeTab: PortalTab = useMemo(() => {
@@ -342,6 +350,8 @@ export function PortalProvider({ children }: { children: React.ReactNode }) {
         setActiveCustomerId,
         availableCustomers: customers,
         metrics,
+        simulateZeroState,
+        setSimulateZeroState,
       }}
     >
       {children}
