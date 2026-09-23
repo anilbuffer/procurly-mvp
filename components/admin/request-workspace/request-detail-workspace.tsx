@@ -96,7 +96,14 @@ export function RequestDetailWorkspace({
     "Completed",
   ];
 
-  const currentStageIndex = LIFECYCLE_STAGES.indexOf(request.status);
+  const currentStageIndex = (() => {
+    const idx = LIFECYCLE_STAGES.indexOf(request.status);
+    if (idx !== -1) return idx;
+    if (["QA Pending", "QA Review", "QA Hold", "QA Approved", "Ready for Dispatch"].includes(request.status)) {
+      return LIFECYCLE_STAGES.indexOf("Ordered");
+    }
+    return -1;
+  })();
 
   const handleAdvanceStage = () => {
     if (currentStageIndex < LIFECYCLE_STAGES.length - 1) {

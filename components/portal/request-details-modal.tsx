@@ -114,7 +114,14 @@ export function RequestDetailsModal() {
     "Out For Delivery",
   ];
 
-  const currentStageIndex = LIFECYCLE_STAGES.indexOf(req.status);
+  const currentStageIndex = (() => {
+    const idx = LIFECYCLE_STAGES.indexOf(req.status);
+    if (idx !== -1) return idx;
+    if (["QA Pending", "QA Review", "QA Hold", "QA Approved", "Ready for Dispatch"].includes(req.status)) {
+      return LIFECYCLE_STAGES.indexOf("Ordered");
+    }
+    return -1;
+  })();
 
   const handleCopy = (text: string, label: string) => {
     navigator.clipboard?.writeText(text);
