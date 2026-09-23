@@ -44,13 +44,13 @@ export function SourcingTab({ request }: SourcingTabProps) {
   const [supplierId, setSupplierId] = useState(suppliers[0]?.id || "");
   const [supplierPartRef, setSupplierPartRef] = useState("");
   const [availability, setAvailability] = useState<SupplierAvailability>("In Stock");
-  const [supplierCost, setSupplierCost] = useState<number>(250);
+  const [supplierCost, setSupplierCost] = useState<string | number>("");
   const defaultAirCost = request.specs?.weight ? request.specs.weight * 12.5 : 850;
   const defaultSeaCost = request.specs?.weight ? request.specs.weight * 4.2 : 250;
 
-  const [airFreightInput, setAirFreightInput] = useState<number>(defaultAirCost);
-  const [oceanFreightInput, setOceanFreightInput] = useState<number>(defaultSeaCost);
-  const [leadTimeDays, setLeadTimeDays] = useState<number>(5);
+  const [airFreightInput, setAirFreightInput] = useState<number | string>("");
+  const [oceanFreightInput, setOceanFreightInput] = useState<number | string>("");
+  const [leadTimeDays, setLeadTimeDays] = useState<number | string>("");
   const [condition, setCondition] = useState<SupplierCondition>("Genuine");
   const [notes, setNotes] = useState("");
 
@@ -59,10 +59,10 @@ export function SourcingTab({ request }: SourcingTabProps) {
     setSupplierId(suppliers[0]?.id || "");
     setSupplierPartRef("");
     setAvailability("In Stock");
-    setSupplierCost(250);
-    setAirFreightInput(defaultAirCost);
-    setOceanFreightInput(defaultSeaCost);
-    setLeadTimeDays(5);
+    setSupplierCost("");
+    setAirFreightInput("");
+    setOceanFreightInput("");
+    setLeadTimeDays("");
     setCondition("Genuine");
     setNotes("");
     setShowAddModal(true);
@@ -73,7 +73,7 @@ export function SourcingTab({ request }: SourcingTabProps) {
     setSupplierId(quote.supplierId);
     setSupplierPartRef(quote.supplierPartRef);
     setAvailability(quote.availability);
-    setSupplierCost(quote.supplierCost);
+    setSupplierCost(quote.supplierCost.toString());
     setAirFreightInput(quote.airFreightCost ?? quote.supplierFreight);
     setOceanFreightInput(quote.seaFreightCost ?? defaultSeaCost);
     setLeadTimeDays(quote.leadTimeDays);
@@ -94,7 +94,7 @@ export function SourcingTab({ request }: SourcingTabProps) {
         supplierCountry: sup.country,
         supplierPartRef: supplierPartRef || "REF-" + Math.floor(1000 + Math.random() * 9000),
         availability,
-        supplierCost: Number(supplierCost),
+        supplierCost: supplierCost,
         supplierFreight: Number(airFreightInput),
         airFreightCost: Number(airFreightInput),
         seaFreightCost: Number(oceanFreightInput),
@@ -110,7 +110,7 @@ export function SourcingTab({ request }: SourcingTabProps) {
         supplierCountry: sup.country,
         supplierPartRef: supplierPartRef || "REF-" + Math.floor(1000 + Math.random() * 9000),
         availability,
-        supplierCost: Number(supplierCost),
+        supplierCost: supplierCost,
         supplierFreight: Number(airFreightInput),
         airFreightCost: Number(airFreightInput),
         seaFreightCost: Number(oceanFreightInput),
@@ -178,15 +178,16 @@ export function SourcingTab({ request }: SourcingTabProps) {
                   <th className="py-3 px-4">Availability</th>
                   <th className="py-3 px-4">Lead Time</th>
                   <th className="py-3 px-4 text-right">Supplier Cost</th>
-                  <th className="py-3 px-4 text-right">Air Freight</th>
-                  <th className="py-3 px-4 text-right">Ocean Freight</th>
+                  <th className="py-3 px-4 text-right">Air Freight (Door-to-Door)</th>
+                  <th className="py-3 px-4 text-right">Ocean Freight (Door-to-Door)</th>
                   <th className="py-3 px-4 text-right">Total (Air)</th>
                   <th className="py-3 px-4 text-center">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
                 {supplierQuotations.map((quote) => {
-                  const total = quote.supplierCost + (quote.airFreightCost ?? quote.supplierFreight);
+                  const numericCost = parseFloat(quote.supplierCost.toString()) || 0;
+                  const total = numericCost + (quote.airFreightCost ?? quote.supplierFreight);
                   const isSelected = quote.isSelected;
 
                   return (
@@ -266,7 +267,7 @@ export function SourcingTab({ request }: SourcingTabProps) {
                         {quote.leadTimeDays} Days
                       </td>
                       <td className="py-3 px-4 text-right font-mono text-slate-900">
-                        NZ${quote.supplierCost.toFixed(2)}
+                        {typeof quote.supplierCost === 'number' ? `NZ$${quote.supplierCost.toFixed(2)}` : quote.supplierCost}
                       </td>
                       <td className="py-3 px-4 text-right font-mono text-slate-600">
                         NZ${(quote.airFreightCost ?? quote.supplierFreight).toFixed(2)}
@@ -316,12 +317,12 @@ export function SourcingTab({ request }: SourcingTabProps) {
                     Active Selection: {selectedQuote.supplierName} ({selectedQuote.supplierPartRef})
                   </h4>
                   <p className="text-[11px] text-slate-500">
-                    Landed cost NZ${(selectedQuote.supplierCost + (selectedQuote.airFreightCost ?? selectedQuote.supplierFreight)).toFixed(2)} (Air) • {selectedQuote.leadTimeDays} Days Lead Time. Ready to configure Customer Quote.
+                    Landed cost NZ${((parseFloat(selectedQuote.supplierCost.toString()) || 0) + (selectedQuote.airFreightCost ?? selectedQuote.supplierFreight)).toFixed(2)} (Air) • {selectedQuote.leadTimeDays} Days Lead Time. Ready to configure Customer Quote.
                   </p>
                 </div>
               </div>
               <span className="text-xs font-mono font-bold text-slate-800 bg-white px-3 py-1.5 rounded-xl border border-slate-200 shadow-xs">
-                Base Cost: NZ${selectedQuote.supplierCost.toFixed(2)}
+                Base Cost: {typeof selectedQuote.supplierCost === 'number' ? `NZ$${selectedQuote.supplierCost.toFixed(2)}` : selectedQuote.supplierCost}
               </span>
             </div>
           )}
@@ -403,27 +404,27 @@ export function SourcingTab({ request }: SourcingTabProps) {
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-semibold text-slate-700 mb-1">
-                        Air Express (NZD)
+                        Air Express Landed Door-to-Door (NZD)
                       </label>
                       <input
                         type="number"
                         step="0.01"
                         min="0"
                         value={airFreightInput}
-                        onChange={(e) => setAirFreightInput(Number(e.target.value))}
+                        onChange={(e) => setAirFreightInput(e.target.value === "" ? "" : Number(e.target.value))}
                         className="w-full text-sm p-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#ED2025]/30 focus:border-[#ED2025]"
                       />
                     </div>
                     <div>
                       <label className="block text-sm font-semibold text-slate-700 mb-1">
-                        Ocean Freight (NZD)
+                        Ocean Freight Landed Door-to-Door (NZD)
                       </label>
                       <input
                         type="number"
                         step="0.01"
                         min="0"
                         value={oceanFreightInput}
-                        onChange={(e) => setOceanFreightInput(Number(e.target.value))}
+                        onChange={(e) => setOceanFreightInput(e.target.value === "" ? "" : Number(e.target.value))}
                         className="w-full text-sm p-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#ED2025]/30 focus:border-[#ED2025]"
                       />
                     </div>
@@ -435,12 +436,11 @@ export function SourcingTab({ request }: SourcingTabProps) {
                     Supplier Cost (NZD)
                   </label>
                   <input
-                    type="number"
-                    step="0.01"
-                    min="1"
+                    type="text"
                     value={supplierCost}
-                    onChange={(e) => setSupplierCost(Number(e.target.value))}
+                    onChange={(e) => setSupplierCost(e.target.value)}
                     required
+                    placeholder="e.g. 250 or TBA"
                     className="w-full text-sm p-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#ED2025]/30 focus:border-[#ED2025]"
                   />
                 </div>
@@ -471,7 +471,7 @@ export function SourcingTab({ request }: SourcingTabProps) {
                     type="number"
                     min="1"
                     value={leadTimeDays}
-                    onChange={(e) => setLeadTimeDays(Number(e.target.value))}
+                    onChange={(e) => setLeadTimeDays(e.target.value === "" ? "" : Number(e.target.value))}
                     required
                     className="w-full text-sm p-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#ED2025]/30 focus:border-[#ED2025]"
                   />

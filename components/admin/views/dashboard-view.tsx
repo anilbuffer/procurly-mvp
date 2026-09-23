@@ -43,6 +43,7 @@ export function AdminDashboardView() {
       r.status === "Sourcing" ||
       r.status === "Awaiting Payment" ||
       r.status === "Approved" ||
+      r.status === "Invoicing" ||
       r.payment?.status === "Unpaid" ||
       (r.status === "Ordered" && !r.shipment) ||
       r.status === "QA Review" ||

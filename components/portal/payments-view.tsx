@@ -26,6 +26,7 @@ export function PaymentsView() {
       r.payment ||
       [
         "Approved",
+        "Invoicing",
         "Awaiting Payment",
         "Ordered",
         "Shipped",
@@ -179,7 +180,14 @@ export function PaymentsView() {
                   return (
                     <tr key={req.id} className="hover:bg-slate-50 transition-colors">
                       <td className="py-4 px-6 font-mono font-bold text-slate-900">
-                        {invoiceNum}
+                        <div className="flex items-center gap-1.5">
+                          <span>{invoiceNum}</span>
+                          {pay?.invoiceUrl && (
+                            <a href={pay.invoiceUrl} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:text-blue-700" title="View PDF">
+                              <FileText className="w-3.5 h-3.5" />
+                            </a>
+                          )}
+                        </div>
                       </td>
                       <td className="py-4 px-4 font-mono">
                         <button

@@ -63,6 +63,8 @@ export function RequestDetailsModal() {
   const [verifyPart, setVerifyPart] = useState(false);
   const [verifyAddress, setVerifyAddress] = useState(false);
   const [acceptTerms, setAcceptTerms] = useState(false); // Single static acceptance checkbox
+  const [termsAcceptedAt, setTermsAcceptedAt] = useState<string | null>(null);
+  const [showTermsModal, setShowTermsModal] = useState(false);
 
   // Quote reject state
   const [isRejecting, setIsRejecting] = useState(false);
@@ -95,6 +97,7 @@ export function RequestDetailsModal() {
     "Sourcing",
     "Quoted",
     "Approved",
+    "Invoicing",
     "Awaiting Payment",
     "Ordered",
     "Shipped",
@@ -127,6 +130,7 @@ export function RequestDetailsModal() {
       acceptedBy: activeCustomer?.contactName || req.contactName || "Customer",
       userRole: `Authorized Representative (${activeCustomer?.businessName || req.customerName || "Trade Customer"})`,
       termsAccepted: true, // Static acceptance verified
+      termsAcceptedAt: termsAcceptedAt || new Date().toLocaleString("en-NZ", { timeZone: "Pacific/Auckland" }),
       vehicleVerified: true,
       partVerified: true,
       addressVerified: true,
@@ -487,62 +491,19 @@ export function RequestDetailsModal() {
                   </div>
                   <div className="text-right">
                     <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-                      Final Sell Price
+                      Total Landed Price
                     </span>
                     <div className="text-2xl font-black text-slate-900 font-mono">
                       ${(
-                        req.quotation.subtotal +
-                        req.quotation.gstAmount +
+                        (req.quotation.subtotal +
                         (selectedFreightType === "Air"
                           ? req.quotation.airFreightCost || 0
-                          : req.quotation.seaFreightCost || req.quotation.freightCost || 0)
+                          : req.quotation.seaFreightCost || req.quotation.freightCost || 0)) * 1.15
                       ).toFixed(2)}{" "}
                       <span className="text-xs font-bold text-slate-500">NZD</span>
                     </div>
                     <span className="text-[10px] text-emerald-600 font-semibold">
                       Includes 15% NZ GST & Freight
-                    </span>
-                  </div>
-                </div>
-
-                {/* Breakdown Table */}
-                <div className="space-y-2 text-xs">
-                  <div className="flex justify-between py-1 border-b border-slate-100">
-                    <span className="text-slate-600">Unit Price:</span>
-                    <span className="font-mono font-semibold text-slate-800">
-                      ${req.quotation.unitPrice.toFixed(2)}
-                    </span>
-                  </div>
-                  <div className="flex justify-between py-1 border-b border-slate-100">
-                    <span className="text-slate-600">Quantity:</span>
-                    <span className="font-semibold text-slate-800">
-                      {req.quotation.quantity}
-                    </span>
-                  </div>
-                  <div className="flex justify-between py-1 border-b border-slate-100">
-                    <span className="text-slate-600">Parts Subtotal (Excl. GST):</span>
-                    <span className="font-mono font-semibold text-slate-800">
-                      ${req.quotation.subtotal.toFixed(2)}
-                    </span>
-                  </div>
-                  <div className="flex justify-between py-1 border-b border-slate-100">
-                    <span className="text-slate-600">Selected Freight ({selectedFreightType}):</span>
-                    <span className="font-mono font-semibold text-slate-800">
-                      ${(selectedFreightType === "Air"
-                        ? req.quotation.airFreightCost || 0
-                        : req.quotation.seaFreightCost || req.quotation.freightCost || 0).toFixed(2)}
-                    </span>
-                  </div>
-                  <div className="flex justify-between py-1 border-b border-slate-100">
-                    <span className="text-slate-600">NZ GST (15%):</span>
-                    <span className="font-mono font-semibold text-slate-800">
-                      ${req.quotation.gstAmount.toFixed(2)}
-                    </span>
-                  </div>
-                  <div className="flex justify-between py-1">
-                    <span className="text-slate-600">Quote Validity:</span>
-                    <span className="font-semibold text-amber-700">
-                      Valid for 48 Hours (Guaranteed Allocation)
                     </span>
                   </div>
                 </div>
@@ -570,10 +531,10 @@ export function RequestDetailsModal() {
                         )}
                       </div>
                       <div className="text-xl font-black text-slate-900 font-mono mb-1">
-                        ${(req.quotation.airFreightCost || (req.quotation.freightCost || 0) + 40).toFixed(2)}
+                        ${((req.quotation.subtotal + (req.quotation.airFreightCost || 0)) * 1.15).toFixed(2)}
                       </div>
                       <p className="text-[10px] text-slate-500 leading-relaxed">
-                        Fastest delivery option. Typically 5-7 days transit time.
+                        Fastest delivery option. Typically 7-10 business days transit time. (Landed Door-to-Door)
                       </p>
                     </div>
 
@@ -597,10 +558,10 @@ export function RequestDetailsModal() {
                         )}
                       </div>
                       <div className="text-xl font-black text-slate-900 font-mono mb-1">
-                        ${(req.quotation.seaFreightCost || req.quotation.freightCost || 0).toFixed(2)}
+                        ${((req.quotation.subtotal + (req.quotation.seaFreightCost || req.quotation.freightCost || 0)) * 1.15).toFixed(2)}
                       </div>
                       <p className="text-[10px] text-slate-500 leading-relaxed">
-                        Cost-effective option. Typically 14-21 days transit time.
+                        Cost-effective option. Typically 25-40 business days transit time. (Landed Door-to-Door)
                       </p>
                     </div>
                   </div>
@@ -652,6 +613,16 @@ export function RequestDetailsModal() {
                       {req.quoteAcceptance.acceptedAt}. Autohub Invoice Ref:{" "}
                       <strong className="font-mono">{req.payment?.invoiceNumber || "INV-2026-XXXX"}</strong> (Issued by Autohub Operations).
                     </p>
+                    <div className="mt-2 pt-3 border-t border-emerald-200/60 text-[11px] text-emerald-700 flex flex-col gap-1.5">
+                      <div className="flex items-center gap-1.5">
+                        <CheckCircle2 className="w-3.5 h-3.5 shrink-0" />
+                        <span>Particular Terms of Trade digitally accepted by customer on {req.quoteAcceptance.termsAcceptedAt || req.quoteAcceptance.acceptedAt}.</span>
+                      </div>
+                      <div className="flex items-center gap-1.5">
+                        <CheckCircle2 className="w-3.5 h-3.5 shrink-0" />
+                        <span>Order Parameters Verified (Vehicle, Part, Delivery Address).</span>
+                      </div>
+                    </div>
                     {(!req.payment || req.payment.status === "Unpaid") && (
                       <div className="pt-2 flex flex-wrap items-center justify-between gap-2 border-t border-emerald-200/60">
                         <button
@@ -764,15 +735,15 @@ export function RequestDetailsModal() {
                       </label>
 
                       {/* 4. Single static acceptance checkbox */}
-                      <label className="flex items-center gap-3 cursor-pointer p-2.5 rounded-lg bg-slate-200 hover:bg-slate-300">
+                      <label className="flex items-center gap-3 p-2.5 rounded-lg bg-slate-200 hover:bg-slate-300">
                         <input
                           type="checkbox"
                           checked={acceptTerms}
                           onChange={(e) => setAcceptTerms(e.target.checked)}
-                          className="w-4 h-4 rounded text-[#ED2025] focus:ring-0"
+                          className="w-4 h-4 rounded text-[#ED2025] focus:ring-0 cursor-pointer"
                         />
                         <span>
-                          <strong>Accept Procurement Terms:</strong> I agree to the Procurly Terms of Trade and Privacy Policy
+                          <strong>Accept Procurement Terms:</strong> I agree to the <button type="button" onClick={() => setShowTermsModal(true)} className="text-[#ED2025] hover:underline cursor-pointer">Particular Terms of Trade</button> and Privacy Policy
                         </span>
                       </label>
                     </div>
@@ -1162,6 +1133,50 @@ export function RequestDetailsModal() {
                 className="px-4 py-2 bg-slate-900 rounded-lg border border-slate-200 bg-white hover:bg-slate-100 text-slate-600 hover:text-slate-900 font-bold text-xs uppercase tracking-wider rounded-xl transition-colors"
               >
                 Close Support
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Terms of Trade Modal */}
+      {showTermsModal && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+          <div className="bg-white rounded-2xl max-w-2xl w-full p-6 shadow-2xl flex flex-col max-h-[85vh] animate-in zoom-in-95">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-bold text-slate-900">Particular Terms of Trade</h3>
+              <button
+                type="button"
+                onClick={() => setShowTermsModal(false)}
+                className="w-8 h-8 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 flex items-center justify-center"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+            
+            <div className="flex-1 overflow-y-auto pr-2 space-y-4 text-sm text-slate-700">
+              <p><strong>1. Acceptance of Terms:</strong> By proceeding with this order, the Trade Customer agrees to the Procurly Particular Terms of Trade.</p>
+              <p><strong>2. Quotation Validity:</strong> All quotations are valid for 48 hours and are strictly subject to part availability at the supplier facility.</p>
+              <p><strong>3. Landed Cost & Currency:</strong> The displayed Total Landed Price is in NZD and inclusive of 15% GST and chosen freight. Any customs variances are absorbed by Procurly.</p>
+              <p><strong>4. Returns & Warranty:</strong> Parts procured on behalf of the customer are non-returnable unless defective. Defective parts must be reported within 7 days of delivery.</p>
+              <p><strong>5. Liability:</strong> Procurly acts as a procurement agent and is not liable for secondary damages or workshop labor costs resulting from delayed shipments or part defects.</p>
+              <p><strong>6. Estimated Delivery:</strong> Delivery timeframes (e.g., 25-40 days for Sea Freight) are estimates only. Procurly is not liable for delays caused by customs hold-ups, severe weather events, or global logistics disruptions.</p>
+              <p><strong>7. Risk of Loss:</strong> The risk of loss or damage to the parts passes to the customer upon successful delivery to the nominated Workshop Bay.</p>
+              <p><strong>8. Dangerous Goods (DG):</strong> If the ordered part contains hazardous materials (e.g., lithium batteries, airbags), it is subject to special DG handling which may incur additional compliance delays. The customer consents to these mandatory safety protocols.</p>
+              <p><strong>9. Order Cancellation:</strong> Once the customer clicks "Accept Quote", the order is locked and logistics are initiated. The order cannot be canceled while in transit under any circumstances.</p>
+            </div>
+
+            <div className="pt-4 mt-4 border-t border-slate-200 text-right">
+              <button
+                type="button"
+                onClick={() => {
+                  setAcceptTerms(true);
+                  setTermsAcceptedAt(new Date().toLocaleString("en-NZ", { timeZone: "Pacific/Auckland" }));
+                  setShowTermsModal(false);
+                }}
+                className="px-6 py-2.5 bg-[#ED2025] hover:bg-[#d11a1f] text-white font-bold text-xs uppercase tracking-wider rounded-xl shadow-md transition-all"
+              >
+                Acknowledge & Close
               </button>
             </div>
           </div>

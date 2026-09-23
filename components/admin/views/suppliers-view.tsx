@@ -394,10 +394,10 @@ export function SuppliersView() {
                       </div>
                       <div className="text-right font-mono">
                         <span className="font-bold text-slate-900 block">
-                          NZ${quote.supplierCost.toFixed(2)}
+                          NZ${Number(quote.supplierCost).toFixed(2)}
                         </span>
                         <span className="text-[10px] text-slate-400">
-                          +NZ${quote.supplierFreight.toFixed(2)} freight
+                          +NZ${Number(quote.supplierFreight).toFixed(2)} freight
                         </span>
                       </div>
                     </div>

@@ -56,6 +56,8 @@ export function DashboardView() {
         return "bg-amber-100 text-amber-800 border border-amber-200";
       case "Approved":
         return "bg-emerald-50 text-emerald-700 border border-emerald-200";
+      case "Invoicing":
+        return "bg-indigo-50 text-indigo-700 border border-indigo-200";
       case "Awaiting Payment":
         return "bg-orange-50 text-orange-800 border border-orange-200";
       case "Ordered":

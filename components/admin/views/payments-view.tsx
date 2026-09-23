@@ -10,6 +10,7 @@ import {
   ArrowRight,
   RotateCcw,
   Check,
+  FileText,
 } from "lucide-react";
 import { useUnifiedData } from "@/context/unified-data-context";
 import { PaymentStatusBadge } from "../status-badge";
@@ -169,9 +170,16 @@ export function PaymentsView() {
                       </td>
                       <td className="py-3.5 px-4">
                         <span className="font-bold text-slate-900 block">{req.customerName}</span>
-                        <span className="text-[10px] text-slate-400 font-mono">
-                          {pay?.invoiceNumber || `INV-${req.requestNumber.replace("AH-P-", "")}`}
-                        </span>
+                        <div className="flex items-center gap-1.5 mt-0.5">
+                          <span className="text-[10px] text-slate-400 font-mono">
+                            {pay?.invoiceNumber || `INV-${req.requestNumber.replace("AH-P-", "")}`}
+                          </span>
+                          {pay?.invoiceUrl && (
+                            <a href={pay.invoiceUrl} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:text-blue-700" title="View PDF">
+                              <FileText className="w-3 h-3" />
+                            </a>
+                          )}
+                        </div>
                       </td>
                       <td className="py-3.5 px-4 text-right font-mono font-bold text-slate-900">
                         NZ${amt.toFixed(2)}

@@ -18,6 +18,7 @@ export function OrdersView() {
       r.status === "Delivered" ||
       r.status === "Completed" ||
       r.status === "Approved" ||
+      r.status === "Invoicing" ||
       r.status === "Awaiting Payment" ||
       r.status === "Sourcing" ||
       r.supplierOrder !== undefined
@@ -39,6 +40,7 @@ export function OrdersView() {
       case "Sourcing":
       case "Quoted":
       case "Approved":
+      case "Invoicing":
       case "Ordered":
       case "QA Review":
       case "Ready for Dispatch":

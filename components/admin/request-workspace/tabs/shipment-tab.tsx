@@ -241,13 +241,12 @@ export function ShipmentTab({ request: initialRequest }: ShipmentTabProps) {
                   <div key={m.name} className="relative flex items-start gap-4">
                     {/* Circle marker */}
                     <div
-                      className={`absolute -left-6 mt-0.5 w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold z-10 transition-all ${
-                        isPassed
-                          ? "bg-emerald-500 text-white ring-4 ring-emerald-50"
-                          : isCurrent
+                      className={`absolute -left-6 mt-0.5 w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold z-10 transition-all ${isPassed
+                        ? "bg-emerald-500 text-white ring-4 ring-emerald-50"
+                        : isCurrent
                           ? "bg-[#2B4499] text-white ring-4 ring-blue-100 animate-pulse"
                           : "bg-slate-200 text-slate-500"
-                      }`}
+                        }`}
                     >
                       {isPassed ? <CheckCircle2 className="w-3.5 h-3.5" /> : idx + 1}
                     </div>
@@ -256,9 +255,8 @@ export function ShipmentTab({ request: initialRequest }: ShipmentTabProps) {
                       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
                         <div className="flex items-center gap-2">
                           <h5
-                            className={`text-xs font-bold ${
-                              isCurrent ? "text-[#2B4499]" : "text-slate-900"
-                            }`}
+                            className={`text-xs font-bold ${isCurrent ? "text-[#2B4499]" : "text-slate-900"
+                              }`}
                           >
                             {m.label}
                           </h5>
@@ -289,84 +287,113 @@ export function ShipmentTab({ request: initialRequest }: ShipmentTabProps) {
 
       {/* MODAL: Create Shipment */}
       {showCreateModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs p-4">
-          <div className="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 animate-in zoom-in-95">
-            <h3 className="text-base font-bold text-slate-900 mb-1">Create Consignment Shipment</h3>
-            <p className="text-xs text-slate-500 mb-4">
-              Initialize logistics tracking for {request.requestNumber}.
-            </p>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-sm p-4 animate-in fade-in duration-200">
+          <div className="bg-white rounded-2xl max-w-xl w-full p-6 shadow-xl border border-slate-100 animate-in zoom-in-95 duration-200">
+            <div className="flex items-start gap-4 mb-6">
+              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#ED2025]/10 to-[#ED2025]/5 border border-[#ED2025]/20 flex items-center justify-center shrink-0 shadow-inner">
+                <Truck className="w-5 h-5 text-[#ED2025]" />
+              </div>
+              <div>
+                <h3 className="text-lg font-bold text-slate-900 tracking-tight">Create Consignment Shipment</h3>
+                <p className="text-xs text-slate-500 mt-1 leading-relaxed">
+                  Initialize logistics tracking for {request.requestNumber}.
+                </p>
+              </div>
+            </div>
 
             <form onSubmit={handleCreateShipment} className="space-y-4">
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">
-                    Carrier Name
+                  <label className="block text-sm font-bold text-slate-700 mb-1.5 flex items-center gap-2">
+                    Carrier Name <span className="text-red-500">*</span>
                   </label>
-                  <select
-                    value={carrier}
-                    onChange={(e) => setCarrier(e.target.value)}
-                    className="w-full text-xs p-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#ED2025]/30 focus:border-[#ED2025]"
-                  >
-                    <option value="DHL Global Forwarding">DHL Global Forwarding</option>
-                    <option value="Mainfreight Air & Ocean">Mainfreight Air & Ocean</option>
-                    <option value="FedEx Express International">FedEx Express International</option>
-                    <option value="Japan Post EMS">Japan Post EMS</option>
-                  </select>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+                      <Building className="h-4 w-4 text-slate-400" />
+                    </div>
+                    <select
+                      value={carrier}
+                      onChange={(e) => setCarrier(e.target.value)}
+                      className="w-full text-sm pl-10 p-3.5 rounded-xl border border-slate-200 bg-slate-50/50 hover:bg-white focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#ED2025]/20 focus:border-[#ED2025] transition-all appearance-none"
+                    >
+                      <option value="DHL Global Forwarding">DHL Global Forwarding</option>
+                      <option value="Mainfreight Air & Ocean">Mainfreight Air & Ocean</option>
+                      <option value="FedEx Express International">FedEx Express International</option>
+                      <option value="Japan Post EMS">Japan Post EMS</option>
+                    </select>
+                  </div>
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">
-                    Tracking Number
+                  <label className="block text-sm font-bold text-slate-700 mb-1.5 flex items-center gap-2">
+                    Tracking Number <span className="text-red-500">*</span>
                   </label>
-                  <input
-                    type="text"
-                    value={trackingNumber}
-                    onChange={(e) => setTrackingNumber(e.target.value)}
-                    required
-                    className="w-full text-xs p-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#ED2025]/30 focus:border-[#ED2025]"
-                  />
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+                      <Package className="h-4 w-4 text-slate-400" />
+                    </div>
+                    <input
+                      type="text"
+                      value={trackingNumber}
+                      onChange={(e) => setTrackingNumber(e.target.value)}
+                      required
+                      placeholder="e.g. AWB-9988776655"
+                      className="w-full text-sm pl-10 p-3.5 rounded-xl border border-slate-200 bg-slate-50/50 hover:bg-white focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#ED2025]/20 focus:border-[#ED2025] transition-all"
+                    />
+                  </div>
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">
-                    Origin Facility
+                  <label className="block text-sm font-bold text-slate-700 mb-1.5 flex items-center gap-2">
+                    Origin Facility <span className="text-red-500">*</span>
                   </label>
-                  <input
-                    type="text"
-                    value={origin}
-                    onChange={(e) => setOrigin(e.target.value)}
-                    required
-                    className="w-full text-xs p-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#ED2025]/30 focus:border-[#ED2025]"
-                  />
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+                      <MapPin className="h-4 w-4 text-slate-400" />
+                    </div>
+                    <input
+                      type="text"
+                      value={origin}
+                      onChange={(e) => setOrigin(e.target.value)}
+                      required
+                      placeholder="e.g. Nagoya Consolidation Hub"
+                      className="w-full text-sm pl-10 p-3.5 rounded-xl border border-slate-200 bg-slate-50/50 hover:bg-white focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#ED2025]/20 focus:border-[#ED2025] transition-all"
+                    />
+                  </div>
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">
-                    Estimated Delivery Date
+                  <label className="block text-sm font-bold text-slate-700 mb-1.5 flex items-center gap-2">
+                    Estimated Delivery <span className="text-red-500">*</span>
                   </label>
-                  <input
-                    type="date"
-                    value={estimatedDelivery}
-                    onChange={(e) => setEstimatedDelivery(e.target.value)}
-                    required
-                    className="w-full text-xs p-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#ED2025]/30 focus:border-[#ED2025]"
-                  />
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+                      <Calendar className="h-4 w-4 text-slate-400" />
+                    </div>
+                    <input
+                      type="date"
+                      value={estimatedDelivery}
+                      onChange={(e) => setEstimatedDelivery(e.target.value)}
+                      required
+                      className="w-full text-sm pl-10 p-3.5 rounded-xl border border-slate-200 bg-slate-50/50 hover:bg-white focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#ED2025]/20 focus:border-[#ED2025] transition-all"
+                    />
+                  </div>
                 </div>
               </div>
 
-              <div className="flex justify-end gap-2 pt-2 border-t border-slate-100">
+              <div className="flex items-center justify-end gap-3 pt-4">
                 <button
                   type="button"
                   onClick={() => setShowCreateModal(false)}
-                  className="px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-xl"
+                  className="px-5 py-2.5 text-sm font-bold text-slate-600 bg-white hover:bg-slate-50 border border-slate-200 rounded-xl transition-all shadow-sm"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 text-xs font-bold bg-[#ED2025] hover:bg-[#C8101E] text-white rounded-xl shadow-xs flex items-center gap-1.5"
+                  className="px-5 py-2.5 text-sm font-bold bg-[#ED2025] hover:bg-[#C8101E] text-white rounded-xl shadow-md shadow-red-500/20 transition-all flex items-center gap-2"
                 >
-                  <Truck className="w-3.5 h-3.5" />
+                  <Truck className="w-4 h-4" />
                   Save Shipment
                 </button>
               </div>

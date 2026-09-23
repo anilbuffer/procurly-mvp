@@ -164,6 +164,7 @@ export function RequestsTableView() {
               <option value="Sourcing">Sourcing</option>
               <option value="Quoted">Quoted</option>
               <option value="Approved">Approved</option>
+              <option value="Invoicing">Invoicing</option>
               <option value="Awaiting Payment">Awaiting Payment</option>
               <option value="Ordered">Ordered</option>
               <option value="Shipped">Shipped</option>

@@ -5,6 +5,7 @@ export type RequestStatus =
   | "Sourcing"
   | "Quoted"
   | "Approved"
+  | "Invoicing"
   | "Awaiting Payment"
   | "Ordered"
   | "QA Pending"
@@ -113,7 +114,7 @@ export interface SupplierQuotation {
   supplierCountry: string;
   supplierPartRef: string;
   availability: SupplierAvailability;
-  supplierCost: number; // NZD
+  supplierCost: string | number; // Free-form NZD text or numeric
   supplierFreight: number; // NZD
   airFreightCost?: number; // NZD
   seaFreightCost?: number; // NZD
@@ -200,6 +201,7 @@ export interface QuoteAcceptanceAudit {
   acceptedBy: string;
   userRole: string;
   termsAccepted: boolean;
+  termsAcceptedAt?: string;
   vehicleVerified: boolean;
   partVerified: boolean;
   addressVerified: boolean;
@@ -227,6 +229,7 @@ export interface PaymentDetails {
   paidAt?: string;
   dueDate: string;
   lastUpdated?: string;
+  invoiceUrl?: string;
 }
 
 // ─── Supplier Order ────────────────────────────────────────
@@ -401,7 +404,7 @@ export interface PartRequest {
 
   // Legacy / customer action prompt helpers
   actionRequired?: string;
-  actionType?: "review_quote" | "pay_now" | "view_details" | "none";
+  actionType?: "review_quote" | "pay_now" | "view_details" | "upload_invoice" | "none";
 }
 
 // ─── Notifications ─────────────────────────────────────────
@@ -420,6 +423,7 @@ export type NotificationType =
   | "Order Placed"
   | "QA Review Required"
   | "QA Approved"
+  | "Invoice Issued"
   | "Shipment Dispatched"
   | "Shipment Arrived"
   | "Shipment Updated"

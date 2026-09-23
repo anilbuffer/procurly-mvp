@@ -34,6 +34,10 @@ export function StatusBadge({ status, size = "md", className = "" }: StatusBadge
       case "Shipped":
         return "bg-blue-50 text-blue-700 border-blue-200 ring-blue-600/10";
       
+      // Financial Processing
+      case "Invoicing":
+        return "bg-indigo-50 text-indigo-700 border-indigo-200 ring-indigo-600/10";
+      
       // Waiting / Attention States
       case "Awaiting Payment":
       case "QA Pending":

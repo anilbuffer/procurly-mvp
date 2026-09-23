@@ -59,7 +59,7 @@ interface UnifiedDataContextType {
   // Actions - Requests
   getRequestById: (idOrNumber: string) => PartRequest | undefined;
   submitCustomerRequest: (data: Partial<PartRequest>) => PartRequest;
-  updateRequestStatus: (requestId: string, status: RequestStatus, invoiceNumber?: string) => void;
+  updateRequestStatus: (requestId: string, status: RequestStatus, invoiceNumber?: string, invoiceUrl?: string) => void;
   assignStaff: (requestId: string, staffName: string, staffRole: string) => void;
 
   // Actions - Sourcing & Quotes
@@ -86,6 +86,7 @@ interface UnifiedDataContextType {
   // Actions - Payment
   markPaymentPaid: (requestId: string, paymentRef?: string) => void;
   markPaymentUnpaid: (requestId: string) => void;
+  issueInvoice: (requestId: string, pdfUrl: string) => void;
 
   // Actions - Order Management (Gated by Payment = Paid)
   placeSupplierOrder: (
@@ -354,7 +355,7 @@ export function UnifiedDataProvider({ children }: { children: React.ReactNode })
       newRequests: requests.filter((r) => r.status === "Submitted").length,
       sourcing: requests.filter((r) => r.status === "Sourcing").length,
       quoted: requests.filter((r) => r.status === "Quoted").length,
-      awaitingPayment: requests.filter((r) => r.status === "Awaiting Payment" || (r.status === "Approved" && r.payment?.status !== "Paid")).length,
+      awaitingPayment: requests.filter((r) => r.status === "Awaiting Payment" || r.status === "Invoicing" || (r.status === "Approved" && r.payment?.status !== "Paid")).length,
       readyToOrder: requests.filter((r) => (r.status === "Approved" || r.status === "Awaiting Payment") && r.payment?.status === "Paid" && !r.supplierOrder).length,
       shipped: requests.filter((r) => r.status === "Shipped").length,
       delivered: requests.filter((r) => r.status === "Delivered").length,
@@ -462,7 +463,7 @@ export function UnifiedDataProvider({ children }: { children: React.ReactNode })
 
   // ─── Actions: Update Status & Assignment ────────────────
   const updateRequestStatus = useCallback(
-    (requestId: string, status: RequestStatus, invoiceNumber?: string) => {
+    (requestId: string, status: RequestStatus, invoiceNumber?: string, invoiceUrl?: string) => {
       let targetReqNumber = requestId;
       setRequests((prev) =>
         prev.map((r) => {
@@ -527,9 +528,26 @@ export function UnifiedDataProvider({ children }: { children: React.ReactNode })
                 actionRequired = "Payment received in full. Ready for supplier ordering.";
                 actionType = "none";
               } else {
-                actionRequired = "Settle invoice via Bank Transfer or Card";
-                actionType = "pay_now";
+                actionRequired = "Quote approved. Proceed to Invoicing stage.";
+                actionType = "none";
               }
+            } else if (status === "Invoicing") {
+              if (!updatedPayment) {
+                const amt = r.quotedValue || updatedQuote?.totalAmount || 450;
+                updatedPayment = {
+                  id: `pay-${r.requestNumber}`,
+                  requestId: r.id,
+                  invoiceNumber: invoiceNumber || `INV-2026-${r.requestNumber.replace(/[^0-9]/g, "")}`,
+                  amount: amt,
+                  currency: "NZD",
+                  status: paymentStatus as "Paid" | "Unpaid",
+                  paymentReference: r.requestNumber,
+                  dueDate: new Date(Date.now() + 5 * 86400000).toISOString().split("T")[0],
+                  lastUpdated: "Just now",
+                };
+              }
+              actionRequired = "Drafting invoice. Please upload when ready.";
+              actionType = "none";
             } else if (status === "Awaiting Payment") {
               if (!updatedPayment) {
                 const amt = r.quotedValue || updatedQuote?.totalAmount || 450;
@@ -545,6 +563,9 @@ export function UnifiedDataProvider({ children }: { children: React.ReactNode })
                   lastUpdated: "Just now",
                 };
               }
+              if (invoiceNumber) updatedPayment.invoiceNumber = invoiceNumber;
+              if (invoiceUrl) updatedPayment.invoiceUrl = invoiceUrl;
+              
               actionRequired = "Settle invoice via Bank Transfer or Card";
               actionType = "pay_now";
             } else if (status === "Ordered") {
@@ -922,7 +943,7 @@ export function UnifiedDataProvider({ children }: { children: React.ReactNode })
                   timestamp: new Date().toISOString(),
                   timeLabel: "Just now",
                   title: "Supplier quote added",
-                  description: `Quote from ${quote.supplierName} added (NZ$${quote.supplierCost.toFixed(2)} + NZ$${quote.supplierFreight.toFixed(2)} freight).`,
+                  description: `Quote from ${quote.supplierName} added (NZ$${Number(quote.supplierCost).toFixed(2)} + NZ$${Number(quote.supplierFreight).toFixed(2)} freight).`,
                   actor: currentStaffUser.name,
                   type: "quote",
                 },
@@ -991,12 +1012,12 @@ export function UnifiedDataProvider({ children }: { children: React.ReactNode })
             // Calculate suggestion: 20% margin + flat freight
             let costCalc: CostCalculation | undefined = undefined;
             if (selected) {
-              const baseCost = selected.supplierCost + selected.supplierFreight;
+              const baseCost = Number(selected.supplierCost) + Number(selected.supplierFreight);
               const marginAmount = Math.round(baseCost * 0.2);
               const sellPrice = baseCost + marginAmount;
               costCalc = {
-                supplierCost: selected.supplierCost,
-                supplierFreight: selected.supplierFreight,
+                supplierCost: Number(selected.supplierCost),
+                supplierFreight: Number(selected.supplierFreight),
                 autohubMarginPercent: 20,
                 autohubMarginAmount: marginAmount,
                 customerSellPrice: sellPrice,
@@ -1154,10 +1175,10 @@ export function UnifiedDataProvider({ children }: { children: React.ReactNode })
 
             return {
               ...r,
-              status: "Approved", // Status moves to Approved (Stage 4: Approval)
-              customerResponse: "Accepted", // Admin sees: Customer Response = Accepted
-              actionRequired: "Settle invoice via Bank Transfer or Card",
-              actionType: "pay_now",
+              status: "Invoicing",
+              customerResponse: "Accepted",
+              actionRequired: "Raise and attach invoice PDF",
+              actionType: "upload_invoice",
               lastUpdated: "Just now",
               quoteAcceptance: {
                 acceptedAt: "Just now",
@@ -1192,7 +1213,7 @@ export function UnifiedDataProvider({ children }: { children: React.ReactNode })
                   timestamp: new Date().toISOString(),
                   timeLabel: "Just now",
                   title: "Customer accepted quote",
-                  description: `Quote accepted by ${actor}. Status: Approved. Invoice generated (Unpaid).`,
+                  description: `Quote accepted by ${actor}. Status: Invoicing. Pending PDF attachment.`,
                   actor,
                   type: "quote",
                 },
@@ -1211,7 +1232,7 @@ export function UnifiedDataProvider({ children }: { children: React.ReactNode })
           id: `notif-${Date.now()}`,
           type: "Quote Accepted",
           title: `Quote Accepted: ${reqNum}`,
-          description: `Customer response recorded as Accepted. Status moved to Approved. Invoice generated.`,
+          description: `Customer response recorded as Accepted. Status moved to Invoicing.`,
           timestamp: "Just now",
           read: false,
           requestId,
@@ -1220,6 +1241,56 @@ export function UnifiedDataProvider({ children }: { children: React.ReactNode })
       ]);
     },
     [getRequestById]
+  );
+
+  const issueInvoice = useCallback(
+    (requestId: string, pdfUrl: string) => {
+      setRequests((prev) =>
+        prev.map((r) => {
+          if (r.id === requestId || r.requestNumber === requestId) {
+            return {
+              ...r,
+              status: "Awaiting Payment",
+              actionRequired: "Settle invoice via Bank Transfer or Card",
+              actionType: "pay_now",
+              lastUpdated: "Just now",
+              payment: r.payment
+                ? { ...r.payment, invoiceUrl: pdfUrl, status: "Unpaid" }
+                : undefined,
+              activity: [
+                {
+                  id: `act-${Date.now()}`,
+                  timestamp: new Date().toISOString(),
+                  timeLabel: "Just now",
+                  title: "Invoice Issued",
+                  description: "Invoice PDF attached and sent to customer. Status: Awaiting Payment.",
+                  actor: currentStaffUser.name,
+                  type: "payment",
+                },
+                ...(r.activity || []),
+              ],
+            };
+          }
+          return r;
+        })
+      );
+      
+      const target = getRequestById(requestId);
+      const reqNum = target?.requestNumber || "Request";
+      setNotifications((prev) => [
+        {
+          id: `notif-${Date.now()}`,
+          type: "Invoice Issued",
+          title: `Invoice Issued: ${reqNum}`,
+          description: `Invoice PDF attached. Status moved to Awaiting Payment.`,
+          timestamp: "Just now",
+          read: false,
+          requestId,
+        },
+        ...prev,
+      ]);
+    },
+    [currentStaffUser, getRequestById]
   );
 
   const rejectCustomerQuote = useCallback(
@@ -1927,6 +1998,7 @@ export function UnifiedDataProvider({ children }: { children: React.ReactNode })
         requestMoreInfo,
         markPaymentPaid,
         markPaymentUnpaid,
+        issueInvoice,
         placeSupplierOrder,
         createShipment,
         updateShipmentMilestone,

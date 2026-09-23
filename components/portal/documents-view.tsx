@@ -50,7 +50,7 @@ export function DocumentsView() {
       // 1. Tax Invoice if invoice exists or status >= Approved
       if (
         req.payment ||
-        ["Approved", "Awaiting Payment", "Ordered", "Shipped", "Delivered", "Completed"].includes(req.status)
+        ["Approved", "Invoicing", "Awaiting Payment", "Ordered", "Shipped", "Delivered", "Completed"].includes(req.status)
       ) {
         const invNum = req.payment?.invoiceNumber || `INV-2026-${req.requestNumber.replace(/[^0-9]/g, "")}`;
         list.push({
@@ -71,7 +71,7 @@ export function DocumentsView() {
         req.quotedValue ||
         req.customerQuote ||
         req.costCalculation ||
-        ["Quoted", "Approved", "Awaiting Payment", "Ordered", "Shipped", "Delivered", "Completed"].includes(req.status)
+        ["Quoted", "Approved", "Invoicing", "Awaiting Payment", "Ordered", "Shipped", "Delivered", "Completed"].includes(req.status)
       ) {
         list.push({
           id: `quote-${req.id}`,

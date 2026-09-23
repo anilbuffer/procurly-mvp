@@ -17,6 +17,8 @@ import {
   Send,
   MessageSquare,
   Plus,
+  Link,
+  ArrowRight,
 } from "lucide-react";
 import { PartRequest, RequestStatus } from "@/types/shared";
 import { useUnifiedData } from "@/context/unified-data-context";
@@ -32,15 +34,15 @@ export function OverviewTab({ request }: OverviewTabProps) {
     assignStaff,
     addInternalNote,
     staffUsers,
+    issueInvoice,
   } = useUnifiedData();
 
   // Status modal state
   const [showStatusModal, setShowStatusModal] = useState(false);
   const [newStatus, setNewStatus] = useState<RequestStatus>(request.status);
 
-  // Invoice prompt modal state
-  const [showInvoiceModal, setShowInvoiceModal] = useState(false);
-  const [invoiceNumberInput, setInvoiceNumberInput] = useState("");
+  // Inline Invoice state
+  const [inlinePdfUrl, setInlinePdfUrl] = useState("");
 
   // Assign staff modal state
   const [showAssignModal, setShowAssignModal] = useState(false);
@@ -54,19 +56,8 @@ export function OverviewTab({ request }: OverviewTabProps) {
   const [isCustomerVisible, setIsCustomerVisible] = useState(false);
 
   const handleStatusChange = () => {
-    if (newStatus === "Approved" || newStatus === "Awaiting Payment") {
-      setShowStatusModal(false);
-      setShowInvoiceModal(true);
-    } else {
-      updateRequestStatus(request.id, newStatus);
-      setShowStatusModal(false);
-    }
-  };
-
-  const handleInvoiceSubmit = () => {
-    updateRequestStatus(request.id, newStatus, invoiceNumberInput);
-    setShowInvoiceModal(false);
-    setInvoiceNumberInput("");
+    updateRequestStatus(request.id, newStatus);
+    setShowStatusModal(false);
   };
 
   const handleAssignStaff = () => {
@@ -89,6 +80,7 @@ export function OverviewTab({ request }: OverviewTabProps) {
     "Sourcing",
     "Quoted",
     "Approved",
+    "Invoicing",
     "Awaiting Payment",
     "Ordered",
     "Shipped",
@@ -141,6 +133,41 @@ export function OverviewTab({ request }: OverviewTabProps) {
           </button>
         </div>
       </div>
+
+      {/* Inline Invoicing Banner */}
+      {request.status === "Invoicing" && (
+        <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-2xl p-5 shadow-sm">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div className="flex items-start gap-3">
+              <div className="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center shrink-0">
+                <FileText className="w-5 h-5 text-blue-600" />
+              </div>
+              <div>
+                <h3 className="text-base font-bold text-slate-900">Raise Invoice</h3>
+                <p className="text-xs text-slate-600 mt-0.5">
+                  The quote has been approved. Please attach the invoice PDF URL below to notify the customer.
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center gap-2 w-full md:w-auto">
+              <input
+                type="text"
+                placeholder="e.g. https://xero.com/invoice.pdf"
+                value={inlinePdfUrl}
+                onChange={(e) => setInlinePdfUrl(e.target.value)}
+                className="w-full md:w-64 text-sm p-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500"
+              />
+              <button
+                onClick={() => issueInvoice(request.id, inlinePdfUrl)}
+                disabled={!inlinePdfUrl.trim()}
+                className="px-4 py-2.5 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white rounded-xl text-sm font-bold shadow-sm transition-all whitespace-nowrap"
+              >
+                Issue Invoice
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Grid: Customer, Vehicle, Part, Delivery */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
@@ -310,12 +337,12 @@ export function OverviewTab({ request }: OverviewTabProps) {
                 <span className="text-slate-400 block text-[11px]">Condition Requirement</span>
                 <span className="font-medium text-slate-700">{request.part.condition}</span>
               </div>
-            <div>
-              <span className="text-slate-400 block text-[11px]">Freight Preference</span>
-              <span className="font-bold text-[#ED2025] bg-red-50 px-2 py-0.5 rounded border border-red-100 inline-block mt-0.5">
-                {request.supporting?.freightPreference === "Sea Freight" ? "Ocean Freight" : (request.supporting?.freightPreference || "Not Specified")}
-              </span>
-            </div>
+              <div>
+                <span className="text-slate-400 block text-[11px]">Freight Preference</span>
+                <span className="font-bold text-[#ED2025] bg-red-50 px-2 py-0.5 rounded border border-red-100 inline-block mt-0.5">
+                  {request.supporting?.freightPreference === "Sea Freight" ? "Ocean Freight" : (request.supporting?.freightPreference || "Not Specified")}
+                </span>
+              </div>
             </div>
           </div>
         </div>
@@ -380,11 +407,10 @@ export function OverviewTab({ request }: OverviewTabProps) {
             {(request.internalNotes || []).map((note) => (
               <div
                 key={note.id}
-                className={`p-3.5 rounded-xl border text-xs ${
-                  note.isCustomerVisible
-                    ? "bg-amber-50/50 border-amber-200/80"
-                    : "bg-slate-50 border-slate-200"
-                }`}
+                className={`p-3.5 rounded-xl border text-xs ${note.isCustomerVisible
+                  ? "bg-amber-50/50 border-amber-200/80"
+                  : "bg-slate-50 border-slate-200"
+                  }`}
               >
                 <div className="flex items-center justify-between mb-1.5">
                   <div className="flex items-center gap-2">
@@ -419,11 +445,10 @@ export function OverviewTab({ request }: OverviewTabProps) {
               {ALL_STATUSES.map((st) => (
                 <label
                   key={st}
-                  className={`flex items-center justify-between p-2.5 rounded-xl border cursor-pointer text-xs font-medium transition-all ${
-                    newStatus === st
-                      ? "bg-red-50 border-[#ED2025] text-[#ED2025] font-bold"
-                      : "border-slate-200 hover:bg-slate-50 text-slate-700"
-                  }`}
+                  className={`flex items-center justify-between p-2.5 rounded-xl border cursor-pointer text-xs font-medium transition-all ${newStatus === st
+                    ? "bg-red-50 border-[#ED2025] text-[#ED2025] font-bold"
+                    : "border-slate-200 hover:bg-slate-50 text-slate-700"
+                    }`}
                 >
                   <div className="flex items-center gap-2">
                     <input
@@ -471,11 +496,10 @@ export function OverviewTab({ request }: OverviewTabProps) {
               {staffUsers.map((staff) => (
                 <label
                   key={staff.id}
-                  className={`flex items-center justify-between p-3 rounded-xl border cursor-pointer text-xs transition-all ${
-                    selectedStaffId === staff.id
-                      ? "bg-red-50 border-[#ED2025] text-slate-900 font-bold"
-                      : "border-slate-200 hover:bg-slate-50 text-slate-700"
-                  }`}
+                  className={`flex items-center justify-between p-3 rounded-xl border cursor-pointer text-xs transition-all ${selectedStaffId === staff.id
+                    ? "bg-red-50 border-[#ED2025] text-slate-900 font-bold"
+                    : "border-slate-200 hover:bg-slate-50 text-slate-700"
+                    }`}
                 >
                   <div className="flex items-center gap-3">
                     <input
@@ -562,49 +586,6 @@ export function OverviewTab({ request }: OverviewTabProps) {
                 className="px-4 py-2 text-xs font-semibold bg-[#ED2025] hover:bg-[#C8101E] disabled:opacity-50 text-white rounded-xl shadow-xs"
               >
                 Save Note
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* MODAL: Invoice Number Prompt */}
-      {showInvoiceModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs p-4">
-          <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-200 animate-in zoom-in-95">
-            <h3 className="text-base font-bold text-slate-900 mb-1">Enter Invoice Number</h3>
-            <p className="text-xs text-slate-500 mb-4">
-              Please provide the real invoice number from your accounting software.
-            </p>
-            <div className="space-y-4 mb-6">
-              <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">
-                  Invoice Number
-                </label>
-                <input
-                  type="text"
-                  value={invoiceNumberInput}
-                  onChange={(e) => setInvoiceNumberInput(e.target.value)}
-                  placeholder="e.g. XERO-9982"
-                  className="w-full text-xs p-3 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#ED2025]/30 focus:border-[#ED2025]"
-                />
-              </div>
-            </div>
-            <div className="flex justify-end gap-2">
-              <button
-                type="button"
-                onClick={() => setShowInvoiceModal(false)}
-                className="px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-xl"
-              >
-                Cancel
-              </button>
-              <button
-                type="button"
-                onClick={handleInvoiceSubmit}
-                disabled={!invoiceNumberInput.trim()}
-                className="px-4 py-2 text-xs font-semibold bg-[#ED2025] hover:bg-[#C8101E] disabled:opacity-50 text-white rounded-xl shadow-xs"
-              >
-                Confirm Status Change
               </button>
             </div>
           </div>

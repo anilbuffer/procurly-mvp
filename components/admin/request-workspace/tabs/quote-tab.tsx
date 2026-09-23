@@ -26,11 +26,10 @@ export function QuoteTab({ request, onNavigateToTab }: QuoteTabProps) {
   const selectedQuote = supplierQuotations.find((q) => q.isSelected) || supplierQuotations[0];
 
   const basePartCost = selectedQuote
-    ? selectedQuote.supplierCost
+    ? parseFloat(selectedQuote.supplierCost.toString()) || 0
     : 0;
 
   const [targetMargin, setTargetMargin] = useState<number>(adminSettings.baseMarginPercent || 18);
-  const [procurementFee, setProcurementFee] = useState<number>(60);
   const defaultAir = selectedQuote?.airFreightCost || adminSettings.defaultAirFreight || 185.00;
   const defaultOcean = selectedQuote?.seaFreightCost || adminSettings.defaultSeaFreight || 65.00;
 
@@ -45,20 +44,22 @@ export function QuoteTab({ request, onNavigateToTab }: QuoteTabProps) {
   const [advisoryNote, setAdvisoryNote] = useState<string>("Genuine OEM specification part sourced directly from Japan authorized dealer network.");
   const [showSuccessModal, setShowSuccessModal] = useState(false);
 
-  const marginAmount = basePartCost * (targetMargin / 100);
-  const subtotal = basePartCost + marginAmount + procurementFee + freightCost;
+  const combinedCost = basePartCost + freightCost;
+  const marginAmount = combinedCost * (targetMargin / 100);
+  const subtotal = combinedCost + marginAmount;
   const gstAmount = subtotal * 0.15;
   const totalCustomerQuote = subtotal + gstAmount;
+  const marginMultiplier = 1 + (targetMargin / 100);
 
   const handleIssueQuote = () => {
     if (!selectedQuote) return;
     createCustomerQuote(request.id, {
-      sellPrice: basePartCost + marginAmount + procurementFee,
-      airFreightCost: selectedFreight === "air" ? defaultAir : selectedFreight === "custom" ? freightCost : 0,
-      seaFreightCost: selectedFreight === "ocean" ? defaultOcean : 0,
+      sellPrice: basePartCost * marginMultiplier,
+      airFreightCost: selectedFreight === "air" ? defaultAir * marginMultiplier : selectedFreight === "custom" ? freightCost * marginMultiplier : 0,
+      seaFreightCost: selectedFreight === "ocean" ? defaultOcean * marginMultiplier : 0,
       notes: advisoryNote,
       terms: "Standard terms apply.",
-      estimatedTransitDays: selectedFreight === "air" ? 5 : selectedFreight === "ocean" ? 18 : 10,
+      estimatedTransitDays: selectedFreight === "air" ? 10 : selectedFreight === "ocean" ? 40 : 10,
     });
     setShowSuccessModal(true);
   };
@@ -184,8 +185,9 @@ export function QuoteTab({ request, onNavigateToTab }: QuoteTabProps) {
             ) : (
               supplierQuotations.map(quote => {
                 const isSelected = quote.id === selectedQuote?.id;
-                const totalCost = quote.supplierCost + (quote.airFreightCost || quote.supplierFreight);
-                const jpyEstimate = (quote.supplierCost * 80).toLocaleString();
+                const numericCost = parseFloat(quote.supplierCost.toString()) || 0;
+                const totalCost = numericCost + (quote.airFreightCost || quote.supplierFreight);
+                const jpyEstimate = (numericCost * 80).toLocaleString();
 
                 return (
                   <div
@@ -252,7 +254,7 @@ export function QuoteTab({ request, onNavigateToTab }: QuoteTabProps) {
           </div>
 
           {/* Admin Controls (Manual Input) */}
-          <div className="bg-slate-50 rounded-xl p-5 mb-8 border border-slate-100 grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="bg-slate-50 rounded-xl p-5 mb-8 border border-slate-100 grid grid-cols-1 gap-6">
             <div className="space-y-1.5">
               <label className="text-[11px] font-bold text-slate-500 uppercase block">Target Margin</label>
               <div className="relative">
@@ -266,39 +268,6 @@ export function QuoteTab({ request, onNavigateToTab }: QuoteTabProps) {
                 <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
                   <span className="text-slate-400 font-bold">%</span>
                 </div>
-              </div>
-            </div>
-            <div className="space-y-1.5">
-              <label className="text-[11px] font-bold text-slate-500 uppercase block">Procurement Fee</label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                  <span className="text-slate-400 font-bold">$</span>
-                </div>
-                <input
-                  type="number"
-                  min="0"
-                  value={procurementFee}
-                  onChange={e => setProcurementFee(Number(e.target.value))}
-                  className="w-full text-sm font-bold text-slate-900 bg-white border border-slate-200 rounded-lg p-2.5 pl-7 focus:outline-none focus:ring-2 focus:ring-blue-600/30 focus:border-blue-600 shadow-sm transition-all"
-                />
-              </div>
-            </div>
-            <div className="space-y-1.5">
-              <label className="text-[11px] font-bold text-slate-500 uppercase block">Manual Freight</label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                  <span className="text-slate-400 font-bold">$</span>
-                </div>
-                <input
-                  type="number"
-                  min="0"
-                  value={freightCost}
-                  onChange={e => {
-                    setFreightCost(Number(e.target.value));
-                    setSelectedFreight('custom');
-                  }}
-                  className="w-full text-sm font-bold text-slate-900 bg-white border border-slate-200 rounded-lg p-2.5 pl-7 focus:outline-none focus:ring-2 focus:ring-blue-600/30 focus:border-blue-600 shadow-sm transition-all"
-                />
               </div>
             </div>
           </div>
@@ -329,7 +298,7 @@ export function QuoteTab({ request, onNavigateToTab }: QuoteTabProps) {
                   <div className="font-bold text-[15px] text-slate-900">Air Express</div>
                 </div>
                 <div className="flex justify-between items-center text-xs font-medium ml-1">
-                  <span className="text-slate-600">Transit: 3 - 5 business days</span>
+                  <span className="text-slate-600">Transit: 7 - 10 business days</span>
                   <span className="font-bold text-blue-800 tracking-wide">+${defaultAir.toFixed(2)} NZD</span>
                 </div>
                 {/* Radio Circle */}
@@ -353,7 +322,7 @@ export function QuoteTab({ request, onNavigateToTab }: QuoteTabProps) {
                   <div className="font-bold text-[15px] text-slate-900">Ocean Freight</div>
                 </div>
                 <div className="flex justify-between items-center text-xs font-medium ml-1">
-                  <span className="text-slate-600">Transit: 14 - 18 business days</span>
+                  <span className="text-slate-600">Transit: 25 - 40 business days</span>
                   <span className="font-bold text-blue-800 tracking-wide">+${defaultOcean.toFixed(2)} NZD</span>
                 </div>
                 {/* Radio Circle */}
@@ -369,19 +338,19 @@ export function QuoteTab({ request, onNavigateToTab }: QuoteTabProps) {
             <div className="space-y-3.5 text-[13px]">
               <div className="flex justify-between items-center">
                 <span className="text-slate-600 font-medium">Part Cost & Supplier Acquisition:</span>
-                <span className="font-bold text-slate-900">${basePartCost.toFixed(2)} NZD</span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-slate-600 font-medium">Autohub Procurement & Verification Fee:</span>
-                <span className="font-bold text-slate-900">${procurementFee.toFixed(2)} NZD</span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-slate-600 font-medium">Margin Applied ({targetMargin}%):</span>
-                <span className="font-bold text-slate-900">${marginAmount.toFixed(2)} NZD</span>
+                <span className="font-bold text-slate-900">{selectedQuote && isNaN(parseFloat(selectedQuote.supplierCost.toString())) ? selectedQuote.supplierCost : `$${basePartCost.toFixed(2)} NZD`}</span>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-slate-600 font-medium">Selected International Freight ({selectedFreight === 'air' ? 'Air' : selectedFreight === 'ocean' ? 'Ocean' : 'Custom'}):</span>
                 <span className="font-bold text-slate-900">${freightCost.toFixed(2)} NZD</span>
+              </div>
+              <div className="flex justify-between items-center pt-3 border-t border-slate-200/80 mt-1">
+                <span className="text-slate-600 font-medium">Combined Cost:</span>
+                <span className="font-bold text-slate-900">${combinedCost.toFixed(2)} NZD</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-slate-600 font-medium">Margin Applied ({targetMargin}%):</span>
+                <span className="font-bold text-slate-900">${marginAmount.toFixed(2)} NZD</span>
               </div>
               <div className="flex justify-between items-center pt-3 border-t border-slate-200/80 mt-1">
                 <span className="text-slate-600 font-medium">Subtotal:</span>
