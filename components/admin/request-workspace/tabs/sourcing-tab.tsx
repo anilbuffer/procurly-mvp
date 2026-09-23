@@ -321,7 +321,7 @@ export function SourcingTab({ request }: SourcingTabProps) {
                   </p>
                 </div>
               </div>
-              <span className="text-xs font-mono font-bold text-slate-800 bg-white px-3 py-1.5 rounded-xl border border-slate-200 shadow-xs">
+              <span className="text-sm font-bold text-slate-800 bg-white px-3 py-1.5 rounded-xl border border-slate-200 shadow-xs">
                 Base Cost: {typeof selectedQuote.supplierCost === 'number' ? `NZ$${selectedQuote.supplierCost.toFixed(2)}` : selectedQuote.supplierCost}
               </span>
             </div>

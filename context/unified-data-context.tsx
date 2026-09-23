@@ -386,7 +386,7 @@ export function UnifiedDataProvider({ children }: { children: React.ReactNode })
   const submitCustomerRequest = useCallback(
     (data: Partial<PartRequest>): PartRequest => {
       const nextCount = requests.length + 124;
-      const requestNumber = `AutoHub-P-${String(nextCount).padStart(3, "0")}`;
+      const requestNumber = `AutoHub-P-${String(nextCount).padStart(6, "0")}`;
       const newId = `req-${Date.now()}`;
 
       const newRequest: PartRequest = {

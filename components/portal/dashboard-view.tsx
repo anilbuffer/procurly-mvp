@@ -101,15 +101,14 @@ export function DashboardView() {
           {/* Approved Trade Customer Pill */}
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 text-blue-800 border border-blue-200 text-xs font-bold tracking-wide">
             <ShieldCheck className="w-3.5 h-3.5 text-blue-600" />
-            <span>APPROVED TRADE CUSTOMER</span>
+            <span className="text-[11px]">APPROVED TRADE CUSTOMER</span>
             <span className="text-blue-300">•</span>
-            <span className="font-mono text-[11px]">{activeCustomer.businessName}</span>
+            <span className="text-[11px]">{activeCustomer.businessName}</span>
           </div>
-
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+          <h1 className="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">
             Good morning, {activeCustomer.businessName}
           </h1>
-          <p className="text-sm text-slate-500 font-medium">
+          <p className="text-xs text-slate-500 font-medium">
             Here&apos;s an overview of your procurement activity across all 9 workflow stages.
           </p>
         </div>
