@@ -19,7 +19,10 @@ import {
   Plus,
   Link,
   ArrowRight,
+  UploadCloud,
+  Printer,
 } from "lucide-react";
+import NextLink from "next/link";
 import { PartRequest, RequestStatus } from "@/types/shared";
 import { useUnifiedData } from "@/context/unified-data-context";
 import { StatusBadge, PaymentStatusBadge } from "../../status-badge";
@@ -35,6 +38,7 @@ export function OverviewTab({ request }: OverviewTabProps) {
     addInternalNote,
     staffUsers,
     issueInvoice,
+    placeSupplierOrder,
   } = useUnifiedData();
 
   // Status modal state
@@ -43,6 +47,19 @@ export function OverviewTab({ request }: OverviewTabProps) {
 
   // Inline Invoice state
   const [inlinePdfUrl, setInlinePdfUrl] = useState("");
+  const [invNumber, setInvNumber] = useState(`INV-2026-${request.requestNumber.replace("AH-P-", "")}`);
+  const [invAmount, setInvAmount] = useState(request.quotedValue || request.customerQuote?.totalAmount || 0);
+  const [invDueDate, setInvDueDate] = useState("");
+  const [invFileName, setInvFileName] = useState("");
+
+  // PO form state
+  const selectedQuote = request.supplierQuotations?.find(q => q.id === request.selectedQuotationId) || request.supplierQuotations?.[0];
+  const [poSupplier, setPoSupplier] = useState(selectedQuote?.supplierName || "Nagoya Auto Parts Co.");
+  const [poRef, setPoRef] = useState(`PO-${request.requestNumber.replace("AH-P-", "")}`);
+  const [poCost, setPoCost] = useState(selectedQuote?.supplierCost ? Number(selectedQuote.supplierCost) : 280);
+  const [poFreight, setPoFreight] = useState(selectedQuote?.supplierFreight ? Number(selectedQuote.supplierFreight) : 45);
+  const [poNotes, setPoNotes] = useState("");
+  const [poFileName, setPoFileName] = useState("");
 
   // Assign staff modal state
   const [showAssignModal, setShowAssignModal] = useState(false);
@@ -134,37 +151,189 @@ export function OverviewTab({ request }: OverviewTabProps) {
         </div>
       </div>
 
-      {/* Inline Invoicing Banner */}
-      {request.status === "Invoicing" && (
-        <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-2xl p-5 shadow-sm">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+      {/* Raise Invoice Banner */}
+      {(request.status === "Invoicing" || request.status === "Approved") && (
+        <div className="bg-white border border-blue-200 rounded-2xl p-5 shadow-sm">
+          <div className="flex items-start justify-between gap-3 mb-4">
             <div className="flex items-start gap-3">
               <div className="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center shrink-0">
                 <FileText className="w-5 h-5 text-blue-600" />
               </div>
               <div>
-                <h3 className="text-base font-bold text-slate-900">Raise Invoice</h3>
+                <h3 className="text-base font-bold text-slate-900">Raise Customer Invoice</h3>
                 <p className="text-xs text-slate-600 mt-0.5">
-                  The quote has been approved. Please attach the invoice PDF URL below to notify the customer.
+                  The quote has been approved. Generate and upload the invoice to request payment.
                 </p>
               </div>
             </div>
-            <div className="flex items-center gap-2 w-full md:w-auto">
+            <NextLink 
+              href={`/admin/invoice/${request.id}`}
+              target="_blank"
+              className="px-3 py-1.5 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-xl text-xs font-semibold shadow-sm transition-all flex items-center gap-1.5 whitespace-nowrap"
+            >
+              <Printer className="w-3.5 h-3.5" />
+              Generate PDF
+            </NextLink>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+            <div>
+              <label className="block text-xs font-bold text-slate-700 mb-1">Invoice Number</label>
               <input
                 type="text"
-                placeholder="e.g. https://xero.com/invoice.pdf"
-                value={inlinePdfUrl}
-                onChange={(e) => setInlinePdfUrl(e.target.value)}
-                className="w-full md:w-64 text-sm p-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500"
+                value={invNumber}
+                onChange={(e) => setInvNumber(e.target.value)}
+                className="w-full text-sm p-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500"
               />
-              <button
-                onClick={() => issueInvoice(request.id, inlinePdfUrl)}
-                disabled={!inlinePdfUrl.trim()}
-                className="px-4 py-2.5 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white rounded-xl text-sm font-bold shadow-sm transition-all whitespace-nowrap"
-              >
-                Issue Invoice
-              </button>
             </div>
+            <div>
+              <label className="block text-xs font-bold text-slate-700 mb-1">Amount ($)</label>
+              <input
+                type="number"
+                value={invAmount}
+                onChange={(e) => setInvAmount(Number(e.target.value))}
+                className="w-full text-sm p-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-bold text-slate-700 mb-1">Due Date</label>
+              <input
+                type="date"
+                value={invDueDate}
+                onChange={(e) => setInvDueDate(e.target.value)}
+                className="w-full text-sm p-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500"
+              />
+            </div>
+          </div>
+
+          <div className="border-2 border-dashed border-slate-200 rounded-xl p-6 flex flex-col items-center justify-center text-center hover:bg-slate-50 transition-colors mb-4">
+            <UploadCloud className="w-8 h-8 text-slate-400 mb-2" />
+            <p className="text-sm font-semibold text-slate-700">Drag & drop invoice PDF here</p>
+            <p className="text-xs text-slate-500 mt-1 mb-3">or click to browse from your computer</p>
+            <input 
+              type="file" 
+              className="hidden" 
+              id="invoice-upload" 
+              accept=".pdf,.jpg,.png"
+              onChange={(e) => setInvFileName(e.target.files?.[0]?.name || "")}
+            />
+            <label 
+              htmlFor="invoice-upload" 
+              className="px-4 py-2 bg-white border border-slate-200 rounded-lg text-xs font-semibold text-slate-700 cursor-pointer hover:bg-slate-50 shadow-sm"
+            >
+              Select File
+            </label>
+            {invFileName && <p className="text-xs font-medium text-emerald-600 mt-3 flex items-center gap-1"><CheckCircle2 className="w-3.5 h-3.5"/> {invFileName}</p>}
+          </div>
+
+          <div className="flex justify-end">
+            <button
+              onClick={() => issueInvoice(request.id, { 
+                invoiceNumber: invNumber, 
+                amount: invAmount, 
+                dueDate: invDueDate, 
+                pdfUrl: invFileName ? `https://storage.procurly.com/${invFileName}` : "https://storage.procurly.com/invoice-placeholder.pdf"
+              })}
+              className="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-sm font-bold shadow-sm transition-all flex items-center gap-2"
+            >
+              <Send className="w-4 h-4" />
+              Issue Invoice
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Raise PO Banner */}
+      {request.payment?.status === "Paid" && !request.supplierOrder && (
+        <div className="bg-white border border-emerald-200 rounded-2xl p-5 shadow-sm">
+          <div className="flex items-start gap-3 mb-4">
+            <div className="w-10 h-10 rounded-xl bg-emerald-100 flex items-center justify-center shrink-0">
+              <Package className="w-5 h-5 text-emerald-600" />
+            </div>
+            <div>
+              <h3 className="text-base font-bold text-slate-900">Raise Supplier Purchase Order</h3>
+              <p className="text-xs text-slate-600 mt-0.5">
+                Payment has been received. Place the order with the supplier.
+              </p>
+            </div>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            <div>
+              <label className="block text-xs font-bold text-slate-700 mb-1">Supplier Name</label>
+              <input
+                type="text"
+                value={poSupplier}
+                onChange={(e) => setPoSupplier(e.target.value)}
+                className="w-full text-sm p-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-bold text-slate-700 mb-1">PO Reference</label>
+              <input
+                type="text"
+                value={poRef}
+                onChange={(e) => setPoRef(e.target.value)}
+                className="w-full text-sm p-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-bold text-slate-700 mb-1">Part Cost ($)</label>
+              <input
+                type="number"
+                value={poCost}
+                onChange={(e) => setPoCost(Number(e.target.value))}
+                className="w-full text-sm p-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-bold text-slate-700 mb-1">Freight Cost ($)</label>
+              <input
+                type="number"
+                value={poFreight}
+                onChange={(e) => setPoFreight(Number(e.target.value))}
+                className="w-full text-sm p-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500"
+              />
+            </div>
+            <div className="md:col-span-2">
+              <label className="block text-xs font-bold text-slate-700 mb-1">Order Notes (Optional)</label>
+              <input
+                type="text"
+                value={poNotes}
+                onChange={(e) => setPoNotes(e.target.value)}
+                className="w-full text-sm p-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500"
+              />
+            </div>
+          </div>
+
+          <div className="border-2 border-dashed border-slate-200 rounded-xl p-6 flex flex-col items-center justify-center text-center hover:bg-slate-50 transition-colors mb-4">
+            <UploadCloud className="w-8 h-8 text-slate-400 mb-2" />
+            <p className="text-sm font-semibold text-slate-700">Attach PO Document (Optional)</p>
+            <p className="text-xs text-slate-500 mt-1 mb-3">Upload signed PO or correspondence</p>
+            <input 
+              type="file" 
+              className="hidden" 
+              id="po-upload" 
+              accept=".pdf,.jpg,.png"
+              onChange={(e) => setPoFileName(e.target.files?.[0]?.name || "")}
+            />
+            <label 
+              htmlFor="po-upload" 
+              className="px-4 py-2 bg-white border border-slate-200 rounded-lg text-xs font-semibold text-slate-700 cursor-pointer hover:bg-slate-50 shadow-sm"
+            >
+              Select File
+            </label>
+            {poFileName && <p className="text-xs font-medium text-emerald-600 mt-3 flex items-center gap-1"><CheckCircle2 className="w-3.5 h-3.5"/> {poFileName}</p>}
+          </div>
+
+          <div className="flex justify-end">
+            <button
+              onClick={() => placeSupplierOrder(request.id, { supplierName: poSupplier, supplierRef: poRef, cost: poCost, freight: poFreight, notes: poNotes })}
+              className="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-sm font-bold shadow-sm transition-all flex items-center gap-2"
+            >
+              <Package className="w-4 h-4" />
+              Place Supplier Order
+            </button>
           </div>
         </div>
       )}

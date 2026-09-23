@@ -36,7 +36,7 @@ import {
 } from "@/lib/shared-mock-data";
 
 // ─── Storage Keys ──────────────────────────────────────────
-const STORAGE_REQUESTS = "procurly_shared_requests_v3";
+const STORAGE_REQUESTS = "procurly_shared_requests_v4";
 const STORAGE_CUSTOMERS = "procurly_shared_customers_v3";
 const STORAGE_SUPPLIERS = "procurly_shared_suppliers_v3";
 const STORAGE_STAFF = "procurly_shared_staff_v3";
@@ -86,7 +86,7 @@ interface UnifiedDataContextType {
   // Actions - Payment
   markPaymentPaid: (requestId: string, paymentRef?: string) => void;
   markPaymentUnpaid: (requestId: string) => void;
-  issueInvoice: (requestId: string, pdfUrl: string) => void;
+  issueInvoice: (requestId: string, invoiceData: { invoiceNumber: string; amount: number; dueDate: string; pdfUrl: string }) => void;
 
   // Actions - Order Management (Gated by Payment = Paid)
   placeSupplierOrder: (
@@ -1244,7 +1244,7 @@ export function UnifiedDataProvider({ children }: { children: React.ReactNode })
   );
 
   const issueInvoice = useCallback(
-    (requestId: string, pdfUrl: string) => {
+    (requestId: string, invoiceData: { invoiceNumber: string; amount: number; dueDate: string; pdfUrl: string }) => {
       setRequests((prev) =>
         prev.map((r) => {
           if (r.id === requestId || r.requestNumber === requestId) {
@@ -1255,7 +1255,14 @@ export function UnifiedDataProvider({ children }: { children: React.ReactNode })
               actionType: "pay_now",
               lastUpdated: "Just now",
               payment: r.payment
-                ? { ...r.payment, invoiceUrl: pdfUrl, status: "Unpaid" }
+                ? { 
+                    ...r.payment, 
+                    invoiceNumber: invoiceData.invoiceNumber,
+                    amount: invoiceData.amount,
+                    dueDate: invoiceData.dueDate,
+                    invoiceUrl: invoiceData.pdfUrl, 
+                    status: "Unpaid" 
+                  }
                 : undefined,
               activity: [
                 {

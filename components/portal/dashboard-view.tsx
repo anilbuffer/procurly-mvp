@@ -290,7 +290,7 @@ export function DashboardView() {
                   >
                     <span>
                       {req.actionType === "review_quote"
-                        ? "Review Quote"
+                        ? "Accept Quote"
                         : req.actionType === "pay_now"
                           ? "Pay Now"
                           : "View Details"}
