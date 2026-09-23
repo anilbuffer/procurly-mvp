@@ -237,13 +237,13 @@ export const MOCK_SUPPLIERS: Supplier[] = [
 ];
 
 // ─── Centralized Mock Requests ─────────────────────────────
-// Contains benchmark AH-P-000123 as specified in prompt
+// Contains benchmark AutoHub-P-123 as specified in prompt
 
 export const INITIAL_SHARED_REQUESTS: PartRequest[] = [
-  // ── 1. Benchmark Request: AH-P-000123 (Awaiting Payment, Unpaid) ──
+  // ── 1. Benchmark Request: AutoHub-P-123 (Awaiting Payment, Unpaid) ──
   {
     id: "req-000123",
-    requestNumber: "AH-P-000123",
+    requestNumber: "AutoHub-P-123",
     customerId: "cust-01",
     customerName: "AutoCare Auckland",
     contactName: "Dave Miller",
@@ -395,7 +395,7 @@ export const INITIAL_SHARED_REQUESTS: PartRequest[] = [
       amount: 410.0,
       currency: "NZD",
       status: "Unpaid", // Payment is Unpaid -> Supplier order LOCKED!
-      paymentReference: "AH-P-000123",
+      paymentReference: "AutoHub-P-123",
       dueDate: "2026-09-16",
       lastUpdated: "Today",
       bankDetails: {
@@ -446,7 +446,7 @@ export const INITIAL_SHARED_REQUESTS: PartRequest[] = [
         timestamp: "Today, 09:12 AM",
         timeLabel: "09:12 AM",
         title: "Request submitted",
-        description: "Request AH-P-000123 submitted by Dave Miller (AutoCare Auckland).",
+        description: "Request AutoHub-P-123 submitted by Dave Miller (AutoCare Auckland).",
         actor: "Dave Miller",
         type: "status",
       },
@@ -491,10 +491,10 @@ export const INITIAL_SHARED_REQUESTS: PartRequest[] = [
     actionType: "pay_now",
   },
 
-  // ── 2. Request: AH-P-000145 (Status: Submitted / New) ──
+  // ── 2. Request: AutoHub-P-145 (Status: Submitted / New) ──
   {
     id: "req-000145",
-    requestNumber: "AH-P-000145",
+    requestNumber: "AutoHub-P-145",
     customerId: "cust-01",
     customerName: "AutoCare Auckland",
     contactName: "Dave Miller",
@@ -546,10 +546,10 @@ export const INITIAL_SHARED_REQUESTS: PartRequest[] = [
     actionType: "none",
   },
 
-  // ── 3. Request: AH-P-000138 (Status: Sourcing) ──
+  // ── 3. Request: AutoHub-P-138 (Status: Sourcing) ──
   {
     id: "req-000138",
-    requestNumber: "AH-P-000138",
+    requestNumber: "AutoHub-P-138",
     customerId: "cust-03",
     customerName: "Precision European",
     contactName: "Liam Davies",
@@ -654,10 +654,10 @@ export const INITIAL_SHARED_REQUESTS: PartRequest[] = [
     actionType: "none",
   },
 
-  // ── 4. Request: AH-P-000128 (Status: Quoted / Review) ──
+  // ── 4. Request: AutoHub-P-128 (Status: Quoted / Review) ──
   {
     id: "req-000128",
-    requestNumber: "AH-P-000128",
+    requestNumber: "AutoHub-P-128",
     customerId: "cust-02",
     customerName: "SP Motors Ltd",
     contactName: "James Wilson",
@@ -784,10 +784,10 @@ export const INITIAL_SHARED_REQUESTS: PartRequest[] = [
     actionType: "review_quote",
   },
 
-  // ── 5. Request: AH-P-000137 (Status: Approved / Pending Payment) ──
+  // ── 5. Request: AutoHub-P-137 (Status: Approved / Pending Payment) ──
   {
     id: "req-000137",
-    requestNumber: "AH-P-000137",
+    requestNumber: "AutoHub-P-137",
     customerId: "cust-01",
     customerName: "AutoCare Auckland",
     contactName: "Dave Miller",
@@ -868,7 +868,7 @@ export const INITIAL_SHARED_REQUESTS: PartRequest[] = [
       amount: 720.0,
       currency: "NZD",
       status: "Unpaid",
-      paymentReference: "AH-P-000137",
+      paymentReference: "AutoHub-P-137",
       dueDate: "2026-09-15",
     },
     documents: [],
@@ -888,10 +888,10 @@ export const INITIAL_SHARED_REQUESTS: PartRequest[] = [
     actionType: "pay_now",
   },
 
-  // ── 6. Request: AH-P-000125 (Status: Ordered / Paid / Order Placed) ──
+  // ── 6. Request: AutoHub-P-125 (Status: Ordered / Paid / Order Placed) ──
   {
     id: "req-000125",
-    requestNumber: "AH-P-000125",
+    requestNumber: "AutoHub-P-125",
     customerId: "cust-02",
     customerName: "SP Motors Ltd",
     contactName: "James Wilson",
@@ -972,7 +972,7 @@ export const INITIAL_SHARED_REQUESTS: PartRequest[] = [
       amount: 640.0,
       currency: "NZD",
       status: "Paid", // Payment is Paid -> Supplier Order placed!
-      paymentReference: "AH-P-000125-PAID",
+      paymentReference: "AutoHub-P-125-PAID",
       paidAt: "2026-09-07T11:00:00Z",
       dueDate: "2026-09-14",
     },
@@ -1022,10 +1022,10 @@ export const INITIAL_SHARED_REQUESTS: PartRequest[] = [
     actionType: "none",
   },
 
-  // ── 7. Request: AH-P-000120 (Status: Shipped / In Transit milestone) ──
+  // ── 7. Request: AutoHub-P-120 (Status: Shipped / In Transit milestone) ──
   {
     id: "req-000120",
-    requestNumber: "AH-P-000120",
+    requestNumber: "AutoHub-P-120",
     customerId: "cust-02",
     customerName: "SP Motors Ltd",
     contactName: "James Wilson",
@@ -1088,7 +1088,7 @@ export const INITIAL_SHARED_REQUESTS: PartRequest[] = [
       amount: 2450.0,
       currency: "NZD",
       status: "Paid",
-      paymentReference: "AH-P-000120-PAID",
+      paymentReference: "AutoHub-P-120-PAID",
       dueDate: "2026-09-08",
     },
     supplierOrder: {
@@ -1193,10 +1193,10 @@ export const INITIAL_SHARED_REQUESTS: PartRequest[] = [
     actionType: "view_details",
   },
 
-  // ── 8. Request: AH-P-000115 (Status: Delivered) ──
+  // ── 8. Request: AutoHub-P-115 (Status: Delivered) ──
   {
     id: "req-000115",
-    requestNumber: "AH-P-000115",
+    requestNumber: "AutoHub-P-115",
     customerId: "cust-03",
     customerName: "Precision European",
     contactName: "Liam Davies",
@@ -1259,7 +1259,7 @@ export const INITIAL_SHARED_REQUESTS: PartRequest[] = [
       amount: 3890.0,
       currency: "NZD",
       status: "Paid",
-      paymentReference: "AH-P-000115-PAID",
+      paymentReference: "AutoHub-P-115-PAID",
       dueDate: "2026-09-01",
     },
     shipment: {
@@ -1336,10 +1336,10 @@ export const INITIAL_SHARED_REQUESTS: PartRequest[] = [
     actionType: "none",
   },
 
-  // ── 9. Request: AH-P-000110 (Status: Completed) ──
+  // ── 9. Request: AutoHub-P-110 (Status: Completed) ──
   {
     id: "req-000110",
-    requestNumber: "AH-P-000110",
+    requestNumber: "AutoHub-P-110",
     customerId: "cust-02",
     customerName: "SP Motors Ltd",
     contactName: "James Wilson",
@@ -1402,7 +1402,7 @@ export const INITIAL_SHARED_REQUESTS: PartRequest[] = [
       amount: 590.0,
       currency: "NZD",
       status: "Paid",
-      paymentReference: "AH-P-000110-PAID",
+      paymentReference: "AutoHub-P-110-PAID",
       dueDate: "2026-08-20",
     },
     documents: [],
@@ -1421,10 +1421,10 @@ export const INITIAL_SHARED_REQUESTS: PartRequest[] = [
     actionRequired: "Order successfully completed and archived",
     actionType: "none",
   },
-  // ── 7. Request: AH-P-000188 (Status: QA Pending) ──
+  // ── 7. Request: AutoHub-P-188 (Status: QA Pending) ──
   {
     id: "req-000188",
-    requestNumber: "AH-P-000188",
+    requestNumber: "AutoHub-P-188",
     customerId: "cust-01",
     customerName: "AutoCare Auckland",
     contactName: "Dave Miller",
@@ -1467,10 +1467,10 @@ export const INITIAL_SHARED_REQUESTS: PartRequest[] = [
     actionRequired: "QA Verification Required",
     actionType: "view_details",
   },
-  // ── 8. Request: AH-P-000199 (Status: QA Review) ──
+  // ── 8. Request: AutoHub-P-199 (Status: QA Review) ──
   {
     id: "req-000199",
-    requestNumber: "AH-P-000199",
+    requestNumber: "AutoHub-P-199",
     customerId: "cust-02",
     customerName: "SP Motors Ltd",
     contactName: "James Wilson",
@@ -1527,7 +1527,7 @@ export const INITIAL_NOTIFICATIONS: PortalNotification[] = [
   {
     id: "notif-01",
     type: "New Request",
-    title: "New Request: AH-P-000145",
+    title: "New Request: AutoHub-P-145",
     description: "AutoCare Auckland submitted request for Toyota RAV4 Front Brake Rotors.",
     timestamp: "10m ago",
     read: false,
@@ -1536,7 +1536,7 @@ export const INITIAL_NOTIFICATIONS: PortalNotification[] = [
   {
     id: "notif-02",
     type: "Quote Accepted",
-    title: "Quote Accepted: AH-P-000123",
+    title: "Quote Accepted: AutoHub-P-123",
     description: "Dave Miller accepted quote for NZ$410.00. Status: Awaiting Payment.",
     timestamp: "45m ago",
     read: false,
@@ -1545,7 +1545,7 @@ export const INITIAL_NOTIFICATIONS: PortalNotification[] = [
   {
     id: "notif-03",
     type: "Payment Received",
-    title: "Payment Confirmed: AH-P-000125",
+    title: "Payment Confirmed: AutoHub-P-125",
     description: "NZ$640.00 received. Supplier Order unlocked and placed.",
     timestamp: "2h ago",
     read: true,
@@ -1554,7 +1554,7 @@ export const INITIAL_NOTIFICATIONS: PortalNotification[] = [
   {
     id: "notif-04",
     type: "Shipment Updated",
-    title: "Shipment In Transit: AH-P-000120",
+    title: "Shipment In Transit: AutoHub-P-120",
     description: "Flight JL0711 departed Nagoya. Arriving in NZ this weekend.",
     timestamp: "5h ago",
     read: true,

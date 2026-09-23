@@ -350,7 +350,7 @@ export interface StaffUser {
 
 export interface PartRequest {
   id: string;
-  requestNumber: string; // e.g. "AH-P-000123"
+  requestNumber: string; // e.g. "AutoHub-P-123"
   customerId?: string;
   customerName?: string;
   contactName?: string;

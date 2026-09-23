@@ -39,7 +39,7 @@ export function PaymentTab({ request: initialRequest, onNavigateToTab }: Payment
     selectedSupplierQuote?.supplierName || "Nagoya Auto Parts Co."
   );
   const [orderSupplierRef, setOrderSupplierRef] = useState(
-    "PO-" + request.requestNumber.replace("AH-P-", "")
+    "PO-" + request.requestNumber.replace("AutoHub-P-", "")
   );
   const [orderCost, setOrderCost] = useState(
     selectedSupplierQuote?.supplierCost || 245
@@ -131,7 +131,7 @@ export function PaymentTab({ request: initialRequest, onNavigateToTab }: Payment
           <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-100">
             <span className="text-slate-400 block text-[11px]">Autohub Invoice #</span>
             <span className="font-mono font-semibold text-slate-800">
-              {payment?.invoiceNumber || `INV-2026-${request.requestNumber.replace("AH-P-", "")}`}
+              {payment?.invoiceNumber || `INV-2026-${request.requestNumber.replace("AutoHub-P-", "")}`}
             </span>
             <span className="text-[10px] text-slate-400 block">External accounting ref</span>
           </div>

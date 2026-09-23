@@ -385,7 +385,7 @@ export function UnifiedDataProvider({ children }: { children: React.ReactNode })
   const submitCustomerRequest = useCallback(
     (data: Partial<PartRequest>): PartRequest => {
       const nextCount = requests.length + 124;
-      const requestNumber = `AH-P-${String(nextCount).padStart(6, "0")}`;
+      const requestNumber = `AutoHub-P-${String(nextCount).padStart(3, "0")}`;
       const newId = `req-${Date.now()}`;
 
       const newRequest: PartRequest = {
@@ -574,7 +574,7 @@ export function UnifiedDataProvider({ children }: { children: React.ReactNode })
                   id: `ord-${Date.now()}`,
                   supplierId: r.selectedQuotationId || "sup-01",
                   supplierName: "Nagoya Auto Parts Co.",
-                  supplierRef: `PO-${r.requestNumber.replace("AH-P-", "")}`,
+                  supplierRef: `PO-${r.requestNumber.replace("AutoHub-P-", "")}`,
                   orderDate: new Date().toISOString().split("T")[0],
                   cost: 280,
                   freight: 45,
@@ -1193,7 +1193,7 @@ export function UnifiedDataProvider({ children }: { children: React.ReactNode })
               payment: {
                 id: `pay-${r.requestNumber}`,
                 requestId: r.id,
-                invoiceNumber: `INV-2026-${r.requestNumber.replace("AH-P-", "")}`,
+                invoiceNumber: `INV-2026-${r.requestNumber.replace("AutoHub-P-", "")}`,
                 amount,
                 currency: "NZD",
                 status: "Unpaid", // Payment is Unpaid
@@ -1381,7 +1381,7 @@ export function UnifiedDataProvider({ children }: { children: React.ReactNode })
             const currentPay = r.payment || {
               id: `pay-${r.requestNumber}`,
               requestId: r.id,
-              invoiceNumber: `INV-2026-${r.requestNumber.replace("AH-P-", "")}`,
+              invoiceNumber: `INV-2026-${r.requestNumber.replace("AutoHub-P-", "")}`,
               amount: r.quotedValue || 410.0,
               currency: "NZD",
               status: "Paid",
@@ -2043,3 +2043,4 @@ export function useUnifiedData() {
   }
   return context;
 }
+

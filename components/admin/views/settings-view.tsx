@@ -23,7 +23,7 @@ export function AdminSettingsView() {
   const [defaultAirFreight, setDefaultAirFreight] = useState(adminSettings.defaultAirFreight || 185);
   const [defaultSeaFreight, setDefaultSeaFreight] = useState(adminSettings.defaultSeaFreight || 65);
   const [taxRate, setTaxRate] = useState(15);
-  const [refPrefix, setRefPrefix] = useState("AH-P-");
+  const [refPrefix, setRefPrefix] = useState("AutoHub-P-");
   const [m365Connected, setM365Connected] = useState(true);
   const [m365Sender, setM365Sender] = useState("procurement@autohub.co.nz");
   const [termsVersion, setTermsVersion] = useState("v2026.1 (NZ Commercial Trade)");

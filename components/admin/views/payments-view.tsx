@@ -172,7 +172,7 @@ export function PaymentsView() {
                         <span className="font-bold text-slate-900 block">{req.customerName}</span>
                         <div className="flex items-center gap-1.5 mt-0.5">
                           <span className="text-[10px] text-slate-400 font-mono">
-                            {pay?.invoiceNumber || `INV-${req.requestNumber.replace("AH-P-", "")}`}
+                            {pay?.invoiceNumber || `INV-${req.requestNumber.replace("AutoHub-P-", "")}`}
                           </span>
                           {pay?.invoiceUrl && (
                             <a href={pay.invoiceUrl} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:text-blue-700" title="View PDF">

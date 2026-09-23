@@ -17,7 +17,7 @@ export default function InvoicePrintPage() {
     return <div className="p-10 text-center">Request not found.</div>;
   }
 
-  const invoiceNumber = `INV-2026-${request.requestNumber.replace("AH-P-", "")}`;
+  const invoiceNumber = `INV-2026-${request.requestNumber.replace("AutoHub-P-", "")}`;
   const currentDate = new Date().toLocaleDateString("en-NZ", {
     year: "numeric",
     month: "long",

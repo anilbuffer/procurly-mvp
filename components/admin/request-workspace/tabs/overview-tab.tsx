@@ -47,7 +47,7 @@ export function OverviewTab({ request }: OverviewTabProps) {
 
   // Inline Invoice state
   const [inlinePdfUrl, setInlinePdfUrl] = useState("");
-  const [invNumber, setInvNumber] = useState(`INV-2026-${request.requestNumber.replace("AH-P-", "")}`);
+  const [invNumber, setInvNumber] = useState(`INV-2026-${request.requestNumber.replace("AutoHub-P-", "")}`);
   const [invAmount, setInvAmount] = useState(request.quotedValue || request.customerQuote?.totalAmount || 0);
   const [invDueDate, setInvDueDate] = useState("");
   const [invFileName, setInvFileName] = useState("");
@@ -55,7 +55,7 @@ export function OverviewTab({ request }: OverviewTabProps) {
   // PO form state
   const selectedQuote = request.supplierQuotations?.find(q => q.id === request.selectedQuotationId) || request.supplierQuotations?.[0];
   const [poSupplier, setPoSupplier] = useState(selectedQuote?.supplierName || "Nagoya Auto Parts Co.");
-  const [poRef, setPoRef] = useState(`PO-${request.requestNumber.replace("AH-P-", "")}`);
+  const [poRef, setPoRef] = useState(`PO-${request.requestNumber.replace("AutoHub-P-", "")}`);
   const [poCost, setPoCost] = useState(selectedQuote?.supplierCost ? Number(selectedQuote.supplierCost) : 280);
   const [poFreight, setPoFreight] = useState(selectedQuote?.supplierFreight ? Number(selectedQuote.supplierFreight) : 45);
   const [poNotes, setPoNotes] = useState("");
