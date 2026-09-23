@@ -9,6 +9,7 @@ export type RequestStatus =
   | "Ordered"
   | "QA Pending"
   | "QA Review"
+  | "QA Hold"
   | "QA Approved"
   | "Ready for Dispatch"
   | "Shipped"
@@ -244,7 +245,7 @@ export interface SupplierOrder {
 // ─── QA Verification ─────────────────────────────────────────
 
 export interface QADetails {
-  status: "Pending" | "Review" | "Approved" | "Rejected";
+  status: "Pending" | "Review" | "Approved" | "Rejected" | "Hold";
   photos: string[];
   videos?: string[];
   notes?: string;
@@ -252,6 +253,7 @@ export interface QADetails {
   uploadedBy?: string;
   customerReviewedAt?: string;
   customerNotes?: string;
+  resolution?: "Ship Replacement" | "Issue Refund" | "Return Shipment to Origin";
 }
 
 // ─── Shipment ──────────────────────────────────────────────

@@ -115,9 +115,10 @@ interface UnifiedDataContextType {
   completeRequest: (requestId: string) => void;
 
   // Actions - QA Verification
-  submitQAMedia: (requestId: string, qaData: { photos: string[]; videos?: string[]; notes: string }) => void;
-  approveQA: (requestId: string, customerNotes?: string) => void;
-  rejectQA: (requestId: string, customerNotes: string) => void;
+  submitQAMedia: (requestId: string, qaData: { photos: string[]; videos?: string[]; notes: string }, isIssueLogged?: boolean) => void;
+  approveQA: (requestId: string, adminNotes?: string) => void;
+  rejectQA: (requestId: string, adminNotes: string) => void;
+  resolveQAHold: (requestId: string, resolution: "Ship Replacement" | "Issue Refund" | "Return Shipment to Origin") => void;
 
   // Actions - Notes & Documents
   addInternalNote: (requestId: string, text: string, isCustomerVisible?: boolean) => void;
@@ -611,6 +612,9 @@ export function UnifiedDataProvider({ children }: { children: React.ReactNode })
             } else if (status === "QA Review") {
               actionRequired = "Review QA Media";
               actionType = "view_details";
+            } else if (status === "QA Hold") {
+              actionRequired = "QA Issue Logged. Admin Resolution Required.";
+              actionType = "view_details";
             } else if (status === "QA Approved") {
               actionRequired = "QA Approved. Ready for dispatch.";
               actionType = "none";
@@ -665,17 +669,21 @@ export function UnifiedDataProvider({ children }: { children: React.ReactNode })
   );
 
   const submitQAMedia = useCallback(
-    (requestId: string, qaData: { photos: string[]; videos?: string[]; notes: string }) => {
+    (requestId: string, qaData: { photos: string[]; videos?: string[]; notes: string }, isIssueLogged?: boolean) => {
       setRequests((prev) =>
         prev.map((r) => {
           if (r.id === requestId || r.requestNumber === requestId) {
+            const nextStatus = isIssueLogged ? "QA Hold" : "QA Review";
+            const nextAction = isIssueLogged ? "QA Issue Logged. Admin Resolution Required." : "Review QA Media";
+            const nextQaStatus = isIssueLogged ? "Hold" : "Review";
+            
             return {
               ...r,
-              status: "QA Review",
-              actionRequired: "Review QA Media",
+              status: nextStatus,
+              actionRequired: nextAction,
               actionType: "view_details",
               qaDetails: {
-                status: "Review",
+                status: nextQaStatus,
                 photos: qaData.photos,
                 videos: qaData.videos,
                 notes: qaData.notes,
@@ -688,8 +696,10 @@ export function UnifiedDataProvider({ children }: { children: React.ReactNode })
                   id: `act-${Date.now()}`,
                   timestamp: new Date().toISOString(),
                   timeLabel: "Just now",
-                  title: "QA Media Uploaded",
-                  description: "Quality assurance media and notes submitted for customer review.",
+                  title: isIssueLogged ? "QA Issue Logged" : "QA Media Uploaded",
+                  description: isIssueLogged 
+                    ? "Quality assurance issue logged. Order placed on hold." 
+                    : "Quality assurance media and notes submitted for admin review.",
                   actor: currentStaffUser.name,
                   type: "status",
                 },
@@ -701,13 +711,15 @@ export function UnifiedDataProvider({ children }: { children: React.ReactNode })
         })
       );
       
-      // Notify customer
+      // Notify Admin
       setNotifications((prev) => [
         {
           id: `notif-${Date.now()}`,
           type: "QA Review Required",
-          title: "QA Review Required",
-          description: `QA media uploaded for your order. Please review and approve.`,
+          title: isIssueLogged ? "QA Hold Alert" : "QA Review Required",
+          description: isIssueLogged 
+            ? `An issue was logged for ${requestId}. Order placed on hold.`
+            : `QA media uploaded for ${requestId}. Please review and approve.`,
           timestamp: "Just now",
           read: false,
           requestId,
@@ -719,7 +731,7 @@ export function UnifiedDataProvider({ children }: { children: React.ReactNode })
   );
 
   const approveQA = useCallback(
-    (requestId: string, customerNotes?: string) => {
+    (requestId: string, adminNotes?: string) => {
       setRequests((prev) =>
         prev.map((r) => {
           if (r.id === requestId || r.requestNumber === requestId) {
@@ -732,7 +744,7 @@ export function UnifiedDataProvider({ children }: { children: React.ReactNode })
                 ...r.qaDetails!,
                 status: "Approved",
                 customerReviewedAt: "Just now",
-                customerNotes,
+                customerNotes: adminNotes,
               },
               lastUpdated: "Just now",
               activity: [
@@ -741,8 +753,8 @@ export function UnifiedDataProvider({ children }: { children: React.ReactNode })
                   timestamp: new Date().toISOString(),
                   timeLabel: "Just now",
                   title: "QA Approved",
-                  description: "QA was approved by customer. Ready for dispatch.",
-                  actor: "Customer", // Ideally passed in
+                  description: "QA was approved by Admin. Cleared for final dispatch.",
+                  actor: currentStaffUser.name,
                   type: "status",
                 },
                 ...(r.activity || []),
@@ -752,25 +764,39 @@ export function UnifiedDataProvider({ children }: { children: React.ReactNode })
           return r;
         })
       );
+      
+      // Real-time status notification for the customer
+      setNotifications((prev) => [
+        {
+          id: `notif-${Date.now()}`,
+          type: "Status Update",
+          title: "Order Cleared for Dispatch",
+          description: `Your order ${requestId} has passed QA review and is ready for final delivery.`,
+          timestamp: "Just now",
+          read: false,
+          requestId,
+        },
+        ...prev,
+      ]);
     },
-    []
+    [currentStaffUser]
   );
 
   const rejectQA = useCallback(
-    (requestId: string, customerNotes: string) => {
+    (requestId: string, adminNotes: string) => {
       setRequests((prev) =>
         prev.map((r) => {
           if (r.id === requestId || r.requestNumber === requestId) {
             return {
               ...r,
-              status: "QA Pending", // return to pending for re-upload or return
-              actionRequired: "QA Rejected by Customer",
+              status: "QA Hold",
+              actionRequired: "QA Issue Confirmed by Admin",
               actionType: "view_details",
               qaDetails: {
                 ...r.qaDetails!,
                 status: "Rejected",
                 customerReviewedAt: "Just now",
-                customerNotes,
+                customerNotes: adminNotes,
               },
               lastUpdated: "Just now",
               activity: [
@@ -779,8 +805,8 @@ export function UnifiedDataProvider({ children }: { children: React.ReactNode })
                   timestamp: new Date().toISOString(),
                   timeLabel: "Just now",
                   title: "QA Rejected",
-                  description: `QA rejected: ${customerNotes}`,
-                  actor: "Customer",
+                  description: `QA rejected by Admin: ${adminNotes}`,
+                  actor: currentStaffUser.name,
                   type: "status",
                 },
                 ...(r.activity || []),
@@ -791,7 +817,54 @@ export function UnifiedDataProvider({ children }: { children: React.ReactNode })
         })
       );
     },
-    []
+    [currentStaffUser]
+  );
+
+  const resolveQAHold = useCallback(
+    (requestId: string, resolution: "Ship Replacement" | "Issue Refund" | "Return Shipment to Origin") => {
+      setRequests((prev) =>
+        prev.map((r) => {
+          if (r.id === requestId || r.requestNumber === requestId) {
+            return {
+              ...r,
+              qaDetails: {
+                ...r.qaDetails!,
+                resolution,
+              },
+              lastUpdated: "Just now",
+              activity: [
+                {
+                  id: `act-${Date.now()}`,
+                  timestamp: new Date().toISOString(),
+                  timeLabel: "Just now",
+                  title: "QA Resolution Selected",
+                  description: `Admin selected resolution: ${resolution}`,
+                  actor: currentStaffUser.name,
+                  type: "status",
+                },
+                ...(r.activity || []),
+              ],
+            };
+          }
+          return r;
+        })
+      );
+      
+      // Notify Customer
+      setNotifications((prev) => [
+        {
+          id: `notif-${Date.now()}`,
+          type: "Status Update",
+          title: "QA Issue Resolution",
+          description: `An issue was found during QA for ${requestId}. Resolution: ${resolution}.`,
+          timestamp: "Just now",
+          read: false,
+          requestId,
+        },
+        ...prev,
+      ]);
+    },
+    [currentStaffUser]
   );
 
   const assignStaff = useCallback(
@@ -1862,6 +1935,7 @@ export function UnifiedDataProvider({ children }: { children: React.ReactNode })
         submitQAMedia,
         approveQA,
         rejectQA,
+        resolveQAHold,
         addInternalNote,
         addDocument,
         addCustomer,

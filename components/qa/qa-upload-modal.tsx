@@ -15,13 +15,15 @@ export function QAUploadModal({ requestId, onClose }: QAUploadModalProps) {
   
   const [notes, setNotes] = useState("");
   const [isUploading, setIsUploading] = useState(false);
+  const [isLoggingIssue, setIsLoggingIssue] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
 
   if (!req) return null;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent, asIssue: boolean = false) => {
     e.preventDefault();
     setIsUploading(true);
+    setIsLoggingIssue(asIssue);
     
     // Simulate upload progress
     const interval = setInterval(() => {
@@ -35,7 +37,7 @@ export function QAUploadModal({ requestId, onClose }: QAUploadModalProps) {
                 "https://images.unsplash.com/photo-1599839619722-39751411ea63?w=600&auto=format&fit=crop&q=80",
                 "https://images.unsplash.com/photo-1605333557550-96b6fbcf2b55?w=600&auto=format&fit=crop&q=80"
               ]
-            });
+            }, isLoggingIssue);
           }
           setIsUploading(false);
           onClose();
@@ -67,31 +69,47 @@ export function QAUploadModal({ requestId, onClose }: QAUploadModalProps) {
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-6 space-y-6">
-          <div className="bg-slate-50 p-4 rounded-xl border border-slate-100">
-            <h3 className="text-sm font-bold text-slate-800 mb-1">Part Details</h3>
-            <p className="text-sm font-bold text-slate-900">{req.part.name}</p>
-            <p className="text-sm text-slate-600 mb-2">{req.vehicle.make} {req.vehicle.model} ({req.vehicle.year})</p>
-            <div className="grid grid-cols-2 gap-x-4 gap-y-2 mt-3 pt-3 border-t border-slate-100">
-              <div>
-                <p className="text-xs text-slate-500 font-medium">Part Number</p>
-                <p className="text-sm font-medium text-slate-900">{req.part.partNumber || "N/A"}</p>
+        <form onSubmit={(e) => handleSubmit(e, false)} className="p-6 space-y-6">
+          <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden relative">
+            <div className="absolute top-0 left-0 w-1.5 h-full bg-[#ED2025]"></div>
+            <div className="p-5">
+              <div className="flex items-start justify-between mb-4">
+                <div>
+                  <h3 className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">Part Inspection Target</h3>
+                  <p className="text-lg font-black text-slate-900">{req.part.name}</p>
+                  <p className="text-sm font-medium text-slate-500 mt-0.5">{req.vehicle.make} {req.vehicle.model} ({req.vehicle.year})</p>
+                </div>
+                <div className="bg-slate-100 text-slate-700 text-xs font-bold px-3 py-1.5 rounded-lg border border-slate-200 shrink-0">
+                  {req.part.condition}
+                </div>
               </div>
-              <div>
-                <p className="text-xs text-slate-500 font-medium">Supplier Ref</p>
-                <p className="text-sm font-medium text-slate-900">
-                  {req.selectedQuotationId ? req.supplierQuotations?.find(q => q.id === req.selectedQuotationId)?.supplierPartRef : "N/A"}
-                </p>
-              </div>
-              <div>
-                <p className="text-xs text-slate-500 font-medium">Supplier Name</p>
-                <p className="text-sm font-medium text-slate-900">
-                  {req.selectedQuotationId ? req.supplierQuotations?.find(q => q.id === req.selectedQuotationId)?.supplierName : "N/A"}
-                </p>
-              </div>
-              <div>
-                <p className="text-xs text-slate-500 font-medium">Condition</p>
-                <p className="text-sm font-medium text-slate-900">{req.part.condition}</p>
+              
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-4 p-4 bg-slate-50 rounded-xl border border-slate-100/80">
+                <div className="space-y-1">
+                  <p className="text-xs font-bold text-slate-400 flex items-center gap-1.5">
+                    <FileText className="w-3.5 h-3.5" />
+                    Part Number
+                  </p>
+                  <p className="text-sm font-bold text-slate-800">{req.part.partNumber || "N/A"}</p>
+                </div>
+                <div className="space-y-1">
+                  <p className="text-xs font-bold text-slate-400 flex items-center gap-1.5">
+                    <AlertCircle className="w-3.5 h-3.5" />
+                    Supplier Ref
+                  </p>
+                  <p className="text-sm font-bold text-slate-800 font-mono">
+                    {req.selectedQuotationId ? req.supplierQuotations?.find(q => q.id === req.selectedQuotationId)?.supplierPartRef : "N/A"}
+                  </p>
+                </div>
+                <div className="space-y-1 col-span-2 md:col-span-1">
+                  <p className="text-xs font-bold text-slate-400 flex items-center gap-1.5">
+                    <UploadCloud className="w-3.5 h-3.5" />
+                    Supplier Name
+                  </p>
+                  <p className="text-sm font-bold text-slate-800 truncate" title={req.selectedQuotationId ? req.supplierQuotations?.find(q => q.id === req.selectedQuotationId)?.supplierName : "N/A"}>
+                    {req.selectedQuotationId ? req.supplierQuotations?.find(q => q.id === req.selectedQuotationId)?.supplierName : "N/A"}
+                  </p>
+                </div>
               </div>
             </div>
           </div>
@@ -125,39 +143,62 @@ export function QAUploadModal({ requestId, onClose }: QAUploadModalProps) {
           <div className="bg-amber-50 p-4 rounded-xl flex items-start gap-3">
             <AlertCircle className="w-5 h-5 text-amber-500 shrink-0 mt-0.5" />
             <p className="text-xs text-amber-800 font-medium leading-relaxed">
-              Ensure no supplier branding, invoices, or business cards are visible in the uploaded media. These images will be directly visible to the customer.
+              Ensure clear documentation of the part's condition. These images will be reviewed by the Admin for final approval.
             </p>
           </div>
 
-          <div className="pt-4 flex justify-end gap-3 border-t border-slate-100">
+          <div className="pt-4 flex justify-between gap-3 border-t border-slate-100">
             <button
               type="button"
-              onClick={onClose}
-              disabled={isUploading}
-              className="px-5 py-2.5 text-sm font-bold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-xl transition-colors disabled:opacity-50"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
+              onClick={(e) => handleSubmit(e, true)}
               disabled={isUploading || notes.trim() === ""}
-              className="px-6 py-2.5 text-sm font-bold text-white bg-[#ED2025] hover:bg-[#d11a1f] rounded-xl shadow-md transition-colors flex items-center gap-2 disabled:opacity-50"
+              className="px-5 py-2.5 text-sm font-bold text-purple-700 bg-purple-50 hover:bg-purple-100 border border-purple-200 rounded-xl transition-colors disabled:opacity-50 flex items-center gap-2"
             >
-              {isUploading ? (
+              {isUploading && isLoggingIssue ? (
                 <>
-                  <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
+                  <svg className="animate-spin -ml-1 h-4 w-4 text-purple-700" fill="none" viewBox="0 0 24 24">
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
                   </svg>
-                  Uploading ({uploadProgress}%)
+                  Uploading...
                 </>
               ) : (
                 <>
-                  <CheckCircle className="w-4 h-4" />
-                  Submit for Customer Review
+                  <AlertCircle className="w-4 h-4" />
+                  Log Issue (Hold)
                 </>
               )}
             </button>
+            <div className="flex items-center gap-3">
+              <button
+                type="button"
+                onClick={onClose}
+                disabled={isUploading}
+                className="px-5 py-2.5 text-sm font-bold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-xl transition-colors disabled:opacity-50"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                disabled={isUploading || notes.trim() === ""}
+                className="px-6 py-2.5 text-sm font-bold text-white bg-[#ED2025] hover:bg-[#d11a1f] rounded-xl shadow-md transition-colors flex items-center gap-2 disabled:opacity-50"
+              >
+                {isUploading && !isLoggingIssue ? (
+                  <>
+                    <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                    </svg>
+                    Uploading ({uploadProgress}%)
+                  </>
+                ) : (
+                  <>
+                    <CheckCircle className="w-4 h-4" />
+                    Submit for Admin Approval
+                  </>
+                )}
+              </button>
+            </div>
           </div>
         </form>
       </div>
