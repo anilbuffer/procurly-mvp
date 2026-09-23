@@ -62,6 +62,11 @@ export function QuoteTab({ request, onNavigateToTab }: QuoteTabProps) {
       estimatedTransitDays: selectedFreight === "air" ? 10 : selectedFreight === "ocean" ? 40 : 10,
     });
     setShowSuccessModal(true);
+    
+    // Simulate Email Notification
+    setTimeout(() => {
+      alert(`📧 EMAIL NOTIFICATION: To Customer\nSubject: Updated Quote Available\n\nAn updated quotation for your requested part (${request.part.name}) is now available for review and approval in your portal.`);
+    }, 500);
   };
 
   return (

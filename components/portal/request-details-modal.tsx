@@ -142,6 +142,11 @@ export function RequestDetailsModal() {
     acceptQuote(req.id, audit);
     setIsAcceptingQuote(false);
     setActiveTab("overview");
+    
+    // Simulate Email Notification
+    setTimeout(() => {
+      alert(`📧 EMAIL NOTIFICATION: To Admin Team\nSubject: Quote Approved for Request ${req.requestNumber}\n\nThe customer has approved the quote and verified the order parameters. Please check the portal and proceed with the next action.`);
+    }, 500);
   };
 
   const handleConfirmReject = () => {
