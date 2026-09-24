@@ -64,51 +64,51 @@ export function PortalSidebar({ collapsed = false, onToggleCollapse }: PortalSid
       badgeColor?: string;
     }[];
   }[] = [
-    {
-      label: "MAIN",
-      items: [
-        { id: "dashboard", label: "Dashboard", icon: LayoutGrid },
-      ],
-    },
-    {
-      label: "OPERATIONS",
-      items: [
-        {
-          id: "requests",
-          label: "Requests",
-          icon: FileText,
-          badge: metrics.awaitingAction > 0 ? metrics.awaitingAction : undefined,
-          badgeColor: "bg-[#B30D12] text-white",
-        },
-        {
-          id: "orders",
-          label: "Orders",
-          icon: CheckSquare,
-          badge: activeOrdersCount > 0 ? activeOrdersCount : undefined,
-          badgeColor: "bg-purple-600 text-white",
-        },
-        {
-          id: "shipments",
-          label: "Shipments",
-          icon: Truck,
-          badge: metrics.inTransit > 0 ? metrics.inTransit : undefined,
-          badgeColor: "bg-[#2563EB] text-white",
-        },
-      ],
-    },
-    {
-      label: "FINANCE",
-      items: [
-        {
-          id: "payments",
-          label: "Payments",
-          icon: CreditCard,
-          badge: awaitingPaymentCount > 0 ? awaitingPaymentCount : undefined,
-          badgeColor: "bg-amber-500 text-white",
-        },
-      ],
-    },
-  ];
+      {
+        label: "MAIN",
+        items: [
+          { id: "dashboard", label: "Dashboard", icon: LayoutGrid },
+        ],
+      },
+      {
+        label: "OPERATIONS",
+        items: [
+          {
+            id: "requests",
+            label: "Requests",
+            icon: FileText,
+            badge: metrics.awaitingAction > 0 ? metrics.awaitingAction : undefined,
+            badgeColor: "bg-[#B30D12] text-white",
+          },
+          {
+            id: "orders",
+            label: "Orders",
+            icon: CheckSquare,
+            badge: activeOrdersCount > 0 ? activeOrdersCount : undefined,
+            badgeColor: "bg-purple-600 text-white",
+          },
+          {
+            id: "shipments",
+            label: "Shipments",
+            icon: Truck,
+            badge: metrics.inTransit > 0 ? metrics.inTransit : undefined,
+            badgeColor: "bg-[#2563EB] text-white",
+          },
+        ],
+      },
+      {
+        label: "FINANCE",
+        items: [
+          {
+            id: "payments",
+            label: "Payments",
+            icon: CreditCard,
+            badge: awaitingPaymentCount > 0 ? awaitingPaymentCount : undefined,
+            badgeColor: "bg-amber-500 text-white",
+          },
+        ],
+      },
+    ];
 
   return (
     <aside
@@ -119,20 +119,19 @@ export function PortalSidebar({ collapsed = false, onToggleCollapse }: PortalSid
       <div className="flex flex-col flex-1 min-h-0">
         {/* Brand Header */}
         <div
-          className={`h-16 flex items-center justify-between border-b border-[#1E2538]/60 shrink-0 ${
-            collapsed ? "px-3" : "px-5"
-          }`}
+          className={`h-16 flex items-center justify-between border-b border-[#1E2538]/60 shrink-0 ${collapsed ? "px-3" : "px-5"
+            }`}
         >
           <Link
             href="/customer/dashboard"
             className="flex items-center gap-3 cursor-pointer group"
           >
             <div className="w-9 h-9 rounded-xl border-2 border-white bg-[#C40E14] flex items-center justify-center shadow-sm">
-              <span className="text-white font-black text-lg tracking-tighter leading-none shrink-0">A</span>
+              <span className="text-white font-black text-sm tracking-tighter leading-none shrink-0">P</span>
             </div>
             {!collapsed && (
               <div className="flex flex-col">
-                <span className="font-black italic tracking-tight text-white uppercase leading-none font-sans text-lg group-hover:text-red-400 transition-colors">
+                <span className="font-black italic text-[#C40E14] uppercase text-lg tracking-tight leading-none font-sans">
                   PROCUR<span className="not-italic">LY</span>
                 </span>
                 <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider mt-1">
@@ -154,7 +153,7 @@ export function PortalSidebar({ collapsed = false, onToggleCollapse }: PortalSid
         </div>
 
         {/* Navigation Groups */}
-        <div className="flex-1 overflow-y-auto px-3 py-4 space-y-6 custom-scrollbar">
+        <div className="flex-1 overflow-y-auto px-3 py-4 space-y-1 custom-scrollbar">
           {navGroups.map((group) => (
             <div className="space-y-1">
               <nav className="space-y-1">
@@ -168,9 +167,9 @@ export function PortalSidebar({ collapsed = false, onToggleCollapse }: PortalSid
                       href={href}
                       onClick={() => setSelectedRequest(null)}
                       title={collapsed ? item.label : undefined}
-                      className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-[14px] font-medium transition-all group ${isActive
-                        ? "bg-[#1E2538] text-white"
-                        : "text-slate-400 hover:text-white"
+                      className={`relative w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-[13px] font-medium transition-all group overflow-hidden ${isActive
+                        ? "bg-[#1E2538] text-white before:absolute before:left-0 before:top-1/2 before:-translate-y-1/2 before:w-1 before:h-[60%] before:bg-white before:rounded-r-full"
+                        : "text-slate-400 hover:text-white hover:bg-[#1E2538]/50"
                         } ${collapsed ? "justify-center px-0" : ""}`}
                     >
                       <Icon
@@ -205,9 +204,8 @@ export function PortalSidebar({ collapsed = false, onToggleCollapse }: PortalSid
       <div ref={userMenuRef} className="p-3 border-t border-[#1E2538]/60 relative">
         <div
           onClick={() => setShowUserMenu(!showUserMenu)}
-          className={`flex items-center justify-between p-2 rounded-xl bg-[#141B2B] hover:bg-[#1B2338] cursor-pointer transition-all border border-[#1E2538]/40 ${
-            collapsed ? "justify-center" : ""
-          }`}
+          className={`flex items-center justify-between p-2 rounded-xl bg-[#141B2B] hover:bg-[#1B2338] cursor-pointer transition-all border border-[#1E2538]/40 ${collapsed ? "justify-center" : ""
+            }`}
           title={collapsed ? `${activeCustomer.contactName} (${activeCustomer.businessName})` : undefined}
         >
           <div className="flex items-center gap-3 min-w-0">
@@ -231,9 +229,8 @@ export function PortalSidebar({ collapsed = false, onToggleCollapse }: PortalSid
           </div>
           {!collapsed && (
             <ChevronDown
-              className={`w-3.5 h-3.5 text-slate-400 shrink-0 transition-transform duration-200 ${
-                showUserMenu ? "rotate-180" : ""
-              }`}
+              className={`w-3.5 h-3.5 text-slate-400 shrink-0 transition-transform duration-200 ${showUserMenu ? "rotate-180" : ""
+                }`}
             />
           )}
         </div>
@@ -241,9 +238,8 @@ export function PortalSidebar({ collapsed = false, onToggleCollapse }: PortalSid
         {/* User dropdown popover */}
         {showUserMenu && (
           <div
-            className={`absolute bottom-16 ${
-              collapsed ? "left-20 ml-2 w-64" : "left-3 right-3"
-            } bg-[#182033] border border-[#27324D] rounded-xl shadow-2xl p-2.5 space-y-2 z-50 text-xs text-slate-200 animate-in fade-in slide-in-from-bottom-2 duration-150`}
+            className={`absolute bottom-16 ${collapsed ? "left-20 ml-2 w-64" : "left-3 right-3"
+              } bg-[#182033] border border-[#27324D] rounded-xl shadow-2xl p-2.5 space-y-2 z-50 text-xs text-slate-200 animate-in fade-in slide-in-from-bottom-2 duration-150`}
           >
             <div className="px-2 py-1 border-b border-[#27324D]/60 pb-2">
               <p className="font-bold text-white text-xs mt-0.5">{activeCustomer.businessName}</p>

@@ -84,12 +84,12 @@ export function SubadminSidebar({ collapsed, onToggleCollapse }: SubadminSidebar
       <div className={`h-16 flex items-center justify-between border-b border-slate-800 shrink-0 ${collapsed ? "px-2.5" : "px-4"}`}>
         {!collapsed ? (
           <Link href="/subadmin/dashboard" className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg border-2 border-white bg-[#C40E14] flex items-center justify-center shadow-sm">
-              <span className="text-white font-black text-sm tracking-tighter leading-none shrink-0">A</span>
+            <div className="w-9 h-9 rounded-xl border-2 border-white bg-[#C40E14] flex items-center justify-center shadow-sm">
+              <span className="text-white font-black text-sm tracking-tighter leading-none shrink-0">P</span>
             </div>
             <div>
               <div className="flex items-center gap-1.5">
-                <span className="font-black italic text-white uppercase text-base tracking-tight leading-none font-sans">
+                <span className="font-black italic text-[#C40E14] uppercase text-lg tracking-tight leading-none font-sans">
                   PROCUR<span className="not-italic">LY</span>
                 </span>
               </div>
@@ -116,7 +116,7 @@ export function SubadminSidebar({ collapsed, onToggleCollapse }: SubadminSidebar
         </button>
       </div>
 
-      <div className="flex-1 overflow-y-auto px-3 py-4 space-y-6 custom-scrollbar">
+      <div className="flex-1 overflow-y-auto px-3 py-4 space-y-1 custom-scrollbar">
         {navGroups.map((group) => (
           <div key={group.label} className="space-y-1">
             <div className="space-y-1">
@@ -127,13 +127,13 @@ export function SubadminSidebar({ collapsed, onToggleCollapse }: SubadminSidebar
                 const currentFilter = searchParams.get('filter');
 
                 if (itemPath === "/subadmin/dashboard" && pathname === "/subadmin/dashboard") {
-                   if (itemFilter) {
-                       active = currentFilter === itemFilter;
-                   } else {
-                       active = !currentFilter;
-                   }
+                  if (itemFilter) {
+                    active = currentFilter === itemFilter;
+                  } else {
+                    active = !currentFilter;
+                  }
                 } else {
-                   active = isMainActive(itemPath);
+                  active = isMainActive(itemPath);
                 }
 
                 const Icon = item.icon;
@@ -143,9 +143,9 @@ export function SubadminSidebar({ collapsed, onToggleCollapse }: SubadminSidebar
                     key={item.name}
                     href={item.href}
                     title={collapsed ? item.name : undefined}
-                    className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-[14px] font-medium transition-all group ${active
-                      ? "bg-[#1E2538] text-white"
-                      : "text-slate-400 hover:text-white"
+                    className={`relative w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-[13px] font-medium transition-all group overflow-hidden ${active
+                      ? "bg-[#1E2538] text-white before:absolute before:left-0 before:top-1/2 before:-translate-y-1/2 before:w-1 before:h-[60%] before:bg-white before:rounded-r-full"
+                      : "text-slate-400 hover:text-white hover:bg-[#1E2538]/50"
                       } ${collapsed ? "justify-center px-0" : ""}`}
                   >
                     <Icon
@@ -211,7 +211,7 @@ export function SubadminSidebar({ collapsed, onToggleCollapse }: SubadminSidebar
             />
           )}
         </div>
-        
+
         {showUserMenu && (
           <div
             className={`absolute bottom-16 ${collapsed ? "left-20 ml-2 w-64" : "left-3 right-3"

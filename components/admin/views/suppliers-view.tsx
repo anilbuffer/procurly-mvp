@@ -199,11 +199,10 @@ export function SuppliersView() {
               key={filter}
               type="button"
               onClick={() => setStatusFilter(filter)}
-              className={`px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all ${
-                statusFilter === filter
-                  ? "bg-slate-900 text-white shadow-xs"
+              className={`px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all ${statusFilter === filter
+                  ? "bg-[#C40E14] text-white shadow-xs"
                   : "bg-slate-100 text-slate-600 hover:bg-slate-200"
-              }`}
+                }`}
             >
               {filter}
             </button>
@@ -430,7 +429,7 @@ export function SuppliersView() {
           />
 
           <div className="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 animate-in zoom-in-95 duration-200 relative z-10 flex flex-col gap-6">
-            
+
             {/* Header */}
             <div className="flex items-start gap-4">
               <div className="w-12 h-12 bg-rose-50 rounded-2xl flex items-center justify-center shrink-0 border border-rose-100 shadow-inner">

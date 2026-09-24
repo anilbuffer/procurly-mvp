@@ -136,11 +136,10 @@ export function PaymentsView() {
             <button
               key={tab}
               onClick={() => setFilterStatus(tab)}
-              className={`px-3.5 py-1.5 rounded-xl transition-all ${
-                isActive
-                  ? "bg-[#0C101A] text-white shadow-xs"
+              className={`px-3.5 py-1.5 rounded-xl transition-all ${isActive
+                  ? "bg-[#C40E14] text-white shadow-xs"
                   : "bg-white border border-slate-200 text-slate-600 hover:bg-slate-50"
-              }`}
+                }`}
             >
               {tab === "All" ? "All Invoices" : tab}
             </button>

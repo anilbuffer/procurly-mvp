@@ -301,22 +301,20 @@ export function ShipmentsView() {
                 return (
                   <div
                     key={m}
-                    className={`p-3.5 rounded-xl border text-center transition-all ${
-                      isCurrent
+                    className={`p-3.5 rounded-xl border text-center transition-all ${isCurrent
                         ? "border-[#B30D12] bg-red-50/30 shadow-xs ring-2 ring-red-100"
                         : isCompleted
-                        ? "border-emerald-300 bg-emerald-50/50 text-emerald-800"
-                        : "border-slate-200 bg-slate-50/60 text-slate-400"
-                    }`}
+                          ? "border-emerald-300 bg-emerald-50/50 text-emerald-800"
+                          : "border-slate-200 bg-slate-50/60 text-slate-400"
+                      }`}
                   >
                     <div
-                      className={`w-7 h-7 rounded-full mx-auto mb-1.5 flex items-center justify-center text-[11px] font-bold ${
-                        isCurrent
+                      className={`w-7 h-7 rounded-full mx-auto mb-1.5 flex items-center justify-center text-[11px] font-bold ${isCurrent
                           ? "bg-[#B30D12] text-white animate-pulse shadow-sm"
                           : isCompleted
-                          ? "bg-emerald-500 text-white"
-                          : "bg-slate-200 text-slate-500"
-                      }`}
+                            ? "bg-emerald-500 text-white"
+                            : "bg-slate-200 text-slate-500"
+                        }`}
                     >
                       {isCompleted && !isCurrent ? (
                         <Check className="w-3.5 h-3.5 stroke-[3]" />
@@ -325,13 +323,12 @@ export function ShipmentsView() {
                       )}
                     </div>
                     <span
-                      className={`text-[11px] font-bold block leading-tight ${
-                        isCurrent
+                      className={`text-[11px] font-bold block leading-tight ${isCurrent
                           ? "text-[#B30D12]"
                           : isCompleted
-                          ? "text-slate-900"
-                          : "text-slate-400"
-                      }`}
+                            ? "text-slate-900"
+                            : "text-slate-400"
+                        }`}
                     >
                       {m}
                     </span>
@@ -445,11 +442,10 @@ export function ShipmentsView() {
                     <div key={idx} className="flex items-start gap-3.5 text-xs group">
                       <div className="mt-0.5 relative">
                         <div
-                          className={`w-3.5 h-3.5 rounded-full border-2 flex items-center justify-center ${
-                            m.isCompleted
+                          className={`w-3.5 h-3.5 rounded-full border-2 flex items-center justify-center ${m.isCompleted
                               ? "bg-emerald-500 border-emerald-500"
                               : "bg-white border-slate-300"
-                          }`}
+                            }`}
                         >
                           {m.isCompleted && <Check className="w-2.5 h-2.5 text-white stroke-[3]" />}
                         </div>
@@ -461,9 +457,8 @@ export function ShipmentsView() {
                       <div className="flex-1 space-y-0.5">
                         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
                           <span
-                            className={`font-bold ${
-                              m.isCompleted ? "text-slate-900" : "text-slate-500"
-                            }`}
+                            className={`font-bold ${m.isCompleted ? "text-slate-900" : "text-slate-500"
+                              }`}
                           >
                             {m.milestone}
                           </span>
@@ -572,26 +567,24 @@ export function ShipmentsView() {
               tab === "All"
                 ? shippedRequests.length
                 : shippedRequests.filter(
-                    (r) =>
-                      (r.shipment?.currentMilestone ||
-                        (r.status === "Delivered" ? "Delivered" : "In Transit")) === tab
-                  ).length;
+                  (r) =>
+                    (r.shipment?.currentMilestone ||
+                      (r.status === "Delivered" ? "Delivered" : "In Transit")) === tab
+                ).length;
 
             return (
               <button
                 key={tab}
                 onClick={() => setMilestoneFilter(tab)}
-                className={`px-3 py-1.5 rounded-xl transition-all flex items-center gap-1.5 cursor-pointer ${
-                  isActive
-                    ? "bg-[#0C101A] text-white shadow-sm"
+                className={`px-3 py-1.5 rounded-xl transition-all flex items-center gap-1.5 cursor-pointer ${isActive
+                    ? "bg-[#C40E14] text-white shadow-sm"
                     : "bg-slate-100 hover:bg-slate-200/70 text-slate-600"
-                }`}
+                  }`}
               >
                 <span>{tab}</span>
                 <span
-                  className={`text-[10px] px-1.5 py-0.2 rounded-full font-mono font-bold ${
-                    isActive ? "bg-white/20 text-white" : "bg-slate-200 text-slate-700"
-                  }`}
+                  className={`text-[10px] px-1.5 py-0.2 rounded-full font-mono font-bold ${isActive ? "bg-white/20 text-white" : "bg-slate-200 text-slate-700"
+                    }`}
                 >
                   {count}
                 </span>
