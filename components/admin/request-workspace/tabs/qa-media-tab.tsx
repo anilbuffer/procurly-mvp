@@ -5,13 +5,13 @@ import { PartRequest } from "@/types/shared";
 import { Camera, Image as ImageIcon, UploadCloud, CheckCircle2, X } from "lucide-react";
 import { useUnifiedData } from "@/context/unified-data-context";
 
-interface QAMediaTabProps {
+interface SubadminMediaTabProps {
   request: PartRequest;
 }
 
-export function QAMediaTab({ request }: QAMediaTabProps) {
+export function SubadminMediaTab({ request }: SubadminMediaTabProps) {
   // In a real app, you would upload to a server. Here we just fake state.
-  const [qaMedia, setQaMedia] = useState<string[]>(request.supporting.photos || []);
+  const [SubadminMedia, setSubadminMedia] = useState<string[]>(request.supporting.photos || []);
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
@@ -20,11 +20,11 @@ export function QAMediaTab({ request }: QAMediaTabProps) {
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
     // Fake adding a placeholder image on drop for MVP
-    setQaMedia([...qaMedia, "https://images.unsplash.com/photo-1600705607991-382de92b0c48?w=800&auto=format&fit=crop&q=60"]);
+    setSubadminMedia([...SubadminMedia, "https://images.unsplash.com/photo-1600705607991-382de92b0c48?w=800&auto=format&fit=crop&q=60"]);
   };
 
   const handleRemove = (idx: number) => {
-    setQaMedia(qaMedia.filter((_, i) => i !== idx));
+    setSubadminMedia(SubadminMedia.filter((_, i) => i !== idx));
   };
 
   return (
@@ -34,7 +34,7 @@ export function QAMediaTab({ request }: QAMediaTabProps) {
           <Camera className="w-5 h-5 text-[#B30D12]" />
           <div>
             <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider">
-              Supplier QA Media (Photos / Videos)
+              Supplier Subadmin Media (Photos / Videos)
             </h3>
             <p className="text-xs text-slate-500 mt-0.5">
               Drag and drop media files provided by the supplier. These will be required before confirming dispatch.
@@ -58,16 +58,16 @@ export function QAMediaTab({ request }: QAMediaTabProps) {
         </div>
 
         {/* Media Gallery */}
-        {qaMedia.length > 0 ? (
+        {SubadminMedia.length > 0 ? (
           <div>
             <h4 className="text-xs font-bold text-slate-900 uppercase tracking-wider mb-3 flex items-center gap-2">
               <ImageIcon className="w-4 h-4 text-slate-500" />
-              Uploaded QA Evidence
+              Uploaded Subadmin Evidence
             </h4>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-              {qaMedia.map((url, idx) => (
+              {SubadminMedia.map((url, idx) => (
                 <div key={idx} className="relative aspect-square rounded-xl overflow-hidden group border border-slate-200">
-                  <img src={url} alt={`QA Media ${idx + 1}`} className="w-full h-full object-cover" />
+                  <img src={url} alt={`Subadmin Media ${idx + 1}`} className="w-full h-full object-cover" />
                   <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                     <button
                       onClick={() => handleRemove(idx)}
@@ -83,7 +83,7 @@ export function QAMediaTab({ request }: QAMediaTabProps) {
           </div>
         ) : (
           <div className="text-center py-6 text-xs text-slate-400 bg-slate-50 rounded-xl border border-slate-100">
-            No QA media uploaded yet.
+            No Subadmin media uploaded yet.
           </div>
         )}
       </div>

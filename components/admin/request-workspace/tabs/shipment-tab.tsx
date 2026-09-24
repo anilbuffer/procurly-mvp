@@ -302,7 +302,7 @@ export function ShipmentTab({ request: initialRequest }: ShipmentTabProps) {
             </div>
 
             <form onSubmit={handleCreateShipment} className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 gap-4">
                 <div>
                   <label className="block text-sm font-bold text-slate-700 mb-1.5 flex items-center gap-2">
                     Carrier Name <span className="text-red-500">*</span>

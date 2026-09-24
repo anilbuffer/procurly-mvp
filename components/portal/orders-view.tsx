@@ -42,19 +42,19 @@ export function OrdersView() {
       case "Approved":
       case "Invoicing":
       case "Ordered":
-      case "QA Review":
+      case "Subadmin Review":
       case "Ready for Dispatch":
       case "Shipped":
         return "bg-blue-50 text-blue-700 border border-blue-200";
       
       // Waiting / Attention States
       case "Awaiting Payment":
-      case "QA Pending":
-      case "QA Hold":
+      case "Subadmin Pending":
+      case "Subadmin Hold":
         return "bg-red-50 text-red-700 border border-red-200";
       
       // Completed States
-      case "QA Approved":
+      case "Subadmin Approved":
       case "Delivered":
       case "Completed":
         return "bg-green-50 text-green-700 border border-green-200";

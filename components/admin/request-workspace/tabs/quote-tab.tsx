@@ -69,7 +69,7 @@ export function QuoteTab({ request, onNavigateToTab }: QuoteTabProps) {
       estimatedTransitDays: selectedFreight === "air" ? 10 : selectedFreight === "ocean" ? 40 : 10,
     });
     setShowSuccessModal(true);
-    
+
     // Show Action Details Modal instead of alert
     setTimeout(() => {
       setShowActionDetailsModal(true);
@@ -191,11 +191,11 @@ export function QuoteTab({ request, onNavigateToTab }: QuoteTabProps) {
                 <span className="block text-[10px] text-emerald-700">{request.quoteAcceptance.userRole}</span>
               </div>
               <div>
-                <span className="text-emerald-700/80 block text-[10px] font-bold uppercase mb-1 flex items-center gap-1"><Clock className="w-3 h-3"/> Timestamp</span>
+                <span className="text-emerald-700/80 block text-[10px] font-bold uppercase mb-1 flex items-center gap-1"><Clock className="w-3 h-3" /> Timestamp</span>
                 <span className="font-bold text-emerald-950">{request.quoteAcceptance.acceptedAt}</span>
               </div>
               <div>
-                <span className="text-emerald-700/80 block text-[10px] font-bold uppercase mb-1 flex items-center gap-1"><Globe className="w-3 h-3"/> IP Address</span>
+                <span className="text-emerald-700/80 block text-[10px] font-bold uppercase mb-1 flex items-center gap-1"><Globe className="w-3 h-3" /> IP Address</span>
                 <span className="font-bold text-emerald-950 font-mono">{request.quoteAcceptance.ipAddress || "Not Recorded"}</span>
               </div>
               <div>
@@ -415,11 +415,10 @@ export function QuoteTab({ request, onNavigateToTab }: QuoteTabProps) {
             <button
               onClick={handleIssueQuote}
               disabled={!selectedQuote}
-              className={`w-full sm:w-full font-bold py-3.5 px-6 rounded-xl flex items-center justify-center gap-2 transition-colors shadow-md text-sm ${
-                !selectedQuote
+              className={`w-full sm:w-full font-bold py-3.5 px-6 rounded-xl flex items-center justify-center gap-2 transition-colors shadow-md text-sm ${!selectedQuote
                   ? 'bg-slate-200 text-slate-400 cursor-not-allowed shadow-none border border-slate-300'
-                  : 'bg-[#E61932] hover:bg-[#CC162C] text-white shadow-red-500/20'
-              }`}
+                  : 'bg-[#B30D12] hover:bg-[#CC162C] text-white shadow-red-500/20'
+                }`}
             >
               <Check className="w-4 h-4" />
               {selectedQuote ? "Issue Quote to Customer" : "Add a Supplier Quote First"}
@@ -461,18 +460,18 @@ export function QuoteTab({ request, onNavigateToTab }: QuoteTabProps) {
                 <p className="text-xs text-slate-500 mt-1">A simulated notification sent to the customer.</p>
               </div>
             </div>
-            
+
             <div className="bg-slate-50 rounded-xl p-5 border border-slate-200 space-y-4">
               <div>
                 <span className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">To</span>
                 <div className="font-medium text-sm text-slate-900">{request.customerName} (Customer)</div>
               </div>
-              
+
               <div>
                 <span className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Subject</span>
                 <div className="font-bold text-sm text-slate-900">Updated Quote Available</div>
               </div>
-              
+
               <div className="border-t border-slate-200 pt-4">
                 <span className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-2">Message Body</span>
                 <p className="text-sm text-slate-700 whitespace-pre-wrap leading-relaxed">
@@ -480,7 +479,7 @@ export function QuoteTab({ request, onNavigateToTab }: QuoteTabProps) {
                 </p>
               </div>
             </div>
-            
+
             <div className="mt-6 flex justify-end">
               <button
                 onClick={() => setShowActionDetailsModal(false)}

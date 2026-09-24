@@ -18,6 +18,8 @@ import {
   FileText,
   ArrowRight,
   Plus,
+  Activity,
+  Users,
 } from "lucide-react";
 import { PartRequest, RequestStatus } from "@/types/shared";
 import { RequestDetailTab } from "@/types/admin";
@@ -30,7 +32,7 @@ import { PaymentTab } from "./tabs/payment-tab";
 import { ShipmentTab } from "./tabs/shipment-tab";
 import { DocumentsTab } from "./tabs/documents-tab";
 import { ActivityTab } from "./tabs/activity-tab";
-import { QAMediaTab } from "./tabs/qa-media-tab";
+import { SubadminMediaTab } from "./tabs/subadmin-media-tab";
 
 import { useUnifiedData } from "@/context/unified-data-context";
 
@@ -46,7 +48,7 @@ export function RequestDetailWorkspace({
   const { requests, updateRequestStatus, assignStaff, addInternalNote, staffUsers } = useUnifiedData();
   const request = requests.find((r) => r.id === initialRequest.id) || initialRequest;
   const [activeTab, setActiveTab] = useState<RequestDetailTab>("overview");
-  
+
   const finalAmount = request.payment?.amount || request.quotedValue || request.customerQuote?.totalAmount || request.costCalculation?.totalCustomerQuote || 0;
 
   // Modals state
@@ -99,7 +101,7 @@ export function RequestDetailWorkspace({
   const currentStageIndex = (() => {
     const idx = LIFECYCLE_STAGES.indexOf(request.status);
     if (idx !== -1) return idx;
-    if (["QA Pending", "QA Review", "QA Hold", "QA Approved", "Ready for Dispatch"].includes(request.status)) {
+    if (["Subadmin Pending", "Subadmin Review", "Subadmin Hold", "Subadmin Approved", "Ready for Dispatch"].includes(request.status)) {
       return LIFECYCLE_STAGES.indexOf("Ordered");
     }
     return -1;
@@ -141,8 +143,8 @@ export function RequestDetailWorkspace({
         return <ShipmentTab request={request} />;
       case "documents":
         return <DocumentsTab request={request} />;
-      case "qa":
-        return <QAMediaTab request={request} />;
+      case "subadmin":
+        return <SubadminMediaTab request={request} />;
       case "activity":
         return <ActivityTab request={request} />;
       default:
@@ -183,8 +185,8 @@ export function RequestDetailWorkspace({
       badge: ((request.documents?.length || 0) + (request.supporting.photos?.length || 0)) || undefined,
     },
     {
-      id: "qa",
-      label: "QA Media",
+      id: "subadmin",
+      label: "Subadmin Media",
     },
     {
       id: "activity",
@@ -341,7 +343,7 @@ export function RequestDetailWorkspace({
               Request Lifecycle Progression
             </h3>
             <span className="text-xs font-semibold text-slate-500">
-              Stage {currentStageIndex + 1}/9: <span className="text-slate-900 font-bold">{request.status}</span>
+              Stage {currentStageIndex + 1}/10: <span className="text-slate-900 font-bold">{request.status}</span>
             </span>
           </div>
 
@@ -393,20 +395,20 @@ export function RequestDetailWorkspace({
                 >
                   <div
                     className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold transition-all ${isCompleted
-                        ? "bg-emerald-500 text-white shadow-xs group-hover:scale-110"
-                        : isCurrent
-                          ? "bg-[#B30D12] text-white ring-4 ring-red-100 animate-pulse shadow-md group-hover:scale-110"
-                          : "bg-white border-2 border-slate-300 text-slate-400 group-hover:border-slate-500 group-hover:text-slate-600"
+                      ? "bg-emerald-500 text-white shadow-xs group-hover:scale-110"
+                      : isCurrent
+                        ? "bg-[#B30D12] text-white ring-4 ring-red-100 animate-pulse shadow-md group-hover:scale-110"
+                        : "bg-white border-2 border-slate-300 text-slate-400 group-hover:border-slate-500 group-hover:text-slate-600"
                       }`}
                   >
                     {isCompleted ? <CheckCircle2 className="w-4 h-4" /> : idx + 1}
                   </div>
                   <span
                     className={`text-[11px] mt-2 whitespace-nowrap font-medium text-center transition-colors ${isCurrent
-                        ? "font-bold text-[#B30D12]"
-                        : isCompleted
-                          ? "text-slate-800 font-semibold group-hover:text-slate-950"
-                          : "text-slate-400 group-hover:text-slate-700"
+                      ? "font-bold text-[#B30D12]"
+                      : isCompleted
+                        ? "text-slate-800 font-semibold group-hover:text-slate-950"
+                        : "text-slate-400 group-hover:text-slate-700"
                       }`}
                   >
                     {stage}
@@ -428,16 +430,16 @@ export function RequestDetailWorkspace({
               type="button"
               onClick={() => setActiveTab(tab.id)}
               className={`flex items-center gap-2 py-3 px-4 text-xs font-bold border-b-2 whitespace-nowrap transition-all ${isActive
-                  ? "border-[#B30D12] text-[#B30D12]"
-                  : "border-transparent text-slate-500 hover:text-slate-800 hover:border-slate-300"
+                ? "border-[#B30D12] text-[#B30D12]"
+                : "border-transparent text-slate-500 hover:text-slate-800 hover:border-slate-300"
                 }`}
             >
               <span>{tab.label}</span>
               {tab.badge !== undefined && (
                 <span
                   className={`text-[10px] font-bold px-1.5 py-0.2 rounded-full ${isActive
-                      ? "bg-red-50 text-[#B30D12]"
-                      : "bg-slate-100 text-slate-600"
+                    ? "bg-red-50 text-[#B30D12]"
+                    : "bg-slate-100 text-slate-600"
                     }`}
                 >
                   {tab.badge}
@@ -452,47 +454,66 @@ export function RequestDetailWorkspace({
       <div>{renderActiveTabContent()}</div>
       {/* MODAL: Change Status */}
       {showStatusModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs p-4">
-          <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-200 animate-in zoom-in-95">
-            <h3 className="text-base font-bold text-slate-900 mb-1">Change Request Status</h3>
-            <p className="text-xs text-slate-500 mb-4">
-              Select the new operational stage for {request.requestNumber}.
-            </p>
-            <div className="space-y-1.5 mb-6 max-h-60 overflow-y-auto">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-0">
+          {/* Backdrop */}
+          <div
+            className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm transition-opacity"
+            onClick={() => setShowStatusModal(false)}
+          />
+          <div className="bg-white rounded-2xl max-w-xl w-full p-6 shadow-2xl border border-slate-200 animate-in zoom-in-95 duration-200 relative z-10 flex flex-col gap-5">
+            {/* Header */}
+            <div className="flex items-start gap-4">
+              <div className="w-10 h-10 bg-rose-50 rounded-2xl flex items-center justify-center shrink-0 border border-rose-100 shadow-inner">
+                <Activity className="w-5 h-5 text-[#B30D12]" />
+              </div>
+              <div>
+                <h3 className="text-lg font-bold text-slate-900 mb-1">Change Request Status</h3>
+                <p className="text-xs text-slate-500">
+                  Select the new operational stage for {request.requestNumber}.
+                </p>
+              </div>
+            </div>
+
+            <div className="space-y-2 mb-2 max-h-[50vh] overflow-y-auto custom-scrollbar pr-2">
               {LIFECYCLE_STAGES.map((st) => (
                 <label
                   key={st}
-                  className={`flex items-center justify-between p-2.5 rounded-xl border cursor-pointer text-xs font-medium transition-all ${newStatus === st
-                    ? "bg-red-50 border-[#B30D12] text-[#B30D12] font-bold"
-                    : "border-slate-200 hover:bg-slate-50 text-slate-700"
+                  className={`flex items-center justify-between p-3.5 rounded-xl border cursor-pointer transition-all group ${newStatus === st
+                    ? "bg-rose-50/50 border-[#B30D12]/40 shadow-sm"
+                    : "border-slate-200 hover:border-slate-300 hover:bg-slate-50"
                     }`}
                 >
-                  <div className="flex items-center gap-2">
-                    <input
-                      type="radio"
-                      name="status_choice"
-                      checked={newStatus === st}
-                      onChange={() => setNewStatus(st)}
-                      className="accent-[#B30D12]"
-                    />
-                    <span>{st}</span>
+                  <div className="flex items-center gap-3">
+                    <div className="relative flex items-center justify-center">
+                      <input
+                        type="radio"
+                        name="status_choice"
+                        checked={newStatus === st}
+                        onChange={() => setNewStatus(st)}
+                        className="peer sr-only"
+                      />
+                      <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors ${newStatus === st ? 'border-[#B30D12]' : 'border-slate-300 group-hover:border-slate-400'}`}>
+                        {newStatus === st && <div className="w-2.5 h-2.5 rounded-full bg-[#B30D12]" />}
+                      </div>
+                    </div>
+                    <span className={`text-sm font-semibold transition-colors ${newStatus === st ? 'text-slate-900' : 'text-slate-700'}`}>{st}</span>
                   </div>
                   <StatusBadge status={st} size="sm" />
                 </label>
               ))}
             </div>
-            <div className="flex justify-end gap-2">
+            <div className="flex justify-end gap-3 pt-3 border-t border-slate-100">
               <button
                 type="button"
                 onClick={() => setShowStatusModal(false)}
-                className="px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-xl"
+                className="px-5 py-2.5 text-sm font-semibold text-slate-600 bg-slate-50 border border-slate-200 hover:bg-slate-100 hover:text-slate-900 rounded-xl transition-colors"
               >
                 Cancel
               </button>
               <button
                 type="button"
                 onClick={handleStatusChange}
-                className="px-4 py-2 text-xs font-semibold bg-[#B30D12] hover:bg-[#C8101E] text-white rounded-xl shadow-xs"
+                className="px-5 py-2.5 text-sm font-bold bg-[#B30D12] hover:bg-[#C8101E] text-white rounded-xl shadow-sm hover:shadow-md transition-all"
               >
                 Update Status
               </button>
@@ -503,52 +524,72 @@ export function RequestDetailWorkspace({
 
       {/* MODAL: Assign Staff */}
       {showAssignModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs p-4">
-          <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-200 animate-in zoom-in-95">
-            <h3 className="text-base font-bold text-slate-900 mb-1">Assign Internal Staff</h3>
-            <p className="text-xs text-slate-500 mb-4">
-              Designate the specialist responsible for {request.requestNumber}.
-            </p>
-            <div className="space-y-2 mb-6">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-0">
+          {/* Backdrop */}
+          <div
+            className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm transition-opacity"
+            onClick={() => setShowAssignModal(false)}
+          />
+          <div className="bg-white rounded-2xl max-w-xl w-full p-6 shadow-2xl border border-slate-200 animate-in zoom-in-95 duration-200 relative z-10 flex flex-col gap-5">
+            {/* Header */}
+            <div className="flex items-start gap-4">
+              <div className="w-10 h-10 bg-rose-50 rounded-2xl flex items-center justify-center shrink-0 border border-rose-100 shadow-inner">
+                <Users className="w-5 h-5 text-[#B30D12]" />
+              </div>
+              <div>
+                <h3 className="text-lg font-bold text-slate-900 mb-1">Assign Internal Staff</h3>
+                <p className="text-xs text-slate-500">
+                  Designate the specialist responsible for {request.requestNumber}.
+                </p>
+              </div>
+            </div>
+
+            <div className="space-y-2 mb-2 max-h-[50vh] overflow-y-auto custom-scrollbar pr-2">
               {staffUsers.map((staff) => (
                 <label
                   key={staff.id}
-                  className={`flex items-center justify-between p-3 rounded-xl border cursor-pointer text-xs transition-all ${selectedStaffId === staff.id
-                    ? "bg-red-50 border-[#B30D12] text-slate-900 font-bold"
-                    : "border-slate-200 hover:bg-slate-50 text-slate-700"
+                  className={`flex items-center justify-between p-3.5 rounded-xl border cursor-pointer transition-all group ${selectedStaffId === staff.id
+                    ? "bg-rose-50/50 border-[#B30D12]/40 shadow-sm"
+                    : "border-slate-200 hover:border-slate-300 hover:bg-slate-50"
                     }`}
                 >
-                  <div className="flex items-center gap-3">
-                    <input
-                      type="radio"
-                      name="assign_choice"
-                      checked={selectedStaffId === staff.id}
-                      onChange={() => setSelectedStaffId(staff.id)}
-                      className="accent-[#B30D12]"
-                    />
+                  <div className="flex items-center gap-3.5">
+                    <div className="relative flex items-center justify-center">
+                      <input
+                        type="radio"
+                        name="assign_choice"
+                        checked={selectedStaffId === staff.id}
+                        onChange={() => setSelectedStaffId(staff.id)}
+                        className="peer sr-only"
+                      />
+                      <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors ${selectedStaffId === staff.id ? 'border-[#B30D12]' : 'border-slate-300 group-hover:border-slate-400'}`}>
+                        {selectedStaffId === staff.id && <div className="w-2.5 h-2.5 rounded-full bg-[#B30D12]" />}
+                      </div>
+                    </div>
                     <div>
-                      <span className="block font-bold">{staff.name}</span>
-                      <span className="block text-[10px] text-slate-400">{staff.department}</span>
+                      <span className={`block text-sm font-semibold transition-colors ${selectedStaffId === staff.id ? 'text-slate-900' : 'text-slate-700'}`}>{staff.name}</span>
+                      <span className="block text-[11px] font-medium text-slate-400">{staff.department}</span>
                     </div>
                   </div>
-                  <span className="text-[11px] font-semibold bg-slate-100 px-2 py-0.5 rounded text-slate-600">
+                  <span className={`text-[11px] font-bold px-2 py-1 rounded-lg ${selectedStaffId === staff.id ? 'bg-white border border-rose-100 text-[#B30D12] shadow-xs' : 'bg-slate-100 text-slate-600'}`}>
                     {staff.role}
                   </span>
                 </label>
               ))}
             </div>
-            <div className="flex justify-end gap-2">
+
+            <div className="flex justify-end gap-3 pt-3 border-t border-slate-100">
               <button
                 type="button"
                 onClick={() => setShowAssignModal(false)}
-                className="px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-xl"
+                className="px-5 py-2.5 text-sm font-semibold text-slate-600 bg-slate-50 border border-slate-200 hover:bg-slate-100 hover:text-slate-900 rounded-xl transition-colors"
               >
                 Cancel
               </button>
               <button
                 type="button"
                 onClick={handleAssignStaff}
-                className="px-4 py-2 text-xs font-semibold bg-[#B30D12] hover:bg-[#C8101E] text-white rounded-xl shadow-xs"
+                className="px-5 py-2.5 text-sm font-bold bg-[#B30D12] hover:bg-[#C8101E] text-white rounded-xl shadow-sm hover:shadow-md transition-all"
               >
                 Confirm Assignment
               </button>
@@ -559,40 +600,67 @@ export function RequestDetailWorkspace({
 
       {/* MODAL: Add Note */}
       {showNoteModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs p-4">
-          <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-200 animate-in zoom-in-95">
-            <h3 className="text-base font-bold text-slate-900 mb-1">Add Workspace Note</h3>
-            <p className="text-xs text-slate-500 mb-4">
-              Record fitment verification, supplier interactions, or internal remarks.
-            </p>
-            <div className="space-y-4 mb-6">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-0">
+          {/* Backdrop */}
+          <div
+            className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm transition-opacity"
+            onClick={() => setShowNoteModal(false)}
+          />
+
+          <div className="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 animate-in zoom-in-95 duration-200 relative z-10 flex flex-col gap-6">
+
+            {/* Header */}
+            <div className="flex items-start gap-4">
+              <div className="w-12 h-12 bg-rose-50 rounded-2xl flex items-center justify-center shrink-0 border border-rose-100 shadow-inner">
+                <FileText className="w-6 h-6 text-[#B30D12]" />
+              </div>
               <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">
-                  Note Content
+                <h3 className="text-lg font-bold text-slate-900 mb-1">Add Workspace Note</h3>
+                <p className="text-sm text-slate-500">
+                  Record fitment verification, supplier interactions, or internal remarks.
+                </p>
+              </div>
+            </div>
+
+            <div className="space-y-5">
+              <div>
+                <label className="block text-xs font-bold text-slate-700 mb-1.5">
+                  Note Content <span className="text-rose-500">*</span>
                 </label>
                 <textarea
                   value={noteText}
                   onChange={(e) => setNoteText(e.target.value)}
                   rows={4}
                   placeholder="Type note details here..."
-                  className="w-full text-xs p-3 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#B30D12]/30 focus:border-[#B30D12]"
+                  className="w-full text-sm p-4 rounded-xl border border-slate-300 focus:outline-none focus:ring-4 focus:ring-[#B30D12]/10 focus:border-[#B30D12] transition-all bg-white placeholder:text-slate-400 shadow-sm resize-none"
                 />
               </div>
-              <label className="flex items-center gap-2 cursor-pointer text-xs text-slate-700">
-                <input
-                  type="checkbox"
-                  checked={isCustomerVisible}
-                  onChange={(e) => setIsCustomerVisible(e.target.checked)}
-                  className="rounded border-slate-300 accent-[#B30D12]"
-                />
-                <span>Make visible to customer in Customer Portal</span>
+
+              <label className="flex items-start gap-3 cursor-pointer group p-3.5 rounded-xl border border-slate-200 hover:bg-slate-50 hover:border-[#B30D12]/30 transition-all">
+                <div className="pt-0.5">
+                  <input
+                    type="checkbox"
+                    checked={isCustomerVisible}
+                    onChange={(e) => setIsCustomerVisible(e.target.checked)}
+                    className="w-4 h-4 rounded border-slate-300 text-[#B30D12] focus:ring-[#B30D12] cursor-pointer"
+                  />
+                </div>
+                <div>
+                  <span className="block text-sm font-bold text-slate-900 group-hover:text-[#B30D12] transition-colors">
+                    Make visible to customer
+                  </span>
+                  <span className="block text-xs text-slate-500 mt-0.5">
+                    Note will be displayed in the Customer Portal.
+                  </span>
+                </div>
               </label>
             </div>
-            <div className="flex justify-end gap-2">
+
+            <div className="flex justify-end gap-3 pt-4 border-t border-slate-100">
               <button
                 type="button"
                 onClick={() => setShowNoteModal(false)}
-                className="px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-xl"
+                className="px-5 py-2.5 text-sm font-semibold text-slate-600 bg-slate-50 border border-slate-200 hover:bg-slate-100 hover:text-slate-900 rounded-xl transition-colors"
               >
                 Cancel
               </button>
@@ -600,8 +668,9 @@ export function RequestDetailWorkspace({
                 type="button"
                 onClick={handleAddNote}
                 disabled={!noteText.trim()}
-                className="px-4 py-2 text-xs font-semibold bg-[#B30D12] hover:bg-[#C8101E] disabled:opacity-50 text-white rounded-xl shadow-xs"
+                className="px-5 py-2.5 text-sm font-bold bg-[#B30D12] hover:bg-[#C8101E] disabled:bg-slate-200 disabled:text-slate-400 disabled:cursor-not-allowed text-white rounded-xl shadow-sm hover:shadow-md transition-all flex items-center gap-2 group"
               >
+                <Plus className="w-4 h-4 group-hover:rotate-90 transition-transform duration-300" />
                 Save Note
               </button>
             </div>

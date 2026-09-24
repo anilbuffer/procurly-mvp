@@ -28,7 +28,7 @@ import {
 
 const POPULAR_MAKES_AND_MODELS: Record<string, string[]> = {
   Toyota: ["Hilux GR Sport", "Hilux", "Hiace", "Land Cruiser", "Land Cruiser Prado", "RAV4", "Corolla", "Camry", "Yaris", "Prius", "Aqua", "C-HR", "Fortuner", "Other Toyota Model"],
-  Nissan: ["Navara", "X-Trail", "Qashqai", "Patrol", "Leaf", "Juke", "Skyline", "Caravan", "Note", "Pathfinder", "Other Nissan Model"],
+  Nissan: ["Navara", "X-Trail", "SubadminshSubadmini", "Patrol", "Leaf", "Juke", "Skyline", "Caravan", "Note", "Pathfinder", "Other Nissan Model"],
   Mazda: ["CX-5", "CX-3", "CX-8", "CX-9", "CX-30", "CX-60", "Mazda 3", "Mazda 6", "Mazda 2", "BT-50", "MX-5", "Other Mazda Model"],
   Honda: ["Civic", "Civic Type R", "CR-V", "HR-V", "Jazz / Fit", "Accord", "Odyssey", "ZR-V", "Vezel", "Other Honda Model"],
   Subaru: ["WRX", "WRX STI", "Outback", "Forester", "XV / Crosstrek", "Legacy", "Impreza", "BRZ", "Levorg", "Other Subaru Model"],

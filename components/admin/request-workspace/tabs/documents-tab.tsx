@@ -130,15 +130,14 @@ export function DocumentsTab({ request }: DocumentsTabProps) {
                     </div>
 
                     <span
-                      className={`text-[9px] font-bold px-2 py-0.5 rounded-full shrink-0 ${
-                        doc.type === "Customer"
-                          ? "bg-blue-50 text-blue-700"
-                          : doc.type === "Supplier"
+                      className={`text-[9px] font-bold px-2 py-0.5 rounded-full shrink-0 ${doc.type === "Customer"
+                        ? "bg-blue-50 text-blue-700"
+                        : doc.type === "Supplier"
                           ? "bg-purple-50 text-purple-700"
                           : doc.type === "Shipment"
-                          ? "bg-cyan-50 text-cyan-700"
-                          : "bg-slate-100 text-slate-700"
-                      }`}
+                            ? "bg-cyan-50 text-cyan-700"
+                            : "bg-slate-100 text-slate-700"
+                        }`}
                     >
                       {doc.type}
                     </span>
@@ -182,72 +181,107 @@ export function DocumentsTab({ request }: DocumentsTabProps) {
 
       {/* MODAL: Upload Document */}
       {showUploadModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs p-4">
-          <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-200 animate-in zoom-in-95">
-            <h3 className="text-base font-bold text-slate-900 mb-1">Upload Request Document</h3>
-            <p className="text-xs text-slate-500 mb-4">
-              Attach files to {request.requestNumber}.
-            </p>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-0">
+          {/* Backdrop */}
+          <div
+            className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm transition-opacity"
+            onClick={() => setShowUploadModal(false)}
+          />
 
-            <form onSubmit={handleUpload} className="space-y-4">
+          <div className="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 animate-in zoom-in-95 duration-200 relative z-10 flex flex-col gap-6">
+
+            {/* Header */}
+            <div className="flex items-start gap-4">
+              <div className="w-12 h-12 bg-rose-50 rounded-2xl flex items-center justify-center shrink-0 border border-rose-100 shadow-inner">
+                <Upload className="w-6 h-6 text-[#B30D12]" />
+              </div>
               <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">
-                  Document Title / File Name
-                </label>
-                <input
-                  type="text"
-                  value={docName}
-                  onChange={(e) => setDocName(e.target.value)}
-                  placeholder="e.g. Fitment_Verification_Toyota_Hiace.pdf"
-                  required
-                  className="w-full text-xs p-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#B30D12]/30 focus:border-[#B30D12]"
-                />
+                <h3 className="text-lg font-bold text-slate-900 mb-1">Upload Request Document</h3>
+                <p className="text-sm text-slate-500">
+                  Attach files to {request.requestNumber}. Select a file or drag and drop.
+                </p>
+              </div>
+            </div>
+
+            <form onSubmit={handleUpload} className="space-y-6">
+
+              {/* Drag and Drop Zone */}
+              <div className="relative border-2 border-dashed border-slate-200 hover:border-[#B30D12]/40 rounded-2xl p-8 flex flex-col items-center justify-center text-center bg-slate-50/50 hover:bg-rose-50/30 transition-all cursor-pointer group">
+                <div className="w-12 h-12 bg-white rounded-full shadow-sm border border-slate-100 flex items-center justify-center mb-4 group-hover:scale-110 group-hover:shadow-md transition-all duration-300">
+                  <Upload className="w-5 h-5 text-slate-400 group-hover:text-[#B30D12] transition-colors" />
+                </div>
+                <p className="text-sm font-bold text-slate-900 mb-1">
+                  <span className="text-[#B30D12]">Click to upload</span> or drag and drop
+                </p>
+                <p className="text-xs text-slate-500">PDF, JPG, PNG, or DOCX (max. 25MB)</p>
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-4">
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">
-                    Classification
+                  <label className="block text-xs font-bold text-slate-700 mb-1.5">
+                    Document Title / File Name <span className="text-rose-500">*</span>
                   </label>
-                  <select
-                    value={docType}
-                    onChange={(e) => setDocType(e.target.value as any)}
-                    className="w-full text-xs p-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#B30D12]/30 focus:border-[#B30D12]"
-                  >
-                    <option value="Customer">Customer Supporting</option>
-                    <option value="Supplier">Supplier Spec / Quote</option>
-                    <option value="Shipment">Shipment / Air Waybill</option>
-                    <option value="General">General Documentation</option>
-                  </select>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+                      <FileText className="w-4 h-4 text-slate-400" />
+                    </div>
+                    <input
+                      type="text"
+                      value={docName}
+                      onChange={(e) => setDocName(e.target.value)}
+                      placeholder="e.g. Fitment_Verification_Toyota_Hiace.pdf"
+                      required
+                      className="w-full text-sm pl-10 pr-4 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-4 focus:ring-[#B30D12]/10 focus:border-[#B30D12] transition-all bg-white placeholder:text-slate-400 shadow-sm"
+                    />
+                  </div>
                 </div>
 
-                <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">
-                    Simulated File Size
-                  </label>
-                  <input
-                    type="text"
-                    value={docSize}
-                    onChange={(e) => setDocSize(e.target.value)}
-                    className="w-full text-xs p-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#B30D12]/30 focus:border-[#B30D12]"
-                  />
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs font-bold text-slate-700 mb-1.5">
+                      Classification
+                    </label>
+                    <select
+                      value={docType}
+                      onChange={(e) => setDocType(e.target.value as any)}
+                      className="w-full text-sm px-3.5 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-4 focus:ring-[#B30D12]/10 focus:border-[#B30D12] transition-all bg-white appearance-none shadow-sm cursor-pointer hover:border-slate-400"
+                      style={{ backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e")`, backgroundPosition: 'right 0.75rem center', backgroundRepeat: 'no-repeat', backgroundSize: '1.25em 1.25em', paddingRight: '2.5rem' }}
+                    >
+                      <option value="Customer">Customer Supporting</option>
+                      <option value="Supplier">Supplier Spec / Quote</option>
+                      <option value="Shipment">Shipment / Air Waybill</option>
+                      <option value="General">General Documentation</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-slate-700 mb-1.5">
+                      Simulated File Size
+                    </label>
+                    <input
+                      type="text"
+                      value={docSize}
+                      onChange={(e) => setDocSize(e.target.value)}
+                      className="w-full text-sm px-3.5 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-4 focus:ring-[#B30D12]/10 focus:border-[#B30D12] transition-all bg-slate-50 shadow-sm text-slate-600"
+                    />
+                  </div>
                 </div>
               </div>
 
-              <div className="flex justify-end gap-2 pt-2 border-t border-slate-100">
+              <div className="flex justify-end gap-3 pt-4 border-t border-slate-100">
                 <button
                   type="button"
                   onClick={() => setShowUploadModal(false)}
-                  className="px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-xl"
+                  className="px-5 py-2.5 text-sm font-semibold text-slate-600 bg-slate-50 border border-slate-200 hover:bg-slate-100 hover:text-slate-900 rounded-xl transition-colors"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 text-xs font-bold bg-[#B30D12] hover:bg-[#C8101E] text-white rounded-xl shadow-xs flex items-center gap-1.5"
+                  className="px-5 py-2.5 text-sm font-bold bg-[#B30D12] hover:bg-[#C8101E] text-white rounded-xl shadow-sm hover:shadow-md transition-all flex items-center gap-2 group"
                 >
-                  <Upload className="w-3.5 h-3.5" />
-                  Save Document
+                  <Upload className="w-4 h-4 group-hover:-translate-y-0.5 transition-transform" />
+                  Upload Document
                 </button>
               </div>
             </form>

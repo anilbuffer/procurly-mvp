@@ -8,10 +8,10 @@ export type RequestStatus =
   | "Invoicing"
   | "Awaiting Payment"
   | "Ordered"
-  | "QA Pending"
-  | "QA Review"
-  | "QA Hold"
-  | "QA Approved"
+  | "Subadmin Pending"
+  | "Subadmin Review"
+  | "Subadmin Hold"
+  | "Subadmin Approved"
   | "Ready for Dispatch"
   | "Shipped"
   | "Delivered"
@@ -27,7 +27,7 @@ export type ShipmentMilestone =
   | "Out For Delivery"
   | "Delivered";
 
-export type StaffRole = "Administrator" | "Procurement" | "Operations" | "Finance" | "QA Operator";
+export type StaffRole = "Administrator" | "Procurement" | "Operations" | "Finance" | "Subadmin";
 
 export type CustomerStatus = "Pending Approval" | "Active" | "Suspended";
 
@@ -248,9 +248,9 @@ export interface SupplierOrder {
   documents: string[];
 }
 
-// ─── QA Verification ─────────────────────────────────────────
+// ─── Subadmin Verification ─────────────────────────────────────────
 
-export interface QADetails {
+export interface SubadminDetails {
   status: "Pending" | "Review" | "Approved" | "Rejected" | "Hold";
   photos: string[];
   videos?: string[];
@@ -391,8 +391,8 @@ export interface PartRequest {
   // Supplier Order
   supplierOrder?: SupplierOrder;
 
-  // QA Verification
-  qaDetails?: QADetails;
+  // Subadmin Verification
+  SubadminDetails?: SubadminDetails;
 
   // Shipment & Delivery
   shipment?: ShipmentDetails;
@@ -422,8 +422,8 @@ export type NotificationType =
   | "Payment Received"
   | "Payment Updated"
   | "Order Placed"
-  | "QA Review Required"
-  | "QA Approved"
+  | "Subadmin Review Required"
+  | "Subadmin Approved"
   | "Invoice Issued"
   | "Shipment Dispatched"
   | "Shipment Arrived"

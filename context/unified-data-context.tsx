@@ -37,12 +37,12 @@ import {
 } from "@/lib/shared-mock-data";
 
 // ─── Storage Keys ──────────────────────────────────────────
-const STORAGE_REQUESTS = "procurly_shared_requests_v4";
-const STORAGE_CUSTOMERS = "procurly_shared_customers_v3";
-const STORAGE_SUPPLIERS = "procurly_shared_suppliers_v3";
-const STORAGE_STAFF = "procurly_shared_staff_v3";
-const STORAGE_NOTIFICATIONS = "procurly_shared_notifications_v3";
-const STORAGE_ACTIVE_ROLE = "procurly_active_staff_role_v3";
+const STORAGE_REQUESTS = "procurly_shared_requests_v5";
+const STORAGE_CUSTOMERS = "procurly_shared_customers_v4";
+const STORAGE_SUPPLIERS = "procurly_shared_suppliers_v4";
+const STORAGE_STAFF = "procurly_shared_staff_v4";
+const STORAGE_NOTIFICATIONS = "procurly_shared_notifications_v4";
+const STORAGE_ACTIVE_ROLE = "procurly_active_staff_role_v4";
 
 interface UnifiedDataContextType {
   // State
@@ -116,11 +116,11 @@ interface UnifiedDataContextType {
   recordDelivery: (requestId: string, confirmationNotes?: string) => void;
   completeRequest: (requestId: string) => void;
 
-  // Actions - QA Verification
-  submitQAMedia: (requestId: string, qaData: { photos: string[]; videos?: string[]; notes: string }, isIssueLogged?: boolean) => void;
-  approveQA: (requestId: string, adminNotes?: string) => void;
-  rejectQA: (requestId: string, adminNotes: string) => void;
-  resolveQAHold: (requestId: string, resolution: "Ship Replacement" | "Issue Refund" | "Return Shipment to Origin") => void;
+  // Actions - Subadmin Verification
+  submitSubadminMedia: (requestId: string, SubadminData: { photos: string[]; videos?: string[]; notes: string }, isIssueLogged?: boolean) => void;
+  approveSubadmin: (requestId: string, adminNotes?: string) => void;
+  rejectSubadmin: (requestId: string, adminNotes: string) => void;
+  resolveSubadminHold: (requestId: string, resolution: "Ship Replacement" | "Issue Refund" | "Return Shipment to Origin") => void;
 
   // Actions - Notes & Documents
   addInternalNote: (requestId: string, text: string, isCustomerVisible?: boolean) => void;
@@ -628,17 +628,17 @@ export function UnifiedDataProvider({ children }: { children: React.ReactNode })
             } else if (status === "Completed") {
               actionRequired = "Request completed & archived";
               actionType = "none";
-            } else if (status === "QA Pending") {
-              actionRequired = "QA Verification Required";
+            } else if (status === "Subadmin Pending") {
+              actionRequired = "Subadmin Verification Required";
               actionType = "view_details";
-            } else if (status === "QA Review") {
-              actionRequired = "Review QA Media";
+            } else if (status === "Subadmin Review") {
+              actionRequired = "Review Subadmin Media";
               actionType = "view_details";
-            } else if (status === "QA Hold") {
-              actionRequired = "QA Issue Logged. Admin Resolution Required.";
+            } else if (status === "Subadmin Hold") {
+              actionRequired = "Subadmin Issue Logged. Admin Resolution Required.";
               actionType = "view_details";
-            } else if (status === "QA Approved") {
-              actionRequired = "QA Approved. Ready for dispatch.";
+            } else if (status === "Subadmin Approved") {
+              actionRequired = "Subadmin Approved. Ready for dispatch.";
               actionType = "none";
             } else if (status === "Ready for Dispatch") {
               actionRequired = "Awaiting shipment";
@@ -690,25 +690,25 @@ export function UnifiedDataProvider({ children }: { children: React.ReactNode })
     [currentStaffUser]
   );
 
-  const submitQAMedia = useCallback(
-    (requestId: string, qaData: { photos: string[]; videos?: string[]; notes: string }, isIssueLogged?: boolean) => {
+  const submitSubadminMedia = useCallback(
+    (requestId: string, SubadminData: { photos: string[]; videos?: string[]; notes: string }, isIssueLogged?: boolean) => {
       setRequests((prev) =>
         prev.map((r) => {
           if (r.id === requestId || r.requestNumber === requestId) {
-            const nextStatus = isIssueLogged ? "QA Hold" : "QA Review";
-            const nextAction = isIssueLogged ? "QA Issue Logged. Admin Resolution Required." : "Review QA Media";
-            const nextQaStatus = isIssueLogged ? "Hold" : "Review";
+            const nextStatus = isIssueLogged ? "Subadmin Hold" : "Subadmin Review";
+            const nextAction = isIssueLogged ? "Subadmin Issue Logged. Admin Resolution Required." : "Review Subadmin Media";
+            const nextSubadminStatus = isIssueLogged ? "Hold" : "Review";
             
             return {
               ...r,
               status: nextStatus,
               actionRequired: nextAction,
               actionType: "view_details",
-              qaDetails: {
-                status: nextQaStatus,
-                photos: qaData.photos,
-                videos: qaData.videos,
-                notes: qaData.notes,
+              SubadminDetails: {
+                status: nextSubadminStatus,
+                photos: SubadminData.photos,
+                videos: SubadminData.videos,
+                notes: SubadminData.notes,
                 uploadedAt: "Just now",
                 uploadedBy: currentStaffUser.name,
               },
@@ -718,7 +718,7 @@ export function UnifiedDataProvider({ children }: { children: React.ReactNode })
                   id: `act-${Date.now()}`,
                   timestamp: new Date().toISOString(),
                   timeLabel: "Just now",
-                  title: isIssueLogged ? "QA Issue Logged" : "QA Media Uploaded",
+                  title: isIssueLogged ? "Subadmin Issue Logged" : "Subadmin Media Uploaded",
                   description: isIssueLogged 
                     ? "Quality assurance issue logged. Order placed on hold." 
                     : "Quality assurance media and notes submitted for admin review.",
@@ -737,11 +737,11 @@ export function UnifiedDataProvider({ children }: { children: React.ReactNode })
       setNotifications((prev) => [
         {
           id: `notif-${Date.now()}`,
-          type: "QA Review Required",
-          title: isIssueLogged ? "QA Hold Alert" : "QA Review Required",
+          type: "Subadmin Review Required",
+          title: isIssueLogged ? "Subadmin Hold Alert" : "Subadmin Review Required",
           description: isIssueLogged 
             ? `An issue was logged for ${requestId}. Order placed on hold.`
-            : `QA media uploaded for ${requestId}. Please review and approve.`,
+            : `Subadmin media uploaded for ${requestId}. Please review and approve.`,
           timestamp: "Just now",
           read: false,
           requestId,
@@ -752,18 +752,18 @@ export function UnifiedDataProvider({ children }: { children: React.ReactNode })
     [currentStaffUser]
   );
 
-  const approveQA = useCallback(
+  const approveSubadmin = useCallback(
     (requestId: string, adminNotes?: string) => {
       setRequests((prev) =>
         prev.map((r) => {
           if (r.id === requestId || r.requestNumber === requestId) {
             return {
               ...r,
-              status: "QA Approved",
-              actionRequired: "QA Approved. Ready for dispatch.",
+              status: "Subadmin Approved",
+              actionRequired: "Subadmin Approved. Ready for dispatch.",
               actionType: "none",
-              qaDetails: {
-                ...r.qaDetails!,
+              SubadminDetails: {
+                ...r.SubadminDetails!,
                 status: "Approved",
                 customerReviewedAt: "Just now",
                 customerNotes: adminNotes,
@@ -774,8 +774,8 @@ export function UnifiedDataProvider({ children }: { children: React.ReactNode })
                   id: `act-${Date.now()}`,
                   timestamp: new Date().toISOString(),
                   timeLabel: "Just now",
-                  title: "QA Approved",
-                  description: "QA was approved by Admin. Cleared for final dispatch.",
+                  title: "Subadmin Approved",
+                  description: "Subadmin was approved by Admin. Cleared for final dispatch.",
                   actor: currentStaffUser.name,
                   type: "status",
                 },
@@ -793,7 +793,7 @@ export function UnifiedDataProvider({ children }: { children: React.ReactNode })
           id: `notif-${Date.now()}`,
           type: "Status Update",
           title: "Order Cleared for Dispatch",
-          description: `Your order ${requestId} has passed QA review and is ready for final delivery.`,
+          description: `Your order ${requestId} has passed Subadmin review and is ready for final delivery.`,
           timestamp: "Just now",
           read: false,
           requestId,
@@ -804,18 +804,18 @@ export function UnifiedDataProvider({ children }: { children: React.ReactNode })
     [currentStaffUser]
   );
 
-  const rejectQA = useCallback(
+  const rejectSubadmin = useCallback(
     (requestId: string, adminNotes: string) => {
       setRequests((prev) =>
         prev.map((r) => {
           if (r.id === requestId || r.requestNumber === requestId) {
             return {
               ...r,
-              status: "QA Hold",
-              actionRequired: "QA Issue Confirmed by Admin",
+              status: "Subadmin Hold",
+              actionRequired: "Subadmin Issue Confirmed by Admin",
               actionType: "view_details",
-              qaDetails: {
-                ...r.qaDetails!,
+              SubadminDetails: {
+                ...r.SubadminDetails!,
                 status: "Rejected",
                 customerReviewedAt: "Just now",
                 customerNotes: adminNotes,
@@ -826,8 +826,8 @@ export function UnifiedDataProvider({ children }: { children: React.ReactNode })
                   id: `act-${Date.now()}`,
                   timestamp: new Date().toISOString(),
                   timeLabel: "Just now",
-                  title: "QA Rejected",
-                  description: `QA rejected by Admin: ${adminNotes}`,
+                  title: "Subadmin Rejected",
+                  description: `Subadmin rejected by Admin: ${adminNotes}`,
                   actor: currentStaffUser.name,
                   type: "status",
                 },
@@ -842,15 +842,15 @@ export function UnifiedDataProvider({ children }: { children: React.ReactNode })
     [currentStaffUser]
   );
 
-  const resolveQAHold = useCallback(
+  const resolveSubadminHold = useCallback(
     (requestId: string, resolution: "Ship Replacement" | "Issue Refund" | "Return Shipment to Origin") => {
       setRequests((prev) =>
         prev.map((r) => {
           if (r.id === requestId || r.requestNumber === requestId) {
             return {
               ...r,
-              qaDetails: {
-                ...r.qaDetails!,
+              SubadminDetails: {
+                ...r.SubadminDetails!,
                 resolution,
               },
               lastUpdated: "Just now",
@@ -859,7 +859,7 @@ export function UnifiedDataProvider({ children }: { children: React.ReactNode })
                   id: `act-${Date.now()}`,
                   timestamp: new Date().toISOString(),
                   timeLabel: "Just now",
-                  title: "QA Resolution Selected",
+                  title: "Subadmin Resolution Selected",
                   description: `Admin selected resolution: ${resolution}`,
                   actor: currentStaffUser.name,
                   type: "status",
@@ -877,8 +877,8 @@ export function UnifiedDataProvider({ children }: { children: React.ReactNode })
         {
           id: `notif-${Date.now()}`,
           type: "Status Update",
-          title: "QA Issue Resolution",
-          description: `An issue was found during QA for ${requestId}. Resolution: ${resolution}.`,
+          title: "Subadmin Issue Resolution",
+          description: `An issue was found during Subadmin for ${requestId}. Resolution: ${resolution}.`,
           timestamp: "Just now",
           read: false,
           requestId,
@@ -2016,10 +2016,10 @@ export function UnifiedDataProvider({ children }: { children: React.ReactNode })
         updateShipmentMilestone,
         recordDelivery,
         completeRequest,
-        submitQAMedia,
-        approveQA,
-        rejectQA,
-        resolveQAHold,
+        submitSubadminMedia,
+        approveSubadmin,
+        rejectSubadmin,
+        resolveSubadminHold,
         addInternalNote,
         addDocument,
         addCustomer,

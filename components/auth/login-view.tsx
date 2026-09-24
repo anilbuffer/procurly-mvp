@@ -40,8 +40,8 @@ export type AuthMode = "login" | "register" | "mfa" | "forgot_password" | "chang
  */
 export function getPortalRoute(targetEmail: string): string {
   const normalized = (targetEmail || "").toLowerCase().trim();
-  if (normalized.includes("qa")) {
-    return "/qa/dashboard";
+  if (normalized.includes("subadmin")) {
+    return "/subadmin/dashboard";
   }
   if (
     normalized.includes("procurly.io") ||
@@ -57,6 +57,13 @@ export function getPortalRoute(targetEmail: string): string {
     return "/admin/dashboard";
   }
   return "/customer/dashboard";
+}
+
+export function getPortalName(targetEmail: string): string {
+  const route = getPortalRoute(targetEmail);
+  if (route.includes("subadmin")) return "Subadmin Portal";
+  if (route.includes("admin")) return "Unified Admin Portal";
+  return "Customer Portal";
 }
 
 export function LoginView() {
@@ -346,8 +353,7 @@ export function LoginView() {
                 variant="success"
                 icon={<CheckCircle2 className="w-4 h-4 text-emerald-600" />}
                 title="Credentials verified"
-                description={`Secure direct session initialized. Redirecting to ${getPortalRoute(email) === "/procurement" ? "Procurement Portal" : "Customer Portal"
-                  } workspace...`}
+                description={`Secure direct session initialized. Redirecting to ${getPortalName(email)} workspace...`}
               />
             )}
 
@@ -437,8 +443,8 @@ export function LoginView() {
               >
                 <span>
                   {requireMfa
-                    ? `Continue to ${getPortalRoute(email) === "/procurement" ? "Procurement Portal" : "Customer Portal"} (MFA) →`
-                    : `Sign In to ${getPortalRoute(email) === "/procurement" ? "Procurement Portal" : "Customer Portal"} →`}
+                    ? `Continue to ${getPortalName(email)} (MFA) →`
+                    : `Sign In to ${getPortalName(email)} →`}
                 </span>
               </Button>
             </form>
@@ -518,16 +524,16 @@ export function LoginView() {
                   </button>
                 </div>
 
-                {/* 3. QA Portal: QA Tester */}
+                {/* 3. Subadmin Portal: Subadmin Tester */}
                 <div
-                  className={`group relative p-3 rounded-xl border transition-all ${email === "qa@procurly.io"
+                  className={`group relative p-3 rounded-xl border transition-all ${email === "Subadmin@procurly.io"
                     ? "border-emerald-500 bg-emerald-50/50 ring-1 ring-emerald-500/30 shadow-xs"
                     : "border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50/50"
                     }`}
                 >
                   <div className="flex items-center justify-between mb-1.5">
                     <span className="text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800 font-sans">
-                      QA Portal
+                      Subadmin Portal
                     </span>
 
                   </div>
@@ -535,17 +541,17 @@ export function LoginView() {
                     type="button"
                     onClick={() =>
                       handleSelectDemoUser(
-                        "qa@procurly.io",
-                        "QATesting2026!"
+                        "Subadmin@procurly.io",
+                        "SubadminTesting2026!"
                       )
                     }
                     className="w-full text-left cursor-pointer"
                   >
                     <p className="font-bold text-slate-900 truncate">
-                      QA Tester
+                      Subadmin Tester
                     </p>
                     <p className="text-[10px] text-slate-500 truncate">
-                      qa@procurly.io
+                      Subadmin@procurly.io
                     </p>
                   </button>
                 </div>
@@ -586,10 +592,10 @@ export function LoginView() {
                 </button>
                 <button
                   type="button"
-                  onClick={() => router.push("/qa/dashboard")}
+                  onClick={() => router.push("/subadmin/dashboard")}
                   className="text-xs font-semibold text-slate-700 hover:text-emerald-700 inline-flex items-center gap-1 px-3.5 py-1.5 rounded-xl bg-slate-100 hover:bg-emerald-50 border border-slate-200 hover:border-emerald-200 transition-colors"
                 >
-                  <span>QA Portal →</span>
+                  <span>Subadmin Portal →</span>
                 </button>
               </div>
             </div>
@@ -909,8 +915,7 @@ export function LoginView() {
                 variant="success"
                 icon={<CheckCircle2 className="w-4 h-4 text-[#059669]" />}
                 title="Identity verified"
-                description={`Authentication successful. Redirecting to ${getPortalRoute(email) === "/procurement" ? "Procurement Portal" : "Customer Portal"
-                  } workspace...`}
+                description={`Authentication successful. Redirecting to ${getPortalName(email)} workspace...`}
               />
             )}
 
@@ -1081,7 +1086,7 @@ export function LoginView() {
                   </h4>
                 </div>
                 <p className="text-xs text-emerald-700 leading-relaxed">
-                  Your new credentials have been activated in the Autohub Identity System. Redirecting to your {getPortalRoute(email) === "/procurement" ? "Procurement Portal" : "Customer Portal"}...
+                  Your new credentials have been activated in the Autohub Identity System. Redirecting to your {getPortalName(email)}...
                 </p>
                 <div className="pt-2">
                   <Button
@@ -1089,7 +1094,7 @@ export function LoginView() {
                     onClick={() => router.push(getPortalRoute(email))}
                     className="w-full h-11 text-xs font-bold bg-[#B30D12] hover:bg-[#9B0A0F] text-white rounded-lg"
                   >
-                    Go to {getPortalRoute(email) === "/procurement" ? "Procurement Portal" : "Customer Portal"} Now →
+                    Go to {getPortalName(email)} Now →
                   </Button>
                 </div>
               </div>

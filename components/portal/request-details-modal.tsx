@@ -48,12 +48,12 @@ export function RequestDetailsModal() {
     setPaymentRequest,
     setActiveTab: setPortalTab,
     activeCustomer,
-    approveQA,
-    rejectQA
+    approveSubadmin,
+    rejectSubadmin
   } = usePortal();
 
-  // Navigation tabs: overview | quote | shipment | qa
-  const [activeTab, setActiveTab] = useState<"overview" | "quote" | "shipment" | "qa">("overview");
+  // Navigation tabs: overview | quote | shipment | Subadmin
+  const [activeTab, setActiveTab] = useState<"overview" | "quote" | "shipment" | "Subadmin">("overview");
   const [showDirectContactModal, setShowDirectContactModal] = useState(false);
   const [copiedContact, setCopiedContact] = useState<string | null>(null);
 
@@ -80,8 +80,8 @@ export function RequestDetailsModal() {
       setActiveTab("quote");
     } else if ((req.status === "Shipped" || req.status === "Delivered") && req.shipment) {
       setActiveTab("shipment");
-    } else if (req.status === "QA Review" && req.qaDetails) {
-      setActiveTab("qa");
+    } else if (req.status === "Subadmin Review" && req.SubadminDetails) {
+      setActiveTab("Subadmin");
     } else {
       setActiveTab("overview");
     }
@@ -117,7 +117,7 @@ export function RequestDetailsModal() {
   const currentStageIndex = (() => {
     const idx = LIFECYCLE_STAGES.indexOf(req.status);
     if (idx !== -1) return idx;
-    if (["QA Pending", "QA Review", "QA Hold", "QA Approved", "Ready for Dispatch"].includes(req.status)) {
+    if (["Subadmin Pending", "Subadmin Review", "Subadmin Hold", "Subadmin Approved", "Ready for Dispatch"].includes(req.status)) {
       return LIFECYCLE_STAGES.indexOf("Ordered");
     }
     return -1;
@@ -282,17 +282,17 @@ export function RequestDetailsModal() {
             </button>
           )}
 
-          {req.qaDetails && (
+          {req.SubadminDetails && (
             <button
-              onClick={() => setActiveTab("qa")}
-              className={`py-3 px-4 border-b-2 flex items-center gap-2 transition-colors ${activeTab === "qa"
+              onClick={() => setActiveTab("Subadmin")}
+              className={`py-3 px-4 border-b-2 flex items-center gap-2 transition-colors ${activeTab === "Subadmin"
                 ? "border-[#B30D12] text-[#B30D12]"
                 : "border-transparent hover:text-slate-900"
                 }`}
             >
               <ShieldCheck className="w-3.5 h-3.5" />
-              <span>QA Review</span>
-              {req.status === "QA Review" && (
+              <span>Subadmin Review</span>
+              {req.status === "Subadmin Review" && (
                 <span className="w-2 h-2 rounded-full bg-[#B30D12]" />
               )}
             </button>
@@ -812,14 +812,14 @@ export function RequestDetailsModal() {
                 </div>
               </div>
 
-              {/* QA Media Block */}
+              {/* Subadmin Media Block */}
               {(req.supporting.photos || []).length > 0 && (
                 <div className="p-6 rounded-2xl bg-emerald-50 border border-emerald-200 space-y-4">
                   <div className="flex items-center gap-2 mb-2">
                     <ShieldCheck className="w-5 h-5 text-emerald-600" />
                     <div>
                       <h4 className="text-sm font-bold text-emerald-900 uppercase tracking-wider">
-                        Supplier QA Verified
+                        Supplier Subadmin Verified
                       </h4>
                       <p className="text-[11px] text-emerald-700">
                         Visual evidence verified by Autohub before dispatch
@@ -829,7 +829,7 @@ export function RequestDetailsModal() {
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                     {req.supporting.photos?.map((url, idx) => (
                       <div key={idx} className="relative aspect-square rounded-xl overflow-hidden border border-emerald-200">
-                        <img src={url} alt={`QA Media ${idx + 1}`} className="w-full h-full object-cover" />
+                        <img src={url} alt={`Subadmin Media ${idx + 1}`} className="w-full h-full object-cover" />
                       </div>
                     ))}
                   </div>
@@ -910,8 +910,8 @@ export function RequestDetailsModal() {
             </div>
           )}
 
-          {/* TAB 4: QA REVIEW */}
-          {activeTab === "qa" && req.qaDetails && (
+          {/* TAB 4: Subadmin REVIEW */}
+          {activeTab === "Subadmin" && req.SubadminDetails && (
             <div className="space-y-6">
               <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
                 <div className="flex items-center justify-between mb-4 pb-4 border-b border-slate-100">
@@ -921,20 +921,20 @@ export function RequestDetailsModal() {
                       Quality Assurance Review
                     </h3>
                     <p className="text-xs text-slate-500 mt-1">
-                      Uploaded by {req.qaDetails.uploadedBy} on {req.qaDetails.uploadedAt}
+                      Uploaded by {req.SubadminDetails.uploadedBy} on {req.SubadminDetails.uploadedAt}
                     </p>
                   </div>
-                  {req.qaDetails.status === "Review" && (
+                  {req.SubadminDetails.status === "Review" && (
                     <span className="px-3 py-1 rounded-full bg-amber-50 text-amber-700 text-xs font-bold border border-amber-200">
                       Pending Your Approval
                     </span>
                   )}
-                  {req.qaDetails.status === "Approved" && (
+                  {req.SubadminDetails.status === "Approved" && (
                     <span className="px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 text-xs font-bold border border-emerald-200">
                       Approved
                     </span>
                   )}
-                  {req.qaDetails.status === "Rejected" && (
+                  {req.SubadminDetails.status === "Rejected" && (
                     <span className="px-3 py-1 rounded-full bg-red-50 text-red-700 text-xs font-bold border border-red-200">
                       Rejected
                     </span>
@@ -946,11 +946,11 @@ export function RequestDetailsModal() {
                     Inspection Photos / Videos
                   </h4>
                   <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                    {req.qaDetails.photos?.map((photo, i) => (
+                    {req.SubadminDetails.photos?.map((photo, i) => (
                       <div key={i} className="aspect-video bg-slate-100 rounded-xl overflow-hidden border border-slate-200">
                         <img
                           src={photo}
-                          alt={`QA Photo ${i + 1}`}
+                          alt={`Subadmin Photo ${i + 1}`}
                           className="w-full h-full object-cover"
                         />
                       </div>
@@ -960,20 +960,20 @@ export function RequestDetailsModal() {
 
                 <div className="mb-6">
                   <h4 className="text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">
-                    QA Operator Notes
+                    Subadmin Operator Notes
                   </h4>
                   <p className="text-sm text-slate-800 bg-slate-50 p-4 rounded-xl border border-slate-100">
-                    {req.qaDetails.notes}
+                    {req.SubadminDetails.notes}
                   </p>
                 </div>
 
-                {req.qaDetails.status === "Review" ? (
+                {req.SubadminDetails.status === "Review" ? (
                   <div className="pt-6 border-t border-slate-100 flex items-center justify-end gap-3">
                     <button
                       onClick={() => {
                         const reason = window.prompt("Reason for rejecting part:");
                         if (reason) {
-                          rejectQA(req.id, reason);
+                          rejectSubadmin(req.id, reason);
                           setSelectedRequest(null);
                         }
                       }}
@@ -983,7 +983,7 @@ export function RequestDetailsModal() {
                     </button>
                     <button
                       onClick={() => {
-                        approveQA(req.id);
+                        approveSubadmin(req.id);
                         setActiveTab("overview");
                       }}
                       className="px-6 py-2.5 text-sm font-bold text-white bg-[#B30D12] hover:bg-[#9B0A0F] rounded-xl shadow-md transition-colors flex items-center gap-2"
@@ -993,13 +993,13 @@ export function RequestDetailsModal() {
                     </button>
                   </div>
                 ) : (
-                  req.qaDetails.customerNotes && (
+                  req.SubadminDetails.customerNotes && (
                     <div className="mt-4 pt-4 border-t border-slate-100">
                       <h4 className="text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">
                         Your Notes
                       </h4>
                       <p className="text-sm text-slate-800 bg-slate-50 p-4 rounded-xl border border-slate-100">
-                        {req.qaDetails.customerNotes}
+                        {req.SubadminDetails.customerNotes}
                       </p>
                     </div>
                   )

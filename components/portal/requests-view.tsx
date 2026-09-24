@@ -99,13 +99,13 @@ export function RequestsView() {
         return "bg-orange-50 text-orange-800 border border-orange-200";
       case "Ordered":
         return "bg-blue-50 text-blue-700 border border-blue-200";
-      case "QA Pending":
+      case "Subadmin Pending":
         return "bg-red-50 text-[#B30D12] border border-red-200";
-      case "QA Review":
+      case "Subadmin Review":
         return "bg-amber-50 text-amber-600 border border-amber-200";
-      case "QA Hold":
+      case "Subadmin Hold":
         return "bg-purple-50 text-purple-700 border border-purple-200";
-      case "QA Approved":
+      case "Subadmin Approved":
       case "Ready for Dispatch":
         return "bg-emerald-50 text-emerald-700 border border-emerald-200";
       case "Shipped":
@@ -154,10 +154,10 @@ export function RequestsView() {
               "Shipped",
               "Delivered",
               "Completed",
-              "QA Pending",
-              "QA Review",
-              "QA Hold",
-              "QA Approved",
+              "Subadmin Pending",
+              "Subadmin Review",
+              "Subadmin Hold",
+              "Subadmin Approved",
               "Ready for Dispatch",
             ].map((tab) => (
               <option key={tab} value={tab}>

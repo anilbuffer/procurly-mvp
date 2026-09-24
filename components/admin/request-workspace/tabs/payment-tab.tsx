@@ -13,6 +13,8 @@ import {
   ShieldCheck,
   Building2,
   ShoppingBag,
+  Hash,
+  FileText
 } from "lucide-react";
 import { PartRequest } from "@/types/shared";
 import { useUnifiedData } from "@/context/unified-data-context";
@@ -160,20 +162,18 @@ export function PaymentTab({ request: initialRequest, onNavigateToTab }: Payment
 
       {/* THE PAYMENT GATE (Section 18) */}
       <div
-        className={`rounded-2xl p-6 border shadow-xs transition-all ${
-          isPaid
-            ? "bg-gradient-to-r from-emerald-50/80 to-white border-emerald-200"
-            : "bg-slate-50/80 border-slate-300"
-        }`}
+        className={`rounded-2xl p-6 border shadow-xs transition-all ${isPaid
+          ? "bg-gradient-to-r from-emerald-50/80 to-white border-emerald-200"
+          : "bg-slate-50/80 border-slate-300"
+          }`}
       >
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex items-start sm:items-center gap-3.5">
             <div
-              className={`w-10 h-10 rounded-2xl flex items-center justify-center shrink-0 ${
-                isPaid
-                  ? "bg-emerald-600 text-white shadow-md shadow-emerald-700/20"
-                  : "bg-slate-200 text-slate-500"
-              }`}
+              className={`w-10 h-10 rounded-2xl flex items-center justify-center shrink-0 ${isPaid
+                ? "bg-emerald-600 text-white shadow-md shadow-emerald-700/20"
+                : "bg-slate-200 text-slate-500"
+                }`}
             >
               {isPaid ? <Unlock className="w-5 h-5" /> : <Lock className="w-5 h-5" />}
             </div>
@@ -184,11 +184,10 @@ export function PaymentTab({ request: initialRequest, onNavigateToTab }: Payment
                   Supplier Order Gate: {isPaid ? "UNLOCKED" : "LOCKED"}
                 </h4>
                 <span
-                  className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
-                    isPaid
-                      ? "bg-emerald-100 text-emerald-800"
-                      : "bg-amber-100 text-amber-800"
-                  }`}
+                  className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${isPaid
+                    ? "bg-emerald-100 text-emerald-800"
+                    : "bg-amber-100 text-amber-800"
+                    }`}
                 >
                   {isPaid ? "Available" : "Order Blocked"}
                 </span>
@@ -215,11 +214,10 @@ export function PaymentTab({ request: initialRequest, onNavigateToTab }: Payment
                 type="button"
                 disabled={!isPaid}
                 onClick={() => setShowOrderModal(true)}
-                className={`px-5 py-2.5 rounded-xl text-xs font-bold transition-all shadow-xs flex items-center gap-2 ${
-                  isPaid
-                    ? "bg-[#B30D12] hover:bg-[#C8101E] text-white shadow-red-900/20"
-                    : "bg-slate-200 text-slate-400 cursor-not-allowed"
-                }`}
+                className={`px-5 py-2.5 rounded-xl text-xs font-bold transition-all shadow-xs flex items-center gap-2 ${isPaid
+                  ? "bg-[#B30D12] hover:bg-[#C8101E] text-white shadow-red-900/20"
+                  : "bg-slate-200 text-slate-400 cursor-not-allowed"
+                  }`}
               >
                 <ShoppingBag className="w-4 h-4" />
                 PLACE SUPPLIER ORDER
@@ -283,44 +281,64 @@ export function PaymentTab({ request: initialRequest, onNavigateToTab }: Payment
 
       {/* MODAL: Mark Payment Paid */}
       {showMarkPaidModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs p-4">
-          <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-200 animate-in zoom-in-95">
-            <h3 className="text-base font-bold text-slate-900 mb-1">Record Payment Received</h3>
-            <p className="text-xs text-slate-500 mb-4">
-              Confirm bank remittance for {request.requestNumber} (NZ${amount.toFixed(2)}).
-            </p>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-0">
+          {/* Backdrop */}
+          <div
+            className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm transition-opacity"
+            onClick={() => setShowMarkPaidModal(false)}
+          />
+
+          <div className="bg-white rounded-2xl max-w-xl w-full p-6 shadow-2xl border border-slate-200 animate-in zoom-in-95 duration-200 relative z-10 flex flex-col gap-6">
+
+            {/* Header */}
+            <div className="flex items-start gap-4">
+              <div className="w-10 h-10 bg-emerald-50 rounded-2xl flex items-center justify-center shrink-0 border border-emerald-100 shadow-inner">
+                <DollarSign className="w-5 h-5 text-emerald-600" />
+              </div>
+              <div>
+                <h3 className="text-lg font-bold text-slate-900 mb-1">Record Payment Received</h3>
+                <p className="text-xs text-slate-500">
+                  Confirm bank remittance for {request.requestNumber} (NZ${amount.toFixed(2)}).
+                </p>
+              </div>
+            </div>
 
             <form onSubmit={handleMarkPaid} className="space-y-4">
               <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">
-                  Payment Reference / Bank Trace ID
+                <label className="block text-xs font-bold text-slate-700 mb-1.5">
+                  Payment Reference / Bank Trace ID <span className="text-rose-500">*</span>
                 </label>
-                <input
-                  type="text"
-                  value={paymentRefInput}
-                  onChange={(e) => setPaymentRefInput(e.target.value)}
-                  placeholder="e.g. ANZ-TRACE-98124"
-                  required
-                  className="w-full text-xs p-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-600 font-mono"
-                />
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+                    <Hash className="w-4 h-4 text-slate-400" />
+                  </div>
+                  <input
+                    type="text"
+                    value={paymentRefInput}
+                    onChange={(e) => setPaymentRefInput(e.target.value)}
+                    placeholder="e.g. ANZ-TRACE-98124"
+                    required
+                    className="w-full text-sm pl-10 pr-4 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 font-mono transition-all shadow-sm"
+                  />
+                </div>
               </div>
 
-              <div className="p-3 bg-emerald-50 text-emerald-900 rounded-xl text-xs flex items-center justify-between">
-                <span>Amount Cleared:</span>
-                <span className="font-mono font-black text-sm">NZ${amount.toFixed(2)}</span>
+              <div className="p-4 bg-emerald-50 border border-emerald-100 rounded-xl text-sm flex items-center justify-between text-emerald-900 shadow-sm mt-2">
+                <span className="font-medium">Amount Cleared:</span>
+                <span className="font-mono font-black text-base">NZ${amount.toFixed(2)}</span>
               </div>
 
-              <div className="flex justify-end gap-2 pt-2 border-t border-slate-100">
+              <div className="flex justify-end gap-3 pt-4 border-t border-slate-100 mt-2">
                 <button
                   type="button"
                   onClick={() => setShowMarkPaidModal(false)}
-                  className="px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-xl"
+                  className="px-5 py-2.5 text-sm font-semibold text-slate-600 bg-slate-50 border border-slate-200 hover:bg-slate-100 hover:text-slate-900 rounded-xl transition-colors"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl shadow-xs"
+                  className="px-5 py-2.5 text-sm font-bold bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl shadow-sm hover:shadow-md transition-all flex items-center gap-2 group"
                 >
                   Confirm as Paid
                 </button>
@@ -332,81 +350,116 @@ export function PaymentTab({ request: initialRequest, onNavigateToTab }: Payment
 
       {/* MODAL: Place Supplier Order */}
       {showOrderModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs p-4">
-          <div className="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 animate-in zoom-in-95">
-            <h3 className="text-base font-bold text-slate-900 mb-1">Place Supplier Order</h3>
-            <p className="text-xs text-slate-500 mb-4">
-              Authorized release of PO for {request.part.name}.
-            </p>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-0">
+          {/* Backdrop */}
+          <div
+            className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm transition-opacity"
+            onClick={() => setShowOrderModal(false)}
+          />
+
+          <div className="bg-white rounded-2xl max-w-xl w-full p-6 shadow-2xl border border-slate-200 animate-in zoom-in-95 duration-200 relative z-10 flex flex-col gap-6">
+
+            {/* Header */}
+            <div className="flex items-start gap-4">
+              <div className="w-10 h-10 bg-rose-50 rounded-2xl flex items-center justify-center shrink-0 border border-rose-100 shadow-inner">
+                <ShoppingBag className="w-5 h-5 text-[#B30D12]" />
+              </div>
+              <div>
+                <h3 className="text-lg font-bold text-slate-900 mb-1">Place Supplier Order</h3>
+                <p className="text-xs text-slate-500">
+                  Authorized release of PO for {request.part.name}.
+                </p>
+              </div>
+            </div>
 
             <form onSubmit={handlePlaceOrder} className="space-y-4">
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-2 gap-4">
                 <div className="col-span-2">
-                  <label className="block text-xs font-bold text-slate-700 mb-1">
-                    Supplier Name
+                  <label className="block text-sm font-bold text-slate-700 mb-1.5">
+                    Supplier Name <span className="text-rose-500">*</span>
                   </label>
-                  <input
-                    type="text"
-                    value={orderSupplierName}
-                    onChange={(e) => setOrderSupplierName(e.target.value)}
-                    required
-                    className="w-full text-xs p-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#B30D12]/30 focus:border-[#B30D12]"
-                  />
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+                      <Building2 className="w-4 h-4 text-slate-400" />
+                    </div>
+                    <input
+                      type="text"
+                      value={orderSupplierName}
+                      onChange={(e) => setOrderSupplierName(e.target.value)}
+                      required
+                      className="w-full text-sm pl-10 pr-4 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-4 focus:ring-[#B30D12]/10 focus:border-[#B30D12] transition-all bg-white shadow-sm"
+                    />
+                  </div>
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">
-                    Purchase Order Ref #
+                  <label className="block text-sm font-bold text-slate-700 mb-1.5">
+                    Purchase Order Ref # <span className="text-rose-500">*</span>
                   </label>
-                  <input
-                    type="text"
-                    value={orderSupplierRef}
-                    onChange={(e) => setOrderSupplierRef(e.target.value)}
-                    required
-                    className="w-full text-xs p-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#B30D12]/30 focus:border-[#B30D12] font-mono"
-                  />
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+                      <Hash className="w-4 h-4 text-slate-400" />
+                    </div>
+                    <input
+                      type="text"
+                      value={orderSupplierRef}
+                      onChange={(e) => setOrderSupplierRef(e.target.value)}
+                      required
+                      className="w-full text-sm pl-10 pr-4 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-4 focus:ring-[#B30D12]/10 focus:border-[#B30D12] transition-all bg-white font-mono shadow-sm"
+                    />
+                  </div>
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">
-                    Supplier Cost (NZD)
+                  <label className="block text-sm font-bold text-slate-700 mb-1.5">
+                    Supplier Cost (NZD) <span className="text-rose-500">*</span>
                   </label>
-                  <input
-                    type="number"
-                    step="0.01"
-                    value={orderCost}
-                    onChange={(e) => setOrderCost(Number(e.target.value))}
-                    required
-                    className="w-full text-xs p-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#B30D12]/30 focus:border-[#B30D12]"
-                  />
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+                      <DollarSign className="w-4 h-4 text-slate-400" />
+                    </div>
+                    <input
+                      type="number"
+                      step="0.01"
+                      value={orderCost}
+                      onChange={(e) => setOrderCost(Number(e.target.value))}
+                      required
+                      className="w-full text-sm pl-10 pr-4 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-4 focus:ring-[#B30D12]/10 focus:border-[#B30D12] transition-all bg-white shadow-sm"
+                    />
+                  </div>
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">
+                <label className="block text-sm font-bold text-slate-700 mb-1.5">
                   Procurement / Dispatch Instructions
                 </label>
-                <textarea
-                  value={orderNotes}
-                  onChange={(e) => setOrderNotes(e.target.value)}
-                  rows={2}
-                  className="w-full text-xs p-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#B30D12]/30 focus:border-[#B30D12]"
-                />
+                <div className="relative">
+                  <div className="absolute top-3 left-0 pl-3.5 flex items-start pointer-events-none">
+                    <FileText className="w-4 h-4 text-slate-400" />
+                  </div>
+                  <textarea
+                    value={orderNotes}
+                    onChange={(e) => setOrderNotes(e.target.value)}
+                    rows={4}
+                    className="w-full text-sm pl-10 pr-4 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-4 focus:ring-[#B30D12]/10 focus:border-[#B30D12] transition-all bg-white shadow-sm resize-none custom-scrollbar"
+                  />
+                </div>
               </div>
 
-              <div className="flex justify-end gap-2 pt-2 border-t border-slate-100">
+              <div className="flex justify-end gap-3 pt-4 border-t border-slate-100 mt-2">
                 <button
                   type="button"
                   onClick={() => setShowOrderModal(false)}
-                  className="px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-xl"
+                  className="px-5 py-2.5 text-sm font-semibold text-slate-600 bg-slate-50 border border-slate-200 hover:bg-slate-100 hover:text-slate-900 rounded-xl transition-colors"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 text-xs font-bold bg-[#B30D12] hover:bg-[#C8101E] text-white rounded-xl shadow-xs flex items-center gap-1.5"
+                  className="px-5 py-2.5 text-sm font-bold bg-[#B30D12] hover:bg-[#C8101E] text-white rounded-xl shadow-sm hover:shadow-md transition-all flex items-center gap-2 group"
                 >
-                  <ShoppingBag className="w-3.5 h-3.5" />
+                  <ShoppingBag className="w-4 h-4 group-hover:-translate-y-0.5 transition-transform duration-300" />
                   Confirm Order Release
                 </button>
               </div>
