@@ -462,7 +462,13 @@ export function LoginView() {
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs">
                 {/* 1. Customer Portal: James Wilson */}
                 <div
-                  className={`group relative p-3 rounded-xl border transition-all ${email === "james.wilson@spmotors.co.nz"
+                  onClick={() =>
+                    handleSelectDemoUser(
+                      "james.wilson@spmotors.co.nz",
+                      "Procurly2026!"
+                    )
+                  }
+                  className={`group relative p-3 rounded-xl border transition-all cursor-pointer ${email === "james.wilson@spmotors.co.nz"
                     ? "border-blue-500 bg-blue-50/50 ring-1 ring-blue-500/30 shadow-xs"
                     : "border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50/50"
                     }`}
@@ -473,28 +479,25 @@ export function LoginView() {
                     </span>
 
                   </div>
-                  <button
-                    type="button"
-                    onClick={() =>
-                      handleSelectDemoUser(
-                        "james.wilson@spmotors.co.nz",
-                        "Procurly2026!"
-                      )
-                    }
-                    className="w-full text-left cursor-pointer"
-                  >
+                  <div className="w-full text-left">
                     <p className="font-bold text-slate-900 truncate">
                       James Wilson (SP Motors)
                     </p>
                     <p className="text-[10px] text-slate-500 truncate">
                       james.wilson@spmotors.co.nz
                     </p>
-                  </button>
+                  </div>
                 </div>
 
                 {/* 2. Unified Admin Portal: Sarah Jenkins (Procurement) / David Vance (Admin) */}
                 <div
-                  className={`group relative p-3 rounded-xl border transition-all ${email === "sarah.jenkins@procurly.io"
+                  onClick={() =>
+                    handleSelectDemoUser(
+                      "sarah.jenkins@procurly.io",
+                      "AdminSecure2026!"
+                    )
+                  }
+                  className={`group relative p-3 rounded-xl border transition-all cursor-pointer ${email === "sarah.jenkins@procurly.io"
                     ? "border-[#B30D12] bg-red-50/50 ring-1 ring-[#B30D12]/30 shadow-xs"
                     : "border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50/50"
                     }`}
@@ -505,28 +508,25 @@ export function LoginView() {
                     </span>
 
                   </div>
-                  <button
-                    type="button"
-                    onClick={() =>
-                      handleSelectDemoUser(
-                        "sarah.jenkins@procurly.io",
-                        "AdminSecure2026!"
-                      )
-                    }
-                    className="w-full text-left cursor-pointer"
-                  >
+                  <div className="w-full text-left">
                     <p className="font-bold text-slate-900 truncate">
                       Sarah Jenkins (Admin Desk)
                     </p>
                     <p className="text-[10px] text-slate-500 truncate">
                       sarah.jenkins@procurly.io
                     </p>
-                  </button>
+                  </div>
                 </div>
 
                 {/* 3. Subadmin Portal: Subadmin Tester */}
                 <div
-                  className={`group relative p-3 rounded-xl border transition-all ${email === "Subadmin@procurly.io"
+                  onClick={() =>
+                    handleSelectDemoUser(
+                      "Subadmin@procurly.io",
+                      "SubadminTesting2026!"
+                    )
+                  }
+                  className={`group relative p-3 rounded-xl border transition-all cursor-pointer ${email === "Subadmin@procurly.io"
                     ? "border-emerald-500 bg-emerald-50/50 ring-1 ring-emerald-500/30 shadow-xs"
                     : "border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50/50"
                     }`}
@@ -537,23 +537,14 @@ export function LoginView() {
                     </span>
 
                   </div>
-                  <button
-                    type="button"
-                    onClick={() =>
-                      handleSelectDemoUser(
-                        "Subadmin@procurly.io",
-                        "SubadminTesting2026!"
-                      )
-                    }
-                    className="w-full text-left cursor-pointer"
-                  >
+                  <div className="w-full text-left">
                     <p className="font-bold text-slate-900 truncate">
                       Subadmin Tester
                     </p>
                     <p className="text-[10px] text-slate-500 truncate">
                       Subadmin@procurly.io
                     </p>
-                  </button>
+                  </div>
                 </div>
               </div>
             </div>
