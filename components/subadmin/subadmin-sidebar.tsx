@@ -13,6 +13,7 @@ import {
   ChevronDown,
   ArrowRightLeft,
   LogOut,
+  Menu,
 } from "lucide-react";
 import { useUnifiedData } from "@/context/unified-data-context";
 
@@ -109,21 +110,16 @@ export function SubadminSidebar({ collapsed, onToggleCollapse }: SubadminSidebar
           onClick={onToggleCollapse}
           type="button"
           aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
-          className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors focus:outline-none"
+          className="p-1.5 rounded-lg text-slate-400 hover:text-white transition-colors focus:outline-none"
         >
-          {collapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
+          <Menu className="w-5 h-5" />
         </button>
       </div>
 
       <div className="flex-1 overflow-y-auto px-3 py-4 space-y-6 custom-scrollbar">
         {navGroups.map((group) => (
           <div key={group.label} className="space-y-1">
-            {!collapsed && (
-              <h3 className="px-3 text-[10px] font-bold tracking-wider text-slate-500 uppercase">
-                {group.label}
-              </h3>
-            )}
-            <div className="space-y-0.5">
+            <div className="space-y-1">
               {group.items.map((item) => {
                 let active = false;
                 const itemPath = item.href.split('?')[0];
@@ -147,14 +143,14 @@ export function SubadminSidebar({ collapsed, onToggleCollapse }: SubadminSidebar
                     key={item.name}
                     href={item.href}
                     title={collapsed ? item.name : undefined}
-                    className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition-all group ${active
-                      ? "bg-[#1E2538] text-white shadow-inner font-bold"
-                      : "text-slate-400 hover:text-white hover:bg-[#151C2C]"
-                      } ${collapsed ? "justify-center" : ""}`}
+                    className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-[14px] font-medium transition-all group ${active
+                      ? "bg-[#1E2538] text-white"
+                      : "text-slate-400 hover:text-white"
+                      } ${collapsed ? "justify-center px-0" : ""}`}
                   >
                     <Icon
-                      className={`w-4 h-4 shrink-0 transition-colors ${active
-                        ? "text-[#B30D12]"
+                      className={`w-[18px] h-[18px] shrink-0 transition-colors ${active
+                        ? "text-white"
                         : "text-slate-400 group-hover:text-white"
                         }`}
                     />
@@ -165,7 +161,7 @@ export function SubadminSidebar({ collapsed, onToggleCollapse }: SubadminSidebar
                     {!collapsed && item.badge !== undefined && (
                       <span
                         suppressHydrationWarning
-                        className={`text-[10px] font-bold px-2 py-0.5 rounded-full shrink-0 ${item.badgeColor || "bg-slate-700 text-white"
+                        className={`text-[10px] font-bold px-1.5 py-0.5 rounded-md shrink-0 leading-none ${item.badgeColor || "bg-red-500 text-white"
                           }`}
                       >
                         {item.badge}
