@@ -14,7 +14,14 @@ import {
   Building2,
   ShoppingBag,
   Hash,
-  FileText
+  FileText,
+  User,
+  Mail,
+  Phone,
+  MapPin,
+  Car,
+  Truck,
+  Info,
 } from "lucide-react";
 import { PartRequest } from "@/types/shared";
 import { useUnifiedData } from "@/context/unified-data-context";
@@ -50,8 +57,12 @@ export function PaymentTab({ request: initialRequest, onNavigateToTab }: Payment
     selectedSupplierQuote?.supplierFreight || 30
   );
   const [orderNotes, setOrderNotes] = useState(
-    "Airfreight consolidation. Please affix Autohub barcoded consignment labels."
+    `Airfreight consolidation. Please affix Autohub barcoded consignment labels.\nRequester: ${request.customerName} (Ref: ${request.requestNumber})\nDestination: ${request.deliveryAddress.streetAddress}, ${request.deliveryAddress.city}\nAttn: ${request.contactName} (${request.customerPhone || request.deliveryAddress.phone})`
   );
+  const [handoverMode, setHandoverMode] = useState<"Consolidated via Autohub Hub" | "Direct Drop-ship to Requester">(
+    "Consolidated via Autohub Hub"
+  );
+  const [includeRequesterTag, setIncludeRequesterTag] = useState(true);
 
   const payment = request.payment;
   const isPaid = payment?.status === "Paid";
@@ -71,6 +82,15 @@ export function PaymentTab({ request: initialRequest, onNavigateToTab }: Payment
       cost: Number(orderCost),
       freight: Number(orderFreight),
       notes: orderNotes,
+      requesterName: request.customerName,
+      requesterContact: request.contactName,
+      requesterEmail: request.customerEmail,
+      requesterPhone: request.customerPhone,
+      deliveryAddress: `${request.deliveryAddress.streetAddress}, ${request.deliveryAddress.suburb ? `${request.deliveryAddress.suburb}, ` : ""}${request.deliveryAddress.city} ${request.deliveryAddress.postalCode}`,
+      deliveryCity: request.deliveryAddress.city,
+      vehicleSummary: `${request.vehicle.year} ${request.vehicle.make} ${request.vehicle.model}${request.vehicle.vin ? ` (VIN: ${request.vehicle.vin})` : ""}`,
+      partSummary: `${request.part.name}${request.part.partNumber ? ` (OEM: ${request.part.partNumber})` : ""} - Qty: ${request.part.quantity || 1}`,
+      handoverMode: handoverMode,
     });
     if (success) {
       setShowOrderModal(false);
@@ -276,6 +296,38 @@ export function PaymentTab({ request: initialRequest, onNavigateToTab }: Payment
               &quot;{request.supplierOrder.notes}&quot;
             </p>
           )}
+
+          {/* Supplier Handover: Requester Consignment Details */}
+          <div className="mt-4 pt-4 border-t border-slate-100 bg-slate-50/70 rounded-xl p-4 border border-slate-200 text-xs">
+            <div className="flex flex-wrap items-center justify-between gap-2 mb-3 pb-2 border-b border-slate-200">
+              <span className="text-[11px] font-bold text-slate-800 uppercase tracking-wider flex items-center gap-1.5">
+                <User className="w-3.5 h-3.5 text-[#B30D12]" />
+                <span>Supplier Handover: Requester Consignment Details</span>
+              </span>
+              <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-slate-200/80 text-slate-800">
+                {request.supplierOrder.handoverMode || "Consolidated via Autohub Hub"}
+              </span>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div>
+                <span className="text-slate-400 text-[10px] uppercase font-bold block">Requester Organization</span>
+                <span className="font-bold text-slate-900 block text-sm">{request.supplierOrder.requesterName || request.customerName}</span>
+                <span className="text-slate-600 text-[11px] block mt-0.5">Attn: {request.supplierOrder.requesterContact || request.contactName}</span>
+                <span className="text-slate-500 text-[10px] block">{request.supplierOrder.requesterEmail || request.customerEmail}</span>
+              </div>
+              <div>
+                <span className="text-slate-400 text-[10px] uppercase font-bold block">Fulfillment Delivery Bay</span>
+                <span className="font-semibold text-slate-800 block leading-relaxed">{request.supplierOrder.deliveryAddress || `${request.deliveryAddress.streetAddress}, ${request.deliveryAddress.city}`}</span>
+                <span className="text-slate-500 text-[11px] block mt-0.5">Phone: {request.supplierOrder.requesterPhone || request.customerPhone || request.deliveryAddress.phone}</span>
+              </div>
+              <div>
+                <span className="text-slate-400 text-[10px] uppercase font-bold block">Target Vehicle & Part Scope</span>
+                <span className="font-semibold text-slate-800 block">{request.supplierOrder.vehicleSummary || `${request.vehicle.year} ${request.vehicle.make} ${request.vehicle.model}`}</span>
+                <span className="text-slate-600 text-[11px] block mt-0.5">{request.supplierOrder.partSummary || `${request.part.name} (Qty: ${request.part.quantity || 1})`}</span>
+                <span className="text-slate-400 font-mono text-[10px] block mt-0.5">Trade Ref: {request.requestNumber}</span>
+              </div>
+            </div>
+          </div>
         </div>
       )}
 
@@ -357,7 +409,7 @@ export function PaymentTab({ request: initialRequest, onNavigateToTab }: Payment
             onClick={() => setShowOrderModal(false)}
           />
 
-          <div className="bg-white rounded-2xl max-w-xl w-full p-6 shadow-2xl border border-slate-200 animate-in zoom-in-95 duration-200 relative z-10 flex flex-col gap-6">
+          <div className="bg-white rounded-2xl max-w-2xl w-full p-6 shadow-2xl border border-slate-200 animate-in zoom-in-95 duration-200 relative z-10 flex flex-col gap-5 max-h-[90vh] overflow-y-auto custom-scrollbar">
 
             {/* Header */}
             <div className="flex items-start gap-4">
@@ -365,10 +417,117 @@ export function PaymentTab({ request: initialRequest, onNavigateToTab }: Payment
                 <ShoppingBag className="w-5 h-5 text-[#B30D12]" />
               </div>
               <div>
-                <h3 className="text-lg font-bold text-slate-900 mb-1">Place Supplier Order</h3>
+                <h3 className="text-lg font-bold text-slate-900 mb-1">Place Supplier Order (PO)</h3>
                 <p className="text-xs text-slate-500">
-                  Authorized release of PO for {request.part.name}.
+                  Authorized release of overseas purchase order with customer handover details.
                 </p>
+              </div>
+            </div>
+
+            {/* Requester & Handover Details Card */}
+            <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 text-xs space-y-3">
+              <div className="flex items-center justify-between pb-2 border-b border-slate-200">
+                <span className="font-bold text-slate-800 uppercase tracking-wider text-[11px] flex items-center gap-1.5">
+                  <User className="w-3.5 h-3.5 text-[#B30D12]" />
+                  <span>Supplier Handover: Requester & Consignment Details</span>
+                </span>
+                <span className="text-[10px] font-mono font-bold text-slate-600 bg-white border border-slate-200 px-2 py-0.5 rounded">
+                  Ref: {request.requestNumber}
+                </span>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <span className="text-slate-400 text-[10px] uppercase font-bold block">Requester Organization</span>
+                  <span className="font-bold text-slate-900 text-sm block">{request.customerName}</span>
+                  <span className="text-slate-600 font-medium">Contact: {request.contactName}</span>
+                  <div className="flex items-center gap-3 text-slate-500 mt-1">
+                    {request.customerEmail && (
+                      <span className="flex items-center gap-1">
+                        <Mail className="w-3 h-3 text-slate-400" />
+                        {request.customerEmail}
+                      </span>
+                    )}
+                    {request.customerPhone && (
+                      <span className="flex items-center gap-1">
+                        <Phone className="w-3 h-3 text-slate-400" />
+                        {request.customerPhone}
+                      </span>
+                    )}
+                  </div>
+                </div>
+
+                <div>
+                  <span className="text-slate-400 text-[10px] uppercase font-bold block">Fulfillment Delivery Bay</span>
+                  <span className="font-semibold text-slate-800 block">
+                    {request.deliveryAddress.streetAddress}, {request.deliveryAddress.suburb}
+                  </span>
+                  <span className="text-slate-600">
+                    {request.deliveryAddress.city} {request.deliveryAddress.postalCode}
+                  </span>
+                  <span className="text-slate-400 text-[10px] block mt-0.5">
+                    Attn: {request.deliveryAddress.recipientName} ({request.deliveryAddress.phone})
+                  </span>
+                </div>
+              </div>
+
+              <div className="pt-2 border-t border-slate-200/80 grid grid-cols-2 gap-3 text-[11px] text-slate-600">
+                <div>
+                  <span className="text-slate-400 text-[10px] uppercase font-bold block">Target Vehicle</span>
+                  <span className="font-semibold text-slate-800">
+                    {request.vehicle.year} {request.vehicle.make} {request.vehicle.model}
+                  </span>
+                  {request.vehicle.vin && (
+                    <span className="text-slate-500 font-mono block text-[10px]">
+                      VIN: {request.vehicle.vin}
+                    </span>
+                  )}
+                </div>
+                <div>
+                  <span className="text-slate-400 text-[10px] uppercase font-bold block">Part / Scope</span>
+                  <span className="font-semibold text-slate-800">
+                    {request.part.name} (Qty: {request.part.quantity || 1})
+                  </span>
+                  {request.part.partNumber && (
+                    <span className="text-slate-500 font-mono block text-[10px]">
+                      OEM #: {request.part.partNumber}
+                    </span>
+                  )}
+                </div>
+              </div>
+
+              {/* Handover Logistics Configuration */}
+              <div className="pt-2 border-t border-slate-200/80 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                <div className="flex items-center gap-2">
+                  <label className="text-[11px] font-bold text-slate-700 whitespace-nowrap">Handover Route:</label>
+                  <select
+                    value={handoverMode}
+                    onChange={(e) => setHandoverMode(e.target.value as any)}
+                    className="text-xs py-1 px-2 rounded-lg border border-slate-300 bg-white font-medium text-slate-800 focus:outline-none focus:border-[#B30D12]"
+                  >
+                    <option value="Consolidated via Autohub Hub">Consolidated via Autohub Auckland Hub (MPI Clearance First)</option>
+                    <option value="Direct Drop-ship to Requester">Direct Drop-ship to Requester Workshop Bay</option>
+                  </select>
+                </div>
+                <label className="flex items-center gap-1.5 cursor-pointer text-[11px] text-slate-600 font-medium">
+                  <input
+                    type="checkbox"
+                    checked={includeRequesterTag}
+                    onChange={(e) => {
+                      const checked = e.target.checked;
+                      setIncludeRequesterTag(checked);
+                      if (checked) {
+                        setOrderNotes(
+                          `Airfreight consolidation. Please affix Autohub barcoded consignment labels.\nRequester: ${request.customerName} (Ref: ${request.requestNumber})\nDestination: ${request.deliveryAddress.streetAddress}, ${request.deliveryAddress.city}\nAttn: ${request.contactName} (${request.customerPhone || request.deliveryAddress.phone})`
+                        );
+                      } else {
+                        setOrderNotes("Airfreight consolidation. Please affix Autohub barcoded consignment labels.");
+                      }
+                    }}
+                    className="w-3.5 h-3.5 text-[#B30D12] rounded border-slate-300 focus:ring-[#B30D12]"
+                  />
+                  <span>Include Requester in Dispatch Notes</span>
+                </label>
               </div>
             </div>
 

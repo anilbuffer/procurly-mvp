@@ -1,12 +1,14 @@
 "use client";
 
 import React, { useState } from "react";
+import Link from "next/link";
 import {
   FileText,
   UploadCloud,
   CheckCircle2,
   DollarSign,
-  AlertCircle
+  AlertCircle,
+  ExternalLink,
 } from "lucide-react";
 import { PartRequest } from "@/types/shared";
 import { useUnifiedData } from "@/context/unified-data-context";
@@ -32,8 +34,8 @@ export function InvoiceTab({ request: initialRequest, onNavigateToTab }: Invoice
     e.preventDefault();
     setIsMarking(true);
     setTimeout(() => {
-      // Transition from Invoicing to Awaiting Payment
-      updateRequestStatus(request.id, "Awaiting Payment");
+      // Transition from Invoicing to Awaiting Payment and save invoiceNumber
+      updateRequestStatus(request.id, "Awaiting Payment", invoiceNumber, fileAttached ? "Invoice_Attached.pdf" : undefined);
       setIsMarking(false);
       if (onNavigateToTab) {
         onNavigateToTab("payment");
@@ -92,7 +94,19 @@ export function InvoiceTab({ request: initialRequest, onNavigateToTab }: Invoice
 
           {/* Invoice Attachment Form */}
           <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm flex flex-col h-full">
-            <h3 className="text-base font-bold text-slate-900 mb-4">Invoice Details</h3>
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-base font-bold text-slate-900">Invoice Details</h3>
+              <Link
+                href={`/admin/invoice/${request.id}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-xs text-blue-600 hover:text-blue-800 font-bold flex items-center gap-1 hover:underline"
+                title="Preview full system-generated invoice in new tab"
+              >
+                <span>Preview System Invoice</span>
+                <ExternalLink className="w-3.5 h-3.5" />
+              </Link>
+            </div>
             <div className="border-t border-slate-200 mb-4"></div>
 
             <form onSubmit={handleMarkInvoiced} className="flex flex-col gap-5 flex-1">
@@ -141,7 +155,7 @@ export function InvoiceTab({ request: initialRequest, onNavigateToTab }: Invoice
                 <div className="mt-auto pt-2">
                   <button
                     type="submit"
-                    disabled={isMarking || !fileAttached}
+                    disabled={isMarking}
                     className="w-full py-3 rounded-xl text-sm font-bold shadow-sm transition-all flex items-center justify-center gap-2 bg-[#B30D12] hover:bg-[#C8101E] disabled:opacity-50 disabled:cursor-not-allowed text-white"
                   >
                     {isMarking ? (

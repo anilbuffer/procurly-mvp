@@ -2,13 +2,19 @@
 
 import React from "react";
 import { useRouter } from "next/navigation";
-import { CheckSquare, Truck, ArrowRight, ShieldCheck, Clock, CheckCircle2 } from "lucide-react";
+import { CheckSquare, Truck, ArrowRight, ShieldCheck, Clock, CheckCircle2, FileText } from "lucide-react";
 import Link from "next/link";
 import { usePortal } from "@/context/portal-context";
 
 export function OrdersView() {
   const router = useRouter();
-  const { requests, setSelectedRequest, setActiveTab, setIsNewRequestModalOpen } = usePortal();
+  const {
+    requests,
+    setSelectedRequest,
+    setActiveTab,
+    setIsNewRequestModalOpen,
+    openInvoiceModal,
+  } = usePortal();
 
   // Orders in procurement, placed, or fulfilled
   const orderRequests = requests.filter(
@@ -164,6 +170,19 @@ export function OrdersView() {
                       ${(req.quotedValue || req.customerQuote?.totalAmount || 0).toFixed(2)}
                     </td>
                     <td className="py-4 px-6 text-right space-x-2 whitespace-nowrap">
+                      {(req.payment || req.quoteAcceptance || ["Approved", "Invoicing", "Awaiting Payment", "Ordered", "Shipped", "Delivered", "Completed"].includes(req.status)) && (
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            openInvoiceModal(req);
+                          }}
+                          className="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-lg transition-colors inline-flex items-center gap-1 text-xs"
+                          title="View & Download Official Tax Invoice"
+                        >
+                          <FileText className="w-3 h-3 text-slate-500" />
+                          <span>Invoice</span>
+                        </button>
+                      )}
                       {req.shipment ? (
                         <button
                           onClick={(e) => {

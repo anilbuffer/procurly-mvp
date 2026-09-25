@@ -33,6 +33,12 @@ interface PortalContextType {
   setIsPaymentModalOpen: (open: boolean) => void;
   paymentRequest: PartRequest | null;
   setPaymentRequest: (req: PartRequest | null) => void;
+  isInvoiceModalOpen: boolean;
+  setIsInvoiceModalOpen: (open: boolean) => void;
+  invoiceRequest: PartRequest | null;
+  setInvoiceRequest: (req: PartRequest | null) => void;
+  openInvoiceModal: (req: PartRequest) => void;
+  closeInvoiceModal: () => void;
   notifications: PortalNotification[];
   unreadNotificationsCount: number;
   markNotificationAsRead: (id: string) => void;
@@ -140,6 +146,18 @@ export function PortalProvider({ children }: { children: React.ReactNode }) {
   const [quoteRequest, setQuoteRequest] = useState<PartRequest | null>(null);
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
   const [paymentRequest, setPaymentRequest] = useState<PartRequest | null>(null);
+  const [isInvoiceModalOpen, setIsInvoiceModalOpen] = useState(false);
+  const [invoiceRequest, setInvoiceRequest] = useState<PartRequest | null>(null);
+
+  const openInvoiceModal = useCallback((req: PartRequest) => {
+    setInvoiceRequest(req);
+    setIsInvoiceModalOpen(true);
+  }, []);
+
+  const closeInvoiceModal = useCallback(() => {
+    setIsInvoiceModalOpen(false);
+    setInvoiceRequest(null);
+  }, []);
 
   // Keep selectedRequest synchronized with updated shared request object
   const selectedRequest = useMemo(() => {
@@ -330,6 +348,12 @@ export function PortalProvider({ children }: { children: React.ReactNode }) {
         setIsPaymentModalOpen,
         paymentRequest,
         setPaymentRequest,
+        isInvoiceModalOpen,
+        setIsInvoiceModalOpen,
+        invoiceRequest,
+        setInvoiceRequest,
+        openInvoiceModal,
+        closeInvoiceModal,
         notifications,
         unreadNotificationsCount,
         markNotificationAsRead,

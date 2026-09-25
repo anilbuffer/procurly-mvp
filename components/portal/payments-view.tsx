@@ -17,7 +17,13 @@ import { usePortal } from "@/context/portal-context";
 import { PartRequest } from "@/types/portal";
 
 export function PaymentsView() {
-  const { requests, setIsPaymentModalOpen, setPaymentRequest, setSelectedRequest } = usePortal();
+  const {
+    requests,
+    setIsPaymentModalOpen,
+    setPaymentRequest,
+    setSelectedRequest,
+    openInvoiceModal,
+  } = usePortal();
   const [filterStatus, setFilterStatus] = useState<"All" | "Unpaid" | "Paid">("All");
 
   // Requests that have payment record, are invoiceable, or in stages Approved onwards
@@ -95,7 +101,7 @@ export function PaymentsView() {
           </div>
           <h2 className="text-xl font-bold text-slate-900">Payment Status & Invoices</h2>
           <p className="text-xs text-slate-500">
-            Invoice generation remains in the existing Autohub operational process. The portal records payment status and settlement references.
+            View, generate, and download official Autohub GST tax invoices. Review settlement references and bank remittance details.
           </p>
         </div>
 
@@ -121,9 +127,9 @@ export function PaymentsView() {
       <div className="bg-blue-50/60 border border-blue-200 rounded-2xl p-4 flex items-start gap-3 text-xs text-blue-900">
         <Info className="w-4 h-4 text-blue-600 shrink-0 mt-0.5" />
         <div>
-          <span className="font-bold block">Autohub Invoicing & Payment Tracking Notice</span>
+          <span className="font-bold block">Autohub Invoicing & Accounts Receivable Handover</span>
           <p className="text-blue-800 text-[11px] leading-relaxed">
-            Tax invoices are generated within the existing Autohub operational workflow. For MVP, payment status is recorded strictly as <strong>Unpaid</strong> or <strong>Paid</strong>. Settlement references and bank details are logged for tracking.
+            Tax invoices are generated upon quote approval. Click on any invoice number or the <strong>Invoice</strong> button to view the full breakdown, print, or download a local copy.
           </p>
         </div>
       </div>
@@ -158,7 +164,7 @@ export function PaymentsView() {
                 <th className="py-3.5 px-4">Description</th>
                 <th className="py-3.5 px-4">Amount (NZD)</th>
                 <th className="py-3.5 px-4">Payment Status</th>
-                <th className="py-3.5 px-6 text-right">Settlement Action</th>
+                <th className="py-3.5 px-6 text-right">Settlement & Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 text-slate-700">
@@ -179,14 +185,15 @@ export function PaymentsView() {
                   return (
                     <tr key={req.id} className="hover:bg-slate-50 transition-colors">
                       <td className="py-4 px-6 font-mono font-bold text-slate-900">
-                        <div className="flex items-center gap-1.5">
-                          <span>{invoiceNum}</span>
-                          {pay?.invoiceUrl && (
-                            <a href={pay.invoiceUrl} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:text-blue-700" title="View PDF">
-                              <FileText className="w-3.5 h-3.5" />
-                            </a>
-                          )}
-                        </div>
+                        <button
+                          type="button"
+                          onClick={() => openInvoiceModal(req)}
+                          className="flex items-center gap-1.5 text-blue-600 hover:text-blue-800 hover:underline group cursor-pointer text-left"
+                          title="Click to view & download official Tax Invoice"
+                        >
+                          <span className="font-mono font-bold">{invoiceNum}</span>
+                          <FileText className="w-3.5 h-3.5 text-blue-500 group-hover:scale-110 transition-transform" />
+                        </button>
                       </td>
                       <td className="py-4 px-4 font-mono">
                         <button
@@ -220,22 +227,33 @@ export function PaymentsView() {
                         )}
                       </td>
                       <td className="py-4 px-6 text-right whitespace-nowrap">
-                        {paymentStatus === "Unpaid" ? (
+                        <div className="flex items-center justify-end gap-2">
                           <button
-                            onClick={() => handleOpenPaymentModal(req)}
-                            className="px-3.5 py-1.5 bg-[#B30D12] hover:bg-[#9B0A0F] text-white font-bold text-xs uppercase tracking-wider rounded-lg shadow-xs transition-all"
+                            type="button"
+                            onClick={() => openInvoiceModal(req)}
+                            className="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-lg transition-colors inline-flex items-center gap-1"
+                            title="View & Download Invoice"
                           >
-                            Record Payment →
+                            <FileText className="w-3.5 h-3.5 text-slate-600" />
+                            <span>Invoice</span>
                           </button>
-                        ) : (
-                          <button
-                            onClick={() => handleOpenPaymentModal(req)}
-                            className="inline-flex items-center gap-1.5 text-xs text-emerald-700 font-bold hover:underline"
-                          >
-                            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
-                            <span>Paid (View Record)</span>
-                          </button>
-                        )}
+                          {paymentStatus === "Unpaid" ? (
+                            <button
+                              onClick={() => handleOpenPaymentModal(req)}
+                              className="px-3.5 py-1.5 bg-[#B30D12] hover:bg-[#9B0A0F] text-white font-bold text-xs uppercase tracking-wider rounded-lg shadow-xs transition-all"
+                            >
+                              Record Payment →
+                            </button>
+                          ) : (
+                            <button
+                              onClick={() => handleOpenPaymentModal(req)}
+                              className="inline-flex items-center gap-1.5 text-xs text-emerald-700 font-bold hover:underline"
+                            >
+                              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                              <span>Paid (View Record)</span>
+                            </button>
+                          )}
+                        </div>
                       </td>
                     </tr>
                   );

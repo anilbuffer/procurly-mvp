@@ -246,6 +246,16 @@ export interface SupplierOrder {
   total: number;
   notes: string;
   documents: string[];
+  // Supplier Handover & Requester Details
+  requesterName?: string;
+  requesterContact?: string;
+  requesterEmail?: string;
+  requesterPhone?: string;
+  deliveryAddress?: string;
+  deliveryCity?: string;
+  vehicleSummary?: string;
+  partSummary?: string;
+  handoverMode?: string;
 }
 
 // ─── Subadmin Verification ─────────────────────────────────────────

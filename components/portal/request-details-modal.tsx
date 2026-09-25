@@ -27,6 +27,8 @@ import {
   Phone,
   Headphones,
   Copy,
+  Download,
+  ShoppingBag,
 } from "lucide-react";
 import { usePortal } from "@/context/portal-context";
 import {
@@ -49,7 +51,8 @@ export function RequestDetailsModal() {
     setActiveTab: setPortalTab,
     activeCustomer,
     approveSubadmin,
-    rejectSubadmin
+    rejectSubadmin,
+    openInvoiceModal,
   } = usePortal();
 
   // Navigation tabs: overview | quote | shipment | Subadmin
@@ -149,11 +152,35 @@ export function RequestDetailsModal() {
     acceptQuote(req.id, audit);
     setIsAcceptingQuote(false);
     setActiveTab("overview");
-    
-    // Simulate Email Notification
+
+    // Automatically generate and open Tax Invoice for the customer to review & download
+    const invoiceNumber = req.payment?.invoiceNumber || `INV-2026-${req.requestNumber.replace(/[^0-9]/g, "").padStart(4, "0")}`;
+    const syntheticUpdatedReq: PartRequest = {
+      ...req,
+      status: "Invoicing",
+      customerResponse: "Accepted",
+      quoteAcceptance: audit,
+      payment: req.payment || {
+        id: `pay-${req.requestNumber}`,
+        requestId: req.id,
+        invoiceNumber,
+        amount: req.customerQuote?.totalAmount || req.quotedValue || 450,
+        currency: "NZD",
+        status: "Unpaid",
+        paymentReference: req.requestNumber,
+        dueDate: new Date(Date.now() + 5 * 86400000).toISOString().split("T")[0],
+        lastUpdated: "Just now",
+        bankDetails: {
+          bankName: "ANZ New Zealand",
+          accountName: "Autohub Procurement NZ Ltd",
+          accountNumber: "01-0288-0349821-00",
+          swiftBic: "ANZBNZ22",
+        },
+      },
+    };
     setTimeout(() => {
-      alert(`📧 EMAIL NOTIFICATION: To Admin Team\nSubject: Quote Approved for Request ${req.requestNumber}\n\nThe customer has approved the quote and verified the order parameters. Please check the portal and proceed with the next action.`);
-    }, 500);
+      openInvoiceModal(syntheticUpdatedReq);
+    }, 350);
   };
 
   const handleConfirmReject = () => {
@@ -295,6 +322,20 @@ export function RequestDetailsModal() {
               {req.status === "Subadmin Review" && (
                 <span className="w-2 h-2 rounded-full bg-[#B30D12]" />
               )}
+            </button>
+          )}
+
+          {(req.payment || req.quoteAcceptance || ["Approved", "Invoicing", "Awaiting Payment", "Ordered", "Shipped", "Delivered", "Completed"].includes(req.status)) && (
+            <button
+              onClick={() => openInvoiceModal(req)}
+              className="py-3 px-4 border-b-2 border-transparent hover:text-[#B30D12] flex items-center gap-2 transition-colors text-slate-700"
+              title="View & Download Official GST Tax Invoice"
+            >
+              <FileText className="w-3.5 h-3.5 text-[#B30D12]" />
+              <span>Tax Invoice</span>
+              <span className="text-[10px] font-mono bg-slate-100 text-slate-700 px-1.5 py-0.5 rounded font-bold">
+                {req.payment?.invoiceNumber || `INV-2026-${req.requestNumber.replace(/[^0-9]/g, "").padStart(4, "0")}`}
+              </span>
             </button>
           )}
 
@@ -626,6 +667,60 @@ export function RequestDetailsModal() {
                       {req.quoteAcceptance.acceptedAt}. Autohub Invoice Ref:{" "}
                       <strong className="font-mono">{req.payment?.invoiceNumber || "INV-2026-XXXX"}</strong> (Issued by Autohub Operations).
                     </p>
+
+                    {/* Accounts Receivable Invoice Handover Action Box */}
+                    <div className="bg-white p-3.5 rounded-xl border border-emerald-300 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                      <div>
+                        <span className="text-[10px] uppercase font-bold text-slate-400 block">
+                          Accounts Receivable Invoice Handover
+                        </span>
+                        <div className="flex items-center gap-2 mt-0.5">
+                          <span className="font-mono font-bold text-slate-900 text-sm">
+                            {req.payment?.invoiceNumber || `INV-2026-${req.requestNumber.replace(/[^0-9]/g, "").padStart(4, "0")}`}
+                          </span>
+                          <span className="text-[11px] text-slate-500 font-medium">
+                            &bull; Total: ${(req.payment?.amount || req.customerQuote?.totalAmount || req.quotedValue || 450).toFixed(2)} NZD
+                          </span>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <button
+                          type="button"
+                          onClick={() => openInvoiceModal(req)}
+                          className="px-3 py-1.5 bg-[#B30D12] hover:bg-[#9B0A0F] text-white font-bold text-xs rounded-lg transition-colors inline-flex items-center gap-1.5 shadow-xs"
+                        >
+                          <FileText className="w-3.5 h-3.5" />
+                          <span>View & Generate Invoice</span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => openInvoiceModal(req)}
+                          className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-lg transition-colors inline-flex items-center gap-1.5"
+                          title="Download Invoice PDF"
+                        >
+                          <Download className="w-3.5 h-3.5" />
+                          <span>Download</span>
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Supplier Order Handover Active Box */}
+                    {req.supplierOrder && (
+                      <div className="bg-white p-3.5 rounded-xl border border-indigo-200 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+                        <div>
+                          <div className="flex items-center gap-1.5 font-bold text-indigo-900">
+                            <ShoppingBag className="w-3.5 h-3.5 text-indigo-600" />
+                            <span>Supplier Order Handover Active</span>
+                          </div>
+                          <p className="text-slate-600 text-[11px] mt-0.5">
+                            Purchase Order <strong className="font-mono text-slate-800">{req.supplierOrder.supplierRef}</strong> released to {req.supplierOrder.supplierName}. Handover Route: <span className="font-semibold text-slate-700">{req.supplierOrder.handoverMode || "Consolidated via Autohub Hub"}</span>.
+                          </p>
+                        </div>
+                        <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200 shrink-0">
+                          PO Placed ({req.supplierOrder.orderDate})
+                        </span>
+                      </div>
+                    )}
                     <div className="mt-2 pt-3 border-t border-emerald-200/60 text-[11px] text-emerald-700 flex flex-col gap-1.5">
                       <div className="flex items-center gap-1.5">
                         <CheckCircle2 className="w-3.5 h-3.5 shrink-0" />

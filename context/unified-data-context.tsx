@@ -98,6 +98,15 @@ interface UnifiedDataContextType {
       cost: number;
       freight: number;
       notes: string;
+      requesterName?: string;
+      requesterContact?: string;
+      requesterEmail?: string;
+      requesterPhone?: string;
+      deliveryAddress?: string;
+      deliveryCity?: string;
+      vehicleSummary?: string;
+      partSummary?: string;
+      handoverMode?: string;
     }
   ) => boolean;
 
@@ -1513,6 +1522,15 @@ export function UnifiedDataProvider({ children }: { children: React.ReactNode })
         cost: number;
         freight: number;
         notes: string;
+        requesterName?: string;
+        requesterContact?: string;
+        requesterEmail?: string;
+        requesterPhone?: string;
+        deliveryAddress?: string;
+        deliveryCity?: string;
+        vehicleSummary?: string;
+        partSummary?: string;
+        handoverMode?: string;
       }
     ): boolean => {
       const target = getRequestById(requestId);
@@ -1537,6 +1555,15 @@ export function UnifiedDataProvider({ children }: { children: React.ReactNode })
                 total: order.cost + order.freight,
                 notes: order.notes,
                 documents: [],
+                requesterName: order.requesterName || r.customerName,
+                requesterContact: order.requesterContact || r.contactName,
+                requesterEmail: order.requesterEmail || r.customerEmail,
+                requesterPhone: order.requesterPhone || r.customerPhone,
+                deliveryAddress: order.deliveryAddress || `${r.deliveryAddress?.streetAddress}, ${r.deliveryAddress?.city}`,
+                deliveryCity: order.deliveryCity || r.deliveryAddress?.city,
+                vehicleSummary: order.vehicleSummary || `${r.vehicle.year} ${r.vehicle.make} ${r.vehicle.model}`,
+                partSummary: order.partSummary || `${r.part.name} (Qty: ${r.part.quantity || 1})`,
+                handoverMode: order.handoverMode || "Consolidated via Autohub Hub",
               },
               actionRequired: "Supplier order placed. Awaiting dispatch & shipment tracking.",
               actionType: "none",

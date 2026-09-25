@@ -6,6 +6,7 @@ import { PortalHeader } from "./portal-header";
 import { NewRequestModal } from "./new-request-modal";
 import { RequestDetailsModal } from "./request-details-modal";
 import { PaymentModal } from "./payment-modal";
+import { InvoiceModal } from "./invoice-modal";
 import { usePortal } from "@/context/portal-context";
 
 interface CustomerPortalLayoutProps {
@@ -42,6 +43,7 @@ export function CustomerPortalLayout({ children }: CustomerPortalLayoutProps) {
       {/* Interactive Global Modals */}
       <NewRequestModal />
       <PaymentModal />
+      <InvoiceModal />
     </div>
   );
 }

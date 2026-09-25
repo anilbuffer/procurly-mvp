@@ -15,7 +15,7 @@ import {
 import { usePortal } from "@/context/portal-context";
 
 export function DocumentsView() {
-  const { requests, activeCustomer, setSelectedRequest, setActiveTab } = usePortal();
+  const { requests, activeCustomer, setSelectedRequest, setActiveTab, openInvoiceModal } = usePortal();
   const [docSearch, setDocSearch] = useState("");
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
@@ -106,6 +106,16 @@ export function DocumentsView() {
   }, [requests]);
 
   const handleDownload = (doc: (typeof docs)[0]) => {
+    if (doc.category === "Tax Invoice") {
+      const target = requests.find((r) => r.requestNumber === doc.ref);
+      if (target) {
+        openInvoiceModal(target);
+        setToastMessage(`Opening Official Tax Invoice for ${doc.ref}`);
+        setTimeout(() => setToastMessage(null), 3000);
+        return;
+      }
+    }
+
     const fileContent = `========================================================
 AUTOHUB / PROCURly OFFICIAL PROCUREMENT RECORD
 ========================================================
@@ -250,13 +260,28 @@ For formal queries contact ops@procurly.autohub.co.nz
               </div>
             </div>
 
-            <button
-              onClick={() => handleDownload(d)}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-100 hover:bg-slate-200 rounded-lg text-slate-700 font-bold transition-colors"
-            >
-              <Download className="w-3.5 h-3.5" />
-              <span>Download</span>
-            </button>
+            <div className="flex items-center gap-2">
+              {d.category === "Tax Invoice" && (
+                <button
+                  onClick={() => {
+                    const target = requests.find((r) => r.requestNumber === d.ref);
+                    if (target) openInvoiceModal(target);
+                  }}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-100 hover:bg-slate-200 rounded-lg text-slate-700 font-bold transition-colors"
+                  title="View official Tax Invoice"
+                >
+                  <FileText className="w-3.5 h-3.5" />
+                  <span>View</span>
+                </button>
+              )}
+              <button
+                onClick={() => handleDownload(d)}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-100 hover:bg-slate-200 rounded-lg text-slate-700 font-bold transition-colors"
+              >
+                <Download className="w-3.5 h-3.5" />
+                <span>Download</span>
+              </button>
+            </div>
           </div>
         ))}
       </div>
