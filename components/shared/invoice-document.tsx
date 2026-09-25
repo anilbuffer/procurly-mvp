@@ -92,7 +92,7 @@ export function InvoiceDocument({
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Tax Invoice ${invoiceNumber} - Autohub / Procurly</title>
+  <title>Tax Invoice ${invoiceNumber} - PROCURLY</title>
   <style>
     body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; color: #0f172a; margin: 0; padding: 40px; background: #fff; line-height: 1.5; }
     .container { max-width: 800px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 12px; padding: 40px; }
@@ -122,12 +122,12 @@ export function InvoiceDocument({
   <div class="container">
     <div class="header">
       <div>
-        <h1 class="brand-title">AUTOHUB</h1>
-        <div class="brand-sub">Procurement & Parts | New Zealand</div>
+        <h1 class="brand-title">PROCURLY</h1>
+        <div class="brand-sub">B2B Automotive Procurement | New Zealand</div>
         <p style="font-size: 11px; color: #64748b; margin-top: 6px;">
           NZ GST Reg: 134-892-741 &bull; NZBN: 9429048392014<br>
           Level 3, 102 Hobson St, Auckland Central 1010<br>
-          accounts@procurly.autohub.co.nz
+          accounts@procurly.co.nz
         </p>
       </div>
       <div>
@@ -156,7 +156,7 @@ export function InvoiceDocument({
         <div class="card-title">Bank Remittance Details</div>
         <div class="card-content">
           <strong>Bank:</strong> ANZ New Zealand<br>
-          <strong>Account Name:</strong> Autohub Procurement NZ Ltd<br>
+          <strong>Account Name:</strong> Procurly NZ Ltd<br>
           <strong>Account No:</strong> 01-0288-0349821-00<br>
           <strong>SWIFT / BIC:</strong> ANZBNZ22<br>
           <strong style="color: #B30D12;">Reference:</strong> ${invoiceNumber}
@@ -215,9 +215,9 @@ export function InvoiceDocument({
     </div>
 
     <div class="footer">
-      <strong>Terms & Conditions:</strong> All parts are supplied under standard Autohub B2B Trade Customer Warranty.
-      Payment is strictly due within 5 business days of issue date. Title of goods remains with Autohub until full settlement is cleared.
-      For inquiries contact accounts@procurly.autohub.co.nz.
+      <strong>Terms & Conditions:</strong> All parts are supplied under standard Procurly B2B Trade Customer Warranty.
+      Payment is strictly due within 5 business days of issue date. Title of goods remains with Procurly until full settlement is cleared.
+      For inquiries contact accounts@procurly.co.nz.
     </div>
   </div>
 </body>
@@ -227,7 +227,7 @@ export function InvoiceDocument({
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;
-    link.download = `Autohub_Tax_Invoice_${invoiceNumber}.html`;
+    link.download = `Procurly_Tax_Invoice_${invoiceNumber}.html`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -258,7 +258,7 @@ export function InvoiceDocument({
               </span>
             </div>
             <p className="text-xs text-slate-500">
-              Official Autohub B2B GST Tax Invoice
+              Official PROCURLY B2B GST Tax Invoice
             </p>
           </div>
         </div>
@@ -328,20 +328,20 @@ export function InvoiceDocument({
           <div>
             <div className="flex items-center gap-2 mb-1">
               <span className="text-3xl font-black italic tracking-tighter text-[#B30D12]">
-                AUTOHUB
+                PROCURLY
               </span>
               <span className="text-xs font-bold uppercase tracking-wider bg-slate-100 text-slate-600 px-2 py-0.5 rounded">
                 Procurement
               </span>
             </div>
             <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
-              Autohub Procurement NZ Ltd &bull; Trade Solutions
+              Procurly NZ Ltd &bull; Trade Procurement Solutions
             </p>
             <div className="text-xs text-slate-500 mt-2 space-y-0.5">
               <p>NZ GST Registration: <strong>134-892-741</strong></p>
               <p>NZBN: <strong>9429048392014</strong></p>
               <p>Level 3, 102 Hobson Street, Auckland Central, 1010</p>
-              <p>Email: accounts@procurly.autohub.co.nz &bull; Tel: +64 9 303 3338</p>
+              <p>Email: accounts@procurly.co.nz &bull; Tel: +64 9 303 3338</p>
             </div>
           </div>
 
@@ -426,7 +426,7 @@ export function InvoiceDocument({
             </h3>
             <div className="text-xs text-slate-700 space-y-1">
               <p><strong>Bank:</strong> ANZ New Zealand</p>
-              <p><strong>Account Name:</strong> Autohub Procurement NZ Ltd</p>
+              <p><strong>Account Name:</strong> Procurly NZ Ltd</p>
               <div className="flex items-center justify-between bg-white p-2 rounded-lg border border-slate-200 mt-1">
                 <span className="font-mono font-bold text-slate-900">
                   01-0288-0349821-00
@@ -563,7 +563,7 @@ export function InvoiceDocument({
           <div className="text-xs text-slate-500 max-w-sm">
             <p className="font-bold text-slate-700 mb-1 flex items-center gap-1">
               <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
-              <span>Autohub Verified Transaction</span>
+              <span>Procurly Verified Transaction</span>
             </p>
             <p className="leading-relaxed">
               Amounts shown in New Zealand Dollars (NZD). GST is charged at 15% in accordance with the New Zealand Goods and Services Tax Act 1985.
@@ -595,16 +595,16 @@ export function InvoiceDocument({
         {/* Terms of Trade & Footnote */}
         <div className="border-t border-slate-200 pt-6 text-[11px] text-slate-500 leading-relaxed space-y-2">
           <h4 className="font-bold text-slate-700 uppercase tracking-wider text-[10px]">
-            Autohub Terms & Conditions of Trade
+            Procurly Terms & Conditions of Trade
           </h4>
           <p>
-            1. <strong>Warranty & Fitment:</strong> All components are backed by standard Autohub B2B Trade Warranty. Warranty covers functional defects and verified fitment against specified VIN/chassis parameters.
+            1. <strong>Warranty & Fitment:</strong> All components are backed by standard Procurly B2B Trade Warranty. Warranty covers functional defects and verified fitment against specified VIN/chassis parameters.
           </p>
           <p>
             2. <strong>Payment Settlement:</strong> Payment is strictly due by the due date specified on this document. Title and property of goods shall not pass to the purchaser until payment has been made in full.
           </p>
           <p>
-            3. <strong>Disputes & Inquiries:</strong> Any discrepancy must be reported within 5 business days of delivery to Autohub Operations at <span className="underline">accounts@procurly.autohub.co.nz</span>.
+            3. <strong>Disputes & Inquiries:</strong> Any discrepancy must be reported within 5 business days of delivery to Procurly Operations at <span className="underline">accounts@procurly.co.nz</span>.
           </p>
         </div>
       </div>

@@ -1,158 +1,714 @@
 "use client";
 
-import React, { useEffect } from "react";
-import { useParams } from "next/navigation";
-import { useUnifiedData } from "@/context/unified-data-context";
-import { Printer, ArrowLeft } from "lucide-react";
+import React, { useState } from "react";
+import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
+import {
+  Printer,
+  ArrowLeft,
+  Download,
+  Copy,
+  Check,
+  CreditCard,
+  CheckCircle2,
+  Clock,
+  Building2,
+  ShieldCheck,
+  FileText,
+  TrendingUp,
+  DollarSign,
+  Package,
+  Share2,
+} from "lucide-react";
+import { useUnifiedData } from "@/context/unified-data-context";
 
-export default function InvoicePrintPage() {
+export default function AdminInvoicePage() {
   const params = useParams();
-  const id = params.id as string;
-  const { getRequestById } = useUnifiedData();
+  const router = useRouter();
+  const id = (params?.id as string) || "";
+  const { getRequestById, markPaymentPaid, markPaymentUnpaid } = useUnifiedData();
+
+  const [copiedField, setCopiedField] = useState<string | null>(null);
+  const [isUpdatingPayment, setIsUpdatingPayment] = useState(false);
 
   const request = getRequestById(id);
 
   if (!request) {
-    return <div className="p-10 text-center">Request not found.</div>;
+    return (
+      <div className="min-h-screen bg-slate-100 flex items-center justify-center p-6">
+        <div className="bg-white rounded-2xl border border-slate-200 p-10 max-w-md w-full text-center shadow-sm">
+          <div className="w-12 h-12 rounded-2xl bg-red-50 text-[#B30D12] flex items-center justify-center mx-auto mb-4 font-bold">
+            <FileText className="w-6 h-6" />
+          </div>
+          <h2 className="text-lg font-bold text-slate-900 mb-1">Invoice Not Found</h2>
+          <p className="text-xs text-slate-500 mb-6">
+            No parts request or invoice record could be located matching identifier &quot;{id}&quot;.
+          </p>
+          <button
+            type="button"
+            onClick={() => router.push("/admin/requests")}
+            className="w-full py-2.5 bg-[#B30D12] hover:bg-[#9B0A0F] text-white text-xs font-bold uppercase tracking-wider rounded-xl transition-colors shadow-sm"
+          >
+            Return to All Requests
+          </button>
+        </div>
+      </div>
+    );
   }
 
-  const invoiceNumber = `INV-2026-${request.requestNumber.replace("AutoHub-P-", "")}`;
-  const currentDate = new Date().toLocaleDateString("en-NZ", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  });
-  
-  // Due date is +5 days
-  const dueDate = new Date(Date.now() + 5 * 86400000).toLocaleDateString("en-NZ", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  });
+  const invoiceNumber =
+    request.payment?.invoiceNumber ||
+    `INV-2026-${request.requestNumber.replace(/[^0-9]/g, "").padStart(4, "0")}`;
 
-  const quote = request.customerQuote;
-  const amount = quote?.totalAmount || request.quotedValue || 0;
-  const subtotal = quote?.subtotal || (amount - (quote?.freightCost || 0));
-  const freight = quote?.freightCost || quote?.airFreightCost || quote?.seaFreightCost || 0;
+  const quote = request.customerQuote || request.quotation;
+  const amount =
+    request.payment?.amount ||
+    quote?.totalAmount ||
+    request.quotedValue ||
+    request.costCalculation?.totalCustomerQuote ||
+    450;
+
+  const freight =
+    quote?.freightCost ||
+    quote?.airFreightCost ||
+    quote?.seaFreightCost ||
+    45;
+
+  const subtotal = Math.max(0, amount - freight);
   const gst = quote?.gstAmount || Number(((amount * 15) / 115).toFixed(2));
-  const subtotalExGst = amount - gst;
+  const subtotalExGst = Number((amount - gst).toFixed(2));
+
+  const isPaid = request.payment?.status === "Paid" || request.paymentStatus === "Paid";
+
+  const issueDate =
+    request.quoteAcceptance?.acceptedAt?.split(",")[0] ||
+    request.dateSubmitted ||
+    new Date().toLocaleDateString("en-NZ", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+
+  const dueDate =
+    request.payment?.dueDate ||
+    new Date(Date.now() + 5 * 86400000).toLocaleDateString("en-NZ", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+
+  // Financial reconciliation & margin estimates for internal admin ledger
+  const selectedSupplierQuote =
+    request.supplierQuotations?.find(
+      (q) => (request.selectedQuotationId && q.id === request.selectedQuotationId) || q.isSelected
+    ) || request.supplierQuotations?.[0];
+
+  const selectedQuoteCost = selectedSupplierQuote
+    ? Number(selectedSupplierQuote.supplierCost) || 0
+    : 0;
+
+  const selectedQuoteFreight = selectedSupplierQuote
+    ? (selectedSupplierQuote.airFreightCost ?? selectedSupplierQuote.supplierFreight) || 0
+    : 0;
+
+  const supplierCost =
+    request.supplierOrder?.cost ||
+    request.costCalculation?.supplierCost ||
+    selectedQuoteCost ||
+    Math.round(subtotal * 0.65);
+
+  const supplierFreight =
+    request.supplierOrder?.freight ||
+    request.costCalculation?.supplierFreight ||
+    selectedQuoteFreight ||
+    Math.round(freight * 0.7);
+
+  const totalInternalCost = supplierCost + supplierFreight;
+  const grossProfit = Math.max(0, subtotalExGst - totalInternalCost);
+  const marginPercent = subtotalExGst > 0 ? ((grossProfit / subtotalExGst) * 100).toFixed(1) : "0.0";
 
   const handlePrint = () => {
     window.print();
   };
 
+  const handleCopy = (text: string, fieldName: string) => {
+    navigator.clipboard.writeText(text);
+    setCopiedField(fieldName);
+    setTimeout(() => setCopiedField(null), 2500);
+  };
+
+  const handleTogglePaymentStatus = () => {
+    setIsUpdatingPayment(true);
+    setTimeout(() => {
+      if (isPaid) {
+        markPaymentUnpaid(request.id);
+      } else {
+        markPaymentPaid(request.id, `${invoiceNumber}-ADMIN-SETTLED`);
+      }
+      setIsUpdatingPayment(false);
+    }, 350);
+  };
+
+  const handleDownloadHtml = () => {
+    const htmlContent = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Tax Invoice ${invoiceNumber} - PROCURLY</title>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; color: #0f172a; margin: 0; padding: 40px; background: #fff; line-height: 1.5; }
+    .container { max-width: 800px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 12px; padding: 40px; }
+    .header { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid #0f172a; padding-bottom: 24px; margin-bottom: 30px; }
+    .brand-title { color: #B30D12; font-size: 32px; font-weight: 900; margin: 0; letter-spacing: -0.5px; }
+    .brand-sub { color: #64748b; font-size: 13px; font-weight: 600; text-transform: uppercase; margin-top: 4px; }
+    .invoice-title { font-size: 28px; font-weight: 900; text-transform: uppercase; text-align: right; margin: 0 0 8px 0; color: #0f172a; }
+    .meta-text { font-size: 13px; color: #475569; margin: 3px 0; text-align: right; }
+    .status-badge { display: inline-block; padding: 4px 12px; border-radius: 9999px; font-size: 11px; font-weight: 800; text-transform: uppercase; margin-top: 6px; }
+    .status-paid { background: #dcfce7; color: #166534; border: 1px solid #bbf7d0; }
+    .status-unpaid { background: #fef3c7; color: #92400e; border: 1px solid #fde68a; }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-bottom: 30px; }
+    .card { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px; }
+    .card-title { font-size: 11px; font-weight: 800; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
+    .card-content { font-size: 13px; color: #1e293b; }
+    table { width: 100%; border-collapse: collapse; margin-bottom: 24px; }
+    th { border-bottom: 2px solid #0f172a; padding: 10px 8px; text-align: left; font-size: 12px; font-weight: 800; text-transform: uppercase; color: #0f172a; }
+    td { border-bottom: 1px solid #f1f5f9; padding: 12px 8px; font-size: 13px; }
+    .totals { width: 300px; margin-left: auto; margin-bottom: 30px; }
+    .totals-row { display: flex; justify-content: space-between; font-size: 13px; color: #475569; padding: 4px 0; }
+    .totals-grand { display: flex; justify-content: space-between; font-size: 18px; font-weight: 900; color: #0f172a; border-top: 2px solid #0f172a; padding-top: 8px; margin-top: 8px; }
+    .footer { border-top: 1px solid #e2e8f0; padding-top: 20px; font-size: 11px; color: #64748b; }
+    @media print { body { padding: 0; } .container { border: none; padding: 0; } }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div>
+        <h1 class="brand-title">PROCURLY</h1>
+        <div class="brand-sub">B2B Automotive Procurement Solutions | New Zealand</div>
+        <p style="font-size: 11px; color: #64748b; margin-top: 6px;">
+          NZ GST Reg: 134-892-741 &bull; NZBN: 9429048392014<br>
+          Level 3, 102 Hobson St, Auckland Central 1010<br>
+          Email: accounts@procurly.co.nz &bull; Tel: +64 9 303 3338
+        </p>
+      </div>
+      <div>
+        <h2 class="invoice-title">Tax Invoice</h2>
+        <p class="meta-text"><strong>Invoice #:</strong> ${invoiceNumber}</p>
+        <p class="meta-text"><strong>Issue Date:</strong> ${issueDate}</p>
+        <p class="meta-text"><strong>Due Date:</strong> ${dueDate}</p>
+        <p class="meta-text"><strong>Request Ref:</strong> ${request.requestNumber}</p>
+        <div style="text-align: right;">
+          <span class="status-badge ${isPaid ? "status-paid" : "status-unpaid"}">${isPaid ? "Paid in Full" : "Payment Due / Awaiting Settlement"}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid">
+      <div class="card">
+        <div class="card-title">Billed To</div>
+        <div class="card-content">
+          <strong>${request.customerName}</strong><br>
+          Attn: ${request.contactName}<br>
+          ${request.deliveryAddress?.streetAddress || "Designated Trade Facility"}<br>
+          ${request.deliveryAddress?.suburb ? `${request.deliveryAddress.suburb}, ` : ""}${request.deliveryAddress?.city || "Auckland"} ${request.deliveryAddress?.postalCode || ""}<br>
+          New Zealand
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">Remittance / Bank Transfer</div>
+        <div class="card-content">
+          <strong>Bank:</strong> ANZ New Zealand<br>
+          <strong>Account Name:</strong> Procurly NZ Ltd<br>
+          <strong>Account No:</strong> 01-0288-0349821-00<br>
+          <strong style="color: #B30D12;">Reference:</strong> ${invoiceNumber}
+        </div>
+      </div>
+    </div>
+
+    <div style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 10px 14px; border-radius: 8px; margin-bottom: 20px; font-size: 12px; color: #334155;">
+      <strong>Vehicle Identified:</strong> ${request.vehicle.year} ${request.vehicle.make} ${request.vehicle.model}
+      ${request.vehicle.vin ? ` &bull; <strong>VIN/Chassis:</strong> ${request.vehicle.vin}` : ""}
+      &bull; <strong>Destination:</strong> ${request.deliveryAddress?.city || "Auckland"}
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Description & Specifications</th>
+          <th style="text-align: center; width: 60px;">Qty</th>
+          <th style="text-align: right; width: 140px;">Amount (NZD)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>
+            <strong>${request.part.name}</strong><br>
+            <span style="font-size: 11px; color: #64748b;">
+              ${request.part.partNumber ? `OEM Part #${request.part.partNumber} &bull; ` : ""}Condition: ${request.part.condition || "Genuine OEM Verified"}
+            </span>
+          </td>
+          <td style="text-align: center;">${request.part.quantity || 1}</td>
+          <td style="text-align: right; font-weight: 600;">$${subtotal.toFixed(2)}</td>
+        </tr>
+        <tr>
+          <td>
+            <strong>Consolidated International Freight & Logistics</strong><br>
+            <span style="font-size: 11px; color: #64748b;">Includes customs clearance, MPI biosecurity inspection & door dispatch to ${request.deliveryAddress?.city || "Auckland"}.</span>
+          </td>
+          <td style="text-align: center;">1</td>
+          <td style="text-align: right; font-weight: 600;">$${freight.toFixed(2)}</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="totals">
+      <div class="totals-row">
+        <span>Subtotal (Excl. GST)</span>
+        <span>$${subtotalExGst.toFixed(2)}</span>
+      </div>
+      <div class="totals-row">
+        <span>GST (15%)</span>
+        <span>$${gst.toFixed(2)}</span>
+      </div>
+      <div class="totals-grand">
+        <span>Total Amount</span>
+        <span>$${amount.toFixed(2)} NZD</span>
+      </div>
+    </div>
+
+    <div class="footer">
+      <strong>Terms & Conditions:</strong> All parts are supplied under standard Procurly B2B Trade Customer Warranty.
+      Payment is strictly due within 5 business days of issue date. Title of goods remains with Procurly until full settlement is cleared.
+      For inquiries contact accounts@procurly.co.nz.
+    </div>
+  </div>
+</body>
+</html>`;
+
+    const blob = new Blob([htmlContent], { type: "text/html;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `Procurly_Tax_Invoice_${invoiceNumber}.html`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
+
   return (
     <div className="min-h-screen bg-slate-100 p-4 md:p-8 font-sans print:bg-white print:p-0">
-      {/* Non-printable action bar */}
-      <div className="max-w-4xl mx-auto mb-6 flex items-center justify-between print:hidden">
-        <Link 
-          href={`/admin/workspace/${request.id}`}
-          className="px-4 py-2 bg-white border border-slate-200 text-slate-700 font-bold rounded-xl shadow-sm hover:bg-slate-50 flex items-center gap-2"
-        >
-          <ArrowLeft className="w-4 h-4" />
-          Back to Workspace
-        </Link>
-        <button
-          onClick={handlePrint}
-          className="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-sm transition-all flex items-center gap-2"
-        >
-          <Printer className="w-4 h-4" />
-          Print / Save as PDF
-        </button>
-      </div>
+      {/* ─── Non-printable Executive Top Control Bar ─────────────────── */}
+      <div className="max-w-4xl mx-auto mb-6 flex flex-col gap-3 print:hidden">
+        {/* Breadcrumb & Navigation */}
+        <div className="flex flex-wrap items-center justify-between gap-3 bg-white p-3.5 px-4 rounded-2xl border border-slate-200 shadow-xs">
+          <div className="flex items-center gap-3">
+            {/* Back to Workspace button navigating directly into the request workspace */}
+            <Link
+              href={`/admin/requests/${request.id}`}
+              className="px-3.5 py-2 bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs rounded-xl shadow-xs transition-all flex items-center gap-2 group cursor-pointer"
+              title={`Return to Workspace for ${request.requestNumber}`}
+            >
+              <ArrowLeft className="w-4 h-4 text-slate-300 group-hover:-translate-x-0.5 transition-transform" />
+              <span>Back to Workspace</span>
+            </Link>
 
-      {/* Invoice Document */}
-      <div className="max-w-4xl mx-auto bg-white p-10 md:p-16 shadow-xl rounded-xl print:shadow-none print:p-0">
-        <div className="flex justify-between items-start mb-12">
-          <div>
-            <h1 className="text-4xl font-extrabold text-[#ED2025] mb-2">AUTOHUB</h1>
-            <p className="text-sm text-slate-500 font-medium">Procurement & Parts</p>
+            <div className="hidden sm:flex items-center gap-2 text-xs text-slate-500">
+              <span className="text-slate-300">/</span>
+              <span className="font-mono font-bold text-slate-700">{request.requestNumber}</span>
+              <span className="text-slate-300">/</span>
+              <span className="font-bold text-[#B30D12]">Tax Invoice</span>
+            </div>
           </div>
-          <div className="text-right">
-            <h2 className="text-3xl font-bold text-slate-900 mb-2 uppercase tracking-tight">Invoice</h2>
-            <p className="text-sm text-slate-600"><strong>Invoice Number:</strong> {invoiceNumber}</p>
-            <p className="text-sm text-slate-600"><strong>Date of Issue:</strong> {currentDate}</p>
-            <p className="text-sm text-slate-600"><strong>Due Date:</strong> {dueDate}</p>
-            <p className="text-sm text-slate-600"><strong>Reference:</strong> {request.requestNumber}</p>
+
+          {/* Status & Quick Actions */}
+          <div className="flex flex-wrap items-center gap-2">
+            {/* Status Pill */}
+            <span
+              className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider border flex items-center gap-1.5 ${
+                isPaid
+                  ? "bg-emerald-50 text-emerald-700 border-emerald-200"
+                  : "bg-amber-50 text-amber-700 border-amber-200"
+              }`}
+            >
+              {isPaid ? (
+                <>
+                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                  <span>Paid in Full</span>
+                </>
+              ) : (
+                <>
+                  <Clock className="w-3.5 h-3.5 text-amber-600" />
+                  <span>Awaiting Settlement</span>
+                </>
+              )}
+            </span>
+
+            {/* Admin Payment Toggle Action */}
+            <button
+              type="button"
+              onClick={handleTogglePaymentStatus}
+              disabled={isUpdatingPayment}
+              className={`px-3 py-1.5 rounded-xl font-bold text-xs transition-all flex items-center gap-1.5 shadow-xs cursor-pointer ${
+                isPaid
+                  ? "bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200"
+                  : "bg-emerald-600 hover:bg-emerald-700 text-white"
+              }`}
+              title={isPaid ? "Click to revert payment to Unpaid" : "Click to mark as Paid / Settled in full"}
+            >
+              <CreditCard className="w-3.5 h-3.5" />
+              <span>{isPaid ? "Mark as Unpaid" : "Record Payment →"}</span>
+            </button>
+
+            {/* Download Offline HTML */}
+            <button
+              type="button"
+              onClick={handleDownloadHtml}
+              className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-xl transition-all flex items-center gap-1.5 border border-slate-200"
+              title="Download offline HTML invoice"
+            >
+              <Download className="w-3.5 h-3.5 text-slate-600" />
+              <span>Download</span>
+            </button>
+
+            {/* Print / Save PDF */}
+            <button
+              type="button"
+              onClick={handlePrint}
+              className="px-3.5 py-1.5 bg-[#B30D12] hover:bg-[#9B0A0F] text-white font-bold text-xs rounded-xl transition-all flex items-center gap-1.5 shadow-xs"
+              title="Print or Save as PDF"
+            >
+              <Printer className="w-3.5 h-3.5" />
+              <span>Print / Save PDF</span>
+            </button>
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-12 mb-12">
-          <div>
-            <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Billed To</h3>
-            <p className="text-lg font-bold text-slate-900 mb-1">{request.customerName}</p>
-            <p className="text-sm text-slate-700 leading-relaxed">
-              Attn: {request.contactName}<br />
-              {request.deliveryAddress?.streetAddress}<br />
-              {request.deliveryAddress?.suburb}, {request.deliveryAddress?.city} {request.deliveryAddress?.postalCode}
-            </p>
+        {/* Admin Operational Margin & Reconciliation Card */}
+        <div className="bg-gradient-to-r from-slate-900 to-slate-800 text-white p-4 px-5 rounded-2xl shadow-sm border border-slate-700">
+          <div className="flex flex-wrap items-center justify-between gap-3 pb-3 mb-3 border-b border-slate-700/60 text-xs">
+            <div className="flex items-center gap-2">
+              <div className="w-6 h-6 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold">
+                <TrendingUp className="w-3.5 h-3.5" />
+              </div>
+              <span className="font-bold text-slate-200 uppercase tracking-wider text-[11px]">
+                Internal Financial Ledger &amp; Margin Reconciliation (Admin Eyes Only)
+              </span>
+            </div>
+            <span className="text-[11px] font-mono text-slate-400">
+              Assigned PO: <strong className="text-white">{request.supplierOrder?.supplierRef || "PO Pending"}</strong>
+            </span>
           </div>
+
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs">
+            <div>
+              <span className="text-slate-400 block text-[10px] uppercase font-bold">Customer Invoiced</span>
+              <span className="font-mono text-base font-bold text-white">${amount.toFixed(2)} NZD</span>
+            </div>
+            <div>
+              <span className="text-slate-400 block text-[10px] uppercase font-bold">Est. Supplier Cost (PO)</span>
+              <span className="font-mono text-base font-bold text-slate-300">${supplierCost.toFixed(2)} NZD</span>
+            </div>
+            <div>
+              <span className="text-slate-400 block text-[10px] uppercase font-bold">Est. Logistics &amp; Freight</span>
+              <span className="font-mono text-base font-bold text-slate-300">${supplierFreight.toFixed(2)} NZD</span>
+            </div>
+            <div>
+              <span className="text-emerald-400 block text-[10px] uppercase font-bold">Gross Margin</span>
+              <span className="font-mono text-base font-bold text-emerald-400">
+                ${grossProfit.toFixed(2)} <span className="text-xs text-emerald-300 font-semibold">({marginPercent}%)</span>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* ─── Official PROCURLY GST Tax Invoice Document Sheet ─────────── */}
+      <div className="max-w-4xl mx-auto bg-white p-8 sm:p-12 md:p-16 border border-slate-200 shadow-xl rounded-2xl print:shadow-none print:border-none print:p-0 print:m-0 text-slate-800">
+        {/* Document Header */}
+        <div className="flex flex-col sm:flex-row justify-between items-start gap-6 border-b-2 border-slate-900 pb-8 mb-8">
           <div>
-            <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Payment Details</h3>
-            <div className="bg-slate-50 p-4 rounded-xl border border-slate-100">
-              <p className="text-sm text-slate-700 mb-1"><strong>Bank:</strong> ANZ New Zealand</p>
-              <p className="text-sm text-slate-700 mb-1"><strong>Account Name:</strong> Autohub Procurement NZ Ltd</p>
-              <p className="text-sm text-slate-700 mb-1"><strong>Account Number:</strong> 01-0288-0349821-00</p>
-              <p className="text-sm text-slate-700 mt-2 text-[#ED2025] font-semibold">Please use {invoiceNumber} as reference</p>
+            <div className="flex items-center gap-2 mb-1">
+              <span className="text-4xl font-black italic tracking-tighter text-[#B30D12]">
+                PROCURLY
+              </span>
+              <span className="text-xs font-bold uppercase tracking-wider bg-slate-100 text-slate-600 px-2 py-0.5 rounded">
+                Procurement
+              </span>
+            </div>
+            <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
+              Procurly NZ Ltd &bull; Automotive Procurement Solutions
+            </p>
+            <div className="text-xs text-slate-500 mt-2 space-y-0.5">
+              <p>NZ GST Registration: <strong>134-892-741</strong></p>
+              <p>NZBN: <strong>9429048392014</strong></p>
+              <p>Level 3, 102 Hobson Street, Auckland Central, 1010</p>
+              <p>Email: accounts@procurly.co.nz &bull; Tel: +64 9 303 3338</p>
+            </div>
+          </div>
+
+          <div className="text-left sm:text-right">
+            <h2 className="text-3xl font-black uppercase tracking-tight text-slate-900 mb-1">
+              Tax Invoice
+            </h2>
+            <div className="space-y-1 text-xs text-slate-600">
+              <p>
+                <strong>Invoice Number:</strong>{" "}
+                <span className="font-mono font-bold text-slate-900 text-sm">
+                  {invoiceNumber}
+                </span>
+              </p>
+              <p>
+                <strong>Date of Issue:</strong> {issueDate}
+              </p>
+              <p>
+                <strong>Due Date:</strong> {dueDate}
+              </p>
+              <p>
+                <strong>Request Ref:</strong>{" "}
+                <span className="font-mono text-slate-700">{request.requestNumber}</span>
+              </p>
+              {request.supplierOrder?.supplierRef && (
+                <p>
+                  <strong>Linked PO:</strong>{" "}
+                  <span className="font-mono text-slate-700">{request.supplierOrder.supplierRef}</span>
+                </p>
+              )}
+            </div>
+            <div className="mt-3 sm:flex sm:justify-end">
+              <span
+                className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider border ${
+                  isPaid
+                    ? "bg-emerald-100 text-emerald-800 border-emerald-300"
+                    : "bg-amber-100 text-amber-900 border-amber-300"
+                }`}
+              >
+                {isPaid ? (
+                  <>
+                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-700" />
+                    <span>Paid in Full</span>
+                  </>
+                ) : (
+                  <>
+                    <Clock className="w-3.5 h-3.5 text-amber-700" />
+                    <span>Payment Due</span>
+                  </>
+                )}
+              </span>
             </div>
           </div>
         </div>
 
-        <table className="w-full text-left mb-12">
+        {/* Billed To & Bank Remittance Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+          {/* Customer Card */}
+          <div className="bg-slate-50/70 border border-slate-200 rounded-xl p-5">
+            <h3 className="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-2 flex items-center gap-1.5">
+              <Building2 className="w-3.5 h-3.5 text-slate-500" />
+              <span>Billed To</span>
+            </h3>
+            <p className="text-base font-bold text-slate-900">
+              {request.customerName}
+            </p>
+            <div className="text-xs text-slate-600 mt-1 leading-relaxed">
+              <p>Attn: <strong>{request.contactName}</strong></p>
+              <p>{request.deliveryAddress?.streetAddress || "Designated Trade Facility"}</p>
+              <p>
+                {request.deliveryAddress?.suburb ? `${request.deliveryAddress.suburb}, ` : ""}
+                {request.deliveryAddress?.city || "Auckland"} {request.deliveryAddress?.postalCode || ""}
+              </p>
+              <p>New Zealand</p>
+              <p className="mt-2 text-[11px] text-slate-400 font-mono">
+                Account Status: Verified Trade Client (Net 5 Settlement)
+              </p>
+            </div>
+          </div>
+
+          {/* Payment Instructions Card */}
+          <div className="bg-slate-50/70 border border-slate-200 rounded-xl p-5 relative">
+            <h3 className="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-2 flex items-center gap-1.5">
+              <CreditCard className="w-3.5 h-3.5 text-slate-500" />
+              <span>Remittance / Bank Transfer</span>
+            </h3>
+            <div className="text-xs text-slate-700 space-y-1">
+              <p><strong>Bank:</strong> ANZ New Zealand</p>
+              <p><strong>Account Name:</strong> Procurly NZ Ltd</p>
+              <div className="flex items-center justify-between bg-white p-2 rounded-lg border border-slate-200 mt-1">
+                <span className="font-mono font-bold text-slate-900">
+                  01-0288-0349821-00
+                </span>
+                <button
+                  type="button"
+                  onClick={() => handleCopy("01-0288-0349821-00", "account")}
+                  className="text-[11px] font-bold text-slate-500 hover:text-slate-900 flex items-center gap-1 print:hidden cursor-pointer"
+                >
+                  {copiedField === "account" ? (
+                    <Check className="w-3 h-3 text-emerald-600" />
+                  ) : (
+                    <Copy className="w-3 h-3" />
+                  )}
+                  <span>{copiedField === "account" ? "Copied" : "Copy"}</span>
+                </button>
+              </div>
+              <div className="flex items-center justify-between bg-white p-2 rounded-lg border border-slate-200 mt-1">
+                <span className="text-slate-600 text-[11px]">
+                  Ref: <strong className="text-[#B30D12] font-mono">{invoiceNumber}</strong>
+                </span>
+                <button
+                  type="button"
+                  onClick={() => handleCopy(invoiceNumber, "ref")}
+                  className="text-[11px] font-bold text-slate-500 hover:text-slate-900 flex items-center gap-1 print:hidden cursor-pointer"
+                >
+                  {copiedField === "ref" ? (
+                    <Check className="w-3 h-3 text-emerald-600" />
+                  ) : (
+                    <Copy className="w-3 h-3" />
+                  )}
+                  <span>{copiedField === "ref" ? "Copied" : "Copy Ref"}</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Vehicle & Consignment Info Bar */}
+        <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 mb-8 flex flex-wrap items-center justify-between gap-4 text-xs">
+          <div>
+            <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-0.5">
+              Vehicle Identified
+            </span>
+            <span className="font-bold text-slate-900 text-sm">
+              {request.vehicle.year} {request.vehicle.make} {request.vehicle.model}
+            </span>
+            {request.vehicle.vin && (
+              <span className="text-slate-500 ml-2 font-mono">
+                (VIN: {request.vehicle.vin})
+              </span>
+            )}
+          </div>
+          <div>
+            <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-0.5">
+              Destination
+            </span>
+            <span className="font-semibold text-slate-800">
+              {request.deliveryAddress?.city || "Auckland"}
+            </span>
+          </div>
+          <div>
+            <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-0.5">
+              Payment Terms
+            </span>
+            <span className="font-semibold text-slate-800">Net 5 Days</span>
+          </div>
+        </div>
+
+        {/* Invoice Line Items Table */}
+        <table className="w-full text-left mb-8 border-collapse">
           <thead>
-            <tr className="border-b-2 border-slate-900">
-              <th className="py-3 text-sm font-bold text-slate-900">Description</th>
-              <th className="py-3 text-sm font-bold text-slate-900 text-center">Qty</th>
-              <th className="py-3 text-sm font-bold text-slate-900 text-right">Amount (NZD)</th>
+            <tr className="border-b-2 border-slate-900 text-[11px] font-black uppercase tracking-wider text-slate-900">
+              <th className="py-3 pr-4">Item & Description</th>
+              <th className="py-3 px-4 text-center">Qty</th>
+              <th className="py-3 px-4 text-right">Unit Price</th>
+              <th className="py-3 pl-4 text-right">Total (NZD)</th>
             </tr>
           </thead>
-          <tbody>
-            <tr className="border-b border-slate-100">
-              <td className="py-4">
-                <p className="font-bold text-slate-900">{request.part.name}</p>
-                <p className="text-sm text-slate-500">{request.vehicle.make} {request.vehicle.model} {request.vehicle.year}</p>
-                {request.vehicle.vin && <p className="text-xs text-slate-400 mt-1">VIN: {request.vehicle.vin}</p>}
+          <tbody className="divide-y divide-slate-100 text-xs">
+            {/* Part Line Item */}
+            <tr>
+              <td className="py-4 pr-4">
+                <p className="font-bold text-slate-900 text-sm mb-0.5">
+                  {request.part.name}
+                </p>
+                <p className="text-slate-500 text-[11px]">
+                  Vehicle: {request.vehicle.year} {request.vehicle.make} {request.vehicle.model}
+                  {request.part.partNumber && ` • OEM #${request.part.partNumber}`}
+                </p>
+                <span className="inline-block mt-1 text-[10px] font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
+                  {request.part.condition || "Genuine OEM Verified"}
+                </span>
               </td>
-              <td className="py-4 text-center font-medium">1</td>
-              <td className="py-4 text-right font-medium">${subtotal.toFixed(2)}</td>
+              <td className="py-4 px-4 text-center font-mono font-medium">
+                {request.part.quantity || 1}
+              </td>
+              <td className="py-4 px-4 text-right font-mono font-medium text-slate-700">
+                ${subtotal.toFixed(2)}
+              </td>
+              <td className="py-4 pl-4 text-right font-mono font-bold text-slate-900">
+                ${subtotal.toFixed(2)}
+              </td>
             </tr>
+
+            {/* Freight Line Item */}
             {freight > 0 && (
-              <tr className="border-b border-slate-100">
-                <td className="py-4">
-                  <p className="font-bold text-slate-900">Consolidated Freight & Handling</p>
-                  <p className="text-sm text-slate-500">Delivery to {request.deliveryAddress?.city}</p>
+              <tr>
+                <td className="py-4 pr-4">
+                  <p className="font-bold text-slate-900 text-sm mb-0.5">
+                    Consolidated International Freight & Logistics
+                  </p>
+                  <p className="text-slate-500 text-[11px]">
+                    Landed delivery to {request.deliveryAddress?.city || "New Zealand"} facility. Includes customs tariff processing & clearance.
+                  </p>
                 </td>
-                <td className="py-4 text-center font-medium">1</td>
-                <td className="py-4 text-right font-medium">${freight.toFixed(2)}</td>
+                <td className="py-4 px-4 text-center font-mono font-medium">1</td>
+                <td className="py-4 px-4 text-right font-mono font-medium text-slate-700">
+                  ${freight.toFixed(2)}
+                </td>
+                <td className="py-4 pl-4 text-right font-mono font-bold text-slate-900">
+                  ${freight.toFixed(2)}
+                </td>
               </tr>
             )}
           </tbody>
         </table>
 
-        <div className="flex justify-end mb-12">
-          <div className="w-64 space-y-3">
-            <div className="flex justify-between text-sm text-slate-600">
+        {/* Totals Section */}
+        <div className="flex flex-col sm:flex-row justify-between items-start gap-6 border-t border-slate-200 pt-6 mb-10">
+          <div className="text-xs text-slate-500 max-w-sm">
+            <p className="font-bold text-slate-700 mb-1 flex items-center gap-1">
+              <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
+              <span>Procurly Verified Transaction</span>
+            </p>
+            <p className="leading-relaxed">
+              Amounts shown in New Zealand Dollars (NZD). GST is charged at 15% in accordance with the New Zealand Goods and Services Tax Act 1985.
+            </p>
+          </div>
+
+          <div className="w-full sm:w-72 space-y-2 text-xs">
+            <div className="flex justify-between text-slate-600 py-1">
               <span>Subtotal (Excl. GST)</span>
-              <span>${subtotalExGst.toFixed(2)}</span>
+              <span className="font-mono font-semibold">${subtotalExGst.toFixed(2)}</span>
             </div>
-            <div className="flex justify-between text-sm text-slate-600">
-              <span>GST (15%)</span>
-              <span>${gst.toFixed(2)}</span>
+            <div className="flex justify-between text-slate-600 py-1">
+              <span>GST (15.0%)</span>
+              <span className="font-mono font-semibold">${gst.toFixed(2)}</span>
             </div>
-            <div className="flex justify-between text-xl font-extrabold text-slate-900 border-t-2 border-slate-900 pt-3">
+            <div className="flex justify-between items-center text-lg font-black text-slate-900 border-t-2 border-slate-900 pt-3">
               <span>Total Amount</span>
-              <span>${amount.toFixed(2)}</span>
+              <span className="font-mono font-bold text-xl">${amount.toFixed(2)} NZD</span>
+            </div>
+            <div className="flex justify-between items-center text-xs pt-1">
+              <span className="font-semibold text-slate-500">Balance Due:</span>
+              <span className={`font-mono font-bold ${isPaid ? "text-emerald-700" : "text-[#B30D12]"}`}>
+                {isPaid ? "$0.00 NZD (Paid)" : `$${amount.toFixed(2)} NZD`}
+              </span>
             </div>
           </div>
         </div>
 
-        <div className="border-t border-slate-200 pt-8 mt-16">
-          <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Terms & Conditions</h3>
-          <p className="text-xs text-slate-500 leading-relaxed">
-            All parts are supplied under standard Autohub B2B Trade Warranty. 
-            Payment is strictly due by the due date specified above. 
-            Title of goods does not pass until payment is received in full.
+        {/* Terms of Trade & Footnote */}
+        <div className="border-t border-slate-200 pt-6 text-[11px] text-slate-500 leading-relaxed space-y-2">
+          <h4 className="font-bold text-slate-700 uppercase tracking-wider text-[10px]">
+            Procurly Terms & Conditions of Trade
+          </h4>
+          <p>
+            1. <strong>Warranty & Fitment:</strong> All components are backed by standard Procurly B2B Trade Warranty. Warranty covers functional defects and verified fitment against specified VIN/chassis parameters.
+          </p>
+          <p>
+            2. <strong>Payment Settlement:</strong> Payment is strictly due by the due date specified on this document. Title and property of goods shall not pass to the purchaser until payment has been made in full.
+          </p>
+          <p>
+            3. <strong>Disputes & Inquiries:</strong> Any discrepancy must be reported within 5 business days of delivery to Procurly Operations at <span className="underline">accounts@procurly.co.nz</span>.
           </p>
         </div>
       </div>

@@ -23,6 +23,8 @@ interface PortalContextType {
   requests: PartRequest[];
   selectedRequest: PartRequest | null;
   setSelectedRequest: (req: PartRequest | null) => void;
+  selectedRequestDetailsTab: string;
+  setSelectedRequestDetailsTab: (tab: string) => void;
   isNewRequestModalOpen: boolean;
   setIsNewRequestModalOpen: (open: boolean) => void;
   isQuoteModalOpen: boolean;
@@ -148,10 +150,12 @@ export function PortalProvider({ children }: { children: React.ReactNode }) {
   const [paymentRequest, setPaymentRequest] = useState<PartRequest | null>(null);
   const [isInvoiceModalOpen, setIsInvoiceModalOpen] = useState(false);
   const [invoiceRequest, setInvoiceRequest] = useState<PartRequest | null>(null);
+  const [selectedRequestDetailsTab, setSelectedRequestDetailsTab] = useState<string>("overview");
 
   const openInvoiceModal = useCallback((req: PartRequest) => {
-    setInvoiceRequest(req);
-    setIsInvoiceModalOpen(true);
+    setSelectedRequestDetailsTab("invoice");
+    setSelectedRequestState(req);
+    setIsInvoiceModalOpen(false);
   }, []);
 
   const closeInvoiceModal = useCallback(() => {
@@ -338,6 +342,8 @@ export function PortalProvider({ children }: { children: React.ReactNode }) {
         requests,
         selectedRequest,
         setSelectedRequest,
+        selectedRequestDetailsTab,
+        setSelectedRequestDetailsTab,
         isNewRequestModalOpen,
         setIsNewRequestModalOpen,
         isQuoteModalOpen,

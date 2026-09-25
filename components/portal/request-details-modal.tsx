@@ -31,6 +31,7 @@ import {
   ShoppingBag,
 } from "lucide-react";
 import { usePortal } from "@/context/portal-context";
+import { InvoiceDocument } from "@/components/shared/invoice-document";
 import {
   PartRequest,
   RequestStatus,
@@ -53,10 +54,14 @@ export function RequestDetailsModal() {
     approveSubadmin,
     rejectSubadmin,
     openInvoiceModal,
+    selectedRequestDetailsTab,
+    setSelectedRequestDetailsTab,
   } = usePortal();
 
-  // Navigation tabs: overview | quote | shipment | Subadmin
-  const [activeTab, setActiveTab] = useState<"overview" | "quote" | "shipment" | "Subadmin">("overview");
+  // Navigation tabs: overview | quote | shipment | Subadmin | invoice
+  const [activeTab, setActiveTab] = useState<"overview" | "quote" | "shipment" | "Subadmin" | "invoice">(
+    (selectedRequestDetailsTab as any) || "overview"
+  );
   const [showDirectContactModal, setShowDirectContactModal] = useState(false);
   const [copiedContact, setCopiedContact] = useState<string | null>(null);
 
@@ -77,6 +82,10 @@ export function RequestDetailsModal() {
 
   // Sync active tab based on selected request status
   React.useEffect(() => {
+    if (selectedRequestDetailsTab && ["overview", "quote", "shipment", "Subadmin", "invoice"].includes(selectedRequestDetailsTab)) {
+      setActiveTab(selectedRequestDetailsTab as any);
+      return;
+    }
     if (!selectedRequest) return;
     const req = requests.find((r) => r.id === selectedRequest.id) || selectedRequest;
     if (req.status === "Quoted" && (req.quotation || req.customerQuote)) {
@@ -88,7 +97,7 @@ export function RequestDetailsModal() {
     } else {
       setActiveTab("overview");
     }
-  }, [selectedRequest?.id, selectedRequest?.status, requests]);
+  }, [selectedRequest?.id, selectedRequest?.status, selectedRequestDetailsTab, requests]);
 
   if (!selectedRequest) return null;
 
@@ -151,36 +160,9 @@ export function RequestDetailsModal() {
 
     acceptQuote(req.id, audit);
     setIsAcceptingQuote(false);
-    setActiveTab("overview");
-
-    // Automatically generate and open Tax Invoice for the customer to review & download
-    const invoiceNumber = req.payment?.invoiceNumber || `INV-2026-${req.requestNumber.replace(/[^0-9]/g, "").padStart(4, "0")}`;
-    const syntheticUpdatedReq: PartRequest = {
-      ...req,
-      status: "Invoicing",
-      customerResponse: "Accepted",
-      quoteAcceptance: audit,
-      payment: req.payment || {
-        id: `pay-${req.requestNumber}`,
-        requestId: req.id,
-        invoiceNumber,
-        amount: req.customerQuote?.totalAmount || req.quotedValue || 450,
-        currency: "NZD",
-        status: "Unpaid",
-        paymentReference: req.requestNumber,
-        dueDate: new Date(Date.now() + 5 * 86400000).toISOString().split("T")[0],
-        lastUpdated: "Just now",
-        bankDetails: {
-          bankName: "ANZ New Zealand",
-          accountName: "Autohub Procurement NZ Ltd",
-          accountNumber: "01-0288-0349821-00",
-          swiftBic: "ANZBNZ22",
-        },
-      },
-    };
-    setTimeout(() => {
-      openInvoiceModal(syntheticUpdatedReq);
-    }, 350);
+    // Switch directly to the Tax Invoice tab within the current view (no floating popup modal)
+    setActiveTab("invoice");
+    setSelectedRequestDetailsTab?.("invoice");
   };
 
   const handleConfirmReject = () => {
@@ -327,11 +309,17 @@ export function RequestDetailsModal() {
 
           {(req.payment || req.quoteAcceptance || ["Approved", "Invoicing", "Awaiting Payment", "Ordered", "Shipped", "Delivered", "Completed"].includes(req.status)) && (
             <button
-              onClick={() => openInvoiceModal(req)}
-              className="py-3 px-4 border-b-2 border-transparent hover:text-[#B30D12] flex items-center gap-2 transition-colors text-slate-700"
+              onClick={() => {
+                setActiveTab("invoice");
+                setSelectedRequestDetailsTab?.("invoice");
+              }}
+              className={`py-3 px-4 border-b-2 flex items-center gap-2 transition-colors ${activeTab === "invoice"
+                ? "border-[#B30D12] text-[#B30D12]"
+                : "border-transparent hover:text-slate-900 text-slate-700"
+                }`}
               title="View & Download Official GST Tax Invoice"
             >
-              <FileText className="w-3.5 h-3.5 text-[#B30D12]" />
+              <FileText className="w-3.5 h-3.5" />
               <span>Tax Invoice</span>
               <span className="text-[10px] font-mono bg-slate-100 text-slate-700 px-1.5 py-0.5 rounded font-bold">
                 {req.payment?.invoiceNumber || `INV-2026-${req.requestNumber.replace(/[^0-9]/g, "").padStart(4, "0")}`}
@@ -664,8 +652,8 @@ export function RequestDetailsModal() {
                     <p className="text-emerald-700">
                       Accepted by {req.quoteAcceptance.acceptedBy} (
                       {req.quoteAcceptance.userRole}) on{" "}
-                      {req.quoteAcceptance.acceptedAt}. Autohub Invoice Ref:{" "}
-                      <strong className="font-mono">{req.payment?.invoiceNumber || "INV-2026-XXXX"}</strong> (Issued by Autohub Operations).
+                      {req.quoteAcceptance.acceptedAt}. Procurly Invoice Ref:{" "}
+                      <strong className="font-mono">{req.payment?.invoiceNumber || "INV-2026-XXXX"}</strong> (Issued by Procurly Operations).
                     </p>
 
                     {/* Accounts Receivable Invoice Handover Action Box */}
@@ -686,20 +674,26 @@ export function RequestDetailsModal() {
                       <div className="flex items-center gap-2">
                         <button
                           type="button"
-                          onClick={() => openInvoiceModal(req)}
-                          className="px-3 py-1.5 bg-[#B30D12] hover:bg-[#9B0A0F] text-white font-bold text-xs rounded-lg transition-colors inline-flex items-center gap-1.5 shadow-xs"
+                          onClick={() => {
+                            setActiveTab("invoice");
+                            setSelectedRequestDetailsTab?.("invoice");
+                          }}
+                          className="px-3 py-1.5 bg-[#B30D12] hover:bg-[#9B0A0F] text-white font-bold text-xs rounded-lg transition-colors inline-flex items-center gap-1.5 shadow-xs cursor-pointer"
                         >
                           <FileText className="w-3.5 h-3.5" />
-                          <span>View & Generate Invoice</span>
+                          <span>View Invoice Tab</span>
                         </button>
                         <button
                           type="button"
-                          onClick={() => openInvoiceModal(req)}
-                          className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-lg transition-colors inline-flex items-center gap-1.5"
-                          title="Download Invoice PDF"
+                          onClick={() => {
+                            setActiveTab("invoice");
+                            setSelectedRequestDetailsTab?.("invoice");
+                          }}
+                          className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-lg transition-colors inline-flex items-center gap-1.5 cursor-pointer"
+                          title="Open Tax Invoice Tab to print or download"
                         >
                           <Download className="w-3.5 h-3.5" />
-                          <span>Download</span>
+                          <span>Download / Print</span>
                         </button>
                       </div>
                     </div>
@@ -1100,6 +1094,21 @@ export function RequestDetailsModal() {
                   )
                 )}
               </div>
+            </div>
+          )}
+
+          {/* TAB 5: TAX INVOICE (Within the tab, NOT modal) */}
+          {activeTab === "invoice" && (
+            <div className="space-y-6 animate-in fade-in duration-200">
+              <InvoiceDocument
+                request={req}
+                isModal={false}
+                onPayNow={() => {
+                  setPaymentRequest(req);
+                  setIsPaymentModalOpen(true);
+                }}
+                standaloneUrl={`/customer/invoice/${req.id}`}
+              />
             </div>
           )}
 
