@@ -60,7 +60,7 @@ interface UnifiedDataContextType {
   // Actions - Requests
   getRequestById: (idOrNumber: string) => PartRequest | undefined;
   submitCustomerRequest: (data: Partial<PartRequest>) => PartRequest;
-  updateRequestStatus: (requestId: string, status: RequestStatus, invoiceNumber?: string, invoiceUrl?: string) => void;
+  updateRequestStatus: (requestId: string, status: RequestStatus, invoiceNumber?: string, invoiceUrl?: string, invoiceFileName?: string) => void;
   assignStaff: (requestId: string, staffName: string, staffRole: string) => void;
 
   // Actions - Sourcing & Quotes
@@ -78,6 +78,7 @@ interface UnifiedDataContextType {
       notes: string;
       terms?: string;
       estimatedTransitDays?: number;
+      quotePhotos?: string[];
     }
   ) => void;
   acceptCustomerQuote: (requestId: string, audit: QuoteAcceptanceAudit) => void;
@@ -473,7 +474,7 @@ export function UnifiedDataProvider({ children }: { children: React.ReactNode })
 
   // ─── Actions: Update Status & Assignment ────────────────
   const updateRequestStatus = useCallback(
-    (requestId: string, status: RequestStatus, invoiceNumber?: string, invoiceUrl?: string) => {
+    (requestId: string, status: RequestStatus, invoiceNumber?: string, invoiceUrl?: string, invoiceFileName?: string) => {
       let targetReqNumber = requestId;
       setRequests((prev) =>
         prev.map((r) => {
@@ -575,6 +576,8 @@ export function UnifiedDataProvider({ children }: { children: React.ReactNode })
               }
               if (invoiceNumber) updatedPayment.invoiceNumber = invoiceNumber;
               if (invoiceUrl) updatedPayment.invoiceUrl = invoiceUrl;
+              if (invoiceFileName) updatedPayment.invoiceFileName = invoiceFileName;
+              updatedPayment.invoicedAt = new Date().toLocaleDateString("en-NZ", { year: "numeric", month: "short", day: "numeric" });
               
               actionRequired = "Settle invoice via Bank Transfer or Card";
               actionType = "pay_now";
@@ -611,7 +614,6 @@ export function UnifiedDataProvider({ children }: { children: React.ReactNode })
                     { milestone: "Received At Shipping Facility", location: "Nagoya Hub, Japan", timestamp: new Date().toISOString(), description: "Package received at hub.", isCompleted: true },
                     { milestone: "In Transit", location: "International Air Transit", timestamp: "Pending", description: "Cargo flight scheduled.", isCompleted: false },
                     { milestone: "Arrived in NZ", location: "Auckland Cargo Terminal", timestamp: "Pending", description: "Flight discharge.", isCompleted: false },
-                    { milestone: "Customs Clearance", location: "Auckland Customs & MPI", timestamp: "Pending", description: "Customs inspection.", isCompleted: false },
                     { milestone: "Out For Delivery", location: "Auckland Metro Hub", timestamp: "Pending", description: "Courier dispatch.", isCompleted: false },
                     { milestone: "Delivered", location: r.deliveryAddress.label, timestamp: "Pending", description: "Proof of delivery signature.", isCompleted: false },
                   ],
@@ -1076,6 +1078,7 @@ export function UnifiedDataProvider({ children }: { children: React.ReactNode })
         notes: string;
         terms?: string;
         estimatedTransitDays?: number;
+        quotePhotos?: string[];
       }
     ) => {
       const activeFreight = params.seaFreightCost || params.airFreightCost || params.freight || 0;
@@ -1101,6 +1104,7 @@ export function UnifiedDataProvider({ children }: { children: React.ReactNode })
               sentAt: "Just now",
               status: "Sent",
               createdBy: currentStaffUser.name,
+              quotePhotos: params.quotePhotos,
             };
 
             const newQuotation: Quotation = {
@@ -1124,6 +1128,7 @@ export function UnifiedDataProvider({ children }: { children: React.ReactNode })
               termsAccepted: false,
               procurementTerms: params.terms || "Autohub 12-month replacement guarantee.",
               notes: params.notes,
+              quotePhotos: params.quotePhotos,
             };
 
             return {
@@ -1131,6 +1136,7 @@ export function UnifiedDataProvider({ children }: { children: React.ReactNode })
               status: "Quoted",
               quotedValue: totalAmount,
               customerQuote: newQuotation,
+              quotation: newQuotation,
               customerQuoteVersions: [newVersion, ...(r.customerQuoteVersions || [])],
               customerResponse: undefined,
               actionRequired: "Review & approve quote to proceed to fulfillment",
@@ -1142,7 +1148,7 @@ export function UnifiedDataProvider({ children }: { children: React.ReactNode })
                   timestamp: new Date().toISOString(),
                   timeLabel: "Just now",
                   title: `Customer quote v${nextVer} created`,
-                  description: `Quote created for NZ$${totalAmount.toFixed(2)} (Part: $${params.sellPrice}, Sea Freight: $${activeFreight}) and sent to ${r.customerName}.`,
+                  description: `Quote created for NZ$${totalAmount.toFixed(2)} (Part: $${params.sellPrice.toFixed(2)}, Freight: $${activeFreight.toFixed(2)}) and sent to ${r.customerName}.${params.notes ? ` Specialist Note: "${params.notes}"` : ""}`,
                   actor: currentStaffUser.name,
                   type: "quote",
                 },
@@ -1162,7 +1168,7 @@ export function UnifiedDataProvider({ children }: { children: React.ReactNode })
             id: `notif-${Date.now()}`,
             type: "Quote Sent",
             title: `Quote Ready: ${target.requestNumber}`,
-            description: `Quote for NZ$${totalAmount.toFixed(2)} dispatched to ${target.customerName}.`,
+            description: `Quote for NZ$${totalAmount.toFixed(2)} dispatched to ${target.customerName}.${params.notes ? ` Note: "${params.notes}"` : ""}`,
             timestamp: "Just now",
             read: false,
             requestId: target.id,
@@ -1658,13 +1664,6 @@ export function UnifiedDataProvider({ children }: { children: React.ReactNode })
                     isCompleted: false,
                   },
                   {
-                    milestone: "Customs Clearance",
-                    location: "Auckland Customs & MPI",
-                    timestamp: "Pending clearance",
-                    description: "Autohub customs clearance inspection.",
-                    isCompleted: false,
-                  },
-                  {
                     milestone: "Out For Delivery",
                     location: "Auckland Metro Courier Hub",
                     timestamp: "Pending courier load",
@@ -1726,7 +1725,6 @@ export function UnifiedDataProvider({ children }: { children: React.ReactNode })
         "Received At Shipping Facility",
         "In Transit",
         "Arrived in NZ",
-        "Customs Clearance",
         "Out For Delivery",
         "Delivered",
       ];

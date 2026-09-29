@@ -119,7 +119,7 @@ export function PaymentsView() {
               type="button"
               onClick={() => setStatusFilter(filter)}
               className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${statusFilter === filter
-                ? "bg-[#C40E14] text-white shadow-xs"
+                ? "bg-[#FE0000] text-white shadow-xs"
                 : "bg-slate-100 text-slate-600 hover:bg-slate-200"
                 }`}
             >
@@ -164,7 +164,7 @@ export function PaymentsView() {
                       onClick={() => router.push(`/admin/requests?id=${req.id}`)}
                       className="hover:bg-slate-50/70 cursor-pointer transition-colors group"
                     >
-                      <td className="py-3.5 px-4 font-mono font-bold text-[#B30D12]">
+                      <td className="py-3.5 px-4 font-mono font-bold text-[#FE0000]">
                         {req.requestNumber}
                       </td>
                       <td className="py-3.5 px-4">

@@ -30,7 +30,6 @@ const MILESTONES: ShipmentMilestone[] = [
   "Received At Shipping Facility",
   "In Transit",
   "Arrived in NZ",
-  "Customs Clearance",
   "Out For Delivery",
   "Delivered",
 ];
@@ -150,11 +149,6 @@ export function ShipmentsView() {
         return {
           badgeClass: "bg-purple-50 text-purple-700 border-purple-200",
           dotClass: "bg-purple-500",
-        };
-      case "Customs Clearance":
-        return {
-          badgeClass: "bg-amber-50 text-amber-800 border-amber-200",
-          dotClass: "bg-amber-500",
         };
       case "Out For Delivery":
         return {
@@ -302,18 +296,18 @@ export function ShipmentsView() {
                   <div
                     key={m}
                     className={`p-3.5 rounded-xl border text-center transition-all ${isCurrent
-                        ? "border-[#B30D12] bg-red-50/30 shadow-xs ring-2 ring-red-100"
-                        : isCompleted
-                          ? "border-emerald-300 bg-emerald-50/50 text-emerald-800"
-                          : "border-slate-200 bg-slate-50/60 text-slate-400"
+                      ? "border-[#FE0000] bg-red-50/30 shadow-xs ring-2 ring-red-100"
+                      : isCompleted
+                        ? "border-emerald-300 bg-emerald-50/50 text-emerald-800"
+                        : "border-slate-200 bg-slate-50/60 text-slate-400"
                       }`}
                   >
                     <div
                       className={`w-7 h-7 rounded-full mx-auto mb-1.5 flex items-center justify-center text-[11px] font-bold ${isCurrent
-                          ? "bg-[#B30D12] text-white animate-pulse shadow-sm"
-                          : isCompleted
-                            ? "bg-emerald-500 text-white"
-                            : "bg-slate-200 text-slate-500"
+                        ? "bg-[#FE0000] text-white animate-pulse shadow-sm"
+                        : isCompleted
+                          ? "bg-emerald-500 text-white"
+                          : "bg-slate-200 text-slate-500"
                         }`}
                     >
                       {isCompleted && !isCurrent ? (
@@ -324,10 +318,10 @@ export function ShipmentsView() {
                     </div>
                     <span
                       className={`text-[11px] font-bold block leading-tight ${isCurrent
-                          ? "text-[#B30D12]"
-                          : isCompleted
-                            ? "text-slate-900"
-                            : "text-slate-400"
+                        ? "text-[#FE0000]"
+                        : isCompleted
+                          ? "text-slate-900"
+                          : "text-slate-400"
                         }`}
                     >
                       {m}
@@ -443,8 +437,8 @@ export function ShipmentsView() {
                       <div className="mt-0.5 relative">
                         <div
                           className={`w-3.5 h-3.5 rounded-full border-2 flex items-center justify-center ${m.isCompleted
-                              ? "bg-emerald-500 border-emerald-500"
-                              : "bg-white border-slate-300"
+                            ? "bg-emerald-500 border-emerald-500"
+                            : "bg-white border-slate-300"
                             }`}
                         >
                           {m.isCompleted && <Check className="w-2.5 h-2.5 text-white stroke-[3]" />}
@@ -492,7 +486,7 @@ export function ShipmentsView() {
 
             <button
               onClick={() => setSelectedRequest(selectedReq)}
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-4 py-2 bg-[#B30D12] hover:bg-[#9B0A0F] text-white font-bold rounded-xl transition-colors shadow-xs cursor-pointer"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-4 py-2 bg-[#FE0000] hover:bg-[#9B0A0F] text-white font-bold rounded-xl transition-colors shadow-xs cursor-pointer"
             >
               <span>View Complete Request Audit Log</span>
               <ExternalLink className="w-3.5 h-3.5" />
@@ -577,8 +571,8 @@ export function ShipmentsView() {
                 key={tab}
                 onClick={() => setMilestoneFilter(tab)}
                 className={`px-3 py-1.5 rounded-xl transition-all flex items-center gap-1.5 cursor-pointer ${isActive
-                    ? "bg-[#C40E14] text-white shadow-sm"
-                    : "bg-slate-100 hover:bg-slate-200/70 text-slate-600"
+                  ? "bg-[#FE0000] text-white shadow-sm"
+                  : "bg-slate-100 hover:bg-slate-200/70 text-slate-600"
                   }`}
               >
                 <span>{tab}</span>
@@ -601,7 +595,7 @@ export function ShipmentsView() {
             value={searchFilter}
             onChange={(e) => setSearchFilter(e.target.value)}
             placeholder="Search req, vehicle, carrier..."
-            className="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 placeholder:text-slate-400 focus:outline-hidden focus:ring-2 focus:ring-[#B30D12]/20 focus:border-[#B30D12] transition-all"
+            className="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 placeholder:text-slate-400 focus:outline-hidden focus:ring-2 focus:ring-[#FE0000]/20 focus:border-[#FE0000] transition-all"
           />
           {searchFilter && (
             <button
@@ -731,7 +725,7 @@ export function ShipmentsView() {
                             e.stopPropagation();
                             handleSelectShipment(req.id);
                           }}
-                          className="px-3.5 py-1.5 bg-[#B30D12] hover:bg-[#9B0A0F] text-white font-bold text-xs uppercase tracking-wider rounded-xl shadow-xs inline-flex items-center gap-1.5 transition-all active:scale-95 group-hover:shadow cursor-pointer"
+                          className="px-3.5 py-1.5 bg-[#FE0000] hover:bg-[#9B0A0F] text-white font-bold text-xs uppercase tracking-wider rounded-xl shadow-xs inline-flex items-center gap-1.5 transition-all active:scale-95 group-hover:shadow cursor-pointer"
                         >
                           <Eye className="w-3.5 h-3.5" />
                           <span>View</span>

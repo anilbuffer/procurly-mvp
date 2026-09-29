@@ -29,9 +29,11 @@ import {
   Copy,
   Download,
   ShoppingBag,
+  Camera,
 } from "lucide-react";
 import { usePortal } from "@/context/portal-context";
 import { InvoiceDocument } from "@/components/shared/invoice-document";
+import { LegalModal } from "@/components/auth/legal-modal";
 import {
   PartRequest,
   RequestStatus,
@@ -78,7 +80,17 @@ export function RequestDetailsModal() {
   const [isRejecting, setIsRejecting] = useState(false);
   const [rejectReason, setRejectReason] = useState("Local source found faster");
 
-  const [selectedFreightType, setSelectedFreightType] = useState<"Air" | "Sea">("Sea");
+  const [selectedFreightType, setSelectedFreightType] = useState<"Air" | "Sea" | null>(null);
+  const [quotePhotoLightbox, setQuotePhotoLightbox] = useState<string | null>(null);
+  const [lightboxIndex, setLightboxIndex] = useState<number>(0);
+  const [lightboxPhotos, setLightboxPhotos] = useState<string[]>([]);
+
+  const openLightbox = (photos: string[], index: number = 0) => {
+    if (!photos || photos.length === 0) return;
+    setLightboxPhotos(photos);
+    setLightboxIndex(index);
+    setQuotePhotoLightbox(photos[index]);
+  };
 
   // Sync active tab based on selected request status
   React.useEffect(() => {
@@ -122,7 +134,6 @@ export function RequestDetailsModal() {
     "Received At Shipping Facility",
     "In Transit",
     "Arrived in NZ",
-    "Customs Clearance",
     "Out For Delivery",
   ];
 
@@ -142,7 +153,7 @@ export function RequestDetailsModal() {
   };
 
   const handleConfirmAcceptance = () => {
-    if (!verifyVehicle || !verifyPart || !verifyAddress || !acceptTerms) return;
+    if (!verifyVehicle || !verifyPart || !verifyAddress || !acceptTerms || !selectedFreightType) return;
 
     const audit: QuoteAcceptanceAudit = {
       acceptedAt: new Date().toLocaleString("en-NZ", { timeZone: "Pacific/Auckland" }),
@@ -154,8 +165,8 @@ export function RequestDetailsModal() {
       vehicleVerified: true,
       partVerified: true,
       addressVerified: true,
-      selectedFreightType,
-      freightCost: selectedFreightType === "Air" ? req.quotation?.airFreightCost : (req.quotation?.seaFreightCost || req.quotation?.freightCost || 45.0),
+      selectedFreightType: selectedFreightType!,
+      freightCost: selectedFreightType === "Air" ? (req.quotation?.airFreightCost || req.customerQuote?.airFreightCost || 0) : (req.quotation?.seaFreightCost || req.customerQuote?.seaFreightCost || req.quotation?.freightCost || req.customerQuote?.freightCost || 45.0),
     };
 
     acceptQuote(req.id, audit);
@@ -219,7 +230,7 @@ export function RequestDetailsModal() {
                       className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold transition-all ${isPast
                         ? "bg-emerald-500 text-white"
                         : isCurrent
-                          ? "bg-[#B30D12] text-white ring-4 ring-red-500/20 animate-pulse"
+                          ? "bg-[#FE0000] text-white ring-4 ring-red-500/20 animate-pulse"
                           : "bg-slate-700 text-slate-400"
                         }`}
                     >
@@ -254,7 +265,7 @@ export function RequestDetailsModal() {
           <button
             onClick={() => setActiveTab("overview")}
             className={`py-3 px-4 border-b-2 flex items-center gap-2 transition-colors ${activeTab === "overview"
-              ? "border-[#B30D12] text-[#B30D12]"
+              ? "border-[#FE0000] text-[#FE0000]"
               : "border-transparent hover:text-slate-900"
               }`}
           >
@@ -262,18 +273,18 @@ export function RequestDetailsModal() {
             <span>Overview & Vehicle</span>
           </button>
 
-          {req.quotation && (
+          {(req.quotation || req.customerQuote) && (
             <button
               onClick={() => setActiveTab("quote")}
               className={`py-3 px-4 border-b-2 flex items-center gap-2 transition-colors ${activeTab === "quote"
-                ? "border-[#B30D12] text-[#B30D12]"
+                ? "border-[#FE0000] text-[#FE0000]"
                 : "border-transparent hover:text-slate-900"
                 }`}
             >
               <FileCheck2 className="w-3.5 h-3.5" />
               <span>Quotation & Pricing</span>
               {req.status === "Quoted" && (
-                <span className="w-2 h-2 rounded-full bg-[#B30D12]" />
+                <span className="w-2 h-2 rounded-full bg-[#FE0000]" />
               )}
             </button>
           )}
@@ -282,7 +293,7 @@ export function RequestDetailsModal() {
             <button
               onClick={() => setActiveTab("shipment")}
               className={`py-3 px-4 border-b-2 flex items-center gap-2 transition-colors ${activeTab === "shipment"
-                ? "border-[#B30D12] text-[#B30D12]"
+                ? "border-[#FE0000] text-[#FE0000]"
                 : "border-transparent hover:text-slate-900"
                 }`}
             >
@@ -295,14 +306,14 @@ export function RequestDetailsModal() {
             <button
               onClick={() => setActiveTab("Subadmin")}
               className={`py-3 px-4 border-b-2 flex items-center gap-2 transition-colors ${activeTab === "Subadmin"
-                ? "border-[#B30D12] text-[#B30D12]"
+                ? "border-[#FE0000] text-[#FE0000]"
                 : "border-transparent hover:text-slate-900"
                 }`}
             >
               <ShieldCheck className="w-3.5 h-3.5" />
               <span>Subadmin Review</span>
               {req.status === "Subadmin Review" && (
-                <span className="w-2 h-2 rounded-full bg-[#B30D12]" />
+                <span className="w-2 h-2 rounded-full bg-[#FE0000]" />
               )}
             </button>
           )}
@@ -314,7 +325,7 @@ export function RequestDetailsModal() {
                 setSelectedRequestDetailsTab?.("invoice");
               }}
               className={`py-3 px-4 border-b-2 flex items-center gap-2 transition-colors ${activeTab === "invoice"
-                ? "border-[#B30D12] text-[#B30D12]"
+                ? "border-[#FE0000] text-[#FE0000]"
                 : "border-transparent hover:text-slate-900 text-slate-700"
                 }`}
               title="View & Download Official GST Tax Invoice"
@@ -333,7 +344,7 @@ export function RequestDetailsModal() {
               onClick={() => setShowDirectContactModal(true)}
               className="px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition-colors inline-flex items-center gap-1.5"
             >
-              <Phone className="w-3.5 h-3.5 text-[#B30D12]" />
+              <Phone className="w-3.5 h-3.5 text-[#FE0000]" />
               <span>Contact Operations (Email / Teams / Phone)</span>
             </button>
           </div>
@@ -361,7 +372,7 @@ export function RequestDetailsModal() {
                   {req.status === "Quoted" && (
                     <button
                       onClick={() => setActiveTab("quote")}
-                      className="px-4 py-1.5 bg-[#B30D12] hover:bg-[#9B0A0F] text-white font-bold text-xs uppercase tracking-wider rounded-lg shadow-sm whitespace-nowrap"
+                      className="px-4 py-1.5 bg-[#FE0000] hover:bg-[#9B0A0F] text-white font-bold text-xs uppercase tracking-wider rounded-lg shadow-sm whitespace-nowrap"
                     >
                       Review Quote →
                     </button>
@@ -372,11 +383,77 @@ export function RequestDetailsModal() {
                         setPaymentRequest(req);
                         setIsPaymentModalOpen(true);
                       }}
-                      className="px-4 py-1.5 bg-[#B30D12] hover:bg-[#9B0A0F] text-white font-bold text-xs uppercase tracking-wider rounded-lg shadow-sm whitespace-nowrap"
+                      className="px-4 py-1.5 bg-[#FE0000] hover:bg-[#9B0A0F] text-white font-bold text-xs uppercase tracking-wider rounded-lg shadow-sm whitespace-nowrap"
                     >
                       Record Settlement (Unpaid) →
                     </button>
                   )}
+                </div>
+              )}
+
+              {/* Quotation Ready Highlight Banner in Overview */}
+              {(req.quotation || req.customerQuote) && (
+                <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-red-50/90 via-white to-slate-50 border border-red-200/90 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
+                  <div className="space-y-1.5 flex-1">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-[#FE0000] text-white">
+                        Quotation Ready
+                      </span>
+                      <span className="text-xs font-semibold text-slate-500 font-mono">
+                        {(req.quotation || req.customerQuote)?.oemNumber ? `OEM Ref: ${(req.quotation || req.customerQuote)?.oemNumber}` : "Verified Part"}
+                      </span>
+                      {req.status === "Quoted" && (
+                        <span className="text-[10px] font-bold text-amber-700 bg-amber-50 px-2 py-0.5 rounded border border-amber-200">
+                          Awaiting Customer Action
+                        </span>
+                      )}
+                    </div>
+                    <h3 className="text-sm sm:text-base font-bold text-slate-900">
+                      {(req.quotation || req.customerQuote)?.itemDescription}
+                    </h3>
+                    <p className="text-xs text-slate-600 line-clamp-1 italic">
+                      &ldquo;{(req.quotation || req.customerQuote)?.notes || "Genuine OEM part inspected and verified by AutoHub sourcing specialist."}&rdquo;
+                    </p>
+                  </div>
+
+                  <div className="flex flex-wrap items-center gap-3 shrink-0">
+                    {/* Thumbnail previews */}
+                    {(() => {
+                      const qPhotos = (req.quotation?.quotePhotos || req.customerQuote?.quotePhotos || req.customerQuoteVersions?.[0]?.quotePhotos || req.SubadminDetails?.photos || []);
+                      if (qPhotos.length === 0) return null;
+                      return (
+                        <div className="flex -space-x-2 overflow-hidden items-center py-1">
+                          {qPhotos.slice(0, 3).map((p: string, idx: number) => (
+                            <img
+                              key={idx}
+                              src={p}
+                              alt="Quote part preview"
+                              className="inline-block h-10 w-10 rounded-lg ring-2 ring-white object-cover shadow-xs cursor-pointer hover:scale-110 transition-transform"
+                              onClick={() => {
+                                setLightboxPhotos(qPhotos);
+                                setLightboxIndex(idx);
+                                setQuotePhotoLightbox(p);
+                              }}
+                            />
+                          ))}
+                          {qPhotos.length > 3 && (
+                            <span className="flex items-center justify-center h-10 w-10 rounded-lg ring-2 ring-white bg-slate-800 text-white text-[10px] font-bold">
+                              +{qPhotos.length - 3}
+                            </span>
+                          )}
+                        </div>
+                      );
+                    })()}
+
+                    <button
+                      onClick={() => setActiveTab("quote")}
+                      className="px-4 py-2 bg-[#FE0000] hover:bg-[#9B0A0F] text-white font-bold text-xs uppercase tracking-wider rounded-xl shadow-sm transition-all inline-flex items-center gap-1.5 shrink-0"
+                    >
+                      <Camera className="w-3.5 h-3.5" />
+                      <span>View Quote &amp; Photos</span>
+                      <ArrowRight className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
                 </div>
               )}
 
@@ -385,7 +462,7 @@ export function RequestDetailsModal() {
                 {/* Vehicle Specifications */}
                 <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-3">
                   <div className="flex items-center gap-2 text-xs font-bold text-slate-900">
-                    <Car className="w-4 h-4 text-[#B30D12]" />
+                    <Car className="w-4 h-4 text-[#FE0000]" />
                     <span>Vehicle Information</span>
                   </div>
                   <div className="space-y-2 text-xs">
@@ -425,7 +502,7 @@ export function RequestDetailsModal() {
                 {/* Part Requirements */}
                 <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-3">
                   <div className="flex items-center gap-2 text-xs font-bold text-slate-900">
-                    <Package className="w-4 h-4 text-[#B30D12]" />
+                    <Package className="w-4 h-4 text-[#FE0000]" />
                     <span>Part Specifications</span>
                   </div>
                   <div className="space-y-2 text-xs">
@@ -467,7 +544,7 @@ export function RequestDetailsModal() {
               <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200/80 grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <div className="flex items-center gap-2 text-xs font-bold text-slate-900 mb-2">
-                    <MapPin className="w-4 h-4 text-[#B30D12]" />
+                    <MapPin className="w-4 h-4 text-[#FE0000]" />
                     <span>Delivery Address & Logistics</span>
                   </div>
                   <div className="text-xs text-slate-600 space-y-0.5">
@@ -495,7 +572,7 @@ export function RequestDetailsModal() {
 
                 <div>
                   <div className="flex items-center gap-2 text-xs font-bold text-slate-900 mb-2">
-                    <FileText className="w-4 h-4 text-[#B30D12]" />
+                    <FileText className="w-4 h-4 text-[#FE0000]" />
                     <span>Customer Notes</span>
                   </div>
                   <p className="text-xs text-slate-600 italic bg-white p-3 rounded-lg border border-slate-200">
@@ -507,371 +584,718 @@ export function RequestDetailsModal() {
           )}
 
           {/* TAB 2: QUOTATION & ACCEPTANCE */}
-          {activeTab === "quote" && req.quotation && (
-            <div className="space-y-6">
-              {/* Quote Overview Card */}
-              <div className="p-6 rounded-2xl bg-white border border-slate-200 shadow-sm space-y-4">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-4">
-                  <div>
-                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-                      Official Quotation
-                    </span>
-                    <h3 className="text-lg font-bold text-slate-900">
-                      {req.quotation.itemDescription}
-                    </h3>
-                    <p className="text-xs text-slate-500 font-mono">
-                      OEM Ref: {req.quotation.oemNumber} • Supplier Hub:{" "}
-                      {req.quotation.supplierLocation}
-                    </p>
-                    {req.supporting?.freightPreference && (
-                      <div className="mt-1">
-                        <span className="text-[10px] font-bold text-[#B30D12] bg-red-50 px-2 py-0.5 rounded border border-red-100 inline-flex items-center gap-1">
-                          Freight Preference: {req.supporting.freightPreference === "Sea Freight" ? "Ocean Freight" : req.supporting.freightPreference}
-                        </span>
-                      </div>
-                    )}
-                  </div>
-                  <div className="text-right">
-                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-                      Total Landed Price
-                    </span>
-                    <div className="text-2xl font-black text-slate-900 font-mono">
-                      ${(
-                        (req.quotation.subtotal +
-                        (selectedFreightType === "Air"
-                          ? req.quotation.airFreightCost || 0
-                          : req.quotation.seaFreightCost || req.quotation.freightCost || 0)) * 1.15
-                      ).toFixed(2)}{" "}
-                      <span className="text-xs font-bold text-slate-500">NZD</span>
-                    </div>
-                    <span className="text-[10px] text-emerald-600 font-semibold">
-                      Includes 15% NZ GST & Freight
-                    </span>
-                  </div>
-                </div>
+          {activeTab === "quote" && (req.quotation || req.customerQuote) && (() => {
+            const quote = req.quotation || req.customerQuote!;
+            const adminPhotos: string[] = (
+              (quote.quotePhotos && quote.quotePhotos.length > 0) ? quote.quotePhotos :
+                (req.customerQuote?.quotePhotos && req.customerQuote.quotePhotos.length > 0) ? req.customerQuote.quotePhotos :
+                  (req.customerQuoteVersions?.find((v: any) => v.quotePhotos && v.quotePhotos.length > 0)?.quotePhotos) ||
+                  (req.SubadminDetails?.photos && req.SubadminDetails.photos.length > 0 ? req.SubadminDetails.photos : [])
+            );
+            const customerPhotos: string[] = req.supporting?.photos || [];
+            const specialistNote: string = quote.notes || req.customerQuote?.notes || "";
+            const customerVisibleNotes = (req.internalNotes || []).filter((n: any) => n.isCustomerVisible);
 
-                {/* Freight Selection Options */}
-                {req.status === "Quoted" && !req.quoteAcceptance ? (
-                  <div className="grid grid-cols-2 gap-4">
-                    {/* Air Freight Option */}
-                    <div
-                      onClick={() => setSelectedFreightType("Air")}
-                      className={`p-4 rounded-xl border-2 cursor-pointer transition-all ${selectedFreightType === "Air"
-                        ? "border-[#B30D12] bg-red-50/10"
-                        : "border-slate-200 hover:border-slate-300 bg-white"
-                        }`}
-                    >
-                      <div className="flex items-center justify-between mb-2">
-                        <div className="flex items-center gap-2">
-                          <Send className="w-4 h-4 text-[#B30D12]" />
-                          <span className="text-xs font-bold text-slate-900">Air Express</span>
-                        </div>
-                        {selectedFreightType === "Air" && (
-                          <div className="w-4 h-4 rounded-full bg-[#B30D12] text-white flex items-center justify-center">
-                            <Check className="w-3 h-3" />
-                          </div>
-                        )}
-                      </div>
-                      <div className="text-xl font-black text-slate-900 font-mono mb-1">
-                        ${((req.quotation.subtotal + (req.quotation.airFreightCost || 0)) * 1.15).toFixed(2)}
-                      </div>
-                      <p className="text-[10px] text-slate-500 leading-relaxed">
-                        Fastest delivery option. Typically 7-10 business days transit time. (Landed Door-to-Door)
+            return (
+              <div className="space-y-6">
+                {/* Quote Overview Card */}
+                <div className="p-6 rounded-2xl bg-white border border-slate-200 shadow-sm space-y-4">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-4">
+                    <div>
+                      <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                        Official Quotation
+                      </span>
+                      <h3 className="text-lg font-bold text-slate-900">
+                        {quote.itemDescription}
+                      </h3>
+                      <p className="text-xs text-slate-500 font-mono">
+                        OEM Ref: {quote.oemNumber || req.part.partNumber || "Verified"} • Supplier Hub:{" "}
+                        {quote.supplierLocation || "Japan / Global"}
                       </p>
-                    </div>
-
-                    {/* Sea Freight Option */}
-                    <div
-                      onClick={() => setSelectedFreightType("Sea")}
-                      className={`p-4 rounded-xl border-2 cursor-pointer transition-all ${selectedFreightType === "Sea"
-                        ? "border-[#B30D12] bg-red-50/10"
-                        : "border-slate-200 hover:border-slate-300 bg-white"
-                        }`}
-                    >
-                      <div className="flex items-center justify-between mb-2">
-                        <div className="flex items-center gap-2">
-                          <Truck className="w-4 h-4 text-[#B30D12]" />
-                          <span className="text-xs font-bold text-slate-900">Sea Freight</span>
+                      {req.supporting?.freightPreference && (
+                        <div className="mt-1">
+                          <span className="text-[10px] font-bold text-[#FE0000] bg-red-50 px-2 py-0.5 rounded border border-red-100 inline-flex items-center gap-1">
+                            Freight Preference: {req.supporting.freightPreference === "Sea Freight" ? "Ocean Freight" : req.supporting.freightPreference}
+                          </span>
                         </div>
-                        {selectedFreightType === "Sea" && (
-                          <div className="w-4 h-4 rounded-full bg-[#B30D12] text-white flex items-center justify-center">
-                            <Check className="w-3 h-3" />
-                          </div>
-                        )}
-                      </div>
-                      <div className="text-xl font-black text-slate-900 font-mono mb-1">
-                        ${((req.quotation.subtotal + (req.quotation.seaFreightCost || req.quotation.freightCost || 0)) * 1.15).toFixed(2)}
-                      </div>
-                      <p className="text-[10px] text-slate-500 leading-relaxed">
-                        Cost-effective option. Typically 25-40 business days transit time. (Landed Door-to-Door)
-                      </p>
+                      )}
                     </div>
-                  </div>
-                ) : (
-                  <div className="p-4 rounded-xl border border-slate-200 bg-slate-50/70 space-y-2">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        {req.quoteAcceptance?.selectedFreightType === "Air" ? (
-                          <Send className="w-4 h-4 text-[#B30D12]" />
+                    <div className="text-right">
+                      <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                        Total Landed Price
+                      </span>
+                      <div className="text-2xl font-black text-slate-900 font-mono">
+                        {selectedFreightType ? (
+                          <>
+                            ${(
+                              (quote.subtotal +
+                                (selectedFreightType === "Air"
+                                  ? quote.airFreightCost || 0
+                                  : quote.seaFreightCost || quote.freightCost || 0)) * 1.15
+                            ).toFixed(2)}{" "}
+                            <span className="text-xs font-bold text-slate-500">NZD</span>
+                          </>
                         ) : (
-                          <Truck className="w-4 h-4 text-[#B30D12]" />
+                          <>
+                            <span className="text-slate-400">— </span>
+                            <span className="text-xs font-bold text-slate-400">NZD</span>
+                          </>
                         )}
-                        <span className="text-xs font-bold text-slate-900">
-                          Selected Freight: {req.quoteAcceptance?.selectedFreightType || "Sea"}
-                        </span>
-                        <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-slate-200 text-slate-700 uppercase">
-                          Locked
-                        </span>
                       </div>
-                      <span className="font-mono text-sm font-bold text-slate-900">
-                        ${(req.quoteAcceptance?.freightCost || req.quotation?.freightCost || 0).toFixed(2)} NZD
+                      <span className="text-[10px] text-emerald-600 font-semibold">
+                        {selectedFreightType
+                          ? "Includes 15% NZ GST & Freight"
+                          : "Select freight option below"}
                       </span>
                     </div>
                   </div>
-                )}
 
-                {/* Acceptance Record if already accepted */}
-                {req.quoteAcceptance && (
-                  <div className="p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-xs space-y-2">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-1.5 font-bold text-emerald-800">
-                        <ShieldCheck className="w-4 h-4 text-emerald-600" />
-                        <span>Quote Accepted & Order Logged</span>
+                  {/* Sourcing Specialist Advisory & Admin Notes */}
+                  {(specialistNote || customerVisibleNotes.length > 0) && (
+                    <div className="p-5 rounded-2xl bg-amber-50/80 border border-amber-200/90 text-xs space-y-3 shadow-xs">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2 font-bold text-amber-950">
+                          <div className="w-7 h-7 rounded-lg bg-amber-100 border border-amber-300 flex items-center justify-center text-amber-700">
+                            <MessageSquare className="w-4 h-4" />
+                          </div>
+                          <div>
+                            <span className="text-sm font-bold block">Sourcing Specialist Advisory &amp; Admin Notes</span>
+                            <span className="text-[10px] text-amber-800 font-normal">Direct notes from AutoHub Operations &amp; Inspection Team</span>
+                          </div>
+                        </div>
+                        <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-200/60 text-amber-900 border border-amber-300">
+                          Verified by AutoHub
+                        </span>
                       </div>
-                      {req.payment && (
-                        <span
-                          className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold border ${req.payment.status === "Paid"
-                            ? "bg-emerald-100 text-emerald-800 border-emerald-200"
-                            : "bg-amber-100 text-amber-800 border-amber-200"
-                            }`}
-                        >
-                          Payment: {req.payment.status}
+
+                      {specialistNote && (
+                        <div className="bg-white/90 p-3.5 rounded-xl border border-amber-200/70 text-slate-800 leading-relaxed font-normal shadow-xs">
+                          <div className="text-[10px] font-bold uppercase tracking-wider text-amber-800 mb-1 flex items-center gap-1.5">
+                            <ShieldCheck className="w-3.5 h-3.5 text-amber-600" />
+                            <span>Part Specification &amp; Fitment Advisory</span>
+                          </div>
+                          <p className="whitespace-pre-wrap text-xs text-slate-800">
+                            {specialistNote}
+                          </p>
+                        </div>
+                      )}
+
+                      {customerVisibleNotes.length > 0 && (
+                        <div className="space-y-2 pt-1">
+                          <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500">
+                            Operational Updates
+                          </span>
+                          {customerVisibleNotes.map((note: any) => (
+                            <div key={note.id} className="bg-white/70 p-2.5 rounded-lg border border-amber-100 flex items-start justify-between gap-3 text-xs">
+                              <p className="text-slate-700">{note.content}</p>
+                              <span className="text-[10px] text-slate-400 font-mono shrink-0">{note.createdAt}</span>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Pre-Dispatch Inspection Photos from Admin */}
+                  <div className="p-5 rounded-2xl bg-white border border-slate-200 shadow-xs space-y-4">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
+                      <div className="flex items-center gap-2">
+                        <div className="w-8 h-8 rounded-xl bg-red-50 border border-red-100 text-[#FE0000] flex items-center justify-center">
+                          <Camera className="w-4 h-4" />
+                        </div>
+                        <div>
+                          <h4 className="text-sm font-bold text-slate-900 flex items-center gap-2">
+                            <span>Pre-Dispatch Part Photos &amp; Visual Inspection</span>
+                            {adminPhotos.length > 0 && (
+                              <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                                {adminPhotos.length} Photo{adminPhotos.length > 1 ? "s" : ""} Available
+                              </span>
+                            )}
+                          </h4>
+                          <p className="text-[11px] text-slate-500">
+                            Verified physical inspection photos uploaded by the sourcing hub prior to dispatch.
+                          </p>
+                        </div>
+                      </div>
+
+                      {adminPhotos.length > 0 && (
+                        <span className="text-[11px] text-slate-400 italic">
+                          Click any image to expand full size
                         </span>
                       )}
                     </div>
-                    <p className="text-emerald-700">
-                      Accepted by {req.quoteAcceptance.acceptedBy} (
-                      {req.quoteAcceptance.userRole}) on{" "}
-                      {req.quoteAcceptance.acceptedAt}. Procurly Invoice Ref:{" "}
-                      <strong className="font-mono">{req.payment?.invoiceNumber || "INV-2026-XXXX"}</strong> (Issued by Procurly Operations).
-                    </p>
 
-                    {/* Accounts Receivable Invoice Handover Action Box */}
-                    <div className="bg-white p-3.5 rounded-xl border border-emerald-300 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                      <div>
-                        <span className="text-[10px] uppercase font-bold text-slate-400 block">
-                          Accounts Receivable Invoice Handover
-                        </span>
-                        <div className="flex items-center gap-2 mt-0.5">
-                          <span className="font-mono font-bold text-slate-900 text-sm">
-                            {req.payment?.invoiceNumber || `INV-2026-${req.requestNumber.replace(/[^0-9]/g, "").padStart(4, "0")}`}
+                    {adminPhotos.length > 0 ? (
+                      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3.5">
+                        {adminPhotos.map((photo: string, idx: number) => (
+                          <div
+                            key={idx}
+                            className="relative group rounded-xl overflow-hidden border border-slate-200 shadow-sm aspect-square bg-slate-900 cursor-pointer"
+                            onClick={() => openLightbox(adminPhotos, idx)}
+                          >
+                            <img
+                              src={photo}
+                              alt={`Admin inspection photo ${idx + 1}`}
+                              className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105 opacity-95 group-hover:opacity-100"
+                            />
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-2.5">
+                              <span className="text-[10px] font-bold text-white flex items-center gap-1 w-full">
+                                <span>Photo {idx + 1} of {adminPhotos.length}</span>
+                                <ExternalLink className="w-3 h-3 text-slate-300 ml-auto" />
+                              </span>
+                            </div>
+                            <span className="absolute top-2 left-2 text-[9px] font-bold text-white bg-black/60 backdrop-blur-xs px-2 py-0.5 rounded-md border border-white/10">
+                              Admin Sourced
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="p-6 rounded-xl border border-dashed border-slate-200 bg-slate-50/60 text-center space-y-1.5">
+                        <Camera className="w-6 h-6 text-slate-400 mx-auto" />
+                        <p className="text-xs font-semibold text-slate-700">Visual Inspection Pending Arrival</p>
+                        <p className="text-[11px] text-slate-500 max-w-md mx-auto">
+                          High-resolution physical inspection photos will be uploaded by AutoHub operations upon warehouse arrival before international dispatch.
+                        </p>
+                      </div>
+                    )}
+
+                    {/* Customer Reference Photos Comparison (if customer uploaded photos during request) */}
+                    {customerPhotos.length > 0 && (
+                      <div className="mt-4 pt-4 border-t border-slate-100">
+                        <div className="flex items-center justify-between mb-2">
+                          <span className="text-[11px] font-bold text-slate-700 uppercase tracking-wider">
+                            Customer Reference Photos (Submitted at Request)
                           </span>
-                          <span className="text-[11px] text-slate-500 font-medium">
-                            &bull; Total: ${(req.payment?.amount || req.customerQuote?.totalAmount || req.quotedValue || 450).toFixed(2)} NZD
+                          <span className="text-[10px] text-slate-400">
+                            {customerPhotos.length} reference photo{customerPhotos.length > 1 ? "s" : ""}
                           </span>
                         </div>
+                        <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2">
+                          {customerPhotos.map((photo: string, idx: number) => (
+                            <div
+                              key={idx}
+                              className="relative group rounded-lg overflow-hidden border border-slate-200 aspect-square bg-slate-100 cursor-pointer"
+                              onClick={() => openLightbox(customerPhotos, idx)}
+                            >
+                              <img
+                                src={photo}
+                                alt={`Customer reference ${idx + 1}`}
+                                className="w-full h-full object-cover transition-transform duration-200 group-hover:scale-105"
+                              />
+                              <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                <ExternalLink className="w-3.5 h-3.5 text-white" />
+                              </div>
+                              <span className="absolute bottom-1 left-1 text-[8px] font-bold text-white bg-black/60 px-1 rounded">
+                                Ref #{idx + 1}
+                              </span>
+                            </div>
+                          ))}
+                        </div>
                       </div>
-                      <div className="flex items-center gap-2">
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setActiveTab("invoice");
-                            setSelectedRequestDetailsTab?.("invoice");
-                          }}
-                          className="px-3 py-1.5 bg-[#B30D12] hover:bg-[#9B0A0F] text-white font-bold text-xs rounded-lg transition-colors inline-flex items-center gap-1.5 shadow-xs cursor-pointer"
-                        >
-                          <FileText className="w-3.5 h-3.5" />
-                          <span>View Invoice Tab</span>
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setActiveTab("invoice");
-                            setSelectedRequestDetailsTab?.("invoice");
-                          }}
-                          className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-lg transition-colors inline-flex items-center gap-1.5 cursor-pointer"
-                          title="Open Tax Invoice Tab to print or download"
-                        >
-                          <Download className="w-3.5 h-3.5" />
-                          <span>Download / Print</span>
-                        </button>
-                      </div>
-                    </div>
+                    )}
+                  </div>
 
-                    {/* Supplier Order Handover Active Box */}
-                    {req.supplierOrder && (
-                      <div className="bg-white p-3.5 rounded-xl border border-indigo-200 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
-                        <div>
-                          <div className="flex items-center gap-1.5 font-bold text-indigo-900">
-                            <ShoppingBag className="w-3.5 h-3.5 text-indigo-600" />
-                            <span>Supplier Order Handover Active</span>
+                  {/* Freight Selection Options */}
+                  {req.status === "Quoted" && !req.quoteAcceptance ? (
+                    <div className="space-y-3">
+                      {/* Required Selection Header */}
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <Truck className="w-4 h-4 text-[#FE0000]" />
+                          <span className="text-xs font-bold text-slate-900 uppercase tracking-wider">Select Your Freight Option</span>
+                        </div>
+                        <span className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider border ${selectedFreightType
+                          ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                          : 'bg-red-50 text-[#FE0000] border-red-200 animate-pulse'
+                          }`}>
+                          {selectedFreightType ? '✓ Selected' : '⚠ Required'}
+                        </span>
+                      </div>
+
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        {/* Air Freight Option */}
+                        <div
+                          onClick={() => setSelectedFreightType("Air")}
+                          className={`relative p-5 rounded-2xl border-2 cursor-pointer transition-all duration-200 ${selectedFreightType === "Air"
+                            ? "border-[#FE0000] bg-red-50/30 shadow-lg shadow-red-500/10 ring-1 ring-[#FE0000]/20"
+                            : selectedFreightType === null
+                              ? "border-slate-300 bg-white hover:border-[#FE0000]/50 hover:shadow-md"
+                              : "border-slate-200 bg-white hover:border-slate-300"
+                            }`}
+                        >
+                          {/* Radio indicator */}
+                          <div className={`absolute top-4 right-4 w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all ${selectedFreightType === "Air" ? "border-[#FE0000]" : "border-slate-300"
+                            }`}>
+                            {selectedFreightType === "Air" && <div className="w-2.5 h-2.5 bg-[#FE0000] rounded-full" />}
                           </div>
-                          <p className="text-slate-600 text-[11px] mt-0.5">
-                            Purchase Order <strong className="font-mono text-slate-800">{req.supplierOrder.supplierRef}</strong> released to {req.supplierOrder.supplierName}. Handover Route: <span className="font-semibold text-slate-700">{req.supplierOrder.handoverMode || "Consolidated via Autohub Hub"}</span>.
+
+                          <div className="flex items-center gap-2.5 mb-3">
+                            <div className={`p-2 rounded-xl ${selectedFreightType === "Air" ? "bg-red-100 text-[#FE0000]" : "bg-slate-100 text-slate-500"}`}>
+                              <Send className="w-5 h-5" />
+                            </div>
+                            <div>
+                              <span className="text-sm font-bold text-slate-900 block">Air Express</span>
+                              <span className="text-[10px] text-slate-500">Fastest option</span>
+                            </div>
+                          </div>
+                          <div className="text-xl font-black text-slate-900 font-mono mb-2">
+                            ${((quote.subtotal + (quote.airFreightCost || 0)) * 1.15).toFixed(2)}
+                            <span className="text-xs font-bold text-slate-500 ml-1">NZD</span>
+                          </div>
+                          <div className="flex items-center gap-1.5 text-[11px] text-slate-600 mb-1">
+                            <Clock className="w-3.5 h-3.5 text-slate-400" />
+                            <span className="font-semibold">7–10 business days</span> transit
+                          </div>
+                          <p className="text-[10px] text-slate-400 leading-relaxed">
+                            Priority air cargo. Landed door-to-door including customs clearance.
                           </p>
                         </div>
-                        <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200 shrink-0">
-                          PO Placed ({req.supplierOrder.orderDate})
+
+                        {/* Sea Freight Option */}
+                        <div
+                          onClick={() => setSelectedFreightType("Sea")}
+                          className={`relative p-5 rounded-2xl border-2 cursor-pointer transition-all duration-200 ${selectedFreightType === "Sea"
+                            ? "border-[#FE0000] bg-red-50/30 shadow-lg shadow-red-500/10 ring-1 ring-[#FE0000]/20"
+                            : selectedFreightType === null
+                              ? "border-slate-300 bg-white hover:border-[#FE0000]/50 hover:shadow-md"
+                              : "border-slate-200 bg-white hover:border-slate-300"
+                            }`}
+                        >
+                          {/* Radio indicator */}
+                          <div className={`absolute top-4 right-4 w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all ${selectedFreightType === "Sea" ? "border-[#FE0000]" : "border-slate-300"
+                            }`}>
+                            {selectedFreightType === "Sea" && <div className="w-2.5 h-2.5 bg-[#FE0000] rounded-full" />}
+                          </div>
+
+                          <div className="flex items-center gap-2.5 mb-3">
+                            <div className={`p-2 rounded-xl ${selectedFreightType === "Sea" ? "bg-red-100 text-[#FE0000]" : "bg-slate-100 text-slate-500"}`}>
+                              <Truck className="w-5 h-5" />
+                            </div>
+                            <div>
+                              <span className="text-sm font-bold text-slate-900 block">Sea Freight</span>
+                              <span className="text-[10px] text-emerald-600 font-semibold">Budget-friendly</span>
+                            </div>
+                          </div>
+                          <div className="text-xl font-black text-slate-900 font-mono mb-2">
+                            ${((quote.subtotal + (quote.seaFreightCost || quote.freightCost || 0)) * 1.15).toFixed(2)}
+                            <span className="text-xs font-bold text-slate-500 ml-1">NZD</span>
+                          </div>
+                          <div className="flex items-center gap-1.5 text-[11px] text-slate-600 mb-1">
+                            <Clock className="w-3.5 h-3.5 text-slate-400" />
+                            <span className="font-semibold">25–40 business days</span> transit
+                          </div>
+                          <p className="text-[10px] text-slate-400 leading-relaxed">
+                            Economy ocean route. Landed door-to-door including customs clearance.
+                          </p>
+                          {/* Savings badge */}
+                          {(quote.airFreightCost && (quote.seaFreightCost || quote.freightCost)) && (
+                            <div className="mt-2 inline-flex items-center gap-1 text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                              Save ${(((quote.airFreightCost - (quote.seaFreightCost || quote.freightCost || 0)) * 1.15)).toFixed(2)} NZD
+                            </div>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Validation prompt when no freight selected */}
+                      {!selectedFreightType && (
+                        <p className="text-[11px] text-[#FE0000] font-medium text-center py-1">
+                          Please select a freight option above to continue
+                        </p>
+                      )}
+                    </div>
+                  ) : (
+                    <div className="p-4 rounded-xl border border-slate-200 bg-slate-50/70 space-y-2">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          {req.quoteAcceptance?.selectedFreightType === "Air" ? (
+                            <Send className="w-4 h-4 text-[#FE0000]" />
+                          ) : (
+                            <Truck className="w-4 h-4 text-[#FE0000]" />
+                          )}
+                          <span className="text-xs font-bold text-slate-900">
+                            Selected Freight: {req.quoteAcceptance?.selectedFreightType || "Sea"}
+                          </span>
+                          <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-slate-200 text-slate-700 uppercase">
+                            Locked
+                          </span>
+                        </div>
+                        <span className="font-mono text-sm font-bold text-slate-900">
+                          ${(req.quoteAcceptance?.freightCost || quote.freightCost || 0).toFixed(2)} NZD
                         </span>
                       </div>
-                    )}
-                    <div className="mt-2 pt-3 border-t border-emerald-200/60 text-[11px] text-emerald-700 flex flex-col gap-1.5">
-                      <div className="flex items-center gap-1.5">
-                        <CheckCircle2 className="w-3.5 h-3.5 shrink-0" />
-                        <span>Particular Terms of Trade digitally accepted by customer on {req.quoteAcceptance.termsAcceptedAt || req.quoteAcceptance.acceptedAt} {req.quoteAcceptance.ipAddress && `(IP: ${req.quoteAcceptance.ipAddress})`}.</span>
-                      </div>
-                      <div className="flex items-center gap-1.5">
-                        <CheckCircle2 className="w-3.5 h-3.5 shrink-0" />
-                        <span>Order Parameters Verified (Vehicle, Part, Delivery Address).</span>
-                      </div>
                     </div>
-                    {(!req.payment || req.payment.status === "Unpaid") && (
-                      <div className="pt-2 flex flex-wrap items-center justify-between gap-2 border-t border-emerald-200/60">
-                        <button
-                          onClick={() => {
-                            setPaymentRequest(req);
-                            setIsPaymentModalOpen(true);
-                          }}
-                          className="px-4 py-2 bg-[#B30D12] hover:bg-[#9B0A0F] text-white font-bold text-xs uppercase tracking-wider rounded-xl shadow-sm inline-flex items-center gap-1.5"
-                        >
-                          <DollarSign className="w-3.5 h-3.5" />
-                          <span>Record Settlement (Status: Unpaid) →</span>
-                        </button>
-                        <button
-                          onClick={() => {
-                            setSelectedRequest(null);
-                            setPortalTab("payments");
-                          }}
-                          className="text-xs text-emerald-900 font-bold hover:underline"
-                        >
-                          View Billing & Payments Tab →
-                        </button>
+                  )}
+
+                  {/* Acceptance Record if already accepted */}
+                  {req.quoteAcceptance && (
+                    <div className="p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-xs space-y-2">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-1.5 font-bold text-emerald-800">
+                          <ShieldCheck className="w-4 h-4 text-emerald-600" />
+                          <span>Quote Accepted & Order Logged</span>
+                        </div>
+                        {req.payment && (
+                          <span
+                            className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold border ${req.payment.status === "Paid"
+                              ? "bg-emerald-100 text-emerald-800 border-emerald-200"
+                              : "bg-amber-100 text-amber-800 border-amber-200"
+                              }`}
+                          >
+                            Payment: {req.payment.status}
+                          </span>
+                        )}
                       </div>
-                    )}
-                  </div>
-                )}
-
-                {/* Action Buttons if in Quoted status */}
-                {req.status === "Quoted" && !isAcceptingQuote && (
-                  <div className="flex flex-wrap items-center justify-between gap-3 pt-4 border-t border-slate-100">
-                    <button
-                      onClick={() => setIsRejecting(true)}
-                      className="px-4 py-2 text-xs bg-slate-100 border border-slate-200 rounded-xl font-bold text-slate-600 hover:text-red-600 hover:bg-red-50 rounded-xl transition-colors"
-                    >
-                      Decline Quote
-                    </button>
-
-                    <div className="flex items-center gap-3">
-                      <button
-                        onClick={() => setShowDirectContactModal(true)}
-                        className="px-4 py-2 text-xs font-bold text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-xl transition-colors inline-flex items-center gap-1.5"
-                      >
-                        <Mail className="w-3.5 h-3.5 text-slate-600" />
-                        <span>Request Info (Email/Teams/Phone)</span>
-                      </button>
-                      <button
-                        onClick={() => setIsAcceptingQuote(true)}
-                        className="px-6 py-2.5 bg-[#B30D12] hover:bg-[#9B0A0F] text-white font-bold text-xs uppercase tracking-wider rounded-xl shadow-md shadow-red-500/25 transition-all"
-                      >
-                        Accept Quote →
-                      </button>
-                    </div>
-                  </div>
-                )}
-
-                {/* Single Static Terms Verification Checklist Before Acceptance */}
-                {isAcceptingQuote && (
-                  <div className="p-5 rounded-2xl bg-slate-100 text-black space-y-4 animate-in fade-in duration-200">
-                    <div>
-                      <h4 className="text-sm font-bold text-slate-900">
-                        Required Quote Acceptance Verification
-                      </h4>
-                      <p className="text-xs text-slate-600">
-                        Please verify order parameters and confirm static terms acceptance
+                      <p className="text-emerald-700">
+                        Accepted by {req.quoteAcceptance.acceptedBy} (
+                        {req.quoteAcceptance.userRole}) on{" "}
+                        {req.quoteAcceptance.acceptedAt}. Procurly Invoice Ref:{" "}
+                        <strong className="font-mono">{req.payment?.invoiceNumber || "INV-2026-XXXX"}</strong> (Issued by Procurly Operations).
                       </p>
+
+                      {/* Accounts Receivable Invoice Handover Action Box */}
+                      <div className="bg-white p-3.5 rounded-xl border border-emerald-300 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                        <div>
+                          <span className="text-[10px] uppercase font-bold text-slate-400 block">
+                            Accounts Receivable Invoice Handover
+                          </span>
+                          <div className="flex items-center gap-2 mt-0.5">
+                            <span className="font-mono font-bold text-slate-900 text-sm">
+                              {req.payment?.invoiceNumber || `INV-2026-${req.requestNumber.replace(/[^0-9]/g, "").padStart(4, "0")}`}
+                            </span>
+                            <span className="text-[11px] text-slate-500 font-medium">
+                              &bull; Total: ${(req.payment?.amount || req.customerQuote?.totalAmount || req.quotedValue || 450).toFixed(2)} NZD
+                            </span>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setActiveTab("invoice");
+                              setSelectedRequestDetailsTab?.("invoice");
+                            }}
+                            className="px-3 py-1.5 bg-[#FE0000] hover:bg-[#9B0A0F] text-white font-bold text-xs rounded-lg transition-colors inline-flex items-center gap-1.5 shadow-xs cursor-pointer"
+                          >
+                            <FileText className="w-3.5 h-3.5" />
+                            <span>View Invoice Tab</span>
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setActiveTab("invoice");
+                              setSelectedRequestDetailsTab?.("invoice");
+                            }}
+                            className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-lg transition-colors inline-flex items-center gap-1.5 cursor-pointer"
+                            title="Open Tax Invoice Tab to print or download"
+                          >
+                            <Download className="w-3.5 h-3.5" />
+                            <span>Download / Print</span>
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* Supplier Order Handover Active Box */}
+                      {req.supplierOrder && (
+                        <div className="bg-white p-3.5 rounded-xl border border-indigo-200 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+                          <div>
+                            <div className="flex items-center gap-1.5 font-bold text-indigo-900">
+                              <ShoppingBag className="w-3.5 h-3.5 text-indigo-600" />
+                              <span>Supplier Order Handover Active</span>
+                            </div>
+                            <p className="text-slate-600 text-[11px] mt-0.5">
+                              Purchase Order <strong className="font-mono text-slate-800">{req.supplierOrder.supplierRef}</strong> released to {req.supplierOrder.supplierName}. Handover Route: <span className="font-semibold text-slate-700">{req.supplierOrder.handoverMode || "Consolidated via Autohub Hub"}</span>.
+                            </p>
+                          </div>
+                          <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200 shrink-0">
+                            PO Placed ({req.supplierOrder.orderDate})
+                          </span>
+                        </div>
+                      )}
+                      <div className="mt-2 pt-3 border-t border-emerald-200/60 text-[11px] text-emerald-700 flex flex-col gap-1.5">
+                        <div className="flex items-center gap-1.5">
+                          <CheckCircle2 className="w-3.5 h-3.5 shrink-0" />
+                          <span>Particular Terms of Trade digitally accepted by customer on {req.quoteAcceptance.termsAcceptedAt || req.quoteAcceptance.acceptedAt} {req.quoteAcceptance.ipAddress && `(IP: ${req.quoteAcceptance.ipAddress})`}.</span>
+                        </div>
+                        <div className="flex items-center gap-1.5">
+                          <CheckCircle2 className="w-3.5 h-3.5 shrink-0" />
+                          <span>Order Parameters Verified (Vehicle, Part, Delivery Address).</span>
+                        </div>
+                      </div>
+                      {(!req.payment || req.payment.status === "Unpaid") && (
+                        <div className="pt-2 flex flex-wrap items-center justify-between gap-2 border-t border-emerald-200/60">
+                          <button
+                            onClick={() => {
+                              setPaymentRequest(req);
+                              setIsPaymentModalOpen(true);
+                            }}
+                            className="px-4 py-2 bg-[#FE0000] hover:bg-[#9B0A0F] text-white font-bold text-xs uppercase tracking-wider rounded-xl shadow-sm inline-flex items-center gap-1.5"
+                          >
+                            <DollarSign className="w-3.5 h-3.5" />
+                            <span>Record Settlement (Status: Unpaid) →</span>
+                          </button>
+                          <button
+                            onClick={() => {
+                              setSelectedRequest(null);
+                              setPortalTab("payments");
+                            }}
+                            className="text-xs text-emerald-900 font-bold hover:underline"
+                          >
+                            View Billing & Payments Tab →
+                          </button>
+                        </div>
+                      )}
                     </div>
+                  )}
 
-                    <div className="space-y-3 text-xs">
-                      {/* 1. Vehicle verification */}
-                      <label className="flex items-center gap-3 cursor-pointer p-2.5 rounded-lg bg-slate-200 hover:bg-slate-300">
-                        <input
-                          type="checkbox"
-                          checked={verifyVehicle}
-                          onChange={(e) => setVerifyVehicle(e.target.checked)}
-                          className="w-4 h-4 rounded text-[#B30D12] focus:ring-0"
-                        />
-                        <span>
-                          <strong>Verify Vehicle Information:</strong> {req.vehicle.year}{" "}
-                          {req.vehicle.make} {req.vehicle.model} (VIN:{" "}
-                          {req.vehicle.vin})
-                        </span>
-                      </label>
-
-                      {/* 2. Part verification */}
-                      <label className="flex items-center gap-3 cursor-pointer p-2.5 rounded-lg bg-slate-200 hover:bg-slate-300">
-                        <input
-                          type="checkbox"
-                          checked={verifyPart}
-                          onChange={(e) => setVerifyPart(e.target.checked)}
-                          className="w-4 h-4 rounded text-[#B30D12] focus:ring-0"
-                        />
-                        <span>
-                          <strong>Verify Part Information:</strong> {req.part.name} (Qty:{" "}
-                          {req.part.quantity}, {req.part.condition})
-                        </span>
-                      </label>
-
-                      {/* 3. Delivery address */}
-                      <label className="flex items-center gap-3 cursor-pointer p-2.5 rounded-lg bg-slate-200 hover:bg-slate-300">
-                        <input
-                          type="checkbox"
-                          checked={verifyAddress}
-                          onChange={(e) => setVerifyAddress(e.target.checked)}
-                          className="w-4 h-4 rounded text-[#B30D12] focus:ring-0"
-                        />
-                        <span>
-                          <strong>Verify Delivery Address:</strong>{" "}
-                          {req.deliveryAddress.streetAddress},{" "}
-                          {req.deliveryAddress.city}
-                        </span>
-                      </label>
-
-                      {/* 4. Single static acceptance checkbox */}
-                      <label className="flex items-center gap-3 p-2.5 rounded-lg bg-slate-200 hover:bg-slate-300">
-                        <input
-                          type="checkbox"
-                          checked={acceptTerms}
-                          onChange={(e) => setAcceptTerms(e.target.checked)}
-                          className="w-4 h-4 rounded text-[#B30D12] focus:ring-0 cursor-pointer"
-                        />
-                        <span>
-                          <strong>Accept Procurement Terms:</strong> I agree to the <button type="button" onClick={() => setShowTermsModal(true)} className="text-[#B30D12] hover:underline cursor-pointer">Particular Terms of Trade</button> and Privacy Policy
-                        </span>
-                      </label>
-                    </div>
-
-                    <div className="flex items-center justify-between pt-3 border-t border-slate-300">
+                  {/* Action Buttons if in Quoted status */}
+                  {req.status === "Quoted" && !isAcceptingQuote && (
+                    <div className="flex flex-wrap items-center justify-between gap-3 pt-4 border-t border-slate-100">
                       <button
-                        onClick={() => setIsAcceptingQuote(false)}
-                        className="text-sm bg-white px-4 py-2 rounded-xl border-[1px] border-slate-200 text-slate-700 hover:text-slate-900 hover:bg-slate-100"
+                        onClick={() => setIsRejecting(true)}
+                        className="px-4 py-2 text-xs bg-slate-100 border border-slate-200 rounded-xl font-bold text-slate-600 hover:text-red-600 hover:bg-red-50 transition-colors"
                       >
-                        Cancel
+                        Decline Quote
                       </button>
-                      <button
-                        disabled={
-                          !verifyVehicle || !verifyPart || !verifyAddress || !acceptTerms
-                        }
-                        onClick={handleConfirmAcceptance}
-                        className="px-6 py-2.5 bg-[#B30D12] hover:bg-[#d31318] disabled:bg-[#B30D12]/20 text-white font-bold text-sm uppercase rounded-xl shadow-md transition-all"
-                      >
-                        Confirm Acceptance & Record Order
-                      </button>
+
+                      <div className="flex items-center gap-3">
+                        <button
+                          onClick={() => setShowDirectContactModal(true)}
+                          className="px-4 py-2 text-xs font-bold text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-xl transition-colors inline-flex items-center gap-1.5"
+                        >
+                          <Mail className="w-3.5 h-3.5 text-slate-600" />
+                          <span>Request Info (Email/Teams/Phone)</span>
+                        </button>
+                        <button
+                          onClick={() => {
+                            if (!selectedFreightType) {
+                              // Scroll to freight section or flash it
+                              const el = document.getElementById('freight-selection-section');
+                              if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                              return;
+                            }
+                            setIsAcceptingQuote(true);
+                          }}
+                          className={`px-6 py-2.5 font-bold text-xs uppercase tracking-wider rounded-xl shadow-md transition-all inline-flex items-center gap-2 ${selectedFreightType
+                            ? 'bg-[#FE0000] hover:bg-[#9B0A0F] text-white shadow-red-500/25'
+                            : 'bg-slate-300 text-slate-500 cursor-not-allowed shadow-none'
+                            }`}
+                        >
+                          <FileCheck2 className="w-4 h-4" />
+                          Review Quote
+                        </button>
+                      </div>
                     </div>
-                  </div>
-                )}
+                  )}
+
+                  {/* Single Static Terms Verification Checklist Before Acceptance */}
+                  {isAcceptingQuote && (
+                    <div className="p-5 rounded-2xl bg-slate-50 border-2 border-slate-200 text-black space-y-5 animate-in fade-in slide-in-from-bottom-2 duration-300">
+                      <div className="border-b border-slate-200 pb-4">
+                        <h4 className="text-sm font-bold text-slate-900 flex items-center gap-2">
+                          <ShieldCheck className="w-5 h-5 text-[#FE0000]" />
+                          Quote Acceptance — Final Review
+                        </h4>
+                        <p className="text-xs text-slate-500 mt-1">
+                          Please review the details below and confirm all information is correct before accepting this quotation.
+                        </p>
+                      </div>
+
+                      {/* Prominent Admin Comments in Acceptance */}
+                      {(specialistNote || customerVisibleNotes.length > 0) && (
+                        <div className="p-4 rounded-xl bg-amber-50 border border-amber-300 text-xs space-y-2">
+                          <div className="flex items-center gap-1.5 font-bold text-amber-900">
+                            <MessageSquare className="w-4 h-4 text-amber-600" />
+                            <span>Specialist Note from AutoHub</span>
+                          </div>
+                          {specialistNote && (
+                            <p className="text-amber-950 font-medium leading-relaxed whitespace-pre-wrap bg-white/70 p-3 rounded-lg border border-amber-200/60">
+                              {specialistNote}
+                            </p>
+                          )}
+                          {customerVisibleNotes.map((note: any) => (
+                            <div key={note.id} className="text-amber-900 text-[11px] bg-white/50 p-2 rounded border border-amber-200/40">
+                              <strong>Note:</strong> {note.content}
+                            </div>
+                          ))}
+                        </div>
+                      )}
+
+                      {/* Prominent Admin Photos in Acceptance */}
+                      {adminPhotos.length > 0 && (
+                        <div className="p-4 rounded-xl bg-white border border-slate-200 space-y-2.5">
+                          <div className="flex items-center justify-between text-xs">
+                            <div className="flex items-center gap-1.5 font-bold text-slate-900">
+                              <Camera className="w-4 h-4 text-[#FE0000]" />
+                              <span>Pre-Dispatch Part Photos ({adminPhotos.length})</span>
+                            </div>
+                            <span className="text-[10px] text-slate-500">Click to view full size</span>
+                          </div>
+                          <div className="grid grid-cols-3 sm:grid-cols-4 gap-2.5">
+                            {adminPhotos.map((photo: string, idx: number) => (
+                              <div
+                                key={idx}
+                                className="relative group rounded-xl overflow-hidden border border-slate-200 shadow-sm aspect-square bg-slate-50 cursor-pointer"
+                                onClick={() => openLightbox(adminPhotos, idx)}
+                              >
+                                <img
+                                  src={photo}
+                                  alt={`Part photo ${idx + 1}`}
+                                  className="w-full h-full object-cover transition-transform duration-200 group-hover:scale-105"
+                                />
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Selected Freight Summary */}
+                      <div className="p-3.5 rounded-xl bg-slate-100 border border-slate-200 flex items-center justify-between">
+                        <div className="flex items-center gap-2 text-xs">
+                          {selectedFreightType === "Air" ? (
+                            <Send className="w-4 h-4 text-[#FE0000]" />
+                          ) : (
+                            <Truck className="w-4 h-4 text-[#FE0000]" />
+                          )}
+                          <span className="font-bold text-slate-900">
+                            {selectedFreightType === "Air" ? "Air Express" : "Sea Freight"} — {selectedFreightType === "Air" ? "7–10 days" : "25–40 days"}
+                          </span>
+                        </div>
+                        <span className="font-mono text-sm font-bold text-[#FE0000]">
+                          ${(
+                            (quote.subtotal +
+                              (selectedFreightType === "Air"
+                                ? quote.airFreightCost || 0
+                                : quote.seaFreightCost || quote.freightCost || 0)) * 1.15
+                          ).toFixed(2)} NZD
+                        </span>
+                      </div>
+
+                      {/* Verification Checklist */}
+                      <div className="space-y-2.5 text-xs">
+                        <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Verification Checklist</p>
+                        {/* 1. Vehicle verification */}
+                        <label className="flex items-center gap-3 cursor-pointer p-3 rounded-xl bg-white border border-slate-200 hover:border-slate-300 transition-colors">
+                          <input
+                            type="checkbox"
+                            checked={verifyVehicle}
+                            onChange={(e) => setVerifyVehicle(e.target.checked)}
+                            className="w-4 h-4 rounded text-[#FE0000] focus:ring-0 shrink-0"
+                          />
+                          <span>
+                            <strong>Verify Vehicle Information:</strong> {req.vehicle.year}{" "}
+                            {req.vehicle.make} {req.vehicle.model} (VIN:{" "}
+                            {req.vehicle.vin})
+                          </span>
+                        </label>
+
+                        {/* 2. Part verification */}
+                        <label className="flex items-center gap-3 cursor-pointer p-3 rounded-xl bg-white border border-slate-200 hover:border-slate-300 transition-colors">
+                          <input
+                            type="checkbox"
+                            checked={verifyPart}
+                            onChange={(e) => setVerifyPart(e.target.checked)}
+                            className="w-4 h-4 rounded text-[#FE0000] focus:ring-0 shrink-0"
+                          />
+                          <span>
+                            <strong>Verify Part Information:</strong> {req.part.name} (Qty:{" "}
+                            {req.part.quantity}, {req.part.condition})
+                          </span>
+                        </label>
+
+                        {/* 3. Delivery address */}
+                        <label className="flex items-center gap-3 cursor-pointer p-3 rounded-xl bg-white border border-slate-200 hover:border-slate-300 transition-colors">
+                          <input
+                            type="checkbox"
+                            checked={verifyAddress}
+                            onChange={(e) => setVerifyAddress(e.target.checked)}
+                            className="w-4 h-4 rounded text-[#FE0000] focus:ring-0 shrink-0"
+                          />
+                          <span>
+                            <strong>Verify Delivery Address:</strong>{" "}
+                            {req.deliveryAddress.streetAddress},{" "}
+                            {req.deliveryAddress.city}
+                          </span>
+                        </label>
+
+                        {/* 4. Single static acceptance checkbox */}
+                        <div className={`p-3 rounded-xl border transition-all ${acceptTerms ? "bg-slate-50 border-slate-200" : "bg-white border-slate-200 hover:border-slate-300"
+                          }`}>
+                          <label className="flex items-center gap-3 cursor-pointer select-none">
+                            <input
+                              type="checkbox"
+                              checked={acceptTerms}
+                              onChange={(e) => {
+                                if (!acceptTerms) {
+                                  e.preventDefault();
+                                  setShowTermsModal(true);
+                                } else {
+                                  setAcceptTerms(false);
+                                }
+                              }}
+                              onClick={(e) => {
+                                if (!acceptTerms) {
+                                  e.preventDefault();
+                                  setShowTermsModal(true);
+                                }
+                              }}
+                              className="w-4 h-4 rounded text-[#FE0000] focus:ring-0 cursor-pointer shrink-0"
+                            />
+                            <span className="text-xs text-slate-800">
+                              <strong>Accept Procurement Terms:</strong> I agree to the{" "}
+                              <button
+                                type="button"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setShowTermsModal(true);
+                                }}
+                                className="text-[#FE0000] font-bold hover:underline cursor-pointer"
+                              >
+                                Particular Terms of Trade
+                              </button>{" "}
+                              and Privacy Policy
+                            </span>
+                          </label>
+                          {acceptTerms && termsAcceptedAt && (
+                            <p className="text-[11px] font-medium text-emerald-700 mt-1.5 ml-7 flex items-center gap-1">
+                              <CheckCircle2 className="w-3.5 h-3.5" />
+                              Particular Terms of Trade viewed and accepted ({termsAcceptedAt})
+                            </p>
+                          )}
+                        </div>
+                      </div>
+
+                      <div className="flex items-center justify-between pt-4 border-t border-slate-200">
+                        <button
+                          onClick={() => {
+                            setIsAcceptingQuote(false);
+                            setVerifyVehicle(false);
+                            setVerifyPart(false);
+                            setVerifyAddress(false);
+                            setAcceptTerms(false);
+                          }}
+                          className="text-sm bg-white px-4 py-2.5 rounded-xl border border-slate-200 text-slate-700 hover:text-slate-900 hover:bg-slate-100 font-medium transition-colors"
+                        >
+                          ← Back to Quote
+                        </button>
+                        <button
+                          disabled={
+                            !verifyVehicle || !verifyPart || !verifyAddress || !acceptTerms
+                          }
+                          onClick={handleConfirmAcceptance}
+                          className="px-6 py-2.5 bg-[#FE0000] hover:bg-[#d31318] disabled:bg-slate-200 disabled:text-slate-400 disabled:shadow-none text-white font-bold text-sm uppercase rounded-xl shadow-md shadow-red-500/20 transition-all inline-flex items-center gap-2"
+                        >
+                          <ShieldCheck className="w-4 h-4" />
+                          Confirm Acceptance & Record Order
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
               </div>
-            </div>
-          )}
+            );
+          })()}
 
           {/* TAB 3: SHIPMENT TRACKING & INTERNAL LOGISTICS MILESTONES */}
           {activeTab === "shipment" && req.shipment && (
@@ -946,7 +1370,7 @@ export function RequestDetailsModal() {
                           className={`absolute -left-6 top-0.5 w-4 h-4 rounded-full border-2 flex items-center justify-center ${m.isCompleted
                             ? "bg-emerald-500 border-emerald-500 text-white"
                             : isCurrent
-                              ? "bg-[#B30D12] border-[#B30D12] text-white animate-pulse"
+                              ? "bg-[#FE0000] border-[#FE0000] text-white animate-pulse"
                               : "bg-white border-slate-300"
                             }`}
                         >
@@ -957,7 +1381,7 @@ export function RequestDetailsModal() {
                           <div className="flex items-center gap-2">
                             <span
                               className={`text-xs font-bold ${isCurrent
-                                ? "text-[#B30D12]"
+                                ? "text-[#FE0000]"
                                 : m.isCompleted
                                   ? "text-slate-900"
                                   : "text-slate-500"
@@ -989,7 +1413,7 @@ export function RequestDetailsModal() {
                       setSelectedRequest(null);
                       router.push(`/customer/shipments?id=${encodeURIComponent(id)}`);
                     }}
-                    className="inline-flex items-center gap-1.5 font-bold text-[#B30D12] hover:underline cursor-pointer"
+                    className="inline-flex items-center gap-1.5 font-bold text-[#FE0000] hover:underline cursor-pointer"
                   >
                     <span>Open in Full Shipments View</span>
                     <ExternalLink className="w-3.5 h-3.5" />
@@ -1006,7 +1430,7 @@ export function RequestDetailsModal() {
                 <div className="flex items-center justify-between mb-4 pb-4 border-b border-slate-100">
                   <div>
                     <h3 className="text-lg font-bold text-slate-900 flex items-center gap-2">
-                      <ShieldCheck className="w-5 h-5 text-[#B30D12]" />
+                      <ShieldCheck className="w-5 h-5 text-[#FE0000]" />
                       Quality Assurance Review
                     </h3>
                     <p className="text-xs text-slate-500 mt-1">
@@ -1075,7 +1499,7 @@ export function RequestDetailsModal() {
                         approveSubadmin(req.id);
                         setActiveTab("overview");
                       }}
-                      className="px-6 py-2.5 text-sm font-bold text-white bg-[#B30D12] hover:bg-[#9B0A0F] rounded-xl shadow-md transition-colors flex items-center gap-2"
+                      className="px-6 py-2.5 text-sm font-bold text-white bg-[#FE0000] hover:bg-[#9B0A0F] rounded-xl shadow-md transition-colors flex items-center gap-2"
                     >
                       <CheckCircle2 className="w-4 h-4" />
                       Approve & Dispatch
@@ -1121,7 +1545,7 @@ export function RequestDetailsModal() {
           <div className="bg-white w-full max-w-xl rounded-2xl shadow-2xl border border-slate-200 overflow-hidden space-y-4 p-6">
             <div className="flex items-center justify-between border-b pb-3">
               <div className="flex items-center gap-2.5">
-                <div className="w-9 h-9 rounded-xl bg-red-50 text-[#B30D12] flex items-center justify-center font-bold">
+                <div className="w-9 h-9 rounded-xl bg-red-50 text-[#FE0000] flex items-center justify-center font-bold">
                   <Headphones className="w-5 h-5" />
                 </div>
                 <div>
@@ -1151,7 +1575,7 @@ export function RequestDetailsModal() {
               <div className="p-3.5 rounded-xl border border-slate-200 bg-slate-50/70 hover:bg-slate-50 space-y-2">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <Mail className="w-4 h-4 text-[#B30D12]" />
+                    <Mail className="w-4 h-4 text-[#FE0000]" />
                     <span className="font-bold text-slate-900">Email Operations</span>
                   </div>
                   <span className="text-[10px] font-bold text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded">
@@ -1168,7 +1592,7 @@ export function RequestDetailsModal() {
                     )}&body=${encodeURIComponent(
                       `Hi Autohub Operations Team,\n\nRegarding request ${req.requestNumber} (${req.part.name}):\n\n[Please enter your inquiry here]\n\nTrade Customer: SP Motors Auckland\nContact: James Wilson`
                     )}`}
-                    className="px-3 py-1.5 bg-[#B30D12] hover:bg-[#9B0A0F] text-white font-bold text-xs uppercase tracking-wider rounded-lg transition-colors inline-flex items-center gap-1.5"
+                    className="px-3 py-1.5 bg-[#FE0000] hover:bg-[#9B0A0F] text-white font-bold text-xs uppercase tracking-wider rounded-lg transition-colors inline-flex items-center gap-1.5"
                   >
                     <Mail className="w-3.5 h-3.5" />
                     <span>Open Email Draft →</span>
@@ -1256,44 +1680,78 @@ export function RequestDetailsModal() {
         </div>
       )}
 
-      {/* Terms of Trade Modal */}
-      {showTermsModal && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-          <div className="bg-white rounded-2xl max-w-2xl w-full p-6 shadow-2xl flex flex-col max-h-[85vh] animate-in zoom-in-95">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-bold text-slate-900">Particular Terms of Trade</h3>
-              <button
-                type="button"
-                onClick={() => setShowTermsModal(false)}
-                className="w-8 h-8 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 flex items-center justify-center"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            </div>
-            
-            <div className="flex-1 overflow-y-auto pr-2 space-y-4 text-sm text-slate-700">
-              <p><strong>1. Acceptance of Terms:</strong> By proceeding with this order, the Trade Customer agrees to the Procurly Particular Terms of Trade.</p>
-              <p><strong>2. Quotation Validity:</strong> All quotations are valid for 48 hours and are strictly subject to part availability at the supplier facility.</p>
-              <p><strong>3. Landed Cost & Currency:</strong> The displayed Total Landed Price is in NZD and inclusive of 15% GST and chosen freight. Any customs variances are absorbed by Procurly.</p>
-              <p><strong>4. Returns & Warranty:</strong> Parts procured on behalf of the customer are non-returnable unless defective. Defective parts must be reported within 7 days of delivery.</p>
-              <p><strong>5. Liability:</strong> Procurly acts as a procurement agent and is not liable for secondary damages or workshop labor costs resulting from delayed shipments or part defects.</p>
-              <p><strong>6. Estimated Delivery:</strong> Delivery timeframes (e.g., 25-40 days for Sea Freight) are estimates only. Procurly is not liable for delays caused by customs hold-ups, severe weather events, or global logistics disruptions.</p>
-              <p><strong>7. Risk of Loss:</strong> The risk of loss or damage to the parts passes to the customer upon successful delivery to the nominated Workshop Bay.</p>
-              <p><strong>8. Dangerous Goods (DG):</strong> If the ordered part contains hazardous materials (e.g., lithium batteries, airbags), it is subject to special DG handling which may incur additional compliance delays. The customer consents to these mandatory safety protocols.</p>
-              <p><strong>9. Order Cancellation:</strong> Once the customer clicks "Accept Quote", the order is locked and logistics are initiated. The order cannot be canceled while in transit under any circumstances.</p>
+      {/* Terms of Trade & Privacy Policy Modal (Reused from auth with scroll enforcement) */}
+      <LegalModal
+        isOpen={showTermsModal}
+        onClose={() => setShowTermsModal(false)}
+        initialDoc="terms"
+        title="Particular Terms of Trade"
+        onAccept={() => {
+          setAcceptTerms(true);
+          setTermsAcceptedAt(new Date().toLocaleString("en-NZ", { timeZone: "Pacific/Auckland" }));
+        }}
+      />
+      {/* QUOTE PHOTO LIGHTBOX WITH PREV/NEXT NAVIGATION */}
+      {quotePhotoLightbox && (
+        <div
+          className="fixed inset-0 z-[60] flex items-center justify-center bg-black/85 backdrop-blur-md p-4 select-none animate-in fade-in duration-200"
+          onClick={() => setQuotePhotoLightbox(null)}
+        >
+          <div
+            className="relative max-w-4xl w-full flex flex-col items-center"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="relative overflow-hidden rounded-2xl shadow-2xl bg-black border border-white/10 flex items-center justify-center max-h-[80vh] w-full">
+              <img
+                src={quotePhotoLightbox}
+                alt="Part photo preview"
+                className="max-w-full max-h-[80vh] object-contain rounded-xl"
+              />
+
+              {lightboxPhotos.length > 1 && (
+                <>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const prevIndex = (lightboxIndex - 1 + lightboxPhotos.length) % lightboxPhotos.length;
+                      setLightboxIndex(prevIndex);
+                      setQuotePhotoLightbox(lightboxPhotos[prevIndex]);
+                    }}
+                    className="absolute left-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/60 hover:bg-black/90 text-white flex items-center justify-center backdrop-blur-sm transition-colors border border-white/10 cursor-pointer"
+                    title="Previous photo"
+                  >
+                    <ChevronLeft className="w-5 h-5" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const nextIndex = (lightboxIndex + 1) % lightboxPhotos.length;
+                      setLightboxIndex(nextIndex);
+                      setQuotePhotoLightbox(lightboxPhotos[nextIndex]);
+                    }}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/60 hover:bg-black/90 text-white flex items-center justify-center backdrop-blur-sm transition-colors border border-white/10 cursor-pointer"
+                    title="Next photo"
+                  >
+                    <ChevronRight className="w-5 h-5" />
+                  </button>
+                </>
+              )}
             </div>
 
-            <div className="pt-4 mt-4 border-t border-slate-200 text-right">
+            {/* Bottom status & Close */}
+            <div className="mt-3 flex items-center justify-between w-full px-2 text-white">
+              <span className="text-xs font-medium text-slate-300">
+                {lightboxPhotos.length > 1
+                  ? `Photo ${lightboxIndex + 1} of ${lightboxPhotos.length}`
+                  : "Verified inspection photo"}
+              </span>
               <button
                 type="button"
-                onClick={() => {
-                  setAcceptTerms(true);
-                  setTermsAcceptedAt(new Date().toLocaleString("en-NZ", { timeZone: "Pacific/Auckland" }));
-                  setShowTermsModal(false);
-                }}
-                className="px-6 py-2.5 bg-[#B30D12] hover:bg-[#9B0A0F] text-white font-bold text-xs uppercase tracking-wider rounded-xl shadow-md transition-all"
+                onClick={() => setQuotePhotoLightbox(null)}
+                className="px-3.5 py-1.5 rounded-lg bg-white/20 hover:bg-white/30 text-white text-xs font-semibold backdrop-blur-sm transition-colors inline-flex items-center gap-1.5 cursor-pointer"
               >
-                Acknowledge & Close
+                <X className="w-3.5 h-3.5" />
+                <span>Close Preview</span>
               </button>
             </div>
           </div>

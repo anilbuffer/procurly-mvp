@@ -25,7 +25,7 @@ export default function CustomerInvoicePage() {
           </p>
           <Link
             href="/customer/payments"
-            className="px-4 py-2 bg-[#B30D12] text-white font-bold text-xs rounded-xl shadow-xs hover:bg-[#9B0A0F] inline-flex items-center gap-2"
+            className="px-4 py-2 bg-[#FE0000] text-white font-bold text-xs rounded-xl shadow-xs hover:bg-[#9B0A0F] inline-flex items-center gap-2"
           >
             <ArrowLeft className="w-4 h-4" />
             <span>Return to Payments Ledger</span>

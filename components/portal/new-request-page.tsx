@@ -25,6 +25,7 @@ import {
   PartCondition,
   SavedAddress,
 } from "@/types/portal";
+import { NZAddressLookup, NZAddressSelected } from "./nz-address-lookup";
 
 const POPULAR_MAKES_AND_MODELS: Record<string, string[]> = {
   Toyota: ["Hilux GR Sport", "Hilux", "Hiace", "Land Cruiser", "Land Cruiser Prado", "RAV4", "Corolla", "Camry", "Yaris", "Prius", "Aqua", "C-HR", "Fortuner", "Other Toyota Model"],
@@ -61,6 +62,8 @@ export function NewRequestPage() {
     city: "",
     postalCode: "",
     phone: "",
+    isVerified: false,
+    verifiedSource: "NZ Post",
   });
 
   const [submittedRequestNumber, setSubmittedRequestNumber] = useState<string | null>(null);
@@ -72,11 +75,36 @@ export function NewRequestPage() {
       id: "addr-" + Date.now(),
       ...newAddressForm,
       businessName: "Custom Location",
+      isVerified: newAddressForm.isVerified,
+      verifiedSource: newAddressForm.verifiedSource,
     };
     addSavedAddress(newAddress);
     setIsAddingAddress(false);
     setSelectedAddress(newAddress);
-    setNewAddressForm({ label: "", streetAddress: "", suburb: "", city: "", postalCode: "", recipientName: "", phone: "" });
+    setNewAddressForm({
+      label: "",
+      streetAddress: "",
+      suburb: "",
+      city: "",
+      postalCode: "",
+      recipientName: "",
+      phone: "",
+      isVerified: false,
+      verifiedSource: "NZ Post",
+    });
+  };
+
+  const handleSelectNZAddress = (addr: NZAddressSelected) => {
+    setNewAddressForm((prev) => ({
+      ...prev,
+      streetAddress: addr.streetAddress,
+      suburb: addr.suburb,
+      city: addr.city,
+      postalCode: addr.postalCode,
+      isVerified: addr.isVerified,
+      verifiedSource: addr.source || "NZ Post",
+      label: prev.label || `${addr.suburb || addr.city} Workshop Bay`,
+    }));
   };
 
   // Form states
@@ -136,7 +164,7 @@ export function NewRequestPage() {
       {/* Header */}
       <div className="flex items-start justify-between">
         <div>
-          <div className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-red-50 text-[#B30D12] border border-red-100 rounded-full text-[10px] font-black uppercase tracking-wider mb-2">
+          <div className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-red-50 text-[#FE0000] border border-red-100 rounded-full text-[10px] font-black uppercase tracking-wider mb-2">
             Door-To-Door Sourcing
           </div>
           <h1 className="text-2xl font-bold text-slate-900 tracking-tight mb-1">
@@ -159,7 +187,7 @@ export function NewRequestPage() {
         {/* SECTION 1: VEHICLE IDENTIFICATION */}
         <div className="bg-white rounded-xl border-2 border-slate-200 shadow-sm p-5 space-y-4">
           <div className="flex items-center gap-2 border-b border-slate-100 pb-3">
-            <Car className="w-5 h-5 text-[#B30D12]" />
+            <Car className="w-5 h-5 text-[#FE0000]" />
             <h2 className="text-[13px] font-bold text-slate-900 uppercase tracking-wide">
               1. Vehicle Identification
             </h2>
@@ -175,7 +203,7 @@ export function NewRequestPage() {
                 required
                 value={vehicle.make}
                 onChange={(e) => setVehicle({ ...vehicle, make: e.target.value })}
-                className="w-full text-xs p-2.5 rounded-lg border border-slate-200 focus:ring-2 focus:ring-[#B30D12]/20 focus:border-[#B30D12] outline-none bg-white"
+                className="w-full text-xs p-2.5 rounded-lg border border-slate-200 focus:ring-2 focus:ring-[#FE0000]/20 focus:border-[#FE0000] outline-none bg-white"
                 placeholder="e.g. Toyota"
               />
             </div>
@@ -189,7 +217,7 @@ export function NewRequestPage() {
                 required
                 value={vehicle.model}
                 onChange={(e) => setVehicle({ ...vehicle, model: e.target.value })}
-                className="w-full text-xs p-2.5 rounded-lg border border-slate-200 focus:ring-2 focus:ring-[#B30D12]/20 focus:border-[#B30D12] outline-none bg-white"
+                className="w-full text-xs p-2.5 rounded-lg border border-slate-200 focus:ring-2 focus:ring-[#FE0000]/20 focus:border-[#FE0000] outline-none bg-white"
                 placeholder="e.g. Hilux"
               />
             </div>
@@ -202,7 +230,7 @@ export function NewRequestPage() {
                 type="text"
                 value={vehicle.variant || ""}
                 onChange={(e) => setVehicle({ ...vehicle, variant: e.target.value })}
-                className="w-full text-xs p-2.5 rounded-lg border border-slate-200 focus:ring-2 focus:ring-[#B30D12]/20 focus:border-[#B30D12] outline-none"
+                className="w-full text-xs p-2.5 rounded-lg border border-slate-200 focus:ring-2 focus:ring-[#FE0000]/20 focus:border-[#FE0000] outline-none"
                 placeholder="e.g. SR5, VXR, Nismo"
               />
             </div>
@@ -218,7 +246,7 @@ export function NewRequestPage() {
                 onChange={(e) =>
                   setVehicle({ ...vehicle, year: parseInt(e.target.value) || "" })
                 }
-                className="w-full text-xs p-2.5 rounded-lg border border-slate-200 focus:ring-2 focus:ring-[#B30D12]/20 focus:border-[#B30D12] outline-none bg-white"
+                className="w-full text-xs p-2.5 rounded-lg border border-slate-200 focus:ring-2 focus:ring-[#FE0000]/20 focus:border-[#FE0000] outline-none bg-white"
                 placeholder="e.g. 2024"
               />
             </div>
@@ -237,7 +265,7 @@ export function NewRequestPage() {
                 required
                 value={vehicle.vin}
                 onChange={(e) => setVehicle({ ...vehicle, vin: e.target.value })}
-                className="w-full text-xs p-2.5 rounded-lg border border-slate-200 font-mono focus:ring-2 focus:ring-[#B30D12]/20 focus:border-[#B30D12] outline-none"
+                className="w-full text-xs p-2.5 rounded-lg border border-slate-200 font-mono focus:ring-2 focus:ring-[#FE0000]/20 focus:border-[#FE0000] outline-none"
                 placeholder="e.g. MR0HA3CD800192841"
               />
             </div>
@@ -250,7 +278,7 @@ export function NewRequestPage() {
                 type="text"
                 value={vehicle.registration || ""}
                 onChange={(e) => setVehicle({ ...vehicle, registration: e.target.value })}
-                className="w-full text-xs p-2.5 rounded-lg border border-slate-200 font-mono uppercase focus:ring-2 focus:ring-[#B30D12]/20 focus:border-[#B30D12] outline-none"
+                className="w-full text-xs p-2.5 rounded-lg border border-slate-200 font-mono uppercase focus:ring-2 focus:ring-[#FE0000]/20 focus:border-[#FE0000] outline-none"
                 placeholder="e.g. NZZ482"
               />
             </div>
@@ -265,7 +293,7 @@ export function NewRequestPage() {
                 type="text"
                 value={vehicle.engine || ""}
                 onChange={(e) => setVehicle({ ...vehicle, engine: e.target.value })}
-                className="w-full text-xs p-2.5 rounded-lg border border-slate-200 focus:ring-2 focus:ring-[#B30D12]/20 focus:border-[#B30D12] outline-none"
+                className="w-full text-xs p-2.5 rounded-lg border border-slate-200 focus:ring-2 focus:ring-[#FE0000]/20 focus:border-[#FE0000] outline-none"
                 placeholder="e.g. 1GD-FTV 2.8L"
               />
             </div>
@@ -279,7 +307,7 @@ export function NewRequestPage() {
                 onChange={(e) =>
                   setVehicle({ ...vehicle, transmission: e.target.value })
                 }
-                className="w-full text-xs p-2.5 rounded-lg border border-slate-200 focus:ring-2 focus:ring-[#B30D12]/20 focus:border-[#B30D12] outline-none bg-white"
+                className="w-full text-xs p-2.5 rounded-lg border border-slate-200 focus:ring-2 focus:ring-[#FE0000]/20 focus:border-[#FE0000] outline-none bg-white"
               >
                 <option value="" disabled>Select Transmission</option>
                 <option value="Automatic">Automatic</option>
@@ -297,7 +325,7 @@ export function NewRequestPage() {
                 onChange={(e) =>
                   setVehicle({ ...vehicle, driveConfig: e.target.value })
                 }
-                className="w-full text-xs p-2.5 rounded-lg border border-slate-200 focus:ring-2 focus:ring-[#B30D12]/20 focus:border-[#B30D12] outline-none bg-white"
+                className="w-full text-xs p-2.5 rounded-lg border border-slate-200 focus:ring-2 focus:ring-[#FE0000]/20 focus:border-[#FE0000] outline-none bg-white"
               >
                 <option value="" disabled>Select Drive Config</option>
                 <option value="4WD (Selectable/Low)">4WD (Selectable/Low)</option>
@@ -312,7 +340,7 @@ export function NewRequestPage() {
         {/* SECTION 2: PART REQUIREMENTS & SPECIFICATION */}
         <div className="bg-white rounded-xl border-2 border-slate-200 shadow-sm p-5 space-y-4">
           <div className="flex items-center gap-2 border-b border-slate-100 pb-3">
-            <Package className="w-5 h-5 text-[#B30D12]" />
+            <Package className="w-5 h-5 text-[#FE0000]" />
             <h2 className="text-[13px] font-bold text-slate-900 uppercase tracking-wide">
               2. Part Requirements & Specification
             </h2>
@@ -328,7 +356,7 @@ export function NewRequestPage() {
                 required
                 value={part.name}
                 onChange={(e) => setPart({ ...part, name: e.target.value })}
-                className="w-full text-xs p-2.5 rounded-lg border border-slate-200 focus:ring-2 focus:ring-[#B30D12]/20 focus:border-[#B30D12] outline-none"
+                className="w-full text-xs p-2.5 rounded-lg border border-slate-200 focus:ring-2 focus:ring-[#FE0000]/20 focus:border-[#FE0000] outline-none"
                 placeholder="e.g. Genuine Alternator 12V 130A Assembly"
               />
             </div>
@@ -345,7 +373,7 @@ export function NewRequestPage() {
                 onChange={(e) =>
                   setPart({ ...part, quantity: parseInt(e.target.value) || 1 })
                 }
-                className="w-full text-xs p-2.5 rounded-lg border border-slate-200 focus:ring-2 focus:ring-[#B30D12]/20 focus:border-[#B30D12] outline-none"
+                className="w-full text-xs p-2.5 rounded-lg border border-slate-200 focus:ring-2 focus:ring-[#FE0000]/20 focus:border-[#FE0000] outline-none"
               />
             </div>
           </div>
@@ -359,7 +387,7 @@ export function NewRequestPage() {
                 type="text"
                 value={part.partNumber || ""}
                 onChange={(e) => setPart({ ...part, partNumber: e.target.value })}
-                className="w-full text-xs p-2.5 rounded-lg border border-slate-200 font-mono focus:ring-2 focus:ring-[#B30D12]/20 focus:border-[#B30D12] outline-none"
+                className="w-full text-xs p-2.5 rounded-lg border border-slate-200 font-mono focus:ring-2 focus:ring-[#FE0000]/20 focus:border-[#FE0000] outline-none"
                 placeholder="e.g. 27060-0E050"
               />
             </div>
@@ -373,7 +401,7 @@ export function NewRequestPage() {
                 onChange={(e) =>
                   setPart({ ...part, condition: e.target.value as PartCondition })
                 }
-                className="w-full text-xs p-2.5 rounded-lg border border-slate-200 focus:ring-2 focus:ring-[#B30D12]/20 focus:border-[#B30D12] outline-none bg-white"
+                className="w-full text-xs p-2.5 rounded-lg border border-slate-200 focus:ring-2 focus:ring-[#FE0000]/20 focus:border-[#FE0000] outline-none bg-white"
               >
                 <option value="New">New</option>
                 <option value="Used">Used</option>
@@ -385,7 +413,7 @@ export function NewRequestPage() {
         {/* SECTION 3: FREIGHT PREFERENCE */}
         <div className="bg-white rounded-xl border-2 border-slate-200 shadow-sm p-5 space-y-4">
           <div className="flex items-center gap-2 border-b border-slate-100 pb-3">
-            <Truck className="w-5 h-5 text-[#B30D12]" />
+            <Truck className="w-5 h-5 text-[#FE0000]" />
             <h2 className="text-[13px] font-bold text-slate-900 uppercase tracking-wide">
               3. Freight Preference
             </h2>
@@ -476,7 +504,7 @@ export function NewRequestPage() {
         {/* SECTION 4: SUPPORTING FILES */}
         <div className="bg-white rounded-xl border-2 border-slate-200 shadow-sm p-5 space-y-4">
           <div className="flex items-center gap-2 border-b border-slate-100 pb-3">
-            <FileText className="w-5 h-5 text-[#B30D12]" />
+            <FileText className="w-5 h-5 text-[#FE0000]" />
             <h2 className="text-[13px] font-bold text-slate-900 uppercase tracking-wide">
               4. Supporting Photos
             </h2>
@@ -484,14 +512,14 @@ export function NewRequestPage() {
 
           <div>
             <label className="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-1">
-              Customer Notes / Fitting Instructions
+              Customer Notes
             </label>
             <textarea
               rows={2}
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
               placeholder="Add any specific details, urgency, or fitment notes..."
-              className="w-full text-xs p-2.5 rounded-lg border border-slate-200 focus:ring-2 focus:ring-[#B30D12]/20 focus:border-[#B30D12] outline-none"
+              className="w-full text-xs p-2.5 rounded-lg border border-slate-200 focus:ring-2 focus:ring-[#FE0000]/20 focus:border-[#FE0000] outline-none"
             />
           </div>
 
@@ -500,7 +528,7 @@ export function NewRequestPage() {
               <label className="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-1">
                 Supporting Photos
               </label>
-              <label className="block border-2 border-dashed border-slate-200 hover:border-[#B30D12]/60 rounded-lg p-5 text-center cursor-pointer transition-colors bg-slate-50/50">
+              <label className="block border-2 border-dashed border-slate-200 hover:border-[#FE0000]/60 rounded-lg p-5 text-center cursor-pointer transition-colors bg-slate-50/50">
                 <input
                   type="file"
                   accept="image/png, image/jpeg, image/webp, .pdf, .doc, .docx"
@@ -524,7 +552,7 @@ export function NewRequestPage() {
                 />
                 <UploadCloud className="w-5 h-5 text-slate-400 mx-auto mb-1.5" />
                 <p className="text-[11px] text-slate-600 font-medium">
-                  Drag files here or <span className="text-[#B30D12] font-bold">browse</span>
+                  Drag files here or <span className="text-[#FE0000] font-bold">browse</span>
                 </p>
                 <p className="text-[10px] text-slate-400 mt-0.5">PNG, JPG, WEBP, PDF or DOCX up to 10MB</p>
               </label>
@@ -567,7 +595,7 @@ export function NewRequestPage() {
         {/* SECTION 5: DELIVERY */}
         <div className="bg-white rounded-xl border-2 border-slate-200 shadow-sm p-5 space-y-4">
           <div className="flex items-center gap-2 border-b border-slate-100 pb-3">
-            <MapPin className="w-5 h-5 text-[#B30D12]" />
+            <MapPin className="w-5 h-5 text-[#FE0000]" />
             <h2 className="text-[13px] font-bold text-slate-900 uppercase tracking-wide">
               5. Delivery Address
             </h2>
@@ -575,7 +603,7 @@ export function NewRequestPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             {selectedAddress && (
-              <div className="p-3 rounded-lg border-2 border-[#B30D12] bg-red-50/10 transition-all flex items-start justify-between">
+              <div className="p-3 rounded-lg border-2 border-[#FE0000] bg-red-50/10 transition-all flex items-start justify-between">
                 <div className="space-y-0.5">
                   <div className="flex items-center gap-2">
                     <span className="font-bold text-xs text-slate-900">
@@ -591,7 +619,7 @@ export function NewRequestPage() {
                 </div>
 
                 <div className="flex flex-col items-end gap-2">
-                  <div className="w-4 h-4 rounded-full border-2 border-[#B30D12] bg-[#B30D12] text-white flex items-center justify-center shrink-0 mt-0.5">
+                  <div className="w-4 h-4 rounded-full border-2 border-[#FE0000] bg-[#FE0000] text-white flex items-center justify-center shrink-0 mt-0.5">
                     <Check className="w-2.5 h-2.5" />
                   </div>
                   <button type="button" onClick={() => setSelectedAddress(null)} className="text-[10px] text-red-500 hover:underline font-medium">Remove</button>
@@ -601,32 +629,61 @@ export function NewRequestPage() {
 
             {/* Add New Address Card / Form */}
             {isAddingAddress ? (
-              <div className="md:col-span-2 p-4 rounded-xl border-2 border-dashed border-slate-200 bg-slate-50 space-y-4 animate-in fade-in zoom-in duration-200">
-                <h3 className="text-[13px] font-bold text-slate-900 mb-2">New Delivery Address</h3>
+              <div className="md:col-span-2 p-5 rounded-xl border-2 border-dashed border-[#FE0000]/30 bg-slate-50 space-y-4 animate-in fade-in zoom-in duration-200">
+                <div className="flex items-center justify-between border-b border-slate-200 pb-2">
+                  <div className="flex items-center gap-2">
+                    <MapPin className="w-4 h-4 text-[#FE0000]" />
+                    <h3 className="text-[13px] font-bold text-slate-900">New Workshop Delivery Address</h3>
+                  </div>
+                  <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
+                    NZ Post Autocomplete Active
+                  </span>
+                </div>
+
+                {/* NZ Address Search Integration */}
+                <div className="p-3 bg-white border border-slate-200 rounded-xl space-y-2">
+                  <NZAddressLookup
+                    onSelectAddress={handleSelectNZAddress}
+                    label="Search Official NZ Address"
+                    placeholder="Type NZ street number, road or suburb (e.g. 12 Barrys Point Rd)..."
+                  />
+                  <p className="text-[10px] text-slate-500">
+                    Auto-populates and validates official postal addresses across all New Zealand regions.
+                  </p>
+                </div>
+
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                  <input type="text" placeholder="Location Label (e.g. South Branch)" className="w-full text-xs p-2.5 rounded-lg border outline-none focus:ring-2 focus:ring-[#B30D12]/20 focus:border-[#B30D12]" value={newAddressForm.label} onChange={e => setNewAddressForm({ ...newAddressForm, label: e.target.value })} />
-                  <input type="text" placeholder="Recipient Name" className="w-full text-xs p-2.5 rounded-lg border outline-none focus:ring-2 focus:ring-[#B30D12]/20 focus:border-[#B30D12]" value={newAddressForm.recipientName} onChange={e => setNewAddressForm({ ...newAddressForm, recipientName: e.target.value })} />
-                  <input type="text" placeholder="Street Address" className="w-full text-xs p-2.5 rounded-lg border outline-none focus:ring-2 focus:ring-[#B30D12]/20 focus:border-[#B30D12]" value={newAddressForm.streetAddress} onChange={e => setNewAddressForm({ ...newAddressForm, streetAddress: e.target.value })} />
-                  <input type="text" placeholder="Suburb" className="w-full text-xs p-2.5 rounded-lg border outline-none focus:ring-2 focus:ring-[#B30D12]/20 focus:border-[#B30D12]" value={newAddressForm.suburb} onChange={e => setNewAddressForm({ ...newAddressForm, suburb: e.target.value })} />
-                  <input type="text" placeholder="City" className="w-full text-xs p-2.5 rounded-lg border outline-none focus:ring-2 focus:ring-[#B30D12]/20 focus:border-[#B30D12]" value={newAddressForm.city} onChange={e => setNewAddressForm({ ...newAddressForm, city: e.target.value })} />
+                  <input type="text" placeholder="Location Label (e.g. South Branch Workshop)" className="w-full text-xs p-2.5 rounded-lg border outline-none focus:ring-2 focus:ring-[#FE0000]/20 focus:border-[#FE0000]" value={newAddressForm.label} onChange={e => setNewAddressForm({ ...newAddressForm, label: e.target.value })} />
+                  <input type="text" placeholder="Recipient Contact Name" className="w-full text-xs p-2.5 rounded-lg border outline-none focus:ring-2 focus:ring-[#FE0000]/20 focus:border-[#FE0000]" value={newAddressForm.recipientName} onChange={e => setNewAddressForm({ ...newAddressForm, recipientName: e.target.value })} />
+                  <div>
+                    <input type="text" placeholder="Street Address *" className="w-full text-xs p-2.5 rounded-lg border outline-none focus:ring-2 focus:ring-[#FE0000]/20 focus:border-[#FE0000]" value={newAddressForm.streetAddress} onChange={e => setNewAddressForm({ ...newAddressForm, streetAddress: e.target.value })} />
+                    {newAddressForm.isVerified && (
+                      <span className="text-[9px] font-bold text-emerald-700 flex items-center gap-1 mt-1">
+                        <CheckCircle2 className="w-3 h-3 text-emerald-600" />
+                        Verified via {newAddressForm.verifiedSource}
+                      </span>
+                    )}
+                  </div>
+                  <input type="text" placeholder="Suburb" className="w-full text-xs p-2.5 rounded-lg border outline-none focus:ring-2 focus:ring-[#FE0000]/20 focus:border-[#FE0000]" value={newAddressForm.suburb} onChange={e => setNewAddressForm({ ...newAddressForm, suburb: e.target.value })} />
+                  <input type="text" placeholder="City *" className="w-full text-xs p-2.5 rounded-lg border outline-none focus:ring-2 focus:ring-[#FE0000]/20 focus:border-[#FE0000]" value={newAddressForm.city} onChange={e => setNewAddressForm({ ...newAddressForm, city: e.target.value })} />
                   <div className="grid grid-cols-2 gap-2">
-                    <input type="text" placeholder="Postcode" className="w-full text-xs p-2.5 rounded-lg border outline-none focus:ring-2 focus:ring-[#B30D12]/20 focus:border-[#B30D12]" value={newAddressForm.postalCode} onChange={e => setNewAddressForm({ ...newAddressForm, postalCode: e.target.value })} />
-                    <input type="text" placeholder="Phone" className="w-full text-xs p-2.5 rounded-lg border outline-none focus:ring-2 focus:ring-[#B30D12]/20 focus:border-[#B30D12]" value={newAddressForm.phone} onChange={e => setNewAddressForm({ ...newAddressForm, phone: e.target.value })} />
+                    <input type="text" placeholder="Postcode" className="w-full text-xs p-2.5 rounded-lg border outline-none focus:ring-2 focus:ring-[#FE0000]/20 focus:border-[#FE0000]" value={newAddressForm.postalCode} onChange={e => setNewAddressForm({ ...newAddressForm, postalCode: e.target.value })} />
+                    <input type="text" placeholder="Phone" className="w-full text-xs p-2.5 rounded-lg border outline-none focus:ring-2 focus:ring-[#FE0000]/20 focus:border-[#FE0000]" value={newAddressForm.phone} onChange={e => setNewAddressForm({ ...newAddressForm, phone: e.target.value })} />
                   </div>
                 </div>
                 <div className="flex items-center gap-3 pt-2">
                   <button type="button" onClick={() => setIsAddingAddress(false)} className="px-5 py-2 text-xs font-bold bg-white border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors text-slate-600">Cancel</button>
-                  <button type="button" onClick={handleAddNewAddress} className="px-5 py-2 text-xs font-bold bg-[#B30D12] hover:bg-[#9B0A0F] text-white rounded-lg shadow-sm transition-colors">Save Address</button>
+                  <button type="button" onClick={handleAddNewAddress} className="px-5 py-2 text-xs font-bold bg-[#FE0000] hover:bg-[#9B0A0F] text-white rounded-lg shadow-sm transition-colors">Save Address</button>
                 </div>
               </div>
             ) : (
               !selectedAddress && (
                 <div
                   onClick={() => setIsAddingAddress(true)}
-                  className="p-3 rounded-lg border-2 border-dashed border-slate-200 hover:border-[#B30D12]/50 bg-slate-50/50 hover:bg-red-50/20 cursor-pointer transition-all flex flex-col items-center justify-center text-slate-500 hover:text-[#B30D12] group min-h-[100px]"
+                  className="p-3 rounded-lg border-2 border-dashed border-slate-200 hover:border-[#FE0000]/50 bg-slate-50/50 hover:bg-red-50/20 cursor-pointer transition-all flex flex-col items-center justify-center text-slate-500 hover:text-[#FE0000] group min-h-[100px]"
                 >
-                  <div className="w-8 h-8 rounded-full bg-slate-100 group-hover:bg-[#B30D12]/10 flex items-center justify-center mb-1.5 transition-colors">
-                    <Plus className="w-4 h-4 text-slate-400 group-hover:text-[#B30D12] transition-colors" />
+                  <div className="w-8 h-8 rounded-full bg-slate-100 group-hover:bg-[#FE0000]/10 flex items-center justify-center mb-1.5 transition-colors">
+                    <Plus className="w-4 h-4 text-slate-400 group-hover:text-[#FE0000] transition-colors" />
                   </div>
                   <span className="font-bold text-xs group-hover:text-slate-900 transition-colors">Add New Address</span>
                   <span className="text-[10px] text-slate-400 mt-0.5">Ship to a different workshop</span>
@@ -648,7 +705,7 @@ export function NewRequestPage() {
 
           <button
             type="submit"
-            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-2.5 bg-[#B30D12] hover:bg-[#9B0A0F] text-white font-bold text-[13px] rounded-xl shadow-md shadow-red-500/30 hover:shadow-lg hover:shadow-red-500/40 transition-all"
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-2.5 bg-[#FE0000] hover:bg-[#9B0A0F] text-white font-bold text-[13px] rounded-xl shadow-md shadow-red-500/30 hover:shadow-lg hover:shadow-red-500/40 transition-all"
           >
             <CheckCircle2 className="w-4 h-4" />
             <span>Submit Part Request to Autohub Sourcing</span>
@@ -669,7 +726,7 @@ export function NewRequestPage() {
                 Request Generated & Submitted
               </span>
               <h3 className="text-2xl font-black text-slate-900 tracking-tight">
-                Request Number: <span className="text-[#B30D12] font-mono">{submittedRequestNumber}</span>
+                Request Number: <span className="text-[#FE0000] font-mono">{submittedRequestNumber}</span>
               </h3>
               <p className="text-[13px] text-slate-500 max-w-sm mx-auto leading-relaxed">
                 Your part request has been dispatched to Autohub Sourcing specialists in Japan and overseas distribution centers. You will receive an immediate quote alert once pricing and freight are locked.
@@ -706,7 +763,7 @@ export function NewRequestPage() {
             <div className="pt-2">
               <button
                 onClick={() => router.push("/customer/requests")}
-                className="w-full sm:w-auto px-8 py-3.5 bg-[#B30D12] hover:bg-[#9B0A0F] text-white font-bold text-xs uppercase tracking-wider rounded-xl shadow-md shadow-red-500/20 transition-all"
+                className="w-full sm:w-auto px-8 py-3.5 bg-[#FE0000] hover:bg-[#9B0A0F] text-white font-bold text-xs uppercase tracking-wider rounded-xl shadow-md shadow-red-500/20 transition-all"
               >
                 Return to Requests List
               </button>

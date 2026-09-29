@@ -16,6 +16,7 @@ import {
 import Link from "next/link";
 import { usePortal } from "@/context/portal-context";
 import { PartRequest, RequestStatus } from "@/types/portal";
+import { getStatusBadgeClasses } from "@/lib/status-styles";
 
 export function RequestsView() {
   const {
@@ -84,39 +85,7 @@ export function RequestsView() {
   }, [filteredRequests, currentPage]);
 
   const getStatusBadge = (status: RequestStatus) => {
-    switch (status) {
-      case "Submitted":
-        return "bg-sky-50 text-sky-700 border border-sky-200";
-      case "Sourcing":
-        return "bg-purple-50 text-purple-700 border border-purple-200";
-      case "Quoted":
-        return "bg-amber-100 text-amber-800 border border-amber-200";
-      case "Approved":
-        return "bg-emerald-50 text-emerald-700 border border-emerald-200";
-      case "Invoicing":
-        return "bg-indigo-50 text-indigo-700 border border-indigo-200";
-      case "Awaiting Payment":
-        return "bg-orange-50 text-orange-800 border border-orange-200";
-      case "Ordered":
-        return "bg-blue-50 text-blue-700 border border-blue-200";
-      case "Subadmin Pending":
-        return "bg-red-50 text-[#B30D12] border border-red-200";
-      case "Subadmin Review":
-        return "bg-amber-50 text-amber-600 border border-amber-200";
-      case "Subadmin Hold":
-        return "bg-purple-50 text-purple-700 border border-purple-200";
-      case "Subadmin Approved":
-      case "Ready for Dispatch":
-        return "bg-emerald-50 text-emerald-700 border border-emerald-200";
-      case "Shipped":
-        return "bg-cyan-50 text-cyan-800 border border-cyan-200";
-      case "Delivered":
-        return "bg-teal-50 text-teal-700 border border-teal-200";
-      case "Completed":
-        return "bg-slate-100 text-slate-700 border border-slate-200";
-      default:
-        return "bg-slate-100 text-slate-700 border border-slate-200";
-    }
+    return getStatusBadgeClasses(status);
   };
 
   return (
@@ -132,7 +101,7 @@ export function RequestsView() {
             id="status-filter"
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="text-[13px] font-bold text-slate-700 bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 outline-none focus:border-[#B30D12] focus:ring-1 focus:ring-[#B30D12] transition-all min-w-[180px] cursor-pointer appearance-none"
+            className="text-[13px] font-bold text-slate-700 bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 outline-none focus:border-[#FE0000] focus:ring-1 focus:ring-[#FE0000] transition-all min-w-[180px] cursor-pointer appearance-none"
             style={{
               backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke-width='2.5' stroke='%2364748b'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E")`,
               backgroundRepeat: "no-repeat",
@@ -170,7 +139,7 @@ export function RequestsView() {
         {/* Action button */}
         <Link
           href="/customer/requests/new"
-          className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#B30D12] hover:bg-[#9B0A0F] text-white font-bold text-xs uppercase tracking-wider rounded-xl shadow-md transition-all shrink-0"
+          className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#FE0000] hover:bg-[#9B0A0F] text-white font-bold text-xs uppercase tracking-wider rounded-xl shadow-md transition-all shrink-0"
         >
           <Plus className="w-4 h-4 stroke-[3]" />
           <span>New Parts Request</span>
@@ -207,7 +176,7 @@ export function RequestsView() {
                     className="hover:bg-slate-50 cursor-pointer transition-colors group"
                   >
                     {/* Request Number */}
-                    <td className="py-4 px-6 font-mono font-black text-slate-900 group-hover:text-[#B30D12] transition-colors">
+                    <td className="py-4 px-6 font-mono font-black text-slate-900 group-hover:text-[#FE0000] transition-colors">
                       {req.requestNumber}
                     </td>
 
@@ -266,7 +235,7 @@ export function RequestsView() {
                             e.stopPropagation();
                             setSelectedRequest(req);
                           }}
-                          className="px-3 py-1 bg-[#B30D12] hover:bg-[#9B0A0F] text-white font-bold text-[11px] uppercase tracking-wider rounded-lg shadow-xs"
+                          className="px-3 py-1 bg-[#FE0000] hover:bg-[#9B0A0F] text-white font-bold text-[11px] uppercase tracking-wider rounded-lg shadow-xs"
                         >
                           Review Quote →
                         </button>
@@ -277,7 +246,7 @@ export function RequestsView() {
                             setPaymentRequest(req);
                             setIsPaymentModalOpen(true);
                           }}
-                          className="px-3 py-1 bg-[#B30D12] hover:bg-[#9B0A0F] text-white font-bold text-[11px] uppercase tracking-wider rounded-lg shadow-xs"
+                          className="px-3 py-1 bg-[#FE0000] hover:bg-[#9B0A0F] text-white font-bold text-[11px] uppercase tracking-wider rounded-lg shadow-xs"
                         >
                           Pay Now →
                         </button>
@@ -286,7 +255,7 @@ export function RequestsView() {
                           <span>Track Shipment →</span>
                         </span>
                       ) : (
-                        <span className="text-slate-400 group-hover:text-[#B30D12] font-semibold inline-flex items-center gap-1">
+                        <span className="text-slate-400 group-hover:text-[#FE0000] font-semibold inline-flex items-center gap-1">
                           <span>View</span>
                           <ChevronRight className="w-3.5 h-3.5" />
                         </span>

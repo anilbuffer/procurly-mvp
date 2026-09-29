@@ -69,18 +69,13 @@ export function ShipmentTab({ request: initialRequest }: ShipmentTabProps) {
       desc: "Touched down at Auckland Airport cargo terminal.",
     },
     {
-      name: "Customs Clearance",
-      label: "4. Customs Clearance",
-      desc: "Cleared by NZ Customs Service & MPI bio-security.",
-    },
-    {
       name: "Out For Delivery",
-      label: "5. Out For Delivery",
+      label: "4. Out For Delivery",
       desc: "Dispatched on local Auckland courier van.",
     },
     {
       name: "Delivered",
-      label: "6. Delivered",
+      label: "5. Delivered",
       desc: "Successfully delivered to customer workshop.",
     },
   ];
@@ -132,44 +127,59 @@ export function ShipmentTab({ request: initialRequest }: ShipmentTabProps) {
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2.5">
           {!shipment ? (
             <button
               type="button"
               onClick={() => setShowCreateModal(true)}
-              className="px-4 py-2 bg-[#B30D12] hover:bg-[#C8101E] text-white rounded-xl text-xs font-bold transition-all shadow-xs flex items-center gap-1.5"
+              className="px-4 py-2 bg-[#FE0000] hover:bg-[#C8101E] text-white rounded-xl text-xs font-bold transition-all shadow-xs flex items-center gap-1.5"
             >
               <Plus className="w-4 h-4" />
               Create Shipment
             </button>
           ) : (
-            <>
-              {shipment.currentMilestone !== "Delivered" ? (
+            <div className="flex flex-wrap items-center gap-2 bg-white px-3 py-1.5 rounded-xl border border-slate-300 shadow-xs">
+              <label className="text-xs font-bold text-slate-700 whitespace-nowrap">
+                Shipment Status:
+              </label>
+              <select
+                value={shipment.currentMilestone}
+                onChange={(e) => {
+                  const newMs = e.target.value as ShipmentMilestone;
+                  updateShipmentMilestone(request.id, newMs, `Milestone updated to ${newMs}`);
+                }}
+                className="text-xs font-bold text-slate-900 bg-slate-50 border border-slate-300 hover:border-[#FE0000] rounded-lg px-2.5 py-1.5 focus:outline-none focus:ring-2 focus:ring-[#FE0000]/20 cursor-pointer"
+                title="Select status to advance or reverse milestone"
+              >
+                {MILESTONES.map((m) => (
+                  <option key={m.name} value={m.name}>
+                    {m.label}
+                  </option>
+                ))}
+              </select>
+              <button
+                type="button"
+                onClick={() => {
+                  setSelectedMilestone(shipment.currentMilestone);
+                  setShowAdvanceModal(true);
+                }}
+                className="text-[11px] font-bold text-blue-600 hover:text-blue-800 hover:underline px-1 whitespace-nowrap"
+                title="Add a custom note to this milestone"
+              >
+                + Note
+              </button>
+
+              {shipment.currentMilestone === "Delivered" && request.status !== "Completed" && (
                 <button
                   type="button"
-                  onClick={() => {
-                    const nextIdx = Math.min(currentMilestoneIndex + 1, MILESTONES.length - 1);
-                    setSelectedMilestone(MILESTONES[nextIdx].name);
-                    setShowAdvanceModal(true);
-                  }}
-                  className="px-3.5 py-2 bg-[#2B4499] hover:bg-[#1E3270] text-white rounded-xl text-xs font-bold transition-all shadow-xs flex items-center gap-1.5"
+                  onClick={() => completeRequest(request.id)}
+                  className="ml-1 px-3 py-1 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold transition-all shadow-xs flex items-center gap-1"
                 >
-                  <ArrowRight className="w-4 h-4" />
-                  Advance Milestone
+                  <CheckCircle2 className="w-3.5 h-3.5" />
+                  Complete Request
                 </button>
-              ) : (
-                request.status !== "Completed" && (
-                  <button
-                    type="button"
-                    onClick={() => completeRequest(request.id)}
-                    className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition-all shadow-xs flex items-center gap-1.5"
-                  >
-                    <CheckCircle2 className="w-4 h-4" />
-                    Complete Request
-                  </button>
-                )
               )}
-            </>
+            </div>
           )}
         </div>
       </div>
@@ -184,7 +194,7 @@ export function ShipmentTab({ request: initialRequest }: ShipmentTabProps) {
           <button
             type="button"
             onClick={() => setShowCreateModal(true)}
-            className="px-4 py-2 bg-[#B30D12] text-white rounded-xl text-xs font-semibold shadow-xs"
+            className="px-4 py-2 bg-[#FE0000] text-white rounded-xl text-xs font-semibold shadow-xs"
           >
             Create Consignment Shipment
           </button>
@@ -290,8 +300,8 @@ export function ShipmentTab({ request: initialRequest }: ShipmentTabProps) {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-sm p-4 animate-in fade-in duration-200">
           <div className="bg-white rounded-2xl max-w-xl w-full p-6 shadow-xl border border-slate-100 animate-in zoom-in-95 duration-200">
             <div className="flex items-start gap-4 mb-6">
-              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#B30D12]/10 to-[#B30D12]/5 border border-[#B30D12]/20 flex items-center justify-center shrink-0 shadow-inner">
-                <Truck className="w-5 h-5 text-[#B30D12]" />
+              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#FE0000]/10 to-[#FE0000]/5 border border-[#FE0000]/20 flex items-center justify-center shrink-0 shadow-inner">
+                <Truck className="w-5 h-5 text-[#FE0000]" />
               </div>
               <div>
                 <h3 className="text-lg font-bold text-slate-900 tracking-tight">Create Consignment Shipment</h3>
@@ -314,7 +324,7 @@ export function ShipmentTab({ request: initialRequest }: ShipmentTabProps) {
                     <select
                       value={carrier}
                       onChange={(e) => setCarrier(e.target.value)}
-                      className="w-full text-sm pl-10 p-3.5 rounded-xl border border-slate-200 bg-slate-50/50 hover:bg-white focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#B30D12]/20 focus:border-[#B30D12] transition-all appearance-none"
+                      className="w-full text-sm pl-10 p-3.5 rounded-xl border border-slate-200 bg-slate-50/50 hover:bg-white focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#FE0000]/20 focus:border-[#FE0000] transition-all appearance-none"
                     >
                       <option value="DHL Global Forwarding">DHL Global Forwarding</option>
                       <option value="Mainfreight Air & Ocean">Mainfreight Air & Ocean</option>
@@ -338,7 +348,7 @@ export function ShipmentTab({ request: initialRequest }: ShipmentTabProps) {
                       onChange={(e) => setTrackingNumber(e.target.value)}
                       required
                       placeholder="e.g. AWB-9988776655"
-                      className="w-full text-sm pl-10 p-3.5 rounded-xl border border-slate-200 bg-slate-50/50 hover:bg-white focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#B30D12]/20 focus:border-[#B30D12] transition-all"
+                      className="w-full text-sm pl-10 p-3.5 rounded-xl border border-slate-200 bg-slate-50/50 hover:bg-white focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#FE0000]/20 focus:border-[#FE0000] transition-all"
                     />
                   </div>
                 </div>
@@ -357,7 +367,7 @@ export function ShipmentTab({ request: initialRequest }: ShipmentTabProps) {
                       onChange={(e) => setOrigin(e.target.value)}
                       required
                       placeholder="e.g. Nagoya Consolidation Hub"
-                      className="w-full text-sm pl-10 p-3.5 rounded-xl border border-slate-200 bg-slate-50/50 hover:bg-white focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#B30D12]/20 focus:border-[#B30D12] transition-all"
+                      className="w-full text-sm pl-10 p-3.5 rounded-xl border border-slate-200 bg-slate-50/50 hover:bg-white focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#FE0000]/20 focus:border-[#FE0000] transition-all"
                     />
                   </div>
                 </div>
@@ -375,7 +385,7 @@ export function ShipmentTab({ request: initialRequest }: ShipmentTabProps) {
                       value={estimatedDelivery}
                       onChange={(e) => setEstimatedDelivery(e.target.value)}
                       required
-                      className="w-full text-sm pl-10 p-3.5 rounded-xl border border-slate-200 bg-slate-50/50 hover:bg-white focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#B30D12]/20 focus:border-[#B30D12] transition-all"
+                      className="w-full text-sm pl-10 p-3.5 rounded-xl border border-slate-200 bg-slate-50/50 hover:bg-white focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#FE0000]/20 focus:border-[#FE0000] transition-all"
                     />
                   </div>
                 </div>
@@ -391,7 +401,7 @@ export function ShipmentTab({ request: initialRequest }: ShipmentTabProps) {
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2.5 text-sm font-bold bg-[#B30D12] hover:bg-[#C8101E] text-white rounded-xl shadow-md shadow-red-500/20 transition-all flex items-center gap-2"
+                  className="px-5 py-2.5 text-sm font-bold bg-[#FE0000] hover:bg-[#C8101E] text-white rounded-xl shadow-md shadow-red-500/20 transition-all flex items-center gap-2"
                 >
                   <Truck className="w-4 h-4" />
                   Save Shipment
@@ -406,15 +416,15 @@ export function ShipmentTab({ request: initialRequest }: ShipmentTabProps) {
       {showAdvanceModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs p-4">
           <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-200 animate-in zoom-in-95">
-            <h3 className="text-base font-bold text-slate-900 mb-1">Advance Shipping Milestone</h3>
+            <h3 className="text-base font-bold text-slate-900 mb-1">Update Shipment Status</h3>
             <p className="text-xs text-slate-500 mb-4">
-              Select the milestone achieved for this shipment.
+              Select any milestone to advance or reverse the shipment status.
             </p>
 
             <form onSubmit={handleAdvanceMilestone} className="space-y-4">
               <div>
                 <label className="block text-xs font-bold text-slate-700 mb-1">
-                  Next Milestone
+                  Select Milestone (Advance or Reverse)
                 </label>
                 <select
                   value={selectedMilestone}

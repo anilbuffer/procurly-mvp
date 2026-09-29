@@ -48,6 +48,8 @@ interface PortalContextType {
   activities: ProcurementActivity[];
   savedAddresses: SavedAddress[];
   addSavedAddress: (address: SavedAddress) => void;
+  deleteSavedAddress: (id: string) => void;
+  setDefaultAddress: (id: string) => void;
   searchQuery: string;
   setSearchQuery: (query: string) => void;
   submitNewRequest: (reqData: Partial<PartRequest>) => PartRequest;
@@ -98,19 +100,31 @@ export function PortalProvider({ children }: { children: React.ReactNode }) {
     return customers.find((c) => c.id === activeCustomerId) || customers[1] || customers[0];
   }, [customers, activeCustomerId]);
 
-  const [simulateZeroState, setSimulateZeroState] = useState(true);
+  const [simulateZeroState, setSimulateZeroState] = useState(false);
 
-  // Normalize shared requests for customer components (ensuring quotation alias is always present)
+  // Normalize shared requests for customer components (ensuring quotation and customerQuote alias is always present)
   const requests: PartRequest[] = useMemo(() => {
     if (simulateZeroState) {
       return [];
     }
     
     return sharedRequests.map((r) => {
-      const q = r.customerQuote || r.quotation;
+      let q = r.customerQuote || r.quotation;
+      if (q) {
+        const photos = (
+          (q.quotePhotos && q.quotePhotos.length > 0) ? q.quotePhotos :
+          (r.customerQuoteVersions?.find((v: any) => v.quotePhotos && v.quotePhotos.length > 0)?.quotePhotos) ||
+          (r.SubadminDetails?.photos && r.SubadminDetails.photos.length > 0 ? r.SubadminDetails.photos : undefined)
+        );
+        q = {
+          ...q,
+          quotePhotos: photos,
+        };
+      }
       return {
         ...r,
         quotation: q,
+        customerQuote: q,
         quotedValue: r.quotedValue || q?.totalAmount,
       } as PartRequest;
     });
@@ -192,6 +206,19 @@ export function PortalProvider({ children }: { children: React.ReactNode }) {
       }
       return [...prev, addr];
     });
+  }, []);
+
+  const deleteSavedAddress = useCallback((id: string) => {
+    setSavedAddresses((prev) => prev.filter((a) => a.id !== id));
+  }, []);
+
+  const setDefaultAddress = useCallback((id: string) => {
+    setSavedAddresses((prev) =>
+      prev.map((a) => ({
+        ...a,
+        isDefault: a.id === id,
+      }))
+    );
   }, []);
 
   // Sync request modal selection from URL query param on mount & popstate
@@ -311,8 +338,7 @@ export function PortalProvider({ children }: { children: React.ReactNode }) {
     requestId: string,
     reference?: string
   ) => {
-    markPaymentPaid(requestId, reference);
-
+    // Note: Only admins can mark invoices as Paid. Customer submissions record remittance notes for reconciliation.
     const target = requests.find((r) => r.id === requestId);
     const reqNum = target?.requestNumber || "Request";
 
@@ -321,8 +347,8 @@ export function PortalProvider({ children }: { children: React.ReactNode }) {
         id: `act-${Date.now()}`,
         timestamp: new Date().toISOString(),
         timeLabel: "Just now",
-        title: `Payment Recorded (Paid): ${reqNum}`,
-        description: `Payment recorded as Paid (Ref: ${reference || reqNum}). Supplier order unlocked.`,
+        title: `Remittance Reference Noted: ${reqNum}`,
+        description: `Customer reported bank transfer reference (${reference || reqNum}). Awaiting admin ledger reconciliation.`,
         type: "payment",
         requestId,
       },
@@ -367,6 +393,8 @@ export function PortalProvider({ children }: { children: React.ReactNode }) {
         activities,
         savedAddresses,
         addSavedAddress,
+        deleteSavedAddress,
+        setDefaultAddress,
         searchQuery,
         setSearchQuery,
         submitNewRequest,

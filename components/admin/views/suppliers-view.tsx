@@ -189,7 +189,7 @@ export function SuppliersView() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search Supplier Name, Country, Specialization..."
-            className="w-full px-3.5 py-2 text-xs bg-slate-100/80 hover:bg-slate-100 focus:bg-white text-slate-900 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#B30D12]/30 focus:border-[#B30D12]"
+            className="w-full px-3.5 py-2 text-xs bg-slate-100/80 hover:bg-slate-100 focus:bg-white text-slate-900 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#FE0000]/30 focus:border-[#FE0000]"
           />
         </div>
 
@@ -200,8 +200,8 @@ export function SuppliersView() {
               type="button"
               onClick={() => setStatusFilter(filter)}
               className={`px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all ${statusFilter === filter
-                  ? "bg-[#C40E14] text-white shadow-xs"
-                  : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                ? "bg-[#FE0000] text-white shadow-xs"
+                : "bg-slate-100 text-slate-600 hover:bg-slate-200"
                 }`}
             >
               {filter}
@@ -212,7 +212,7 @@ export function SuppliersView() {
         <button
           type="button"
           onClick={handleOpenAdd}
-          className="px-3.5 py-2 bg-[#B30D12] hover:bg-[#C8101E] text-white rounded-xl text-xs font-bold transition-all shadow-xs flex items-center gap-1.5 self-start sm:self-auto shrink-0"
+          className="px-3.5 py-2 bg-[#FE0000] hover:bg-[#C8101E] text-white rounded-xl text-xs font-bold transition-all shadow-xs flex items-center gap-1.5 self-start sm:self-auto shrink-0"
         >
           <Plus className="w-4 h-4" />
           Add Supplier
@@ -287,7 +287,7 @@ export function SuppliersView() {
                       <select
                         value={s.status}
                         onChange={(e) => updateSupplierStatus(s.id, e.target.value as SupplierStatus)}
-                        className="text-[11px] font-medium py-1 px-2 rounded-lg border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 focus:ring-1 focus:ring-[#B30D12] cursor-pointer"
+                        className="text-[11px] font-medium py-1 px-2 rounded-lg border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 focus:ring-1 focus:ring-[#FE0000] cursor-pointer"
                         title="Change Supplier Operational Status"
                       >
                         <option value="Active">Active</option>
@@ -384,7 +384,7 @@ export function SuppliersView() {
                       className="p-3 bg-white border border-slate-200 rounded-xl flex items-center justify-between text-xs"
                     >
                       <div>
-                        <span className="font-mono font-bold text-[#B30D12] mr-2">{reqNum}</span>
+                        <span className="font-mono font-bold text-[#FE0000] mr-2">{reqNum}</span>
                         <span className="font-semibold text-slate-800">
                           {quote.supplierPartRef}
                         </span>
@@ -433,7 +433,7 @@ export function SuppliersView() {
             {/* Header */}
             <div className="flex items-start gap-4">
               <div className="w-12 h-12 bg-rose-50 rounded-2xl flex items-center justify-center shrink-0 border border-rose-100 shadow-inner">
-                <Building className="w-6 h-6 text-[#B30D12]" />
+                <Building className="w-6 h-6 text-[#FE0000]" />
               </div>
               <div>
                 <h3 className="text-lg font-bold text-slate-900 mb-1">
@@ -460,7 +460,7 @@ export function SuppliersView() {
                     onChange={(e) => setName(e.target.value)}
                     placeholder="e.g. Osaka Auto Spares Ltd"
                     required
-                    className="w-full text-sm pl-10 pr-4 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-4 focus:ring-[#B30D12]/10 focus:border-[#B30D12] transition-all bg-white placeholder:text-slate-400 shadow-sm"
+                    className="w-full text-sm pl-10 pr-4 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-4 focus:ring-[#FE0000]/10 focus:border-[#FE0000] transition-all bg-white placeholder:text-slate-400 shadow-sm"
                   />
                 </div>
               </div>
@@ -479,7 +479,7 @@ export function SuppliersView() {
                       value={contact}
                       onChange={(e) => setContact(e.target.value)}
                       required
-                      className="w-full text-sm pl-10 pr-4 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-4 focus:ring-[#B30D12]/10 focus:border-[#B30D12] transition-all bg-white shadow-sm"
+                      className="w-full text-sm pl-10 pr-4 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-4 focus:ring-[#FE0000]/10 focus:border-[#FE0000] transition-all bg-white shadow-sm"
                     />
                   </div>
                 </div>
@@ -497,7 +497,7 @@ export function SuppliersView() {
                       value={country}
                       onChange={(e) => setCountry(e.target.value)}
                       required
-                      className="w-full text-sm pl-10 pr-4 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-4 focus:ring-[#B30D12]/10 focus:border-[#B30D12] transition-all bg-white shadow-sm"
+                      className="w-full text-sm pl-10 pr-4 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-4 focus:ring-[#FE0000]/10 focus:border-[#FE0000] transition-all bg-white shadow-sm"
                     />
                   </div>
                 </div>
@@ -515,7 +515,7 @@ export function SuppliersView() {
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       required
-                      className="w-full text-sm pl-10 pr-4 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-4 focus:ring-[#B30D12]/10 focus:border-[#B30D12] transition-all bg-white shadow-sm"
+                      className="w-full text-sm pl-10 pr-4 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-4 focus:ring-[#FE0000]/10 focus:border-[#FE0000] transition-all bg-white shadow-sm"
                     />
                   </div>
                 </div>
@@ -533,7 +533,7 @@ export function SuppliersView() {
                       value={phone}
                       onChange={(e) => setPhone(e.target.value)}
                       required
-                      className="w-full text-sm pl-10 pr-4 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-4 focus:ring-[#B30D12]/10 focus:border-[#B30D12] transition-all bg-white shadow-sm"
+                      className="w-full text-sm pl-10 pr-4 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-4 focus:ring-[#FE0000]/10 focus:border-[#FE0000] transition-all bg-white shadow-sm"
                     />
                   </div>
                 </div>
@@ -552,7 +552,7 @@ export function SuppliersView() {
                       onChange={(e) => setCategory(e.target.value)}
                       placeholder="e.g. Genuine Japanese OEM"
                       required
-                      className="w-full text-sm pl-10 pr-4 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-4 focus:ring-[#B30D12]/10 focus:border-[#B30D12] transition-all bg-white placeholder:text-slate-400 shadow-sm"
+                      className="w-full text-sm pl-10 pr-4 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-4 focus:ring-[#FE0000]/10 focus:border-[#FE0000] transition-all bg-white placeholder:text-slate-400 shadow-sm"
                     />
                   </div>
                 </div>
@@ -570,7 +570,7 @@ export function SuppliersView() {
                       value={specializations}
                       onChange={(e) => setSpecializations(e.target.value)}
                       placeholder="e.g. Toyota, Nissan, Brake Rotors"
-                      className="w-full text-sm pl-10 pr-4 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-4 focus:ring-[#B30D12]/10 focus:border-[#B30D12] transition-all bg-white placeholder:text-slate-400 shadow-sm"
+                      className="w-full text-sm pl-10 pr-4 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-4 focus:ring-[#FE0000]/10 focus:border-[#FE0000] transition-all bg-white placeholder:text-slate-400 shadow-sm"
                     />
                   </div>
                 </div>
@@ -586,7 +586,7 @@ export function SuppliersView() {
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2.5 text-sm font-bold bg-[#B30D12] hover:bg-[#C8101E] text-white rounded-xl shadow-sm hover:shadow-md transition-all flex items-center gap-2 group"
+                  className="px-5 py-2.5 text-sm font-bold bg-[#FE0000] hover:bg-[#C8101E] text-white rounded-xl shadow-sm hover:shadow-md transition-all flex items-center gap-2 group"
                 >
                   <Plus className="w-4 h-4 group-hover:rotate-90 transition-transform duration-300" />
                   {editingSupplier ? "Save Changes" : "Create Supplier"}

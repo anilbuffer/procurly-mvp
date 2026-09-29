@@ -72,7 +72,7 @@ export function AdminSidebar({ collapsed, onToggleCollapse }: AdminSidebarProps)
             href: "/admin/requests",
             icon: FileText,
             badge: adminMetrics.totalActive > 0 ? adminMetrics.totalActive : undefined,
-            badgeColor: "bg-[#B30D12] text-white",
+            badgeColor: "bg-[#FE0000] text-white",
           },
           {
             name: "Customers",
@@ -134,13 +134,13 @@ export function AdminSidebar({ collapsed, onToggleCollapse }: AdminSidebarProps)
       >
         {!collapsed ? (
           <Link href="/admin/dashboard" className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl border-2 border-white bg-[#C40E14] flex items-center justify-center shadow-sm">
-              <span className="text-white font-black text-sm tracking-tighter leading-none shrink-0">P</span>
+            <div className="w-9 h-9 rounded-xl border-2 border-white bg-[#FE0000] flex items-center justify-center shadow-sm">
+              <span className="text-white font-black text-sm tracking-tighter leading-none shrink-0">A</span>
             </div>
             <div>
               <div className="flex items-center gap-1.5">
-                <span className="font-black italic text-[#C40E14] uppercase text-lg tracking-tight leading-none font-sans">
-                  PROCUR<span className="not-italic">LY</span>
+                <span className="font-black italic text-[#FE0000] uppercase text-lg tracking-tight leading-none font-sans">
+                  PROCUR<span className="not-italic text-white">LY</span>
                 </span>
               </div>
               <span className="text-[11px] font-bold text-slate-400 uppercase block">
@@ -150,8 +150,8 @@ export function AdminSidebar({ collapsed, onToggleCollapse }: AdminSidebarProps)
           </Link>
         ) : (
           <Link href="/admin/dashboard" className="flex items-center">
-            <div className="w-9 h-9 rounded-lg border-2 border-white bg-[#C40E14] flex items-center justify-center shadow-sm">
-              <span className="text-white font-black text-sm tracking-tighter leading-none shrink-0">P</span>
+            <div className="w-9 h-9 rounded-lg border-2 border-white bg-[#FE0000] flex items-center justify-center shadow-sm">
+              <span className="text-white font-black text-sm tracking-tighter leading-none shrink-0">A</span>
             </div>
           </Link>
         )}
@@ -229,7 +229,7 @@ export function AdminSidebar({ collapsed, onToggleCollapse }: AdminSidebarProps)
                 className="w-8 h-8 rounded-full object-cover shrink-0 shadow-md ring-1 ring-white/10"
               />
             ) : (
-              <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-[#B30D12] to-orange-500 flex items-center justify-center text-white font-black text-xs shrink-0 shadow-md">
+              <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-[#FE0000] to-orange-500 flex items-center justify-center text-white font-black text-xs shrink-0 shadow-md">
                 {(currentStaffUser?.name || "Admin")
                   .split(" ")
                   .map((n) => n[0])

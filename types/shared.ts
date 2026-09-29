@@ -23,7 +23,6 @@ export type ShipmentMilestone =
   | "Received At Shipping Facility"
   | "In Transit"
   | "Arrived in NZ"
-  | "Customs Clearance"
   | "Out For Delivery"
   | "Delivered";
 
@@ -90,6 +89,9 @@ export interface SavedAddress {
   postalCode: string;
   phone: string;
   isDefault?: boolean;
+  isVerified?: boolean;
+  verifiedSource?: string;
+  deliveryInstructions?: string;
 }
 
 // ─── Sourcing & Supplier ───────────────────────────────────
@@ -169,6 +171,7 @@ export interface CustomerQuoteVersion {
   sentAt: string;
   status: "Draft" | "Sent" | "Accepted" | "Rejected" | "Revised";
   createdBy: string;
+  quotePhotos?: string[];
 }
 
 export interface Quotation {
@@ -194,6 +197,7 @@ export interface Quotation {
   supplierLocation?: string;
   notes?: string;
   procurementTerms?: string;
+  quotePhotos?: string[];
 }
 
 export interface QuoteAcceptanceAudit {
@@ -231,6 +235,8 @@ export interface PaymentDetails {
   dueDate: string;
   lastUpdated?: string;
   invoiceUrl?: string;
+  invoiceFileName?: string;
+  invoicedAt?: string;
 }
 
 // ─── Supplier Order ────────────────────────────────────────
@@ -342,6 +348,14 @@ export interface CustomerRecord {
   requestCount?: number;
   deliveryAddress?: SavedAddress;
   notes?: string;
+  tradingName?: string;
+  nzbn?: string;
+  businessType?: string;
+  website?: string;
+  contactRole?: string;
+  termsAcceptedAt?: string;
+  privacyAcceptedAt?: string;
+  ipAddress?: string;
 }
 
 export interface StaffUser {

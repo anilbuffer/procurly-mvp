@@ -63,7 +63,7 @@ export function SubadminSidebar({ collapsed, onToggleCollapse }: SubadminSidebar
           href: "/subadmin/dashboard?filter=pending",
           icon: Camera,
           badge: pendingSubadminCount > 0 ? pendingSubadminCount : undefined,
-          badgeColor: "bg-[#B30D12] text-white",
+          badgeColor: "bg-[#FE0000] text-white",
         },
         {
           name: "Awaiting Approval",
@@ -84,13 +84,13 @@ export function SubadminSidebar({ collapsed, onToggleCollapse }: SubadminSidebar
       <div className={`h-16 flex items-center justify-between border-b border-slate-800 shrink-0 ${collapsed ? "px-2.5" : "px-4"}`}>
         {!collapsed ? (
           <Link href="/subadmin/dashboard" className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl border-2 border-white bg-[#C40E14] flex items-center justify-center shadow-sm">
-              <span className="text-white font-black text-sm tracking-tighter leading-none shrink-0">P</span>
+            <div className="w-9 h-9 rounded-xl border-2 border-white bg-[#FE0000] flex items-center justify-center shadow-sm">
+              <span className="text-white font-black text-sm tracking-tighter leading-none shrink-0">A</span>
             </div>
             <div>
               <div className="flex items-center gap-1.5">
-                <span className="font-black italic text-[#C40E14] uppercase text-lg tracking-tight leading-none font-sans">
-                  PROCUR<span className="not-italic">LY</span>
+                <span className="font-black italic text-[#FE0000] uppercase text-lg tracking-tight leading-none font-sans">
+                  PROCUR<span className="not-italic text-white">LY</span>
                 </span>
               </div>
               <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block -mt-1">
@@ -100,7 +100,7 @@ export function SubadminSidebar({ collapsed, onToggleCollapse }: SubadminSidebar
           </Link>
         ) : (
           <Link href="/subadmin/dashboard" className="flex items-center">
-            <div className="w-9 h-9 rounded-lg border-2 border-white bg-[#C40E14] flex items-center justify-center shadow-sm">
+            <div className="w-9 h-9 rounded-lg border-2 border-white bg-[#FE0000] flex items-center justify-center shadow-sm">
               <span className="text-white font-black text-sm tracking-tighter leading-none shrink-0">A</span>
             </div>
           </Link>
@@ -189,7 +189,7 @@ export function SubadminSidebar({ collapsed, onToggleCollapse }: SubadminSidebar
                 className="w-8 h-8 rounded-full object-cover shrink-0 shadow-md ring-1 ring-white/10"
               />
             ) : (
-              <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-[#B30D12] to-red-600 flex items-center justify-center text-white font-black text-xs shrink-0 shadow-md">
+              <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-[#FE0000] to-red-600 flex items-center justify-center text-white font-black text-xs shrink-0 shadow-md">
                 Subadmin
               </div>
             )}

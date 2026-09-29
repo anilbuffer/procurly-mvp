@@ -82,7 +82,7 @@ export function DocumentsTab({ request }: DocumentsTabProps) {
         <button
           type="button"
           onClick={() => setShowUploadModal(true)}
-          className="px-3.5 py-2 bg-[#B30D12] hover:bg-[#C8101E] text-white rounded-xl text-xs font-bold transition-all shadow-xs flex items-center gap-1.5 self-start sm:self-auto"
+          className="px-3.5 py-2 bg-[#FE0000] hover:bg-[#C8101E] text-white rounded-xl text-xs font-bold transition-all shadow-xs flex items-center gap-1.5 self-start sm:self-auto"
         >
           <Upload className="w-4 h-4" />
           Upload Document
@@ -100,7 +100,7 @@ export function DocumentsTab({ request }: DocumentsTabProps) {
           <button
             type="button"
             onClick={() => setShowUploadModal(true)}
-            className="px-4 py-2 bg-[#B30D12] text-white rounded-xl text-xs font-semibold shadow-xs"
+            className="px-4 py-2 bg-[#FE0000] text-white rounded-xl text-xs font-semibold shadow-xs"
           >
             Upload First Document
           </button>
@@ -193,7 +193,7 @@ export function DocumentsTab({ request }: DocumentsTabProps) {
             {/* Header */}
             <div className="flex items-start gap-4">
               <div className="w-12 h-12 bg-rose-50 rounded-2xl flex items-center justify-center shrink-0 border border-rose-100 shadow-inner">
-                <Upload className="w-6 h-6 text-[#B30D12]" />
+                <Upload className="w-6 h-6 text-[#FE0000]" />
               </div>
               <div>
                 <h3 className="text-lg font-bold text-slate-900 mb-1">Upload Request Document</h3>
@@ -206,12 +206,12 @@ export function DocumentsTab({ request }: DocumentsTabProps) {
             <form onSubmit={handleUpload} className="space-y-6">
 
               {/* Drag and Drop Zone */}
-              <div className="relative border-2 border-dashed border-slate-200 hover:border-[#B30D12]/40 rounded-2xl p-8 flex flex-col items-center justify-center text-center bg-slate-50/50 hover:bg-rose-50/30 transition-all cursor-pointer group">
+              <div className="relative border-2 border-dashed border-slate-200 hover:border-[#FE0000]/40 rounded-2xl p-8 flex flex-col items-center justify-center text-center bg-slate-50/50 hover:bg-rose-50/30 transition-all cursor-pointer group">
                 <div className="w-12 h-12 bg-white rounded-full shadow-sm border border-slate-100 flex items-center justify-center mb-4 group-hover:scale-110 group-hover:shadow-md transition-all duration-300">
-                  <Upload className="w-5 h-5 text-slate-400 group-hover:text-[#B30D12] transition-colors" />
+                  <Upload className="w-5 h-5 text-slate-400 group-hover:text-[#FE0000] transition-colors" />
                 </div>
                 <p className="text-sm font-bold text-slate-900 mb-1">
-                  <span className="text-[#B30D12]">Click to upload</span> or drag and drop
+                  <span className="text-[#FE0000]">Click to upload</span> or drag and drop
                 </p>
                 <p className="text-xs text-slate-500">PDF, JPG, PNG, or DOCX (max. 25MB)</p>
               </div>
@@ -231,7 +231,7 @@ export function DocumentsTab({ request }: DocumentsTabProps) {
                       onChange={(e) => setDocName(e.target.value)}
                       placeholder="e.g. Fitment_Verification_Toyota_Hiace.pdf"
                       required
-                      className="w-full text-sm pl-10 pr-4 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-4 focus:ring-[#B30D12]/10 focus:border-[#B30D12] transition-all bg-white placeholder:text-slate-400 shadow-sm"
+                      className="w-full text-sm pl-10 pr-4 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-4 focus:ring-[#FE0000]/10 focus:border-[#FE0000] transition-all bg-white placeholder:text-slate-400 shadow-sm"
                     />
                   </div>
                 </div>
@@ -244,7 +244,7 @@ export function DocumentsTab({ request }: DocumentsTabProps) {
                     <select
                       value={docType}
                       onChange={(e) => setDocType(e.target.value as any)}
-                      className="w-full text-sm px-3.5 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-4 focus:ring-[#B30D12]/10 focus:border-[#B30D12] transition-all bg-white appearance-none shadow-sm cursor-pointer hover:border-slate-400"
+                      className="w-full text-sm px-3.5 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-4 focus:ring-[#FE0000]/10 focus:border-[#FE0000] transition-all bg-white appearance-none shadow-sm cursor-pointer hover:border-slate-400"
                       style={{ backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e")`, backgroundPosition: 'right 0.75rem center', backgroundRepeat: 'no-repeat', backgroundSize: '1.25em 1.25em', paddingRight: '2.5rem' }}
                     >
                       <option value="Customer">Customer Supporting</option>
@@ -262,7 +262,7 @@ export function DocumentsTab({ request }: DocumentsTabProps) {
                       type="text"
                       value={docSize}
                       onChange={(e) => setDocSize(e.target.value)}
-                      className="w-full text-sm px-3.5 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-4 focus:ring-[#B30D12]/10 focus:border-[#B30D12] transition-all bg-slate-50 shadow-sm text-slate-600"
+                      className="w-full text-sm px-3.5 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-4 focus:ring-[#FE0000]/10 focus:border-[#FE0000] transition-all bg-slate-50 shadow-sm text-slate-600"
                     />
                   </div>
                 </div>
@@ -278,7 +278,7 @@ export function DocumentsTab({ request }: DocumentsTabProps) {
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2.5 text-sm font-bold bg-[#B30D12] hover:bg-[#C8101E] text-white rounded-xl shadow-sm hover:shadow-md transition-all flex items-center gap-2 group"
+                  className="px-5 py-2.5 text-sm font-bold bg-[#FE0000] hover:bg-[#C8101E] text-white rounded-xl shadow-sm hover:shadow-md transition-all flex items-center gap-2 group"
                 >
                   <Upload className="w-4 h-4 group-hover:-translate-y-0.5 transition-transform" />
                   Upload Document

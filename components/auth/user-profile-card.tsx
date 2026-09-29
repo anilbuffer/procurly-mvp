@@ -21,7 +21,7 @@ export function UserProfileCard() {
     switch (role) {
       case "admin":
         return (
-          <span className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-semibold rounded-full bg-[#B30D12]/10 text-[#B30D12] border border-[#B30D12]/20">
+          <span className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-semibold rounded-full bg-[#FE0000]/10 text-[#FE0000] border border-[#FE0000]/20">
             <ShieldCheck className="w-3.5 h-3.5" />
             Administrator
           </span>
@@ -78,7 +78,7 @@ export function UserProfileCard() {
   return (
     <div className="bg-white rounded-2xl shadow-sm border border-slate-200/80 overflow-hidden transition-all hover:shadow-md">
       {/* Top Banner with Brand Gradient */}
-      <div className="h-16 bg-gradient-to-r from-[#263b9f] to-[#B30D12] relative" />
+      <div className="h-16 bg-gradient-to-r from-[#263b9f] to-[#FE0000] relative" />
 
       <div className="px-6 pb-6 pt-0 relative">
         {/* Avatar & Header */}
@@ -121,7 +121,7 @@ export function UserProfileCard() {
             </span>
             <button
               onClick={logout}
-              className="text-xs text-slate-400 hover:text-[#B30D12] transition-colors flex items-center gap-1"
+              className="text-xs text-slate-400 hover:text-[#FE0000] transition-colors flex items-center gap-1"
             >
               <LogOut className="w-3 h-3" />
               Sign out
@@ -135,11 +135,10 @@ export function UserProfileCard() {
                 <button
                   key={u.id}
                   onClick={() => switchUser(u.id)}
-                  className={`p-2 rounded-xl text-left border transition-all text-xs flex flex-col ${
-                    isSelected
+                  className={`p-2 rounded-xl text-left border transition-all text-xs flex flex-col ${isSelected
                       ? "border-[#263b9f] bg-[#263b9f]/5 ring-1 ring-[#263b9f]/30"
                       : "border-slate-200 hover:border-slate-300 hover:bg-slate-50"
-                  }`}
+                    }`}
                 >
                   <div className="flex items-center justify-between w-full mb-1">
                     <span className="font-semibold text-slate-800 truncate">{u.name.split(" ")[0]}</span>

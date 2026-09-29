@@ -81,7 +81,7 @@ export function CustomersView() {
         <button
           type="button"
           onClick={() => setShowAddModal(true)}
-          className="px-3.5 py-2 bg-[#B30D12] hover:bg-[#C8101E] text-white rounded-xl text-xs font-bold transition-all shadow-xs flex items-center gap-1.5 self-start sm:self-auto"
+          className="px-3.5 py-2 bg-[#FE0000] hover:bg-[#C8101E] text-white rounded-xl text-xs font-bold transition-all shadow-xs flex items-center gap-1.5 self-start sm:self-auto"
         >
           <Plus className="w-4 h-4" />
           Add Customer
@@ -238,31 +238,80 @@ export function CustomersView() {
             <div className="w-full h-px bg-slate-100" />
 
             {/* Customer Details */}
-            <div className="grid grid-cols-2 gap-4 bg-slate-50 p-5 rounded-xl border border-slate-200">
+            <div className="grid grid-cols-2 gap-4 bg-slate-50 p-5 rounded-xl border border-slate-200 text-xs">
               <div>
-                <span className="text-slate-500 block text-xs mb-1 font-medium">Contact Person</span>
+                <span className="text-slate-500 block text-[11px] mb-0.5 font-medium">Contact Person</span>
                 <span className="font-bold text-slate-900 text-sm">
                   {selectedCustomer.contactName}
                 </span>
+                {selectedCustomer.contactRole && (
+                  <span className="text-[11px] text-slate-500 block">{selectedCustomer.contactRole}</span>
+                )}
               </div>
               <div>
-                <span className="text-slate-500 block text-xs mb-1 font-medium">Account Status</span>
+                <span className="text-slate-500 block text-[11px] mb-0.5 font-medium">Account Status</span>
                 <span className={`font-bold px-2.5 py-1 rounded-md text-xs inline-flex ${selectedCustomer.status === "Active" ? "bg-emerald-100 text-emerald-800" :
-                  selectedCustomer.status === "Pending Approval" ? "bg-emerald-50 text-emerald-700" :
+                  selectedCustomer.status === "Pending Approval" ? "bg-amber-100 text-amber-800" :
                     "bg-rose-100 text-rose-800"
                   }`}>
                   {selectedCustomer.status}
                 </span>
               </div>
-              <div className="mt-2">
-                <span className="text-slate-500 block text-xs mb-1 font-medium">Email</span>
-                <span className="font-medium text-slate-800 text-sm">{selectedCustomer.email}</span>
+              <div className="mt-1">
+                <span className="text-slate-500 block text-[11px] mb-0.5 font-medium">Email</span>
+                <span className="font-medium text-slate-800">{selectedCustomer.email}</span>
               </div>
-              <div className="mt-2">
-                <span className="text-slate-500 block text-xs mb-1 font-medium">Phone</span>
-                <span className="font-medium text-slate-800 text-sm">{selectedCustomer.phone}</span>
+              <div className="mt-1">
+                <span className="text-slate-500 block text-[11px] mb-0.5 font-medium">Phone</span>
+                <span className="font-medium text-slate-800">{selectedCustomer.phone}</span>
               </div>
+              {selectedCustomer.nzbn && (
+                <div className="mt-1">
+                  <span className="text-slate-500 block text-[11px] mb-0.5 font-medium">NZBN</span>
+                  <span className="font-mono text-slate-800 font-semibold">{selectedCustomer.nzbn}</span>
+                </div>
+              )}
+              {selectedCustomer.businessType && (
+                <div className="mt-1">
+                  <span className="text-slate-500 block text-[11px] mb-0.5 font-medium">Workshop Category</span>
+                  <span className="text-slate-800 font-medium">{selectedCustomer.businessType}</span>
+                </div>
+              )}
             </div>
+
+            {/* Delivery Address if present */}
+            {selectedCustomer.deliveryAddress && (
+              <div className="p-4 bg-slate-50 rounded-xl border border-slate-200 text-xs space-y-1">
+                <div className="flex items-center justify-between text-slate-500 font-semibold text-[11px]">
+                  <span>Nominated Workshop Bay Address</span>
+                  <span className="text-[10px] bg-slate-200 px-2 py-0.5 rounded text-slate-700">
+                    {selectedCustomer.deliveryAddress.label}
+                  </span>
+                </div>
+                <p className="font-bold text-slate-900">
+                  Attn: {selectedCustomer.deliveryAddress.recipientName}
+                </p>
+                <p className="text-slate-700">
+                  {selectedCustomer.deliveryAddress.streetAddress}, {selectedCustomer.deliveryAddress.suburb},{" "}
+                  {selectedCustomer.deliveryAddress.city} {selectedCustomer.deliveryAddress.postalCode}
+                </p>
+                {selectedCustomer.deliveryAddress.deliveryInstructions && (
+                  <p className="text-slate-500 text-[11px] italic">
+                    Instructions: {selectedCustomer.deliveryAddress.deliveryInstructions}
+                  </p>
+                )}
+              </div>
+            )}
+
+            {/* Terms of Trade Acceptance */}
+            {selectedCustomer.termsAcceptedAt && (
+              <div className="p-3 bg-emerald-50 rounded-xl border border-emerald-200 text-xs flex items-center justify-between text-emerald-900">
+                <span className="flex items-center gap-1.5 font-medium">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                  <span>Particular Terms of Trade digitally acknowledged ({selectedCustomer.termsAcceptedAt})</span>
+                </span>
+              </div>
+            )}
 
             {/* Customer's Associated Requests */}
             <div>
@@ -279,7 +328,7 @@ export function CustomersView() {
                       className="p-3.5 bg-white border border-slate-200 hover:border-slate-300 rounded-xl flex items-center justify-between transition-colors shadow-sm"
                     >
                       <div>
-                        <span className="font-mono font-bold text-[#B30D12] mr-2 text-sm">
+                        <span className="font-mono font-bold text-[#FE0000] mr-2 text-sm">
                           {req.requestNumber}
                         </span>
                         <span className="font-semibold text-slate-800 text-sm">
@@ -298,14 +347,31 @@ export function CustomersView() {
               </div>
             </div>
 
-            <div className="flex justify-end gap-3 pt-4 border-t border-slate-100 mt-2">
-              <button
-                type="button"
-                onClick={() => setSelectedCustomer(null)}
-                className="px-5 py-2.5 text-sm font-semibold text-slate-600 bg-slate-50 border border-slate-200 hover:bg-slate-100 hover:text-slate-900 rounded-xl transition-colors"
-              >
-                Close
-              </button>
+            <div className="flex justify-between items-center gap-3 pt-4 border-t border-slate-100 mt-2">
+              <div>
+                {selectedCustomer.status === "Pending Approval" && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      updateCustomerStatus(selectedCustomer.id, "Active");
+                      setSelectedCustomer({ ...selectedCustomer, status: "Active" });
+                    }}
+                    className="px-4 py-2 text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-700 rounded-xl shadow-xs transition-colors flex items-center gap-1.5 cursor-pointer"
+                  >
+                    <CheckCircle2 className="w-4 h-4" />
+                    <span>Approve Trade Account</span>
+                  </button>
+                )}
+              </div>
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={() => setSelectedCustomer(null)}
+                  className="px-5 py-2.5 text-sm font-semibold text-slate-600 bg-slate-50 border border-slate-200 hover:bg-slate-100 hover:text-slate-900 rounded-xl transition-colors cursor-pointer"
+                >
+                  Close
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -325,7 +391,7 @@ export function CustomersView() {
             {/* Header */}
             <div className="flex items-start gap-4">
               <div className="w-10 h-10 bg-rose-50 rounded-2xl flex items-center justify-center shrink-0 border border-rose-100 shadow-inner">
-                <User className="w-5 h-5 text-[#B30D12]" />
+                <User className="w-5 h-5 text-[#FE0000]" />
               </div>
               <div>
                 <h3 className="text-lg font-bold text-slate-900 mb-1">Add Customer Account</h3>
@@ -350,7 +416,7 @@ export function CustomersView() {
                     onChange={(e) => setBusinessName(e.target.value)}
                     placeholder="e.g. Apex Mechanical Ltd"
                     required
-                    className="w-full text-sm pl-10 pr-4 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-4 focus:ring-[#B30D12]/10 focus:border-[#B30D12] transition-all bg-white placeholder:text-slate-400 shadow-sm"
+                    className="w-full text-sm pl-10 pr-4 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-4 focus:ring-[#FE0000]/10 focus:border-[#FE0000] transition-all bg-white placeholder:text-slate-400 shadow-sm"
                   />
                 </div>
               </div>
@@ -369,7 +435,7 @@ export function CustomersView() {
                     onChange={(e) => setContactName(e.target.value)}
                     placeholder="e.g. Craig Watson"
                     required
-                    className="w-full text-sm pl-10 pr-4 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-4 focus:ring-[#B30D12]/10 focus:border-[#B30D12] transition-all bg-white placeholder:text-slate-400 shadow-sm"
+                    className="w-full text-sm pl-10 pr-4 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-4 focus:ring-[#FE0000]/10 focus:border-[#FE0000] transition-all bg-white placeholder:text-slate-400 shadow-sm"
                   />
                 </div>
               </div>
@@ -388,7 +454,7 @@ export function CustomersView() {
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="e.g. craig@apexmech.co.nz"
                     required
-                    className="w-full text-sm pl-10 pr-4 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-4 focus:ring-[#B30D12]/10 focus:border-[#B30D12] transition-all bg-white placeholder:text-slate-400 shadow-sm"
+                    className="w-full text-sm pl-10 pr-4 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-4 focus:ring-[#FE0000]/10 focus:border-[#FE0000] transition-all bg-white placeholder:text-slate-400 shadow-sm"
                   />
                 </div>
               </div>
@@ -407,7 +473,7 @@ export function CustomersView() {
                     onChange={(e) => setPhone(e.target.value)}
                     placeholder="e.g. +64 9 489 1234"
                     required
-                    className="w-full text-sm pl-10 pr-4 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-4 focus:ring-[#B30D12]/10 focus:border-[#B30D12] transition-all bg-white placeholder:text-slate-400 shadow-sm"
+                    className="w-full text-sm pl-10 pr-4 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-4 focus:ring-[#FE0000]/10 focus:border-[#FE0000] transition-all bg-white placeholder:text-slate-400 shadow-sm"
                   />
                 </div>
               </div>
@@ -422,7 +488,7 @@ export function CustomersView() {
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2.5 text-sm font-bold bg-[#B30D12] hover:bg-[#C8101E] text-white rounded-xl shadow-sm hover:shadow-md transition-all flex items-center gap-2 group"
+                  className="px-5 py-2.5 text-sm font-bold bg-[#FE0000] hover:bg-[#C8101E] text-white rounded-xl shadow-sm hover:shadow-md transition-all flex items-center gap-2 group"
                 >
                   <Plus className="w-4 h-4 group-hover:rotate-90 transition-transform duration-300" />
                   Create Customer

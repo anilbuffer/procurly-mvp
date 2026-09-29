@@ -12,11 +12,23 @@ import {
   Plus,
   Check,
   KeyRound,
+  Trash2,
+  Star,
+  CheckCircle2,
+  Sparkles,
+  ExternalLink,
 } from "lucide-react";
 import { usePortal } from "@/context/portal-context";
+import { NZAddressLookup, NZAddressSelected } from "./nz-address-lookup";
 
 export function SettingsView() {
-  const { savedAddresses, addSavedAddress, setActiveTab } = usePortal();
+  const {
+    savedAddresses,
+    addSavedAddress,
+    deleteSavedAddress,
+    setDefaultAddress,
+    setActiveTab,
+  } = usePortal();
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
@@ -31,6 +43,8 @@ export function SettingsView() {
     city: "Auckland",
     postalCode: "",
     isDefault: false,
+    isVerified: false,
+    verifiedSource: "NZ Post",
   });
 
   const showToast = (msg: string) => {
@@ -53,6 +67,8 @@ export function SettingsView() {
       city: formData.city,
       postalCode: formData.postalCode || "1010",
       isDefault: formData.isDefault,
+      isVerified: formData.isVerified,
+      verifiedSource: formData.verifiedSource,
     });
 
     setIsAddModalOpen(false);
@@ -66,8 +82,23 @@ export function SettingsView() {
       city: "Auckland",
       postalCode: "",
       isDefault: false,
+      isVerified: false,
+      verifiedSource: "NZ Post",
     });
     showToast(`Delivery depot "${formData.label}" added successfully.`);
+  };
+
+  const handleSelectNZAddress = (addr: NZAddressSelected) => {
+    setFormData((prev) => ({
+      ...prev,
+      streetAddress: addr.streetAddress,
+      suburb: addr.suburb,
+      city: addr.city,
+      postalCode: addr.postalCode,
+      isVerified: addr.isVerified,
+      verifiedSource: addr.source || "NZ Post",
+      label: prev.label || `${addr.suburb || addr.city} Workshop Depot`,
+    }));
   };
 
   return (
@@ -96,7 +127,7 @@ export function SettingsView() {
         <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 space-y-4 text-xs">
           <div className="flex items-center justify-between border-b pb-3">
             <div className="flex items-center gap-2">
-              <Building2 className="w-4 h-4 text-[#B30D12]" />
+              <Building2 className="w-4 h-4 text-[#FE0000]" />
               <h3 className="font-bold text-slate-900">Trade Profile</h3>
             </div>
             <span className="px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold text-[10px]">
@@ -143,7 +174,7 @@ export function SettingsView() {
         <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 space-y-4 text-xs flex flex-col justify-between">
           <div>
             <div className="flex items-center gap-2 border-b pb-3 mb-3">
-              <Bell className="w-4 h-4 text-[#B30D12]" />
+              <Bell className="w-4 h-4 text-[#FE0000]" />
               <h3 className="font-bold text-slate-900">Notification Channels</h3>
             </div>
 
@@ -158,7 +189,7 @@ export function SettingsView() {
                 <input
                   type="checkbox"
                   defaultChecked
-                  className="w-4 h-4 text-[#B30D12] rounded"
+                  className="w-4 h-4 text-[#FE0000] rounded"
                 />
               </label>
 
@@ -172,7 +203,7 @@ export function SettingsView() {
                 <input
                   type="checkbox"
                   defaultChecked
-                  className="w-4 h-4 text-[#B30D12] rounded"
+                  className="w-4 h-4 text-[#FE0000] rounded"
                 />
               </label>
 
@@ -186,7 +217,7 @@ export function SettingsView() {
                 <input
                   type="checkbox"
                   defaultChecked
-                  className="w-4 h-4 text-[#B30D12] rounded"
+                  className="w-4 h-4 text-[#FE0000] rounded"
                 />
               </label>
             </div>
@@ -207,7 +238,7 @@ export function SettingsView() {
       <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 space-y-4 text-xs">
         <div className="flex items-center justify-between border-b pb-3">
           <div className="flex items-center gap-2">
-            <KeyRound className="w-4 h-4 text-[#B30D12]" />
+            <KeyRound className="w-4 h-4 text-[#FE0000]" />
             <h3 className="font-bold text-slate-900">Security & Account Credentials</h3>
           </div>
           <span className="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold text-[10px]">
@@ -221,7 +252,7 @@ export function SettingsView() {
               <span className="font-bold text-slate-900">Password & Authentication</span>
               <Link
                 href="/login?mode=change_password"
-                className="px-3 py-1 bg-[#B30D12] hover:bg-[#9B0A0F] text-white font-bold text-xs uppercase tracking-wider rounded-lg transition-colors inline-flex items-center gap-1"
+                className="px-3 py-1 bg-[#FE0000] hover:bg-[#9B0A0F] text-white font-bold text-xs uppercase tracking-wider rounded-lg transition-colors inline-flex items-center gap-1"
               >
                 <span>Change Password →</span>
               </Link>
@@ -244,7 +275,7 @@ export function SettingsView() {
             <div className="pt-1">
               <Link
                 href="/login?mode=mfa"
-                className="text-xs font-bold text-[#B30D12] hover:underline inline-flex items-center gap-1"
+                className="text-xs font-bold text-[#FE0000] hover:underline inline-flex items-center gap-1"
               >
                 <span>Configure Authenticator QR Code →</span>
               </Link>
@@ -256,50 +287,113 @@ export function SettingsView() {
       {/* Saved Delivery Addresses Section */}
       <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 space-y-4 text-xs">
         <div className="flex items-center justify-between border-b pb-3">
-          <div className="flex items-center gap-2">
-            <MapPin className="w-4 h-4 text-[#B30D12]" />
-            <h3 className="font-bold text-slate-900">Saved Workshop Delivery Depots</h3>
+          <div>
+            <div className="flex items-center gap-2">
+              <MapPin className="w-4 h-4 text-[#FE0000]" />
+              <h3 className="font-bold text-slate-900 text-sm">Saved Workshop Delivery Depots</h3>
+            </div>
+            <p className="text-[11px] text-slate-500 mt-0.5">
+              Addresses verified with NZ Post / LINZ database for swift parts dispatch.
+            </p>
           </div>
           <button
             onClick={() => setIsAddModalOpen(true)}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#B30D12] hover:bg-[#9B0A0F] text-white font-bold text-xs uppercase tracking-wider rounded-lg transition-colors"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#FE0000] hover:bg-[#9B0A0F] text-white font-bold text-xs uppercase tracking-wider rounded-xl transition-colors shadow-xs"
           >
             <Plus className="w-3.5 h-3.5" />
             <span>Add Depot Address</span>
           </button>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {savedAddresses.map((addr) => (
-            <div
-              key={addr.id}
-              className="p-4 rounded-xl border border-slate-200 bg-slate-50/50 space-y-1"
-            >
-              <div className="flex items-center justify-between">
-                <span className="font-bold text-slate-900">{addr.label}</span>
-                {addr.isDefault && (
-                  <span className="text-[9px] font-bold bg-slate-200 px-1.5 py-0.5 rounded text-slate-700 uppercase">
-                    Default
-                  </span>
-                )}
+        {savedAddresses.length === 0 ? (
+          <div className="p-8 text-center border-2 border-dashed border-slate-200 rounded-xl space-y-2">
+            <MapPin className="w-8 h-8 text-slate-300 mx-auto" />
+            <p className="font-bold text-slate-600">No saved depot addresses</p>
+            <p className="text-slate-400 text-[11px]">
+              Use the NZ Post autocomplete tool above to add your workshop bay.
+            </p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {savedAddresses.map((addr) => (
+              <div
+                key={addr.id}
+                className={`p-4 rounded-xl border transition-all flex flex-col justify-between ${addr.isDefault
+                    ? "border-[#FE0000]/30 bg-red-50/10 shadow-xs"
+                    : "border-slate-200 bg-slate-50/50 hover:bg-white hover:shadow-xs"
+                  }`}
+              >
+                <div className="space-y-1.5">
+                  <div className="flex items-start justify-between gap-2">
+                    <span className="font-bold text-slate-900 leading-snug">{addr.label}</span>
+                    <div className="flex items-center gap-1 shrink-0">
+                      {addr.isDefault && (
+                        <span className="text-[9px] font-bold bg-[#FE0000] text-white px-2 py-0.5 rounded-full uppercase">
+                          Default
+                        </span>
+                      )}
+                    </div>
+                  </div>
+
+                  {addr.businessName && (
+                    <p className="text-[11px] font-semibold text-slate-700">
+                      {addr.businessName}
+                    </p>
+                  )}
+                  <p className="text-slate-600 text-xs">
+                    {addr.streetAddress}{addr.suburb ? `, ${addr.suburb}` : ""}
+                  </p>
+                  <p className="text-slate-600 text-xs font-medium">
+                    {addr.city} {addr.postalCode}
+                  </p>
+
+                  <div className="flex items-center gap-1.5 pt-1">
+                    <span className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
+                      <CheckCircle2 className="w-3 h-3 text-emerald-600" />
+                      NZ Post Verified
+                    </span>
+                  </div>
+
+                  <p className="text-slate-500 text-[11px] pt-1">
+                    Contact: {addr.recipientName} ({addr.phone})
+                  </p>
+                </div>
+
+                <div className="pt-3 mt-3 border-t border-slate-200/60 flex items-center justify-between text-[11px]">
+                  {!addr.isDefault ? (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setDefaultAddress(addr.id);
+                        showToast(`"${addr.label}" is now the default delivery depot.`);
+                      }}
+                      className="text-slate-600 hover:text-[#FE0000] font-semibold flex items-center gap-1 transition-colors"
+                    >
+                      <Star className="w-3 h-3" />
+                      <span>Set as Default</span>
+                    </button>
+                  ) : (
+                    <span className="text-slate-400 italic">Primary Depot</span>
+                  )}
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (confirm(`Remove depot "${addr.label}"?`)) {
+                        deleteSavedAddress(addr.id);
+                        showToast(`Depot "${addr.label}" removed.`);
+                      }
+                    }}
+                    className="text-slate-400 hover:text-red-600 p-1 rounded transition-colors"
+                    title="Delete address"
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                  </button>
+                </div>
               </div>
-              {addr.businessName && (
-                <p className="text-[11px] font-semibold text-slate-700">
-                  {addr.businessName}
-                </p>
-              )}
-              <p className="text-slate-600">
-                {addr.streetAddress}, {addr.suburb}
-              </p>
-              <p className="text-slate-600">
-                {addr.city} {addr.postalCode}
-              </p>
-              <p className="text-slate-500 text-[11px] pt-1">
-                Contact: {addr.recipientName} ({addr.phone})
-              </p>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Add Depot Address Modal */}
@@ -308,7 +402,7 @@ export function SettingsView() {
           <div className="bg-white rounded-2xl max-w-lg w-full border border-slate-200 shadow-2xl p-6 space-y-4">
             <div className="flex items-center justify-between border-b pb-3">
               <div className="flex items-center gap-2">
-                <MapPin className="w-4 h-4 text-[#B30D12]" />
+                <MapPin className="w-4 h-4 text-[#FE0000]" />
                 <h3 className="font-bold text-slate-900 text-sm">Add Workshop Delivery Depot</h3>
               </div>
               <button
@@ -319,7 +413,19 @@ export function SettingsView() {
               </button>
             </div>
 
-            <form onSubmit={handleAddAddress} className="space-y-3 text-xs">
+            <form onSubmit={handleAddAddress} className="space-y-4 text-xs">
+              {/* Integrated NZ Post / Address Autocomplete Service */}
+              <div className="p-3.5 bg-slate-50 border border-slate-200/90 rounded-xl space-y-2">
+                <NZAddressLookup
+                  onSelectAddress={handleSelectNZAddress}
+                  label="Search NZ Address (NZ Post / LINZ / Google Autocomplete)"
+                  placeholder="Type NZ street address, workshop bay or suburb..."
+                />
+                <p className="text-[10px] text-slate-500">
+                  Selecting a validated address will automatically populate street, suburb, city, and 4-digit postcode.
+                </p>
+              </div>
+
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="block font-bold text-slate-700 mb-1">
@@ -331,7 +437,7 @@ export function SettingsView() {
                     placeholder="e.g. North Shore Workshop Bay 3"
                     value={formData.label}
                     onChange={(e) => setFormData({ ...formData, label: e.target.value })}
-                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-[#B30D12]"
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-[#FE0000]"
                   />
                 </div>
                 <div>
@@ -345,7 +451,7 @@ export function SettingsView() {
                     onChange={(e) =>
                       setFormData({ ...formData, businessName: e.target.value })
                     }
-                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-[#B30D12]"
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-[#FE0000]"
                   />
                 </div>
               </div>
@@ -359,7 +465,7 @@ export function SettingsView() {
                     onChange={(e) =>
                       setFormData({ ...formData, recipientName: e.target.value })
                     }
-                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-[#B30D12]"
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-[#FE0000]"
                   />
                 </div>
                 <div>
@@ -368,13 +474,21 @@ export function SettingsView() {
                     type="text"
                     value={formData.phone}
                     onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-[#B30D12]"
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-[#FE0000]"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block font-bold text-slate-700 mb-1">Street Address *</label>
+                <div className="flex items-center justify-between mb-1">
+                  <label className="block font-bold text-slate-700">Street Address *</label>
+                  {formData.isVerified && (
+                    <span className="text-[10px] font-bold text-emerald-700 flex items-center gap-1">
+                      <CheckCircle2 className="w-3 h-3 text-emerald-600" />
+                      Verified via {formData.verifiedSource}
+                    </span>
+                  )}
+                </div>
                 <input
                   type="text"
                   required
@@ -383,7 +497,7 @@ export function SettingsView() {
                   onChange={(e) =>
                     setFormData({ ...formData, streetAddress: e.target.value })
                   }
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-[#B30D12]"
+                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-[#FE0000]"
                 />
               </div>
 
@@ -395,7 +509,7 @@ export function SettingsView() {
                     placeholder="Rosedale"
                     value={formData.suburb}
                     onChange={(e) => setFormData({ ...formData, suburb: e.target.value })}
-                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-[#B30D12]"
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-[#FE0000]"
                   />
                 </div>
                 <div>
@@ -405,7 +519,7 @@ export function SettingsView() {
                     required
                     value={formData.city}
                     onChange={(e) => setFormData({ ...formData, city: e.target.value })}
-                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-[#B30D12]"
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-[#FE0000]"
                   />
                 </div>
                 <div>
@@ -417,7 +531,7 @@ export function SettingsView() {
                     onChange={(e) =>
                       setFormData({ ...formData, postalCode: e.target.value })
                     }
-                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-[#B30D12]"
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-[#FE0000]"
                   />
                 </div>
               </div>
@@ -429,7 +543,7 @@ export function SettingsView() {
                   onChange={(e) =>
                     setFormData({ ...formData, isDefault: e.target.checked })
                   }
-                  className="w-4 h-4 text-[#B30D12] rounded"
+                  className="w-4 h-4 text-[#FE0000] rounded"
                 />
                 <span className="font-semibold text-slate-700">
                   Set as default delivery address for new parts requests
@@ -446,7 +560,7 @@ export function SettingsView() {
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 rounded-xl bg-[#B30D12] hover:bg-[#9B0A0F] text-white font-bold shadow-md shadow-[#B30D12]/20"
+                  className="px-4 py-2 rounded-xl bg-[#FE0000] hover:bg-[#9B0A0F] text-white font-bold shadow-md shadow-[#FE0000]/20"
                 >
                   Save Depot Address
                 </button>

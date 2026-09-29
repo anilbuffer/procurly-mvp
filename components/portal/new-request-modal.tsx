@@ -12,6 +12,7 @@ import {
   ChevronRight,
   Sparkles,
   AlertCircle,
+  Plus,
   Check,
 } from "lucide-react";
 import { usePortal } from "@/context/portal-context";
@@ -22,6 +23,7 @@ import {
   PartCondition,
   SavedAddress,
 } from "@/types/portal";
+import { NZAddressLookup, NZAddressSelected } from "./nz-address-lookup";
 
 const POPULAR_MAKES_AND_MODELS: Record<string, string[]> = {
   Toyota: [
@@ -218,11 +220,26 @@ export function NewRequestModal() {
     setIsNewRequestModalOpen,
     submitNewRequest,
     savedAddresses,
+    addSavedAddress,
   } = usePortal();
 
   // Step state
   const [step, setStep] = useState<1 | 2 | 3 | 4>(1);
   const [submittedRequestNumber, setSubmittedRequestNumber] = useState<string | null>(null);
+
+  // Address creation state within modal
+  const [isAddingNewAddress, setIsAddingNewAddress] = useState(false);
+  const [modalAddressForm, setModalAddressForm] = useState({
+    label: "",
+    recipientName: "James Wilson",
+    streetAddress: "",
+    suburb: "",
+    city: "Auckland",
+    postalCode: "",
+    phone: "+64 21 890 1234",
+    isVerified: false,
+    verifiedSource: "NZ Post",
+  });
 
   // Form states
   const [vehicle, setVehicle] = useState<VehicleInfo>({
@@ -304,7 +321,7 @@ export function NewRequestModal() {
         {/* Modal Header */}
         <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/70">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-[#B30D12] to-[#B91C1C] flex items-center justify-center shadow-md shadow-red-500/20 text-white font-black text-sm">
+            <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-[#FE0000] to-[#B91C1C] flex items-center justify-center shadow-md shadow-red-500/20 text-white font-black text-sm">
               +
             </div>
             <div>
@@ -337,7 +354,7 @@ export function NewRequestModal() {
               </span>
               <h3 className="text-2xl font-black text-slate-900 tracking-tight">
                 Request Number:{" "}
-                <span className="text-[#B30D12] font-mono font-black">
+                <span className="text-[#FE0000] font-mono font-black">
                   {submittedRequestNumber}
                 </span>
               </h3>
@@ -377,7 +394,7 @@ export function NewRequestModal() {
             <div className="flex justify-center gap-3 pt-2">
               <button
                 onClick={handleClose}
-                className="px-6 py-2.5 bg-[#B30D12] hover:bg-[#9B0A0F] text-white font-bold text-xs uppercase tracking-wider rounded-xl shadow-md transition-all"
+                className="px-6 py-2.5 bg-[#FE0000] hover:bg-[#9B0A0F] text-white font-bold text-xs uppercase tracking-wider rounded-xl shadow-md transition-all"
               >
                 Return to Dashboard
               </button>
@@ -403,10 +420,10 @@ export function NewRequestModal() {
                     type="button"
                     onClick={() => setStep(s.num as 1 | 2 | 3 | 4)}
                     className={`p-3 text-center flex items-center justify-center gap-2 border-b-2 font-bold transition-all ${isActive
-                        ? "border-[#B30D12] text-[#B30D12] bg-white shadow-xs"
-                        : isPassed
-                          ? "border-emerald-500 text-emerald-700 bg-emerald-50/30"
-                          : "border-transparent text-slate-400 hover:text-slate-600"
+                      ? "border-[#FE0000] text-[#FE0000] bg-white shadow-xs"
+                      : isPassed
+                        ? "border-emerald-500 text-emerald-700 bg-emerald-50/30"
+                        : "border-transparent text-slate-400 hover:text-slate-600"
                       }`}
                   >
                     <Icon className="w-3.5 h-3.5" />
@@ -421,7 +438,7 @@ export function NewRequestModal() {
               {step === 1 && (
                 <div className="space-y-4">
                   <div className="flex items-center gap-2 text-xs text-slate-500 font-medium">
-                    <Car className="w-4 h-4 text-[#B30D12]" />
+                    <Car className="w-4 h-4 text-[#FE0000]" />
                     <span>Enter complete vehicle identification details for exact fitment</span>
                   </div>
 
@@ -439,7 +456,7 @@ export function NewRequestModal() {
                           const models = POPULAR_MAKES_AND_MODELS[newMake] || ["Other Model"];
                           setVehicle({ ...vehicle, make: newMake, model: models[0] });
                         }}
-                        className="w-full text-xs p-2.5 rounded-lg border border-slate-200 focus:ring-2 focus:ring-[#B30D12]/20 focus:border-[#B30D12] outline-none bg-white font-medium cursor-pointer"
+                        className="w-full text-xs p-2.5 rounded-lg border border-slate-200 focus:ring-2 focus:ring-[#FE0000]/20 focus:border-[#FE0000] outline-none bg-white font-medium cursor-pointer"
                       >
                         {Object.keys(POPULAR_MAKES_AND_MODELS).map((mk) => (
                           <option key={mk} value={mk}>
@@ -460,7 +477,7 @@ export function NewRequestModal() {
                         onChange={(e) =>
                           setVehicle({ ...vehicle, model: e.target.value })
                         }
-                        className="w-full text-xs p-2.5 rounded-lg border border-slate-200 focus:ring-2 focus:ring-[#B30D12]/20 focus:border-[#B30D12] outline-none bg-white font-medium cursor-pointer"
+                        className="w-full text-xs p-2.5 rounded-lg border border-slate-200 focus:ring-2 focus:ring-[#FE0000]/20 focus:border-[#FE0000] outline-none bg-white font-medium cursor-pointer"
                       >
                         {(
                           POPULAR_MAKES_AND_MODELS[vehicle.make] || [
@@ -488,7 +505,7 @@ export function NewRequestModal() {
                             year: parseInt(e.target.value) || 2024,
                           })
                         }
-                        className="w-full text-xs p-2.5 rounded-lg border border-slate-200 focus:ring-2 focus:ring-[#B30D12]/20 focus:border-[#B30D12] outline-none bg-white font-medium cursor-pointer"
+                        className="w-full text-xs p-2.5 rounded-lg border border-slate-200 focus:ring-2 focus:ring-[#FE0000]/20 focus:border-[#FE0000] outline-none bg-white font-medium cursor-pointer"
                       >
                         {AVAILABLE_YEARS.map((yr) => (
                           <option key={yr} value={yr}>
@@ -511,7 +528,7 @@ export function NewRequestModal() {
                         onChange={(e) =>
                           setVehicle({ ...vehicle, vin: e.target.value })
                         }
-                        className="w-full text-xs p-2.5 rounded-lg border border-slate-200 font-mono focus:ring-2 focus:ring-[#B30D12]/20 focus:border-[#B30D12] outline-none"
+                        className="w-full text-xs p-2.5 rounded-lg border border-slate-200 font-mono focus:ring-2 focus:ring-[#FE0000]/20 focus:border-[#FE0000] outline-none"
                         placeholder="e.g. GDH201-0012845"
                       />
                     </div>
@@ -527,7 +544,7 @@ export function NewRequestModal() {
                         onChange={(e) =>
                           setVehicle({ ...vehicle, registration: e.target.value })
                         }
-                        className="w-full text-xs p-2.5 rounded-lg border border-slate-200 font-mono uppercase focus:ring-2 focus:ring-[#B30D12]/20 focus:border-[#B30D12] outline-none"
+                        className="w-full text-xs p-2.5 rounded-lg border border-slate-200 font-mono uppercase focus:ring-2 focus:ring-[#FE0000]/20 focus:border-[#FE0000] outline-none"
                         placeholder="e.g. MTB842"
                       />
                     </div>
@@ -544,7 +561,7 @@ export function NewRequestModal() {
                         onChange={(e) =>
                           setVehicle({ ...vehicle, engine: e.target.value })
                         }
-                        className="w-full text-xs p-2.5 rounded-lg border border-slate-200 focus:ring-2 focus:ring-[#B30D12]/20 focus:border-[#B30D12] outline-none"
+                        className="w-full text-xs p-2.5 rounded-lg border border-slate-200 focus:ring-2 focus:ring-[#FE0000]/20 focus:border-[#FE0000] outline-none"
                         placeholder="e.g. 1GD-FTV 2.8L"
                       />
                     </div>
@@ -559,7 +576,7 @@ export function NewRequestModal() {
                         onChange={(e) =>
                           setVehicle({ ...vehicle, variant: e.target.value })
                         }
-                        className="w-full text-xs p-2.5 rounded-lg border border-slate-200 focus:ring-2 focus:ring-[#B30D12]/20 focus:border-[#B30D12] outline-none"
+                        className="w-full text-xs p-2.5 rounded-lg border border-slate-200 focus:ring-2 focus:ring-[#FE0000]/20 focus:border-[#FE0000] outline-none"
                         placeholder="e.g. GL / DX / SR5"
                       />
                     </div>
@@ -576,7 +593,7 @@ export function NewRequestModal() {
                         onChange={(e) =>
                           setVehicle({ ...vehicle, transmission: e.target.value })
                         }
-                        className="w-full text-xs p-2.5 rounded-lg border border-slate-200 focus:ring-2 focus:ring-[#B30D12]/20 focus:border-[#B30D12] outline-none"
+                        className="w-full text-xs p-2.5 rounded-lg border border-slate-200 focus:ring-2 focus:ring-[#FE0000]/20 focus:border-[#FE0000] outline-none"
                         placeholder="e.g. 6-Speed Automatic"
                       />
                     </div>
@@ -590,7 +607,7 @@ export function NewRequestModal() {
                         onChange={(e) =>
                           setVehicle({ ...vehicle, driveConfig: e.target.value })
                         }
-                        className="w-full text-xs p-2.5 rounded-lg border border-slate-200 focus:ring-2 focus:ring-[#B30D12]/20 focus:border-[#B30D12] outline-none"
+                        className="w-full text-xs p-2.5 rounded-lg border border-slate-200 focus:ring-2 focus:ring-[#FE0000]/20 focus:border-[#FE0000] outline-none"
                       >
                         <option value="4WD">4WD / All-Wheel Drive</option>
                         <option value="RWD">RWD / Rear-Wheel Drive</option>
@@ -605,7 +622,7 @@ export function NewRequestModal() {
               {step === 2 && (
                 <div className="space-y-4">
                   <div className="flex items-center gap-2 text-xs text-slate-500 font-medium">
-                    <Package className="w-4 h-4 text-[#B30D12]" />
+                    <Package className="w-4 h-4 text-[#FE0000]" />
                     <span>Specify part requirements, preference, and condition</span>
                   </div>
 
@@ -618,7 +635,7 @@ export function NewRequestModal() {
                       required
                       value={part.name}
                       onChange={(e) => setPart({ ...part, name: e.target.value })}
-                      className="w-full text-xs p-2.5 rounded-lg border border-slate-200 focus:ring-2 focus:ring-[#B30D12]/20 focus:border-[#B30D12] outline-none"
+                      className="w-full text-xs p-2.5 rounded-lg border border-slate-200 focus:ring-2 focus:ring-[#FE0000]/20 focus:border-[#FE0000] outline-none"
                       placeholder="e.g. Left Front Lower Control Arm Assembly"
                     />
                   </div>
@@ -634,7 +651,7 @@ export function NewRequestModal() {
                         onChange={(e) =>
                           setPart({ ...part, partNumber: e.target.value })
                         }
-                        className="w-full text-xs p-2.5 rounded-lg border border-slate-200 font-mono focus:ring-2 focus:ring-[#B30D12]/20 focus:border-[#B30D12] outline-none"
+                        className="w-full text-xs p-2.5 rounded-lg border border-slate-200 font-mono focus:ring-2 focus:ring-[#FE0000]/20 focus:border-[#FE0000] outline-none"
                         placeholder="e.g. 48069-26150"
                       />
                     </div>
@@ -654,7 +671,7 @@ export function NewRequestModal() {
                             quantity: parseInt(e.target.value) || 1,
                           })
                         }
-                        className="w-full text-xs p-2.5 rounded-lg border border-slate-200 focus:ring-2 focus:ring-[#B30D12]/20 focus:border-[#B30D12] outline-none"
+                        className="w-full text-xs p-2.5 rounded-lg border border-slate-200 focus:ring-2 focus:ring-[#FE0000]/20 focus:border-[#FE0000] outline-none"
                       />
                     </div>
                   </div>
@@ -672,7 +689,7 @@ export function NewRequestModal() {
                             preference: e.target.value as PartPreference,
                           })
                         }
-                        className="w-full text-xs p-2.5 rounded-lg border border-slate-200 focus:ring-2 focus:ring-[#B30D12]/20 focus:border-[#B30D12] outline-none"
+                        className="w-full text-xs p-2.5 rounded-lg border border-slate-200 focus:ring-2 focus:ring-[#FE0000]/20 focus:border-[#FE0000] outline-none"
                       >
                         <option value="Genuine OEM">Genuine OEM Factory</option>
                         <option value="OEM Supplier Tier 1">
@@ -697,7 +714,7 @@ export function NewRequestModal() {
                             condition: e.target.value as PartCondition,
                           })
                         }
-                        className="w-full text-xs p-2.5 rounded-lg border border-slate-200 focus:ring-2 focus:ring-[#B30D12]/20 focus:border-[#B30D12] outline-none"
+                        className="w-full text-xs p-2.5 rounded-lg border border-slate-200 focus:ring-2 focus:ring-[#FE0000]/20 focus:border-[#FE0000] outline-none"
                       >
                         <option value="Brand New OEM">Brand New OEM</option>
                         <option value="Brand New Certified Aftermarket">
@@ -719,20 +736,20 @@ export function NewRequestModal() {
               {step === 3 && (
                 <div className="space-y-4">
                   <div className="flex items-center gap-2 text-xs text-slate-500 font-medium">
-                    <FileText className="w-4 h-4 text-[#B30D12]" />
+                    <FileText className="w-4 h-4 text-[#FE0000]" />
                     <span>Upload photos, parts diagrams, and workshop notes</span>
                   </div>
 
                   <div>
                     <label className="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-1">
-                      Customer Notes / Fitting Instructions
+                      Customer Notes
                     </label>
                     <textarea
                       rows={3}
                       value={notes}
                       onChange={(e) => setNotes(e.target.value)}
                       placeholder="Add any specific details, urgency, or fitment notes..."
-                      className="w-full text-xs p-2.5 rounded-lg border border-slate-200 focus:ring-2 focus:ring-[#B30D12]/20 focus:border-[#B30D12] outline-none"
+                      className="w-full text-xs p-2.5 rounded-lg border border-slate-200 focus:ring-2 focus:ring-[#FE0000]/20 focus:border-[#FE0000] outline-none"
                     />
                   </div>
 
@@ -741,11 +758,11 @@ export function NewRequestModal() {
                     <label className="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-1">
                       Multiple Photos (Damage / Existing Part)
                     </label>
-                    <div className="border-2 border-dashed border-slate-200 hover:border-[#B30D12]/60 rounded-xl p-4 text-center cursor-pointer transition-colors bg-slate-50/50">
+                    <div className="border-2 border-dashed border-slate-200 hover:border-[#FE0000]/60 rounded-xl p-4 text-center cursor-pointer transition-colors bg-slate-50/50">
                       <UploadCloud className="w-6 h-6 text-slate-400 mx-auto mb-1" />
                       <p className="text-xs text-slate-600 font-medium">
                         Drag photos here or{" "}
-                        <span className="text-[#B30D12] font-bold">browse</span>
+                        <span className="text-[#FE0000] font-bold">browse</span>
                       </p>
                       <p className="text-[10px] text-slate-400">
                         PNG, JPG or WEBP up to 10MB
@@ -810,10 +827,118 @@ export function NewRequestModal() {
               {/* STEP 4: DELIVERY ADDRESS & SUBMIT */}
               {step === 4 && (
                 <div className="space-y-4">
-                  <div className="flex items-center gap-2 text-xs text-slate-500 font-medium">
-                    <MapPin className="w-4 h-4 text-[#B30D12]" />
-                    <span>Select saved delivery workshop address before submitting</span>
+                  <div className="flex items-center justify-between text-xs text-slate-500 font-medium">
+                    <div className="flex items-center gap-2">
+                      <MapPin className="w-4 h-4 text-[#FE0000]" />
+                      <span>Select saved delivery workshop address before submitting</span>
+                    </div>
+                    {!isAddingNewAddress && (
+                      <button
+                        type="button"
+                        onClick={() => setIsAddingNewAddress(true)}
+                        className="text-xs font-bold text-[#FE0000] hover:underline flex items-center gap-1"
+                      >
+                        <Plus className="w-3.5 h-3.5" />
+                        <span>Add New Address</span>
+                      </button>
+                    )}
                   </div>
+
+                  {/* Inline Address Creation with NZ Post Autocomplete */}
+                  {isAddingNewAddress && (
+                    <div className="p-4 bg-slate-50 border-2 border-dashed border-[#FE0000]/40 rounded-xl space-y-3 animate-in fade-in zoom-in duration-150">
+                      <div className="flex items-center justify-between border-b border-slate-200 pb-2">
+                        <span className="font-bold text-xs text-slate-900">Add New Workshop Bay (NZ Post Autocomplete)</span>
+                        <button
+                          type="button"
+                          onClick={() => setIsAddingNewAddress(false)}
+                          className="text-xs text-slate-500 hover:text-slate-800"
+                        >
+                          Cancel
+                        </button>
+                      </div>
+
+                      <NZAddressLookup
+                        onSelectAddress={(addr: NZAddressSelected) => {
+                          setModalAddressForm((prev) => ({
+                            ...prev,
+                            streetAddress: addr.streetAddress,
+                            suburb: addr.suburb,
+                            city: addr.city,
+                            postalCode: addr.postalCode,
+                            isVerified: addr.isVerified,
+                            verifiedSource: addr.source || "NZ Post",
+                            label: prev.label || `${addr.suburb || addr.city} Workshop Bay`,
+                          }));
+                        }}
+                        label="Quick Search NZ Address"
+                        placeholder="Start typing NZ street name or workshop location..."
+                      />
+
+                      <div className="grid grid-cols-2 gap-2 text-xs">
+                        <input
+                          type="text"
+                          placeholder="Location Label (e.g. Takapuna Bay 2)"
+                          value={modalAddressForm.label}
+                          onChange={(e) => setModalAddressForm({ ...modalAddressForm, label: e.target.value })}
+                          className="w-full px-2.5 py-1.5 bg-white border border-slate-200 rounded-lg outline-none focus:border-[#FE0000]"
+                        />
+                        <input
+                          type="text"
+                          placeholder="Contact Name"
+                          value={modalAddressForm.recipientName}
+                          onChange={(e) => setModalAddressForm({ ...modalAddressForm, recipientName: e.target.value })}
+                          className="w-full px-2.5 py-1.5 bg-white border border-slate-200 rounded-lg outline-none focus:border-[#FE0000]"
+                        />
+                      </div>
+
+                      <div className="grid grid-cols-3 gap-2 text-xs">
+                        <input
+                          type="text"
+                          placeholder="Street Address *"
+                          value={modalAddressForm.streetAddress}
+                          onChange={(e) => setModalAddressForm({ ...modalAddressForm, streetAddress: e.target.value })}
+                          className="w-full px-2.5 py-1.5 bg-white border border-slate-200 rounded-lg outline-none focus:border-[#FE0000]"
+                        />
+                        <input
+                          type="text"
+                          placeholder="City *"
+                          value={modalAddressForm.city}
+                          onChange={(e) => setModalAddressForm({ ...modalAddressForm, city: e.target.value })}
+                          className="w-full px-2.5 py-1.5 bg-white border border-slate-200 rounded-lg outline-none focus:border-[#FE0000]"
+                        />
+                        <input
+                          type="text"
+                          placeholder="Postcode"
+                          value={modalAddressForm.postalCode}
+                          onChange={(e) => setModalAddressForm({ ...modalAddressForm, postalCode: e.target.value })}
+                          className="w-full px-2.5 py-1.5 bg-white border border-slate-200 rounded-lg outline-none focus:border-[#FE0000]"
+                        />
+                      </div>
+
+                      <div className="flex justify-end gap-2 pt-1">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            if (!modalAddressForm.label || !modalAddressForm.streetAddress) return;
+                            const newAddr: SavedAddress = {
+                              id: `addr-${Date.now()}`,
+                              ...modalAddressForm,
+                              businessName: "SP Motors Ltd",
+                              isVerified: modalAddressForm.isVerified,
+                              verifiedSource: modalAddressForm.verifiedSource,
+                            };
+                            addSavedAddress(newAddr);
+                            setSelectedAddress(newAddr);
+                            setIsAddingNewAddress(false);
+                          }}
+                          className="px-4 py-1.5 bg-[#FE0000] hover:bg-[#9B0A0F] text-white font-bold text-xs rounded-lg shadow-xs"
+                        >
+                          Save & Select Depot
+                        </button>
+                      </div>
+                    </div>
+                  )}
 
                   <div className="space-y-2">
                     {savedAddresses.map((addr) => {
@@ -823,8 +948,8 @@ export function NewRequestModal() {
                           key={addr.id}
                           onClick={() => setSelectedAddress(addr)}
                           className={`p-3.5 rounded-xl border-2 cursor-pointer transition-all flex items-start justify-between ${isSelected
-                              ? "border-[#B30D12] bg-red-50/10"
-                              : "border-slate-200 hover:border-slate-300 bg-white"
+                            ? "border-[#FE0000] bg-red-50/10 shadow-xs"
+                            : "border-slate-200 hover:border-slate-300 bg-white"
                             }`}
                         >
                           <div className="space-y-1">
@@ -837,6 +962,9 @@ export function NewRequestModal() {
                                   Default
                                 </span>
                               )}
+                              <span className="text-[9px] font-bold text-emerald-700 bg-emerald-50 px-1.5 py-0.2 rounded border border-emerald-200">
+                                ✓ NZ Post Verified
+                              </span>
                             </div>
                             <p className="text-xs text-slate-600">
                               {addr.streetAddress}, {addr.suburb}, {addr.city}{" "}
@@ -849,8 +977,8 @@ export function NewRequestModal() {
 
                           <div
                             className={`w-5 h-5 rounded-full border flex items-center justify-center ${isSelected
-                                ? "border-[#B30D12] bg-[#B30D12] text-white"
-                                : "border-slate-300"
+                              ? "border-[#FE0000] bg-[#FE0000] text-white"
+                              : "border-slate-300"
                               }`}
                           >
                             {isSelected && <Check className="w-3 h-3" />}
@@ -860,12 +988,12 @@ export function NewRequestModal() {
                     })}
                   </div>
 
-                  <div className="p-3 bg-blue-50/70 border border-blue-200 rounded-xl flex items-start gap-2 text-xs text-blue-900">
-                    <Sparkles className="w-4 h-4 text-blue-600 shrink-0 mt-0.5" />
+                  <div className="p-3 bg-slate-50 border border-slate-200 rounded-xl flex items-start gap-2 text-xs text-slate-700">
+                    <Sparkles className="w-4 h-4 text-[#FE0000] shrink-0 mt-0.5" />
                     <p>
-                      <strong>Automatic Request Code:</strong> Submitting will lock
+                      <strong className="text-slate-900">Automatic Request Code:</strong> Submitting will lock
                       your request and generate a tracked procurement reference in format{" "}
-                      <code className="font-mono font-bold bg-white px-1 py-0.5 rounded text-blue-700">
+                      <code className="font-mono font-bold bg-white px-1.5 py-0.5 rounded border border-slate-200 text-slate-900">
                         AutoHub-P-XXX
                       </code>
                       .
@@ -900,7 +1028,7 @@ export function NewRequestModal() {
                 ) : (
                   <button
                     type="submit"
-                    className="inline-flex items-center gap-1.5 px-6 py-2.5 bg-[#B30D12] hover:bg-[#9B0A0F] text-white font-bold text-xs uppercase tracking-wider rounded-xl shadow-md shadow-red-500/30 hover:shadow-lg transition-all transform active:scale-95"
+                    className="inline-flex items-center gap-1.5 px-6 py-2.5 bg-[#FE0000] hover:bg-[#9B0A0F] text-white font-bold text-xs uppercase tracking-wider rounded-xl shadow-md shadow-red-500/30 hover:shadow-lg transition-all transform active:scale-95"
                   >
                     <Check className="w-4 h-4 stroke-[3]" />
                     <span>Generate Request & Submit</span>

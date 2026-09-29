@@ -143,8 +143,8 @@ export function PaymentsView() {
               key={tab}
               onClick={() => setFilterStatus(tab)}
               className={`px-3.5 py-1.5 rounded-xl transition-all ${isActive
-                  ? "bg-[#C40E14] text-white shadow-xs"
-                  : "bg-white border border-slate-200 text-slate-600 hover:bg-slate-50"
+                ? "bg-[#FE0000] text-white shadow-xs"
+                : "bg-white border border-slate-200 text-slate-600 hover:bg-slate-50"
                 }`}
             >
               {tab === "All" ? "All Invoices" : tab}
@@ -242,7 +242,7 @@ export function PaymentsView() {
                               onClick={() => handleOpenPaymentModal(req)}
                               className="px-3.5 py-1.5 bg-[#B30D12] hover:bg-[#9B0A0F] text-white font-bold text-xs uppercase tracking-wider rounded-lg shadow-xs transition-all"
                             >
-                              Record Payment →
+                              Settlement Details →
                             </button>
                           ) : (
                             <button

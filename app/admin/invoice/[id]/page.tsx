@@ -37,7 +37,7 @@ export default function AdminInvoicePage() {
     return (
       <div className="min-h-screen bg-slate-100 flex items-center justify-center p-6">
         <div className="bg-white rounded-2xl border border-slate-200 p-10 max-w-md w-full text-center shadow-sm">
-          <div className="w-12 h-12 rounded-2xl bg-red-50 text-[#B30D12] flex items-center justify-center mx-auto mb-4 font-bold">
+          <div className="w-12 h-12 rounded-2xl bg-red-50 text-[#FE0000] flex items-center justify-center mx-auto mb-4 font-bold">
             <FileText className="w-6 h-6" />
           </div>
           <h2 className="text-lg font-bold text-slate-900 mb-1">Invoice Not Found</h2>
@@ -47,7 +47,7 @@ export default function AdminInvoicePage() {
           <button
             type="button"
             onClick={() => router.push("/admin/requests")}
-            className="w-full py-2.5 bg-[#B30D12] hover:bg-[#9B0A0F] text-white text-xs font-bold uppercase tracking-wider rounded-xl transition-colors shadow-sm"
+            className="w-full py-2.5 bg-[#FE0000] hover:bg-[#9B0A0F] text-white text-xs font-bold uppercase tracking-wider rounded-xl transition-colors shadow-sm"
           >
             Return to All Requests
           </button>
@@ -159,7 +159,7 @@ export default function AdminInvoicePage() {
     body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; color: #0f172a; margin: 0; padding: 40px; background: #fff; line-height: 1.5; }
     .container { max-width: 800px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 12px; padding: 40px; }
     .header { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid #0f172a; padding-bottom: 24px; margin-bottom: 30px; }
-    .brand-title { color: #B30D12; font-size: 32px; font-weight: 900; margin: 0; letter-spacing: -0.5px; }
+    .brand-title { color: #FE0000; font-size: 32px; font-weight: 900; margin: 0; letter-spacing: -0.5px; }
     .brand-sub { color: #64748b; font-size: 13px; font-weight: 600; text-transform: uppercase; margin-top: 4px; }
     .invoice-title { font-size: 28px; font-weight: 900; text-transform: uppercase; text-align: right; margin: 0 0 8px 0; color: #0f172a; }
     .meta-text { font-size: 13px; color: #475569; margin: 3px 0; text-align: right; }
@@ -221,7 +221,7 @@ export default function AdminInvoicePage() {
           <strong>Bank:</strong> ANZ New Zealand<br>
           <strong>Account Name:</strong> Procurly NZ Ltd<br>
           <strong>Account No:</strong> 01-0288-0349821-00<br>
-          <strong style="color: #B30D12;">Reference:</strong> ${invoiceNumber}
+          <strong style="color: #FE0000;">Reference:</strong> ${invoiceNumber}
         </div>
       </div>
     </div>
@@ -318,7 +318,7 @@ export default function AdminInvoicePage() {
               <span className="text-slate-300">/</span>
               <span className="font-mono font-bold text-slate-700">{request.requestNumber}</span>
               <span className="text-slate-300">/</span>
-              <span className="font-bold text-[#B30D12]">Tax Invoice</span>
+              <span className="font-bold text-[#FE0000]">Tax Invoice</span>
             </div>
           </div>
 
@@ -326,11 +326,10 @@ export default function AdminInvoicePage() {
           <div className="flex flex-wrap items-center gap-2">
             {/* Status Pill */}
             <span
-              className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider border flex items-center gap-1.5 ${
-                isPaid
+              className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider border flex items-center gap-1.5 ${isPaid
                   ? "bg-emerald-50 text-emerald-700 border-emerald-200"
                   : "bg-amber-50 text-amber-700 border-amber-200"
-              }`}
+                }`}
             >
               {isPaid ? (
                 <>
@@ -350,11 +349,10 @@ export default function AdminInvoicePage() {
               type="button"
               onClick={handleTogglePaymentStatus}
               disabled={isUpdatingPayment}
-              className={`px-3 py-1.5 rounded-xl font-bold text-xs transition-all flex items-center gap-1.5 shadow-xs cursor-pointer ${
-                isPaid
+              className={`px-3 py-1.5 rounded-xl font-bold text-xs transition-all flex items-center gap-1.5 shadow-xs cursor-pointer ${isPaid
                   ? "bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200"
                   : "bg-emerald-600 hover:bg-emerald-700 text-white"
-              }`}
+                }`}
               title={isPaid ? "Click to revert payment to Unpaid" : "Click to mark as Paid / Settled in full"}
             >
               <CreditCard className="w-3.5 h-3.5" />
@@ -376,7 +374,7 @@ export default function AdminInvoicePage() {
             <button
               type="button"
               onClick={handlePrint}
-              className="px-3.5 py-1.5 bg-[#B30D12] hover:bg-[#9B0A0F] text-white font-bold text-xs rounded-xl transition-all flex items-center gap-1.5 shadow-xs"
+              className="px-3.5 py-1.5 bg-[#FE0000] hover:bg-[#9B0A0F] text-white font-bold text-xs rounded-xl transition-all flex items-center gap-1.5 shadow-xs"
               title="Print or Save as PDF"
             >
               <Printer className="w-3.5 h-3.5" />
@@ -430,7 +428,7 @@ export default function AdminInvoicePage() {
         <div className="flex flex-col sm:flex-row justify-between items-start gap-6 border-b-2 border-slate-900 pb-8 mb-8">
           <div>
             <div className="flex items-center gap-2 mb-1">
-              <span className="text-4xl font-black italic tracking-tighter text-[#B30D12]">
+              <span className="text-4xl font-black italic tracking-tighter text-[#FE0000]">
                 PROCURLY
               </span>
               <span className="text-xs font-bold uppercase tracking-wider bg-slate-100 text-slate-600 px-2 py-0.5 rounded">
@@ -478,11 +476,10 @@ export default function AdminInvoicePage() {
             </div>
             <div className="mt-3 sm:flex sm:justify-end">
               <span
-                className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider border ${
-                  isPaid
+                className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider border ${isPaid
                     ? "bg-emerald-100 text-emerald-800 border-emerald-300"
                     : "bg-amber-100 text-amber-900 border-amber-300"
-                }`}
+                  }`}
               >
                 {isPaid ? (
                   <>
@@ -553,7 +550,7 @@ export default function AdminInvoicePage() {
               </div>
               <div className="flex items-center justify-between bg-white p-2 rounded-lg border border-slate-200 mt-1">
                 <span className="text-slate-600 text-[11px]">
-                  Ref: <strong className="text-[#B30D12] font-mono">{invoiceNumber}</strong>
+                  Ref: <strong className="text-[#FE0000] font-mono">{invoiceNumber}</strong>
                 </span>
                 <button
                   type="button"
@@ -689,7 +686,7 @@ export default function AdminInvoicePage() {
             </div>
             <div className="flex justify-between items-center text-xs pt-1">
               <span className="font-semibold text-slate-500">Balance Due:</span>
-              <span className={`font-mono font-bold ${isPaid ? "text-emerald-700" : "text-[#B30D12]"}`}>
+              <span className={`font-mono font-bold ${isPaid ? "text-emerald-700" : "text-[#FE0000]"}`}>
                 {isPaid ? "$0.00 NZD (Paid)" : `$${amount.toFixed(2)} NZD`}
               </span>
             </div>

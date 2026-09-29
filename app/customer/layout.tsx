@@ -6,12 +6,19 @@ import { CustomerPortalLayout } from "@/components/portal/customer-portal-layout
 
 function CustomerLoadingFallback() {
   return (
-    <div className="min-h-screen bg-[#F8FAFC] flex items-center justify-center">
-      <div className="flex flex-col items-center gap-4">
-        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#B30D12] to-[#B91C1C] flex items-center justify-center shadow-md animate-pulse">
-          <span className="text-white font-black text-lg">P</span>
+    <div className="min-h-screen bg-[#F8FAFC] flex items-center justify-center select-none">
+      <div className="flex flex-col items-center gap-3">
+        <div className="w-11 h-11 rounded-xl border-2 border-white bg-[#FE0000] shadow-md flex items-center justify-center animate-pulse">
+          <span className="text-white font-black text-xl tracking-tighter leading-none shrink-0">A</span>
         </div>
-        <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Loading Customer Portal…</p>
+        <div className="flex flex-col items-center text-center">
+          <span className="font-black italic text-[#0F172A] uppercase text-base tracking-tight leading-none font-sans">
+            PROCUR<span className="not-italic font-bold text-slate-500">LY</span>
+          </span>
+          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">
+            Loading Customer Portal…
+          </span>
+        </div>
       </div>
     </div>
   );

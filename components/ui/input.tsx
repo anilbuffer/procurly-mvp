@@ -55,11 +55,11 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
               clsx(
                 "w-full h-12 bg-white text-slate-900 text-sm font-medium placeholder:text-slate-400",
                 "border border-slate-300 rounded-lg transition-all duration-150 ease-in-out",
-                "focus:outline-none focus:border-[#B30D12] focus:ring-2 focus:ring-[#B30D12]/20",
+                "focus:outline-none focus:border-[#FE0000] focus:ring-2 focus:ring-[#FE0000]/20",
                 leftIcon ? "pl-11" : "pl-4",
                 rightIcon ? "pr-11" : "pr-4",
                 error &&
-                  "border-red-500 focus:border-red-600 focus:ring-red-500/20 bg-red-50/20 text-red-950",
+                "border-red-500 focus:border-red-600 focus:ring-red-500/20 bg-red-50/20 text-red-950",
                 disabled && "bg-slate-100 text-slate-400 cursor-not-allowed border-slate-200",
                 className
               )

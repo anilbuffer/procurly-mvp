@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { CheckSquare, Truck, ArrowRight, ShieldCheck, Clock, CheckCircle2, FileText } from "lucide-react";
 import Link from "next/link";
 import { usePortal } from "@/context/portal-context";
+import { getStatusBadgeClasses } from "@/lib/status-styles";
 
 export function OrdersView() {
   const router = useRouter();
@@ -40,34 +41,7 @@ export function OrdersView() {
   }, [orderRequests, currentPage]);
 
   const getStatusColors = (status: string) => {
-    switch (status) {
-      // In-Process States
-      case "Submitted":
-      case "Sourcing":
-      case "Quoted":
-      case "Approved":
-      case "Invoicing":
-      case "Ordered":
-      case "Subadmin Review":
-      case "Ready for Dispatch":
-      case "Shipped":
-        return "bg-blue-50 text-blue-700 border border-blue-200";
-      
-      // Waiting / Attention States
-      case "Awaiting Payment":
-      case "Subadmin Pending":
-      case "Subadmin Hold":
-        return "bg-red-50 text-red-700 border border-red-200";
-      
-      // Completed States
-      case "Subadmin Approved":
-      case "Delivered":
-      case "Completed":
-        return "bg-green-50 text-green-700 border border-green-200";
-        
-      default:
-        return "bg-slate-100 text-slate-700 border border-slate-200";
-    }
+    return getStatusBadgeClasses(status);
   };
 
   return (
@@ -107,7 +81,7 @@ export function OrdersView() {
           <p className="text-xs text-slate-400 mt-1">Submit a new parts request to get started.</p>
           <Link
             href="/customer/requests/new"
-            className="mt-4 inline-flex items-center gap-2 px-5 py-2 bg-[#B30D12] hover:bg-[#9B0A0F] text-white font-bold text-xs uppercase tracking-wider rounded-xl transition-colors"
+            className="mt-4 inline-flex items-center gap-2 px-5 py-2 bg-[#FE0000] hover:bg-[#9B0A0F] text-white font-bold text-xs uppercase tracking-wider rounded-xl transition-colors"
           >
             New Parts Request →
           </Link>
@@ -135,7 +109,7 @@ export function OrdersView() {
                     onClick={() => setSelectedRequest(req)}
                     className="hover:bg-slate-50 cursor-pointer transition-colors group"
                   >
-                    <td className="py-4 px-6 font-mono font-bold text-slate-900 group-hover:text-[#B30D12]">
+                    <td className="py-4 px-6 font-mono font-bold text-slate-900 group-hover:text-[#FE0000]">
                       {req.requestNumber}
                     </td>
                     <td className="py-4 px-4 font-mono font-bold text-slate-700 whitespace-nowrap">

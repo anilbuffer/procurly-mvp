@@ -25,11 +25,14 @@ import {
   Sparkles,
   User,
   ExternalLink,
+  Shield,
   Building2,
   Phone,
   Clock,
+  FileText,
 } from "lucide-react";
 import { useAuth } from "@/context/auth-context";
+import { LegalModal, LegalDocType } from "@/components/auth/legal-modal";
 
 export type AuthMode = "login" | "register" | "mfa" | "forgot_password" | "change_password";
 
@@ -98,7 +101,11 @@ export function LoginView() {
   const [regPhone, setRegPhone] = useState("+64 21 555 0192");
   const [regPassword, setRegPassword] = useState("");
   const [showRegPassword, setShowRegPassword] = useState(false);
-  const [regAcceptTerms, setRegAcceptTerms] = useState(false); // Single static acceptance checkbox
+  const [regAcceptTerms, setRegAcceptTerms] = useState(false); // Explicit customer acceptance checkbox
+  const [termsAttemptedError, setTermsAttemptedError] = useState(false);
+  const [termsAcknowledgedAt, setTermsAcknowledgedAt] = useState<string | null>(null);
+  const [legalModalOpen, setLegalModalOpen] = useState(false);
+  const [legalDocType, setLegalDocType] = useState<LegalDocType>("terms");
   const [isRegistering, setIsRegistering] = useState(false);
   const [regError, setRegError] = useState<string | null>(null);
   const [regSubmitted, setRegSubmitted] = useState(false);
@@ -127,6 +134,13 @@ export function LoginView() {
   const [isUpdatingPassword, setIsUpdatingPassword] = useState(false);
   const [passwordChangeSuccess, setPasswordChangeSuccess] = useState(false);
   const [passwordChangeError, setPasswordChangeError] = useState<string | null>(null);
+
+  // Redirect to dedicated /register page if mode is register
+  useEffect(() => {
+    if (initialModeParam === "register") {
+      router.push("/register");
+    }
+  }, [initialModeParam, router]);
 
   // Countdown timer for MFA QR
   useEffect(() => {
@@ -204,7 +218,8 @@ export function LoginView() {
       return;
     }
     if (!regAcceptTerms) {
-      setRegError("You must agree to the Terms of Trade and Privacy Policy.");
+      setTermsAttemptedError(true);
+      setRegError("You must explicitly acknowledge and agree to the Terms of Trade and Privacy Policy before registration submission.");
       return;
     }
 
@@ -386,7 +401,7 @@ export function LoginView() {
                       setAuthMode("forgot_password");
                       setForgotEmail(email);
                     }}
-                    className="text-xs font-bold text-[#B30D12] hover:underline"
+                    className="text-xs font-bold text-[#FE0000] hover:underline"
                   >
                     Forgot password?
                   </button>
@@ -402,7 +417,7 @@ export function LoginView() {
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="••••••••••••"
                     required
-                    className="w-full h-12 bg-white text-slate-900 text-sm font-medium placeholder:text-slate-400 border border-slate-300 rounded-lg transition-all pl-11 pr-11 focus:outline-none focus:border-[#B30D12] focus:ring-2 focus:ring-[#B30D12]/20"
+                    className="w-full h-12 bg-white text-slate-900 text-sm font-medium placeholder:text-slate-400 border border-slate-300 rounded-lg transition-all pl-11 pr-11 focus:outline-none focus:border-[#FE0000] focus:ring-2 focus:ring-[#FE0000]/20"
                   />
                   <button
                     type="button"
@@ -426,7 +441,7 @@ export function LoginView() {
                     type="checkbox"
                     checked={rememberWorkstation}
                     onChange={(e) => setRememberWorkstation(e.target.checked)}
-                    className="w-4 h-4 rounded text-[#B30D12] focus:ring-0 cursor-pointer"
+                    className="w-4 h-4 rounded text-[#FE0000] focus:ring-0 cursor-pointer"
                   />
                   <span>Remember this workstation for 30 days</span>
                 </label>
@@ -437,7 +452,7 @@ export function LoginView() {
               <Button
                 type="submit"
                 size="lg"
-                className="w-full h-12 text-sm font-bold bg-[#B30D12] hover:bg-[#9B0A0F] active:bg-[#85080C] text-white rounded-lg transition-all shadow-xs"
+                className="w-full h-12 text-sm font-bold bg-[#FE0000] hover:bg-[#9B0A0F] active:bg-[#85080C] text-white rounded-lg transition-all shadow-xs"
                 isLoading={isLoggingIn}
                 loadingText="Authenticating..."
               >
@@ -498,12 +513,12 @@ export function LoginView() {
                     )
                   }
                   className={`group relative p-3 rounded-xl border transition-all cursor-pointer ${email === "sarah.jenkins@procurly.io"
-                    ? "border-[#B30D12] bg-red-50/50 ring-1 ring-[#B30D12]/30 shadow-xs"
+                    ? "border-[#FE0000] bg-red-50/50 ring-1 ring-[#FE0000]/30 shadow-xs"
                     : "border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50/50"
                     }`}
                 >
                   <div className="flex items-center justify-between mb-1.5">
-                    <span className="text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded bg-red-100 text-[#B30D12] font-sans">
+                    <span className="text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded bg-red-100 text-[#FE0000] font-sans">
                       Admin Portal
                     </span>
 
@@ -549,46 +564,23 @@ export function LoginView() {
               </div>
             </div>
 
-            {/* Direct Portal Links & Register Trade Account Link */}
-            <div className="pt-2 text-center border-t border-slate-200/80 space-y-2">
-              <p className="text-xs text-slate-600">
-                New trade customer?{" "}
-                <button
-                  type="button"
-                  onClick={() => {
-                    setAuthMode("register");
-                    setRegError(null);
-                    setRegSubmitted(false);
-                  }}
-                  className="font-bold text-[#B30D12] hover:underline"
-                >
-                  Register your business account →
-                </button>
+            {/* New Trade Customer - Register Account Action Button */}
+            <div className="pt-3 text-center border-t border-slate-200/80 space-y-2.5">
+              <p className="text-xs text-slate-600 font-medium">
+                New trade customer?
               </p>
-
-              <div className="flex flex-wrap items-center justify-center gap-2 pt-1">
-                <button
-                  type="button"
-                  onClick={() => router.push("/customer/dashboard")}
-                  className="text-xs font-semibold text-slate-700 hover:text-[#2B4499] inline-flex items-center gap-1 px-3.5 py-1.5 rounded-xl bg-slate-100 hover:bg-blue-50 border border-slate-200 hover:border-blue-200 transition-colors"
-                >
-                  <span>Customer Portal →</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => router.push("/admin/dashboard")}
-                  className="text-xs font-semibold text-slate-700 hover:text-[#B30D12] inline-flex items-center gap-1 px-3.5 py-1.5 rounded-xl bg-slate-100 hover:bg-red-50 border border-slate-200 hover:border-red-200 transition-colors"
-                >
-                  <span>Unified Admin Portal →</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => router.push("/subadmin/dashboard")}
-                  className="text-xs font-semibold text-slate-700 hover:text-emerald-700 inline-flex items-center gap-1 px-3.5 py-1.5 rounded-xl bg-slate-100 hover:bg-emerald-50 border border-slate-200 hover:border-emerald-200 transition-colors"
-                >
-                  <span>Subadmin Portal →</span>
-                </button>
-              </div>
+              <Button
+                type="button"
+                variant="outline"
+                size="md"
+                onClick={() => {
+                  router.push("/register");
+                }}
+                className="w-full h-11 border-slate-300 hover:border-[#FE0000] text-slate-800 hover:text-[#FE0000] bg-white hover:bg-red-50/40 transition-all font-bold text-xs sm:text-sm shadow-xs group flex items-center justify-center gap-2 cursor-pointer"
+                rightIcon={<ArrowRight className="w-4 h-4 text-[#FE0000] group-hover:translate-x-0.5 transition-transform" />}
+              >
+                <span>Register your business account</span>
+              </Button>
             </div>
           </div>
         )}
@@ -601,11 +593,8 @@ export function LoginView() {
           <div className="space-y-5 animate-in fade-in duration-200">
             {/* Eyebrow */}
             <div className="flex items-center justify-between">
-              <span className="text-[12px] font-bold uppercase tracking-[0.06em] text-[#C40E14] antialiased">
+              <span className="text-[12px] font-bold uppercase tracking-[0.06em] text-[#FE0000] antialiased">
                 TRADE CUSTOMER REGISTRATION
-              </span>
-              <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider bg-white px-2 py-0.5 rounded border border-slate-200">
-                MVP Simplified Scope
               </span>
             </div>
 
@@ -620,29 +609,29 @@ export function LoginView() {
             </div>
 
             {regSubmitted ? (
-              /* Manual Customer Approval Confirmation Screen */
+              /* Manual Customer Approval Confirmation Screen - Neutral Grey Palette */
               <div className="space-y-5 animate-in fade-in duration-200">
-                <div className="p-5 rounded-2xl bg-amber-50/90 border border-amber-300 space-y-4 shadow-sm">
+                <div className="p-5 rounded-2xl bg-slate-100 border border-slate-300/80 space-y-4 shadow-sm">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-amber-100 text-amber-800 flex items-center justify-center font-bold shrink-0">
+                    <div className="w-10 h-10 rounded-full bg-slate-200 text-slate-700 border border-slate-300 flex items-center justify-center font-bold shrink-0">
                       <Clock className="w-5 h-5" />
                     </div>
                     <div>
-                      <span className="text-[10px] font-bold uppercase tracking-wider text-amber-900 bg-amber-200 px-2 py-0.5 rounded-full">
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-slate-700 bg-slate-200 px-2.5 py-0.5 rounded-full border border-slate-300">
                         Pending Manual Approval
                       </span>
-                      <h3 className="text-base font-bold text-amber-950 mt-1">
+                      <h3 className="text-base font-bold text-slate-900 mt-1">
                         Registration Submitted
                       </h3>
                     </div>
                   </div>
 
-                  <p className="text-xs text-amber-900 leading-relaxed">
+                  <p className="text-xs text-slate-600 leading-relaxed">
                     Thank you! Your trade registration for <strong>{regBusinessName}</strong> has been received. Customer trade approvals are reviewed manually by the Procurly Autohub operations team for MVP.
                   </p>
 
                   {/* Registered Details Summary Card */}
-                  <div className="p-4 bg-white rounded-xl border border-amber-200 space-y-2 text-xs">
+                  <div className="p-4 bg-white rounded-xl border border-slate-200 space-y-2 text-xs shadow-2xs">
                     <div className="flex justify-between border-b border-slate-100 pb-1.5">
                       <span className="text-slate-500">Business Name:</span>
                       <span className="font-bold text-slate-900">{regBusinessName}</span>
@@ -660,15 +649,15 @@ export function LoginView() {
                       <span className="font-mono text-slate-800">{regPhone}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-slate-500">Procurement Terms:</span>
-                      <span className="font-semibold text-emerald-700 flex items-center gap-1">
-                        <CheckCircle2 className="w-3.5 h-3.5" /> Static agreement verified
+                      <span className="text-slate-500">Terms of Trade:</span>
+                      <span className="font-semibold text-slate-800 flex items-center gap-1">
+                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" /> Explicitly acknowledged {termsAcknowledgedAt ? `(${termsAcknowledgedAt})` : ""}
                       </span>
                     </div>
                   </div>
 
-                  <div className="p-3 bg-white/70 rounded-xl border border-amber-200/80 text-[11px] text-amber-900 space-y-1">
-                    <p className="font-bold">Next Steps:</p>
+                  <div className="p-3.5 bg-slate-200/50 rounded-xl border border-slate-300/80 text-[11px] text-slate-700 space-y-1">
+                    <p className="font-bold text-slate-900">Next Steps:</p>
                     <p>
                       Our trade desk will manually review your workshop registration and contact <strong>{regContactName}</strong> within 1 business day once your trade customer account is activated.
                     </p>
@@ -683,7 +672,7 @@ export function LoginView() {
                       setAuthMode("login");
                       setRegSubmitted(false);
                     }}
-                    className="w-full h-11 text-xs font-bold bg-[#B30D12] hover:bg-[#9B0A0F] text-white rounded-lg"
+                    className="w-full h-11 text-xs font-bold bg-[#FE0000] hover:bg-[#9B0A0F] text-white rounded-lg"
                   >
                     Return to Sign In →
                   </Button>
@@ -776,7 +765,7 @@ export function LoginView() {
                       onChange={(e) => setRegPassword(e.target.value)}
                       placeholder="Minimum 6 characters"
                       required
-                      className="w-full h-12 bg-white text-slate-900 text-sm font-medium placeholder:text-slate-400 border border-slate-300 rounded-lg transition-all pl-11 pr-11 focus:outline-none focus:border-[#B30D12] focus:ring-2 focus:ring-[#B30D12]/20"
+                      className="w-full h-12 bg-white text-slate-900 text-sm font-medium placeholder:text-slate-400 border border-slate-300 rounded-lg transition-all pl-11 pr-11 focus:outline-none focus:border-[#FE0000] focus:ring-2 focus:ring-[#FE0000]/20"
                     />
                     <button
                       type="button"
@@ -793,20 +782,80 @@ export function LoginView() {
                   </div>
                 </div>
 
-                {/* Single Static Acceptance Checkbox */}
-                <div className="pt-2">
+                {/* Explicit Terms of Trade & Privacy Policy Acceptance with Interactive Display Links */}
+                <div className={`p-3 rounded-xl border transition-all ${termsAttemptedError && !regAcceptTerms
+                  ? "bg-red-50/70 border-red-300 ring-2 ring-red-400/20"
+                  : regAcceptTerms
+                    ? "bg-slate-50 border-slate-200"
+                    : "bg-slate-50/50 border-slate-200/80 hover:border-slate-300"
+                  }`}>
                   <label className="flex items-start gap-2.5 cursor-pointer select-none text-xs text-slate-700">
                     <input
                       type="checkbox"
                       checked={regAcceptTerms}
-                      onChange={(e) => setRegAcceptTerms(e.target.checked)}
-                      className="mt-0.5 w-4 h-4 rounded text-[#B30D12] focus:ring-0 cursor-pointer"
+                      onChange={(e) => {
+                        if (!regAcceptTerms) {
+                          // Force user to open modal and scroll through before acceptance
+                          e.preventDefault();
+                          setLegalDocType("terms");
+                          setLegalModalOpen(true);
+                        } else {
+                          setRegAcceptTerms(false);
+                        }
+                      }}
+                      onClick={(e) => {
+                        if (!regAcceptTerms) {
+                          e.preventDefault();
+                          setLegalDocType("terms");
+                          setLegalModalOpen(true);
+                        }
+                      }}
+                      className="mt-0.5 w-4 h-4 rounded text-[#FE0000] focus:ring-0 cursor-pointer accent-[#FE0000]"
                       required
                     />
                     <span className="leading-snug">
-                      I agree to the Procurly Terms of Trade and Privacy Policy
+                      I have read and explicitly agree to the{" "}
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          setLegalDocType("terms");
+                          setLegalModalOpen(true);
+                        }}
+                        className="font-bold text-[#FE0000] hover:text-[#9B0A0F] underline underline-offset-2 cursor-pointer"
+                      >
+                        Terms of Trade
+                      </button>{" "}
+                      and{" "}
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          setLegalDocType("privacy");
+                          setLegalModalOpen(true);
+                        }}
+                        className="font-bold text-[#FE0000] hover:text-[#9B0A0F] underline underline-offset-2 cursor-pointer"
+                      >
+                        Privacy Policy
+                      </button>
                     </span>
                   </label>
+
+                  {termsAttemptedError && !regAcceptTerms && (
+                    <p className="text-[11px] font-semibold text-red-600 mt-2 flex items-center gap-1">
+                      <AlertCircle className="w-3.5 h-3.5 shrink-0" />
+                      Explicit acknowledgement of the Terms of Trade is required to proceed.
+                    </p>
+                  )}
+
+                  {regAcceptTerms && (
+                    <p className="text-[11px] font-medium text-emerald-700 mt-2 flex items-center gap-1">
+                      <CheckCircle2 className="w-3.5 h-3.5 shrink-0" />
+                      Explicitly acknowledged {termsAcknowledgedAt ? `(${termsAcknowledgedAt})` : ""}
+                    </p>
+                  )}
                 </div>
 
 
@@ -815,7 +864,7 @@ export function LoginView() {
                 <Button
                   type="submit"
                   size="lg"
-                  className="w-full h-12 text-sm font-bold bg-[#B30D12] hover:bg-[#9B0A0F] active:bg-[#85080C] text-white rounded-lg transition-all shadow-xs"
+                  className="w-full h-12 text-sm font-bold bg-[#FE0000] hover:bg-[#9B0A0F] active:bg-[#85080C] text-white rounded-lg transition-all shadow-xs"
                   isLoading={isRegistering}
                   loadingText="Submitting Application..."
                 >
@@ -828,7 +877,7 @@ export function LoginView() {
                     <button
                       type="button"
                       onClick={() => setAuthMode("login")}
-                      className="font-bold text-[#B30D12] hover:underline"
+                      className="font-bold text-[#FE0000] hover:underline"
                     >
                       Sign In to your account →
                     </button>
@@ -858,7 +907,7 @@ export function LoginView() {
               <button
                 type="button"
                 onClick={() => setAuthMode("login")}
-                className="text-slate-400 hover:text-[#B30D12] text-[11px] underline font-bold"
+                className="text-slate-400 hover:text-[#FE0000] text-[11px] underline font-bold"
               >
                 Change
               </button>
@@ -922,7 +971,7 @@ export function LoginView() {
               <Button
                 type="submit"
                 size="lg"
-                className="w-full h-12 text-sm font-bold bg-[#B30D12] hover:bg-[#9B0A0F] text-white rounded-lg transition-all shadow-xs"
+                className="w-full h-12 text-sm font-bold bg-[#FE0000] hover:bg-[#9B0A0F] text-white rounded-lg transition-all shadow-xs"
                 isLoading={mfaStatus === "loading"}
                 loadingText="Verifying..."
                 disabled={mfaCode.length < 6 || mfaStatus === "success"}
@@ -949,7 +998,7 @@ export function LoginView() {
         {authMode === "forgot_password" && (
           <div className="space-y-5 animate-in fade-in duration-200">
             {/* Eyebrow */}
-            <span className="text-[12px] font-bold uppercase tracking-[0.06em] text-[#C40E14] antialiased block">
+            <span className="text-[12px] font-bold uppercase tracking-[0.06em] text-[#FE0000] antialiased block">
               SECURE ACCOUNT ACCESS
             </span>
 
@@ -996,7 +1045,7 @@ export function LoginView() {
                       setCurrentPassword(generatedRecoveryPin);
                       setAuthMode("change_password");
                     }}
-                    className="w-full h-11 text-xs font-bold bg-[#B30D12] hover:bg-[#9B0A0F] text-white rounded-lg"
+                    className="w-full h-11 text-xs font-bold bg-[#FE0000] hover:bg-[#9B0A0F] text-white rounded-lg"
                   >
                     Enter Code & Set New Password →
                   </Button>
@@ -1026,7 +1075,7 @@ export function LoginView() {
                 <Button
                   type="submit"
                   size="lg"
-                  className="w-full h-12 text-sm font-bold bg-[#B30D12] hover:bg-[#9B0A0F] text-white rounded-lg transition-all"
+                  className="w-full h-12 text-sm font-bold bg-[#FE0000] hover:bg-[#9B0A0F] text-white rounded-lg transition-all"
                   isLoading={isSendingReset}
                   loadingText="Sending Recovery Code..."
                 >
@@ -1039,7 +1088,7 @@ export function LoginView() {
               <button
                 type="button"
                 onClick={() => setAuthMode("login")}
-                className="text-xs font-bold text-slate-600 hover:text-[#B30D12] inline-flex items-center gap-1"
+                className="text-xs font-bold text-slate-600 hover:text-[#FE0000] inline-flex items-center gap-1"
               >
                 <span>← Back to Sign In</span>
               </button>
@@ -1053,7 +1102,7 @@ export function LoginView() {
         {authMode === "change_password" && (
           <div className="space-y-5 animate-in fade-in duration-200">
             {/* Eyebrow */}
-            <span className="text-[12px] font-bold uppercase tracking-[0.06em] text-[#C40E14] antialiased block">
+            <span className="text-[12px] font-bold uppercase tracking-[0.06em] text-[#FE0000] antialiased block">
               SECURE ACCOUNT ACCESS
             </span>
 
@@ -1083,7 +1132,7 @@ export function LoginView() {
                   <Button
                     type="button"
                     onClick={() => router.push(getPortalRoute(email))}
-                    className="w-full h-11 text-xs font-bold bg-[#B30D12] hover:bg-[#9B0A0F] text-white rounded-lg"
+                    className="w-full h-11 text-xs font-bold bg-[#FE0000] hover:bg-[#9B0A0F] text-white rounded-lg"
                   >
                     Go to {getPortalName(email)} Now →
                   </Button>
@@ -1121,7 +1170,7 @@ export function LoginView() {
                       onChange={(e) => setCurrentPassword(e.target.value)}
                       placeholder="Current password or recovery PIN"
                       required
-                      className="w-full h-12 bg-white text-slate-900 text-sm font-medium border border-slate-300 rounded-lg pl-11 pr-11 focus:outline-none focus:border-[#B30D12] focus:ring-2 focus:ring-[#B30D12]/20"
+                      className="w-full h-12 bg-white text-slate-900 text-sm font-medium border border-slate-300 rounded-lg pl-11 pr-11 focus:outline-none focus:border-[#FE0000] focus:ring-2 focus:ring-[#FE0000]/20"
                     />
                     <button
                       type="button"
@@ -1156,7 +1205,7 @@ export function LoginView() {
                       onChange={(e) => setNewPassword(e.target.value)}
                       placeholder="Create new password"
                       required
-                      className="w-full h-12 bg-white text-slate-900 text-sm font-medium border border-slate-300 rounded-lg pl-11 pr-11 focus:outline-none focus:border-[#B30D12] focus:ring-2 focus:ring-[#B30D12]/20"
+                      className="w-full h-12 bg-white text-slate-900 text-sm font-medium border border-slate-300 rounded-lg pl-11 pr-11 focus:outline-none focus:border-[#FE0000] focus:ring-2 focus:ring-[#FE0000]/20"
                     />
                     <button
                       type="button"
@@ -1191,7 +1240,7 @@ export function LoginView() {
                       onChange={(e) => setConfirmPassword(e.target.value)}
                       placeholder="Repeat new password"
                       required
-                      className="w-full h-12 bg-white text-slate-900 text-sm font-medium border border-slate-300 rounded-lg pl-11 pr-11 focus:outline-none focus:border-[#B30D12] focus:ring-2 focus:ring-[#B30D12]/20"
+                      className="w-full h-12 bg-white text-slate-900 text-sm font-medium border border-slate-300 rounded-lg pl-11 pr-11 focus:outline-none focus:border-[#FE0000] focus:ring-2 focus:ring-[#FE0000]/20"
                     />
                     <button
                       type="button"
@@ -1262,7 +1311,7 @@ export function LoginView() {
                 <Button
                   type="submit"
                   size="lg"
-                  className="w-full h-12 text-sm font-bold bg-[#B30D12] hover:bg-[#9B0A0F] text-white rounded-lg transition-all"
+                  className="w-full h-12 text-sm font-bold bg-[#FE0000] hover:bg-[#9B0A0F] text-white rounded-lg transition-all"
                   isLoading={isUpdatingPassword}
                   loadingText="Updating Password..."
                   disabled={!isLengthValid || !hasUppercase || !hasNumberOrSymbol || !isMatch}
@@ -1276,7 +1325,7 @@ export function LoginView() {
               <button
                 type="button"
                 onClick={() => setAuthMode("login")}
-                className="text-xs font-bold text-slate-600 hover:text-[#B30D12] inline-flex items-center gap-1"
+                className="text-xs font-bold text-slate-600 hover:text-[#FE0000] inline-flex items-center gap-1"
               >
                 <span>← Return to Sign In</span>
               </button>
@@ -1284,6 +1333,20 @@ export function LoginView() {
           </div>
         )}
       </div>
+
+      {/* Terms of Trade & Privacy Policy Legal Modal */}
+      <LegalModal
+        isOpen={legalModalOpen}
+        onClose={() => setLegalModalOpen(false)}
+        initialDoc={legalDocType}
+        onAccept={() => {
+          setRegAcceptTerms(true);
+          setTermsAttemptedError(false);
+          setTermsAcknowledgedAt(
+            new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
+          );
+        }}
+      />
     </AuthLayout>
   );
 }

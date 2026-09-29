@@ -7,6 +7,19 @@ import {
   ShipmentMilestone,
   CustomerResponse,
 } from "@/types/shared";
+import {
+  getStatusBadgeClasses,
+  getPaymentBadgeClasses,
+  getShipmentMilestoneBadgeClasses,
+  getCustomerResponseBadgeClasses,
+} from "@/lib/status-styles";
+
+export {
+  getStatusBadgeClasses,
+  getPaymentBadgeClasses,
+  getShipmentMilestoneBadgeClasses,
+  getCustomerResponseBadgeClasses,
+};
 
 interface StatusBadgeProps {
   status: RequestStatus | string;
@@ -21,45 +34,11 @@ export function StatusBadge({ status, size = "md", className = "" }: StatusBadge
     lg: "px-3 py-1.5 text-sm font-semibold",
   };
 
-  const getStyle = (s: string) => {
-    switch (s) {
-      // In-Process States
-      case "Submitted":
-      case "Sourcing":
-      case "Quoted":
-      case "Approved":
-      case "Ordered":
-      case "Subadmin Review":
-      case "Ready for Dispatch":
-      case "Shipped":
-        return "bg-blue-50 text-blue-700 border-blue-200 ring-blue-600/10";
-      
-      // Financial Processing
-      case "Invoicing":
-        return "bg-indigo-50 text-indigo-700 border-indigo-200 ring-indigo-600/10";
-      
-      // Waiting / Attention States
-      case "Awaiting Payment":
-      case "Subadmin Pending":
-      case "Subadmin Hold":
-        return "bg-red-50 text-red-700 border-red-200 ring-red-600/10";
-      
-      // Completed States
-      case "Subadmin Approved":
-      case "Delivered":
-      case "Completed":
-        return "bg-green-50 text-green-700 border-green-200 ring-green-600/10";
-        
-      default:
-        return "bg-slate-50 text-slate-700 border-slate-200 ring-slate-600/10";
-    }
-  };
-
   return (
     <span
       className={`inline-flex items-center gap-1.5 rounded-full border shadow-xs transition-colors ${
         sizeClasses[size]
-      } ${getStyle(status)} ${className}`}
+      } ${getStatusBadgeClasses(status)} ${className}`}
     >
       <span className="w-1.5 h-1.5 rounded-full bg-current opacity-80" />
       {status}
@@ -74,23 +53,15 @@ export function PaymentStatusBadge({
   status: PaymentStatus | string;
   size?: "sm" | "md";
 }) {
-  const isPaid = status === "Paid";
+  const { badgeClass, dotClass, label } = getPaymentBadgeClasses(status);
   return (
     <span
       className={`inline-flex items-center gap-1 rounded-full font-semibold border ${
         size === "sm" ? "px-2 py-0.5 text-[11px]" : "px-2.5 py-1 text-xs"
-      } ${
-        isPaid
-          ? "bg-emerald-50 text-emerald-700 border-emerald-200"
-          : "bg-rose-50 text-rose-700 border-rose-200"
-      }`}
+      } ${badgeClass}`}
     >
-      <span
-        className={`w-1.5 h-1.5 rounded-full ${
-          isPaid ? "bg-emerald-500" : "bg-rose-500 animate-pulse"
-        }`}
-      />
-      {isPaid ? "Paid" : "Unpaid"}
+      <span className={`w-1.5 h-1.5 rounded-full ${dotClass}`} />
+      {label}
     </span>
   );
 }
@@ -100,9 +71,10 @@ export function ShipmentMilestoneBadge({
 }: {
   milestone: ShipmentMilestone | string;
 }) {
+  const { badgeClass, dotClass } = getShipmentMilestoneBadgeClasses(milestone);
   return (
-    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-slate-100 text-slate-800 border border-slate-200">
-      <span className="w-1.5 h-1.5 rounded-full bg-cyan-500" />
+    <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium border ${badgeClass}`}>
+      <span className={`w-1.5 h-1.5 rounded-full ${dotClass}`} />
       {milestone}
     </span>
   );
@@ -114,24 +86,15 @@ export function CustomerResponseBadge({
   response?: CustomerResponse | string;
 }) {
   if (!response) return null;
+  const badgeClass = getCustomerResponseBadgeClasses(response);
 
-  if (response === "Accepted") {
-    return (
-      <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800 border border-emerald-200">
-        Customer Response: Accepted
-      </span>
-    );
-  }
-  if (response === "Rejected") {
-    return (
-      <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-rose-100 text-rose-800 border border-rose-200">
-        Customer Response: Declined
-      </span>
-    );
-  }
   return (
-    <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-100 text-amber-800 border border-amber-200">
-      Info Requested
+    <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold border ${badgeClass}`}>
+      {response === "Accepted"
+        ? "Customer Response: Accepted"
+        : response === "Rejected"
+        ? "Customer Response: Declined"
+        : "Info Requested"}
     </span>
   );
 }

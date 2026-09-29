@@ -65,23 +65,23 @@ export function SubadminDashboardView() {
         {/* Subadmin Pending Card */}
         <div
           onClick={() => handleFilter("pending")}
-          className={`bg-white rounded-2xl border ${filter === "pending" ? 'border-[#B30D12] ring-1 ring-[#B30D12] bg-red-50/10' : 'border-slate-200/90 hover:border-red-300'} shadow-sm hover:shadow-md p-5 flex items-start justify-between cursor-pointer transition-all group`}
+          className={`bg-white rounded-2xl border ${filter === "pending" ? 'border-[#FE0000] ring-1 ring-[#FE0000] bg-red-50/10' : 'border-slate-200/90 hover:border-red-300'} shadow-sm hover:shadow-md p-5 flex items-start justify-between cursor-pointer transition-all group`}
         >
           <div className="space-y-1">
             <div className="flex items-center gap-1.5">
-              <span className={`text-[11px] font-bold ${filter === "pending" ? 'text-[#B30D12]' : 'text-slate-500'} group-hover:text-[#B30D12] transition-colors tracking-wider uppercase`}>
+              <span className={`text-[11px] font-bold ${filter === "pending" ? 'text-[#FE0000]' : 'text-slate-500'} group-hover:text-[#FE0000] transition-colors tracking-wider uppercase`}>
                 Subadmin Pending
               </span>
-              {pendingSubadminCount > 0 && <span className="w-2 h-2 rounded-full bg-[#B30D12] animate-pulse" />}
+              {pendingSubadminCount > 0 && <span className="w-2 h-2 rounded-full bg-[#FE0000] animate-pulse" />}
             </div>
-            <div className="text-3xl font-black text-slate-900 group-hover:text-[#B30D12] transition-colors">
+            <div className="text-3xl font-black text-slate-900 group-hover:text-[#FE0000] transition-colors">
               {pendingSubadminCount.toString().padStart(2, '0')}
             </div>
             <div className="text-xs text-slate-500 font-medium">
               Requires Inspection
             </div>
           </div>
-          <div className={`w-10 h-10 rounded-xl ${filter === "pending" ? 'bg-[#B30D12] text-white' : 'bg-red-50 text-[#B30D12] group-hover:bg-[#B30D12] group-hover:text-white'} transition-all flex items-center justify-center`}>
+          <div className={`w-10 h-10 rounded-xl ${filter === "pending" ? 'bg-[#FE0000] text-white' : 'bg-red-50 text-[#FE0000] group-hover:bg-[#FE0000] group-hover:text-white'} transition-all flex items-center justify-center`}>
             <Camera className="w-5 h-5" />
           </div>
         </div>
@@ -159,7 +159,7 @@ export function SubadminDashboardView() {
           <div>
             <div className="flex items-center gap-2.5">
               <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
-                <Package className="w-5 h-5 text-[#B30D12]" />
+                <Package className="w-5 h-5 text-[#FE0000]" />
                 Quality Assurance Queue
               </h2>
               <span className="text-[11px] font-bold text-slate-500 bg-slate-100 px-2.5 py-0.5 rounded-full">
@@ -169,7 +169,7 @@ export function SubadminDashboardView() {
             {filter && (
               <p className="text-xs text-slate-500 mt-1 flex items-center">
                 Showing {filter === "pending" ? "Pending Inspection" : filter === "review" ? "Awaiting Admin Approval" : filter === "hold" ? "On Hold" : "Approved"} items.
-                <button onClick={(e) => { e.stopPropagation(); handleFilter(null); }} className="ml-2 text-[#B30D12] hover:underline font-medium">Clear Filter</button>
+                <button onClick={(e) => { e.stopPropagation(); handleFilter(null); }} className="ml-2 text-[#FE0000] hover:underline font-medium">Clear Filter</button>
               </p>
             )}
           </div>
@@ -201,7 +201,7 @@ export function SubadminDashboardView() {
                 {SubadminRequests.map((req) => (
                   <tr key={req.id} className="hover:bg-slate-50/80 transition-colors group cursor-pointer" onClick={() => setSelectedRequestId(req.id)}>
                     <td className="px-6 py-4">
-                      <div className="font-mono font-bold text-slate-900 group-hover:text-[#B30D12] transition-colors">{req.requestNumber}</div>
+                      <div className="font-mono font-bold text-slate-900 group-hover:text-[#FE0000] transition-colors">{req.requestNumber}</div>
                       <div className="text-[11px] text-slate-500 mt-0.5 font-medium">
                         Ref: {req.selectedQuotationId ? req.supplierQuotations?.find(q => q.id === req.selectedQuotationId)?.supplierPartRef : "N/A"}
                       </div>
@@ -216,7 +216,7 @@ export function SubadminDashboardView() {
                     </td>
                     <td className="px-6 py-4">
                       <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${req.status === "Subadmin Pending"
-                        ? "bg-red-50 text-[#B30D12] border border-red-200"
+                        ? "bg-red-50 text-[#FE0000] border border-red-200"
                         : req.status === "Subadmin Review"
                           ? "bg-amber-50 text-amber-600 border border-amber-200"
                           : req.status === "Subadmin Hold"
@@ -240,7 +240,7 @@ export function SubadminDashboardView() {
                           setSelectedRequestId(req.id);
                         }}
                         className={`inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-lg text-xs font-bold transition-all shadow-sm active:scale-95 ${req.status === "Subadmin Pending"
-                          ? "bg-[#B30D12] text-white hover:bg-[#9B0A0F]"
+                          ? "bg-[#FE0000] text-white hover:bg-[#9B0A0F]"
                           : "bg-white border border-slate-200 text-slate-700 hover:bg-slate-50"
                           }`}
                       >

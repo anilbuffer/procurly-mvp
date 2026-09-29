@@ -235,7 +235,7 @@ export function PaymentTab({ request: initialRequest, onNavigateToTab }: Payment
                 disabled={!isPaid}
                 onClick={() => setShowOrderModal(true)}
                 className={`px-5 py-2.5 rounded-xl text-xs font-bold transition-all shadow-xs flex items-center gap-2 ${isPaid
-                  ? "bg-[#B30D12] hover:bg-[#C8101E] text-white shadow-red-900/20"
+                  ? "bg-[#FE0000] hover:bg-[#C8101E] text-white shadow-red-900/20"
                   : "bg-slate-200 text-slate-400 cursor-not-allowed"
                   }`}
               >
@@ -258,7 +258,7 @@ export function PaymentTab({ request: initialRequest, onNavigateToTab }: Payment
         <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-xs">
           <div className="flex items-center justify-between pb-3 mb-3 border-b border-slate-100">
             <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wider flex items-center gap-2">
-              <ShoppingBag className="w-4 h-4 text-[#B30D12]" />
+              <ShoppingBag className="w-4 h-4 text-[#FE0000]" />
               Active Supplier Order (PO)
             </h3>
             <span className="text-xs font-mono font-bold text-slate-700 bg-slate-100 px-2 py-0.5 rounded">
@@ -301,7 +301,7 @@ export function PaymentTab({ request: initialRequest, onNavigateToTab }: Payment
           <div className="mt-4 pt-4 border-t border-slate-100 bg-slate-50/70 rounded-xl p-4 border border-slate-200 text-xs">
             <div className="flex flex-wrap items-center justify-between gap-2 mb-3 pb-2 border-b border-slate-200">
               <span className="text-[11px] font-bold text-slate-800 uppercase tracking-wider flex items-center gap-1.5">
-                <User className="w-3.5 h-3.5 text-[#B30D12]" />
+                <User className="w-3.5 h-3.5 text-[#FE0000]" />
                 <span>Supplier Handover: Requester Consignment Details</span>
               </span>
               <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-slate-200/80 text-slate-800">
@@ -414,7 +414,7 @@ export function PaymentTab({ request: initialRequest, onNavigateToTab }: Payment
             {/* Header */}
             <div className="flex items-start gap-4">
               <div className="w-10 h-10 bg-rose-50 rounded-2xl flex items-center justify-center shrink-0 border border-rose-100 shadow-inner">
-                <ShoppingBag className="w-5 h-5 text-[#B30D12]" />
+                <ShoppingBag className="w-5 h-5 text-[#FE0000]" />
               </div>
               <div>
                 <h3 className="text-lg font-bold text-slate-900 mb-1">Place Supplier Order (PO)</h3>
@@ -428,7 +428,7 @@ export function PaymentTab({ request: initialRequest, onNavigateToTab }: Payment
             <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 text-xs space-y-3">
               <div className="flex items-center justify-between pb-2 border-b border-slate-200">
                 <span className="font-bold text-slate-800 uppercase tracking-wider text-[11px] flex items-center gap-1.5">
-                  <User className="w-3.5 h-3.5 text-[#B30D12]" />
+                  <User className="w-3.5 h-3.5 text-[#FE0000]" />
                   <span>Supplier Handover: Requester & Consignment Details</span>
                 </span>
                 <span className="text-[10px] font-mono font-bold text-slate-600 bg-white border border-slate-200 px-2 py-0.5 rounded">
@@ -503,7 +503,7 @@ export function PaymentTab({ request: initialRequest, onNavigateToTab }: Payment
                   <select
                     value={handoverMode}
                     onChange={(e) => setHandoverMode(e.target.value as any)}
-                    className="text-xs py-1 px-2 rounded-lg border border-slate-300 bg-white font-medium text-slate-800 focus:outline-none focus:border-[#B30D12]"
+                    className="text-xs py-1 px-2 rounded-lg border border-slate-300 bg-white font-medium text-slate-800 focus:outline-none focus:border-[#FE0000]"
                   >
                     <option value="Consolidated via Autohub Hub">Consolidated via Autohub Auckland Hub (MPI Clearance First)</option>
                     <option value="Direct Drop-ship to Requester">Direct Drop-ship to Requester Workshop Bay</option>
@@ -524,7 +524,7 @@ export function PaymentTab({ request: initialRequest, onNavigateToTab }: Payment
                         setOrderNotes("Airfreight consolidation. Please affix Autohub barcoded consignment labels.");
                       }
                     }}
-                    className="w-3.5 h-3.5 text-[#B30D12] rounded border-slate-300 focus:ring-[#B30D12]"
+                    className="w-3.5 h-3.5 text-[#FE0000] rounded border-slate-300 focus:ring-[#FE0000]"
                   />
                   <span>Include Requester in Dispatch Notes</span>
                 </label>
@@ -546,7 +546,7 @@ export function PaymentTab({ request: initialRequest, onNavigateToTab }: Payment
                       value={orderSupplierName}
                       onChange={(e) => setOrderSupplierName(e.target.value)}
                       required
-                      className="w-full text-sm pl-10 pr-4 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-4 focus:ring-[#B30D12]/10 focus:border-[#B30D12] transition-all bg-white shadow-sm"
+                      className="w-full text-sm pl-10 pr-4 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-4 focus:ring-[#FE0000]/10 focus:border-[#FE0000] transition-all bg-white shadow-sm"
                     />
                   </div>
                 </div>
@@ -564,7 +564,7 @@ export function PaymentTab({ request: initialRequest, onNavigateToTab }: Payment
                       value={orderSupplierRef}
                       onChange={(e) => setOrderSupplierRef(e.target.value)}
                       required
-                      className="w-full text-sm pl-10 pr-4 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-4 focus:ring-[#B30D12]/10 focus:border-[#B30D12] transition-all bg-white font-mono shadow-sm"
+                      className="w-full text-sm pl-10 pr-4 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-4 focus:ring-[#FE0000]/10 focus:border-[#FE0000] transition-all bg-white font-mono shadow-sm"
                     />
                   </div>
                 </div>
@@ -583,7 +583,7 @@ export function PaymentTab({ request: initialRequest, onNavigateToTab }: Payment
                       value={orderCost}
                       onChange={(e) => setOrderCost(Number(e.target.value))}
                       required
-                      className="w-full text-sm pl-10 pr-4 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-4 focus:ring-[#B30D12]/10 focus:border-[#B30D12] transition-all bg-white shadow-sm"
+                      className="w-full text-sm pl-10 pr-4 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-4 focus:ring-[#FE0000]/10 focus:border-[#FE0000] transition-all bg-white shadow-sm"
                     />
                   </div>
                 </div>
@@ -601,7 +601,7 @@ export function PaymentTab({ request: initialRequest, onNavigateToTab }: Payment
                     value={orderNotes}
                     onChange={(e) => setOrderNotes(e.target.value)}
                     rows={4}
-                    className="w-full text-sm pl-10 pr-4 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-4 focus:ring-[#B30D12]/10 focus:border-[#B30D12] transition-all bg-white shadow-sm resize-none custom-scrollbar"
+                    className="w-full text-sm pl-10 pr-4 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-4 focus:ring-[#FE0000]/10 focus:border-[#FE0000] transition-all bg-white shadow-sm resize-none custom-scrollbar"
                   />
                 </div>
               </div>
@@ -616,7 +616,7 @@ export function PaymentTab({ request: initialRequest, onNavigateToTab }: Payment
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2.5 text-sm font-bold bg-[#B30D12] hover:bg-[#C8101E] text-white rounded-xl shadow-sm hover:shadow-md transition-all flex items-center gap-2 group"
+                  className="px-5 py-2.5 text-sm font-bold bg-[#FE0000] hover:bg-[#C8101E] text-white rounded-xl shadow-sm hover:shadow-md transition-all flex items-center gap-2 group"
                 >
                   <ShoppingBag className="w-4 h-4 group-hover:-translate-y-0.5 transition-transform duration-300" />
                   Confirm Order Release

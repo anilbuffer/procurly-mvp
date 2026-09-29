@@ -34,6 +34,10 @@ export function InvoiceDocument({
   isModal = false,
   standaloneUrl,
 }: InvoiceDocumentProps) {
+  const hasUploadedPdf = Boolean(request.payment?.invoiceUrl);
+  const [viewMode, setViewMode] = useState<"uploaded_pdf" | "breakdown">(
+    hasUploadedPdf ? "uploaded_pdf" : "breakdown"
+  );
   const [copiedField, setCopiedField] = useState<string | null>(null);
 
   const invoiceNumber =
@@ -97,7 +101,7 @@ export function InvoiceDocument({
     body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; color: #0f172a; margin: 0; padding: 40px; background: #fff; line-height: 1.5; }
     .container { max-width: 800px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 12px; padding: 40px; }
     .header { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid #e2e8f0; padding-bottom: 24px; margin-bottom: 30px; }
-    .brand-title { color: #B30D12; font-size: 28px; font-weight: 900; margin: 0; letter-spacing: -0.5px; }
+    .brand-title { color: #FE0000; font-size: 28px; font-weight: 900; margin: 0; letter-spacing: -0.5px; }
     .brand-sub { color: #64748b; font-size: 13px; font-weight: 600; text-transform: uppercase; margin-top: 4px; }
     .invoice-title { font-size: 26px; font-weight: 800; text-transform: uppercase; text-align: right; margin: 0 0 8px 0; color: #0f172a; }
     .meta-text { font-size: 13px; color: #475569; margin: 3px 0; text-align: right; }
@@ -159,7 +163,7 @@ export function InvoiceDocument({
           <strong>Account Name:</strong> Procurly NZ Ltd<br>
           <strong>Account No:</strong> 01-0288-0349821-00<br>
           <strong>SWIFT / BIC:</strong> ANZBNZ22<br>
-          <strong style="color: #B30D12;">Reference:</strong> ${invoiceNumber}
+          <strong style="color: #FE0000;">Reference:</strong> ${invoiceNumber}
         </div>
       </div>
     </div>
@@ -239,7 +243,7 @@ export function InvoiceDocument({
       {/* Top Action Bar (Non-printable) */}
       <div className="mb-6 flex flex-wrap items-center justify-between gap-3 bg-white p-4 rounded-2xl border border-slate-200 shadow-xs print:hidden">
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#B30D12] to-[#ED2025] text-white flex items-center justify-center font-bold text-sm shadow-xs">
+          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#FE0000] to-[#ED2025] text-white flex items-center justify-center font-bold text-sm shadow-xs">
             <FileText className="w-4 h-4" />
           </div>
           <div>
@@ -248,11 +252,10 @@ export function InvoiceDocument({
                 {invoiceNumber}
               </span>
               <span
-                className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase border ${
-                  isPaid
+                className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase border ${isPaid
                     ? "bg-emerald-50 text-emerald-700 border-emerald-200"
                     : "bg-amber-50 text-amber-700 border-amber-200"
-                }`}
+                  }`}
               >
                 {isPaid ? "Paid in Full" : "Awaiting Settlement"}
               </span>
@@ -264,14 +267,27 @@ export function InvoiceDocument({
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
-          {/* Download HTML/PDF File */}
+          {/* Download Official Uploaded PDF if available */}
+          {hasUploadedPdf && request.payment?.invoiceUrl && (
+            <a
+              href={request.payment.invoiceUrl}
+              download={request.payment.invoiceFileName || `Tax_Invoice_${invoiceNumber}.pdf`}
+              className="px-3.5 py-2 bg-[#FE0000] hover:bg-[#9B0A0F] text-white font-bold text-xs rounded-xl transition-all flex items-center gap-1.5 shadow-xs"
+              title="Download official attached PDF invoice"
+            >
+              <Download className="w-3.5 h-3.5" />
+              <span>Download PDF</span>
+            </a>
+          )}
+
+          {/* Download HTML/Summary File */}
           <button
             onClick={handleDownloadHtml}
             className="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-xl transition-all flex items-center gap-1.5"
-            title="Download offline invoice file"
+            title="Download offline invoice breakdown"
           >
             <Download className="w-3.5 h-3.5 text-slate-600" />
-            <span>Download Invoice</span>
+            <span>{hasUploadedPdf ? "Summary File" : "Download Invoice"}</span>
           </button>
 
           {/* Print / Save as PDF */}
@@ -281,7 +297,7 @@ export function InvoiceDocument({
             title="Print or Save as PDF"
           >
             <Printer className="w-3.5 h-3.5" />
-            <span>Print / Save PDF</span>
+            <span>Print</span>
           </button>
 
           {/* Standalone link if in modal */}
@@ -297,14 +313,15 @@ export function InvoiceDocument({
             </Link>
           )}
 
-          {/* Pay Now Button if Unpaid */}
+          {/* Settlement Details / Pay Instructions Button if Unpaid */}
           {!isPaid && onPayNow && (
             <button
               onClick={onPayNow}
-              className="px-3.5 py-2 bg-[#B30D12] hover:bg-[#9B0A0F] text-white font-bold text-xs rounded-xl transition-all flex items-center gap-1.5 shadow-xs"
+              className="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl transition-all flex items-center gap-1.5 shadow-xs cursor-pointer"
+              title="View bank deposit and payment settlement details"
             >
               <CreditCard className="w-3.5 h-3.5" />
-              <span>Record Payment →</span>
+              <span>Settlement Instructions →</span>
             </button>
           )}
 
@@ -312,7 +329,7 @@ export function InvoiceDocument({
           {isModal && onClose && (
             <button
               onClick={onClose}
-              className="p-2 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-xl transition-colors ml-1"
+              className="p-2 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-xl transition-colors ml-1 cursor-pointer"
               title="Close viewer"
             >
               <X className="w-5 h-5" />
@@ -321,293 +338,384 @@ export function InvoiceDocument({
         </div>
       </div>
 
-      {/* Printable Invoice Sheet */}
-      <div className="bg-white p-8 sm:p-12 md:p-16 border border-slate-200 rounded-2xl shadow-sm text-slate-800 print:border-none print:shadow-none print:p-0 print:m-0 w-full max-w-4xl mx-auto">
-        {/* Header */}
-        <div className="flex flex-col sm:flex-row justify-between items-start gap-6 border-b-2 border-slate-900 pb-8 mb-8">
-          <div>
-            <div className="flex items-center gap-2 mb-1">
-              <span className="text-3xl font-black italic tracking-tighter text-[#B30D12]">
-                PROCURLY
-              </span>
-              <span className="text-xs font-bold uppercase tracking-wider bg-slate-100 text-slate-600 px-2 py-0.5 rounded">
-                Procurement
-              </span>
-            </div>
-            <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
-              Procurly NZ Ltd &bull; Trade Procurement Solutions
-            </p>
-            <div className="text-xs text-slate-500 mt-2 space-y-0.5">
-              <p>NZ GST Registration: <strong>134-892-741</strong></p>
-              <p>NZBN: <strong>9429048392014</strong></p>
-              <p>Level 3, 102 Hobson Street, Auckland Central, 1010</p>
-              <p>Email: accounts@procurly.co.nz &bull; Tel: +64 9 303 3338</p>
-            </div>
-          </div>
-
-          <div className="text-left sm:text-right">
-            <h2 className="text-3xl font-black uppercase tracking-tight text-slate-900 mb-1">
-              Tax Invoice
-            </h2>
-            <div className="space-y-1 text-xs text-slate-600">
-              <p>
-                <strong>Invoice Number:</strong>{" "}
-                <span className="font-mono font-bold text-slate-900">
-                  {invoiceNumber}
-                </span>
-              </p>
-              <p>
-                <strong>Date of Issue:</strong> {issueDate}
-              </p>
-              <p>
-                <strong>Due Date:</strong> {dueDate}
-              </p>
-              <p>
-                <strong>Request Ref:</strong>{" "}
-                <span className="font-mono text-slate-700">
-                  {request.requestNumber}
-                </span>
-              </p>
-            </div>
-            <div className="mt-3 sm:flex sm:justify-end">
-              <span
-                className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider border ${
-                  isPaid
-                    ? "bg-emerald-100 text-emerald-800 border-emerald-300"
-                    : "bg-amber-100 text-amber-900 border-amber-300"
+      {/* Tab Switcher between Uploaded PDF and System Breakdown */}
+      {hasUploadedPdf && (
+        <div className="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-2.5 rounded-2xl border border-slate-200 shadow-xs print:hidden">
+          <div className="flex items-center gap-1.5 bg-slate-100 p-1 rounded-xl">
+            <button
+              type="button"
+              onClick={() => setViewMode("uploaded_pdf")}
+              className={`px-4 py-2 text-xs font-bold rounded-lg transition-all flex items-center gap-2 cursor-pointer ${viewMode === "uploaded_pdf"
+                  ? "bg-white text-slate-900 shadow-xs border border-slate-200"
+                  : "text-slate-600 hover:text-slate-900"
                 }`}
+            >
+              <FileText className="w-3.5 h-3.5 text-[#FE0000]" />
+              <span>Uploaded PDF Invoice</span>
+              <span className="text-[10px] bg-red-100 text-[#FE0000] px-1.5 py-0.2 rounded-full font-bold">
+                Official
+              </span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setViewMode("breakdown")}
+              className={`px-4 py-2 text-xs font-bold rounded-lg transition-all flex items-center gap-2 cursor-pointer ${viewMode === "breakdown"
+                  ? "bg-white text-slate-900 shadow-xs border border-slate-200"
+                  : "text-slate-600 hover:text-slate-900"
+                }`}
+            >
+              <FileText className="w-3.5 h-3.5 text-slate-400" />
+              <span>System Itemized Summary</span>
+            </button>
+          </div>
+
+          <div className="text-xs text-slate-500 font-medium px-2">
+            Attached File:{" "}
+            <span className="font-bold text-slate-800 font-mono">
+              {request.payment?.invoiceFileName || "Official_Invoice.pdf"}
+            </span>
+          </div>
+        </div>
+      )}
+
+      {/* VIEW 1: EMBEDDED UPLOADED PDF */}
+      {hasUploadedPdf && viewMode === "uploaded_pdf" && request.payment?.invoiceUrl ? (
+        <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm flex flex-col w-full max-w-5xl mx-auto">
+          {/* PDF Viewer Header */}
+          <div className="px-6 py-4 bg-slate-50 border-b border-slate-200 flex flex-wrap items-center justify-between gap-3">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-red-50 border border-red-200 text-[#FE0000] flex items-center justify-center font-bold">
+                <FileText className="w-5 h-5" />
+              </div>
+              <div>
+                <h3 className="text-sm font-bold text-slate-900">
+                  {request.payment?.invoiceFileName || `Official_Tax_Invoice_${invoiceNumber}.pdf`}
+                </h3>
+                <p className="text-xs text-slate-500">
+                  Official accounts receivable invoice attached by Autohub Finance
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <a
+                href={request.payment.invoiceUrl}
+                download={request.payment?.invoiceFileName || `Invoice_${invoiceNumber}.pdf`}
+                className="px-3 py-1.5 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-bold rounded-lg transition-colors flex items-center gap-1.5 shadow-xs"
               >
-                {isPaid ? (
-                  <>
-                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-700" />
-                    <span>Paid in Full</span>
-                  </>
-                ) : (
-                  <>
-                    <Clock className="w-3.5 h-3.5 text-amber-700" />
-                    <span>Payment Due</span>
-                  </>
-                )}
-              </span>
+                <Download className="w-3.5 h-3.5 text-slate-500" />
+                <span>Download</span>
+              </a>
+              <a
+                href={request.payment.invoiceUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-3 py-1.5 bg-[#FE0000] hover:bg-[#9B0A0F] text-white text-xs font-bold rounded-lg transition-colors flex items-center gap-1.5 shadow-xs"
+              >
+                <ExternalLink className="w-3.5 h-3.5" />
+                <span>Full Window</span>
+              </a>
             </div>
           </div>
-        </div>
 
-        {/* Billed To & Bank Remittance Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
-          {/* Customer Card */}
-          <div className="bg-slate-50/70 border border-slate-200 rounded-xl p-5">
-            <h3 className="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-2 flex items-center gap-1.5">
-              <Building2 className="w-3.5 h-3.5 text-slate-500" />
-              <span>Billed To</span>
-            </h3>
-            <p className="text-base font-bold text-slate-900">
-              {request.customerName}
-            </p>
-            <div className="text-xs text-slate-600 mt-1 leading-relaxed">
-              <p>Attn: <strong>{request.contactName}</strong></p>
-              <p>{request.deliveryAddress?.streetAddress || "Designated Trade Facility"}</p>
-              <p>
-                {request.deliveryAddress?.suburb
-                  ? `${request.deliveryAddress.suburb}, `
-                  : ""}
-                {request.deliveryAddress?.city || "Auckland"}{" "}
-                {request.deliveryAddress?.postalCode || ""}
+          {/* Embedded PDF iframe */}
+          <div className="w-full h-[750px] bg-slate-100 flex flex-col items-center justify-center relative">
+            <iframe
+              src={request.payment.invoiceUrl}
+              className="w-full h-full border-none"
+              title="Official Uploaded Tax Invoice PDF"
+            />
+          </div>
+        </div>
+      ) : (
+        /* VIEW 2: PRINTABLE ITEMISED INVOICE SHEET */
+        <div className="bg-white p-8 sm:p-12 md:p-16 border border-slate-200 rounded-2xl shadow-sm text-slate-800 print:border-none print:shadow-none print:p-0 print:m-0 w-full max-w-4xl mx-auto">
+          {/* Header */}
+          <div className="flex flex-col sm:flex-row justify-between items-start gap-6 border-b-2 border-slate-900 pb-8 mb-8">
+            <div>
+              <div className="flex items-center gap-2 mb-1">
+                <span className="text-3xl font-black italic tracking-tighter text-[#FE0000]">
+                  PROCURLY
+                </span>
+                <span className="text-xs font-bold uppercase tracking-wider bg-slate-100 text-slate-600 px-2 py-0.5 rounded">
+                  Procurement
+                </span>
+              </div>
+              <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                Procurly NZ Ltd &bull; Trade Procurement Solutions
               </p>
-              <p>New Zealand</p>
+              <div className="text-xs text-slate-500 mt-2 space-y-0.5">
+                <p>NZ GST Registration: <strong>134-892-741</strong></p>
+                <p>NZBN: <strong>9429048392014</strong></p>
+                <p>Level 3, 102 Hobson Street, Auckland Central, 1010</p>
+                <p>Email: accounts@procurly.co.nz &bull; Tel: +64 9 303 3338</p>
+              </div>
+            </div>
+
+            <div className="text-left sm:text-right">
+              <h2 className="text-3xl font-black uppercase tracking-tight text-slate-900 mb-1">
+                Tax Invoice
+              </h2>
+              <div className="space-y-1 text-xs text-slate-600">
+                <p>
+                  <strong>Invoice Number:</strong>{" "}
+                  <span className="font-mono font-bold text-slate-900">
+                    {invoiceNumber}
+                  </span>
+                </p>
+                <p>
+                  <strong>Date of Issue:</strong> {issueDate}
+                </p>
+                <p>
+                  <strong>Due Date:</strong> {dueDate}
+                </p>
+                <p>
+                  <strong>Request Ref:</strong>{" "}
+                  <span className="font-mono text-slate-700">
+                    {request.requestNumber}
+                  </span>
+                </p>
+              </div>
+              <div className="mt-3 sm:flex sm:justify-end">
+                <span
+                  className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider border ${isPaid
+                      ? "bg-emerald-100 text-emerald-800 border-emerald-300"
+                      : "bg-amber-100 text-amber-900 border-amber-300"
+                    }`}
+                >
+                  {isPaid ? (
+                    <>
+                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-700" />
+                      <span>Paid in Full</span>
+                    </>
+                  ) : (
+                    <>
+                      <Clock className="w-3.5 h-3.5 text-amber-700" />
+                      <span>Payment Due</span>
+                    </>
+                  )}
+                </span>
+              </div>
             </div>
           </div>
 
-          {/* Payment Instructions Card */}
-          <div className="bg-slate-50/70 border border-slate-200 rounded-xl p-5 relative">
-            <h3 className="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-2 flex items-center gap-1.5">
-              <CreditCard className="w-3.5 h-3.5 text-slate-500" />
-              <span>Remittance / Bank Transfer</span>
-            </h3>
-            <div className="text-xs text-slate-700 space-y-1">
-              <p><strong>Bank:</strong> ANZ New Zealand</p>
-              <p><strong>Account Name:</strong> Procurly NZ Ltd</p>
-              <div className="flex items-center justify-between bg-white p-2 rounded-lg border border-slate-200 mt-1">
-                <span className="font-mono font-bold text-slate-900">
-                  01-0288-0349821-00
-                </span>
-                <button
-                  type="button"
-                  onClick={() => handleCopy("01-0288-0349821-00", "account")}
-                  className="text-[11px] font-bold text-slate-500 hover:text-slate-900 flex items-center gap-1 print:hidden"
-                >
-                  {copiedField === "account" ? (
-                    <Check className="w-3 h-3 text-emerald-600" />
-                  ) : (
-                    <Copy className="w-3 h-3" />
-                  )}
-                  <span>{copiedField === "account" ? "Copied" : "Copy"}</span>
-                </button>
+          {/* Billed To & Bank Remittance Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+            {/* Customer Card */}
+            <div className="bg-slate-50/70 border border-slate-200 rounded-xl p-5">
+              <h3 className="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-2 flex items-center gap-1.5">
+                <Building2 className="w-3.5 h-3.5 text-slate-500" />
+                <span>Billed To</span>
+              </h3>
+              <p className="text-base font-bold text-slate-900">
+                {request.customerName}
+              </p>
+              <div className="text-xs text-slate-600 mt-1 leading-relaxed">
+                <p>Attn: <strong>{request.contactName}</strong></p>
+                <p>{request.deliveryAddress?.streetAddress || "Designated Trade Facility"}</p>
+                <p>
+                  {request.deliveryAddress?.suburb
+                    ? `${request.deliveryAddress.suburb}, `
+                    : ""}
+                  {request.deliveryAddress?.city || "Auckland"}{" "}
+                  {request.deliveryAddress?.postalCode || ""}
+                </p>
+                <p>New Zealand</p>
               </div>
-              <div className="flex items-center justify-between bg-white p-2 rounded-lg border border-slate-200 mt-1">
-                <span className="text-slate-600 text-[11px]">
-                  Ref: <strong className="text-[#B30D12] font-mono">{invoiceNumber}</strong>
-                </span>
-                <button
-                  type="button"
-                  onClick={() => handleCopy(invoiceNumber, "ref")}
-                  className="text-[11px] font-bold text-[#B30D12] hover:underline flex items-center gap-1 print:hidden"
-                >
-                  {copiedField === "ref" ? (
-                    <Check className="w-3 h-3 text-emerald-600" />
-                  ) : (
-                    <Copy className="w-3 h-3" />
-                  )}
-                  <span>{copiedField === "ref" ? "Copied" : "Copy Ref"}</span>
-                </button>
+            </div>
+
+            {/* Payment Instructions Card */}
+            <div className="bg-slate-50/70 border border-slate-200 rounded-xl p-5 relative">
+              <h3 className="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-2 flex items-center gap-1.5">
+                <CreditCard className="w-3.5 h-3.5 text-slate-500" />
+                <span>Remittance / Bank Transfer</span>
+              </h3>
+              <div className="text-xs text-slate-700 space-y-1">
+                <p><strong>Bank:</strong> ANZ New Zealand</p>
+                <p><strong>Account Name:</strong> Procurly NZ Ltd</p>
+                <div className="flex items-center justify-between bg-white p-2 rounded-lg border border-slate-200 mt-1">
+                  <span className="font-mono font-bold text-slate-900">
+                    01-0288-0349821-00
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => handleCopy("01-0288-0349821-00", "account")}
+                    className="text-[11px] font-bold text-slate-500 hover:text-slate-900 flex items-center gap-1 print:hidden"
+                  >
+                    {copiedField === "account" ? (
+                      <Check className="w-3 h-3 text-emerald-600" />
+                    ) : (
+                      <Copy className="w-3 h-3" />
+                    )}
+                    <span>{copiedField === "account" ? "Copied" : "Copy"}</span>
+                  </button>
+                </div>
+                <div className="flex items-center justify-between bg-white p-2 rounded-lg border border-slate-200 mt-1">
+                  <span className="text-slate-600 text-[11px]">
+                    Ref: <strong className="text-[#FE0000] font-mono">{invoiceNumber}</strong>
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => handleCopy(invoiceNumber, "ref")}
+                    className="text-[11px] font-bold text-[#FE0000] hover:underline flex items-center gap-1 print:hidden"
+                  >
+                    {copiedField === "ref" ? (
+                      <Check className="w-3 h-3 text-emerald-600" />
+                    ) : (
+                      <Copy className="w-3 h-3" />
+                    )}
+                    <span>{copiedField === "ref" ? "Copied" : "Copy Ref"}</span>
+                  </button>
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
-        {/* Vehicle & Sourcing Metadata Banner */}
-        <div className="bg-slate-100/70 border border-slate-200 rounded-xl px-5 py-3 mb-8 flex flex-wrap items-center justify-between gap-4 text-xs">
-          <div>
-            <span className="text-slate-400 font-bold uppercase text-[10px] block">
-              Vehicle Identified
-            </span>
-            <span className="font-bold text-slate-900 text-sm">
-              {request.vehicle.year} {request.vehicle.make} {request.vehicle.model}
-            </span>
-            {request.vehicle.vin && (
-              <span className="text-slate-500 font-mono text-xs ml-2">
-                (VIN: {request.vehicle.vin})
-              </span>
-            )}
-          </div>
-          <div className="flex items-center gap-4 text-slate-600">
+          {/* Vehicle & Sourcing Metadata Banner */}
+          <div className="bg-slate-100/70 border border-slate-200 rounded-xl px-5 py-3 mb-8 flex flex-wrap items-center justify-between gap-4 text-xs">
             <div>
               <span className="text-slate-400 font-bold uppercase text-[10px] block">
-                Destination
+                Vehicle Identified
               </span>
-              <span className="font-semibold text-slate-800">
-                {request.deliveryAddress?.city || "New Zealand"}
+              <span className="font-bold text-slate-900 text-sm">
+                {request.vehicle.year} {request.vehicle.make} {request.vehicle.model}
               </span>
+              {request.vehicle.vin && (
+                <span className="text-slate-500 font-mono text-xs ml-2">
+                  (VIN: {request.vehicle.vin})
+                </span>
+              )}
             </div>
-            <div className="border-l border-slate-200 pl-4">
-              <span className="text-slate-400 font-bold uppercase text-[10px] block">
-                Payment Terms
-              </span>
-              <span className="font-semibold text-slate-800">
-                Net 5 Days
-              </span>
+            <div className="flex items-center gap-4 text-slate-600">
+              <div>
+                <span className="text-slate-400 font-bold uppercase text-[10px] block">
+                  Destination
+                </span>
+                <span className="font-semibold text-slate-800">
+                  {request.deliveryAddress?.city || "New Zealand"}
+                </span>
+              </div>
+              <div className="border-l border-slate-200 pl-4">
+                <span className="text-slate-400 font-bold uppercase text-[10px] block">
+                  Payment Terms
+                </span>
+                <span className="font-semibold text-slate-800">
+                  Net 5 Days
+                </span>
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* Itemized Line Items Table */}
-        <table className="w-full text-left mb-8 text-xs border-collapse">
-          <thead>
-            <tr className="border-b-2 border-slate-900 text-slate-900">
-              <th className="py-3 font-bold uppercase tracking-wider">Item & Description</th>
-              <th className="py-3 font-bold uppercase tracking-wider text-center w-16">Qty</th>
-              <th className="py-3 font-bold uppercase tracking-wider text-right w-28">Unit Price</th>
-              <th className="py-3 font-bold uppercase tracking-wider text-right w-32">Total (NZD)</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-slate-100 text-slate-700">
-            <tr>
-              <td className="py-4 pr-4">
-                <p className="font-bold text-slate-900 text-sm">
-                  {request.part.name}
-                </p>
-                <p className="text-slate-500 text-[11px] mt-0.5">
-                  {request.part.partNumber && (
-                    <span className="font-mono font-medium">OEM Part #{request.part.partNumber} &bull; </span>
-                  )}
-                  Condition: {request.part.condition || "Genuine OEM Verified"} &bull; Guaranteed Fitment
-                </p>
-              </td>
-              <td className="py-4 text-center font-bold text-slate-900">
-                {request.part.quantity || 1}
-              </td>
-              <td className="py-4 text-right font-mono font-semibold">
-                ${subtotal.toFixed(2)}
-              </td>
-              <td className="py-4 text-right font-mono font-bold text-slate-900">
-                ${subtotal.toFixed(2)}
-              </td>
-            </tr>
-
-            {freight > 0 && (
+          {/* Itemized Line Items Table */}
+          <table className="w-full text-left mb-8 text-xs border-collapse">
+            <thead>
+              <tr className="border-b-2 border-slate-900 text-slate-900">
+                <th className="py-3 font-bold uppercase tracking-wider">Item & Description</th>
+                <th className="py-3 font-bold uppercase tracking-wider text-center w-16">Qty</th>
+                <th className="py-3 font-bold uppercase tracking-wider text-right w-28">Unit Price</th>
+                <th className="py-3 font-bold uppercase tracking-wider text-right w-32">Total (NZD)</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-100 text-slate-700">
               <tr>
                 <td className="py-4 pr-4">
                   <p className="font-bold text-slate-900 text-sm">
-                    Consolidated International Freight & Logistics
+                    {request.part.name}
                   </p>
                   <p className="text-slate-500 text-[11px] mt-0.5">
-                    Express transit, biosecurity inspection, MPI border clearance & domestic courier handling
+                    {request.part.partNumber && (
+                      <span className="font-mono font-medium">OEM Part #{request.part.partNumber} &bull; </span>
+                    )}
+                    Condition: {request.part.condition || "Genuine OEM Verified"} &bull; Guaranteed Fitment
                   </p>
                 </td>
                 <td className="py-4 text-center font-bold text-slate-900">
-                  1
+                  {request.part.quantity || 1}
                 </td>
                 <td className="py-4 text-right font-mono font-semibold">
-                  ${freight.toFixed(2)}
+                  ${subtotal.toFixed(2)}
                 </td>
                 <td className="py-4 text-right font-mono font-bold text-slate-900">
-                  ${freight.toFixed(2)}
+                  ${subtotal.toFixed(2)}
                 </td>
               </tr>
-            )}
-          </tbody>
-        </table>
 
-        {/* Totals Section */}
-        <div className="flex flex-col sm:flex-row justify-between items-start gap-6 border-t border-slate-200 pt-6 mb-10">
-          <div className="text-xs text-slate-500 max-w-sm">
-            <p className="font-bold text-slate-700 mb-1 flex items-center gap-1">
-              <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
-              <span>Procurly Verified Transaction</span>
-            </p>
-            <p className="leading-relaxed">
-              Amounts shown in New Zealand Dollars (NZD). GST is charged at 15% in accordance with the New Zealand Goods and Services Tax Act 1985.
-            </p>
+              {freight > 0 && (
+                <tr>
+                  <td className="py-4 pr-4">
+                    <p className="font-bold text-slate-900 text-sm">
+                      Consolidated International Freight & Logistics
+                    </p>
+                    <p className="text-slate-500 text-[11px] mt-0.5">
+                      Express transit, biosecurity inspection, MPI border clearance & domestic courier handling
+                    </p>
+                  </td>
+                  <td className="py-4 text-center font-bold text-slate-900">
+                    1
+                  </td>
+                  <td className="py-4 text-right font-mono font-semibold">
+                    ${freight.toFixed(2)}
+                  </td>
+                  <td className="py-4 text-right font-mono font-bold text-slate-900">
+                    ${freight.toFixed(2)}
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+
+          {/* Totals Section */}
+          <div className="flex flex-col sm:flex-row justify-between items-start gap-6 border-t border-slate-200 pt-6 mb-10">
+            <div className="text-xs text-slate-500 max-w-sm">
+              <p className="font-bold text-slate-700 mb-1 flex items-center gap-1">
+                <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
+                <span>Procurly Verified Transaction</span>
+              </p>
+              <p className="leading-relaxed">
+                Amounts shown in New Zealand Dollars (NZD). GST is charged at 15% in accordance with the New Zealand Goods and Services Tax Act 1985.
+              </p>
+            </div>
+
+            <div className="w-full sm:w-72 space-y-2 text-xs">
+              <div className="flex justify-between text-slate-600 py-1">
+                <span>Subtotal (Excl. GST)</span>
+                <span className="font-mono font-semibold">${subtotalExGst.toFixed(2)}</span>
+              </div>
+              <div className="flex justify-between text-slate-600 py-1">
+                <span>GST (15.0%)</span>
+                <span className="font-mono font-semibold">${gst.toFixed(2)}</span>
+              </div>
+              <div className="flex justify-between items-center text-lg font-black text-slate-900 border-t-2 border-slate-900 pt-3">
+                <span>Total Amount</span>
+                <span className="font-mono font-bold text-xl">${amount.toFixed(2)} NZD</span>
+              </div>
+              <div className="flex justify-between items-center text-xs pt-1">
+                <span className="font-semibold text-slate-500">Balance Due:</span>
+                <span className={`font-mono font-bold ${isPaid ? "text-emerald-700" : "text-[#FE0000]"}`}>
+                  {isPaid ? "$0.00 NZD (Paid)" : `$${amount.toFixed(2)} NZD`}
+                </span>
+              </div>
+            </div>
           </div>
 
-          <div className="w-full sm:w-72 space-y-2 text-xs">
-            <div className="flex justify-between text-slate-600 py-1">
-              <span>Subtotal (Excl. GST)</span>
-              <span className="font-mono font-semibold">${subtotalExGst.toFixed(2)}</span>
-            </div>
-            <div className="flex justify-between text-slate-600 py-1">
-              <span>GST (15.0%)</span>
-              <span className="font-mono font-semibold">${gst.toFixed(2)}</span>
-            </div>
-            <div className="flex justify-between items-center text-lg font-black text-slate-900 border-t-2 border-slate-900 pt-3">
-              <span>Total Amount</span>
-              <span className="font-mono font-bold text-xl">${amount.toFixed(2)} NZD</span>
-            </div>
-            <div className="flex justify-between items-center text-xs pt-1">
-              <span className="font-semibold text-slate-500">Balance Due:</span>
-              <span className={`font-mono font-bold ${isPaid ? "text-emerald-700" : "text-[#B30D12]"}`}>
-                {isPaid ? "$0.00 NZD (Paid)" : `$${amount.toFixed(2)} NZD`}
-              </span>
-            </div>
+          {/* Terms of Trade & Footnote */}
+          <div className="border-t border-slate-200 pt-6 text-[11px] text-slate-500 leading-relaxed space-y-2">
+            <h4 className="font-bold text-slate-700 uppercase tracking-wider text-[10px]">
+              Procurly Terms & Conditions of Trade
+            </h4>
+            <p>
+              1. <strong>Warranty & Fitment:</strong> All components are backed by standard Procurly B2B Trade Warranty. Warranty covers functional defects and verified fitment against specified VIN/chassis parameters.
+            </p>
+            <p>
+              2. <strong>Payment Settlement:</strong> Payment is strictly due by the due date specified on this document. Title and property of goods shall not pass to the purchaser until payment has been made in full.
+            </p>
+            <p>
+              3. <strong>Disputes & Inquiries:</strong> Any discrepancy must be reported within 5 business days of delivery to Procurly Operations at <span className="underline">accounts@procurly.co.nz</span>.
+            </p>
           </div>
         </div>
-
-        {/* Terms of Trade & Footnote */}
-        <div className="border-t border-slate-200 pt-6 text-[11px] text-slate-500 leading-relaxed space-y-2">
-          <h4 className="font-bold text-slate-700 uppercase tracking-wider text-[10px]">
-            Procurly Terms & Conditions of Trade
-          </h4>
-          <p>
-            1. <strong>Warranty & Fitment:</strong> All components are backed by standard Procurly B2B Trade Warranty. Warranty covers functional defects and verified fitment against specified VIN/chassis parameters.
-          </p>
-          <p>
-            2. <strong>Payment Settlement:</strong> Payment is strictly due by the due date specified on this document. Title and property of goods shall not pass to the purchaser until payment has been made in full.
-          </p>
-          <p>
-            3. <strong>Disputes & Inquiries:</strong> Any discrepancy must be reported within 5 business days of delivery to Procurly Operations at <span className="underline">accounts@procurly.co.nz</span>.
-          </p>
-        </div>
-      </div>
+      )}
     </div>
   );
 }
