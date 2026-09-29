@@ -164,7 +164,7 @@ export function PaymentsView() {
                       onClick={() => router.push(`/admin/requests?id=${req.id}`)}
                       className="hover:bg-slate-50/70 cursor-pointer transition-colors group"
                     >
-                      <td className="py-3.5 px-4 font-mono font-bold text-[#FE0000]">
+                      <td className="py-3.5 px-4 font-mono font-bold text-slate-700 hover:text-slate-800 hover:underline">
                         {req.requestNumber}
                       </td>
                       <td className="py-3.5 px-4">

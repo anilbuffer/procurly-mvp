@@ -24,6 +24,7 @@ import {
 } from "lucide-react";
 import { PartRequest, SupplierQuotation } from "@/types/shared";
 import { useUnifiedData } from "@/context/unified-data-context";
+import { DEFAULT_PART_IMAGE, handleImageError } from "@/lib/default-images";
 
 interface QuoteTabProps {
   request: PartRequest;
@@ -40,7 +41,7 @@ export function QuoteTab({ request, onNavigateToTab }: QuoteTabProps) {
     ? parseFloat(selectedQuote.supplierCost.toString()) || 0
     : 0;
 
-  const [targetMargin, setTargetMargin] = useState<number>(adminSettings.baseMarginPercent || 18);
+  const [targetMargin, setTargetMargin] = useState<string | number>("");
   const defaultAir = selectedQuote?.airFreightCost || adminSettings.defaultAirFreight || 185.00;
   const defaultOcean = selectedQuote?.seaFreightCost || adminSettings.defaultSeaFreight || 65.00;
 
@@ -52,7 +53,7 @@ export function QuoteTab({ request, onNavigateToTab }: QuoteTabProps) {
     request.supporting?.freightPreference === "Sea Freight" ? defaultOcean : defaultAir
   );
 
-  const [advisoryNote, setAdvisoryNote] = useState<string>("Genuine OEM specification part sourced directly from Japan authorized dealer network.");
+  const [advisoryNote, setAdvisoryNote] = useState<string>("");
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [showActionDetailsModal, setShowActionDetailsModal] = useState(false);
   const [isEmailPreviewOnly, setIsEmailPreviewOnly] = useState(false);
@@ -61,12 +62,13 @@ export function QuoteTab({ request, onNavigateToTab }: QuoteTabProps) {
   const [isDraggingPhotos, setIsDraggingPhotos] = useState(false);
   const [photoLightbox, setPhotoLightbox] = useState<string | null>(null);
 
+  const numericMargin = targetMargin === "" ? 0 : parseFloat(targetMargin.toString()) || 0;
   const combinedCost = basePartCost + freightCost;
-  const marginAmount = combinedCost * (targetMargin / 100);
+  const marginAmount = combinedCost * (numericMargin / 100);
   const subtotal = combinedCost + marginAmount;
   const gstAmount = subtotal * 0.15;
   const totalCustomerQuote = subtotal + gstAmount;
-  const marginMultiplier = 1 + (targetMargin / 100);
+  const marginMultiplier = 1 + (numericMargin / 100);
 
   const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
@@ -233,28 +235,32 @@ export function QuoteTab({ request, onNavigateToTab }: QuoteTabProps) {
 
         {/* AUDIT TRAIL: SHOWN IF ACCEPTED */}
         {request.quoteAcceptance && (
-          <div className="bg-emerald-50 rounded-2xl border border-emerald-200 p-6 shadow-sm">
-            <h3 className="text-xs font-bold text-emerald-900 uppercase flex items-center gap-2 mb-4 tracking-wider">
-              <ShieldCheck className="w-4 h-4 text-emerald-600" />
+          <div className="bg-[#f0f4f9] rounded-2xl border border-blue-200/80 p-6 shadow-xs">
+            <h3 className="text-xs font-bold text-[#1e3a8a] uppercase flex items-center gap-2 mb-4 tracking-wider">
+              <ShieldCheck className="w-4 h-4 text-[#2B4499]" />
               Customer Acceptance Audit Trail
             </h3>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs">
               <div>
-                <span className="text-emerald-700/80 block text-[10px] font-bold uppercase mb-1">Accepted By</span>
-                <span className="font-bold text-emerald-950">{request.quoteAcceptance.acceptedBy}</span>
-                <span className="block text-[10px] text-emerald-700">{request.quoteAcceptance.userRole}</span>
+                <span className="text-slate-500 block text-[10px] font-bold uppercase mb-1">Accepted By</span>
+                <span className="font-bold text-[#0f172a]">{request.quoteAcceptance.acceptedBy}</span>
+                <span className="block text-[10px] text-[#2B4499] font-medium">{request.quoteAcceptance.userRole}</span>
               </div>
               <div>
-                <span className="text-emerald-700/80 block text-[10px] font-bold uppercase mb-1 flex items-center gap-1"><Clock className="w-3 h-3" /> Timestamp</span>
-                <span className="font-bold text-emerald-950">{request.quoteAcceptance.acceptedAt}</span>
+                <span className="text-slate-500 block text-[10px] font-bold uppercase mb-1 flex items-center gap-1">
+                  <Clock className="w-3 h-3 text-[#2B4499]" /> Timestamp
+                </span>
+                <span className="font-bold text-[#0f172a]">{request.quoteAcceptance.acceptedAt}</span>
               </div>
               <div>
-                <span className="text-emerald-700/80 block text-[10px] font-bold uppercase mb-1 flex items-center gap-1"><Globe className="w-3 h-3" /> IP Address</span>
-                <span className="font-bold text-emerald-950 font-mono">{request.quoteAcceptance.ipAddress || "Not Recorded"}</span>
+                <span className="text-slate-500 block text-[10px] font-bold uppercase mb-1 flex items-center gap-1">
+                  <Globe className="w-3 h-3 text-[#2B4499]" /> IP Address
+                </span>
+                <span className="font-bold text-[#0f172a] font-mono">{request.quoteAcceptance.ipAddress || "Not Recorded"}</span>
               </div>
               <div>
-                <span className="text-emerald-700/80 block text-[10px] font-bold uppercase mb-1">Terms & Conditions</span>
-                <span className="font-bold text-emerald-950">
+                <span className="text-slate-500 block text-[10px] font-bold uppercase mb-1">Terms &amp; Conditions</span>
+                <span className="font-bold text-[#0f172a]">
                   {request.quoteAcceptance.termsAccepted ? "Explicitly Accepted" : "Not Recorded"}
                 </span>
               </div>
@@ -360,7 +366,7 @@ export function QuoteTab({ request, onNavigateToTab }: QuoteTabProps) {
                   min="0"
                   max="100"
                   value={targetMargin}
-                  onChange={e => setTargetMargin(Number(e.target.value))}
+                  onChange={e => setTargetMargin(e.target.value)}
                   className="w-full text-sm font-bold text-slate-900 bg-white border border-slate-200 rounded-lg p-2.5 pl-3 pr-8 focus:outline-none focus:ring-2 focus:ring-[#FE0000]/30 focus:border-[#FE0000] shadow-sm transition-all [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                 />
                 <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
@@ -447,7 +453,7 @@ export function QuoteTab({ request, onNavigateToTab }: QuoteTabProps) {
                 <span className="font-bold text-slate-900">${combinedCost.toFixed(2)} NZD</span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-slate-600 font-medium">Margin Applied ({targetMargin}%):</span>
+                <span className="text-slate-600 font-medium">Margin Applied ({numericMargin}%):</span>
                 <span className="font-bold text-slate-900">${marginAmount.toFixed(2)} NZD</span>
               </div>
               <div className="flex justify-between items-center pt-3 border-t border-slate-200/80 mt-1">
@@ -543,6 +549,7 @@ export function QuoteTab({ request, onNavigateToTab }: QuoteTabProps) {
                       src={photo}
                       alt={`Quote photo ${idx + 1}`}
                       className="w-full h-full object-cover transition-transform duration-200 group-hover:scale-105"
+                      onError={handleImageError}
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                     <button
@@ -745,6 +752,7 @@ export function QuoteTab({ request, onNavigateToTab }: QuoteTabProps) {
                             src={photo}
                             alt={`Part photo ${idx + 1}`}
                             className="w-full h-full object-cover"
+                            onError={handleImageError}
                           />
                         </div>
                       ))}
@@ -808,9 +816,10 @@ export function QuoteTab({ request, onNavigateToTab }: QuoteTabProps) {
         >
           <div className="relative max-w-3xl max-h-[85vh] animate-in zoom-in-95">
             <img
-              src={photoLightbox}
+              src={photoLightbox || DEFAULT_PART_IMAGE}
               alt="Part photo preview"
               className="max-w-full max-h-[85vh] object-contain rounded-2xl shadow-2xl"
+              onError={handleImageError}
             />
             <button
               type="button"

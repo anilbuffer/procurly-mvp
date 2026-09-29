@@ -95,10 +95,6 @@ export function PaymentsView() {
       {/* Top Ledger Header */}
       <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <div className="flex items-center gap-2 text-xs font-bold text-emerald-600 uppercase tracking-wider mb-1">
-            <CreditCard className="w-4 h-4" />
-            <span>Autohub Invoices & Settlement Ledger</span>
-          </div>
           <h2 className="text-xl font-bold text-slate-900">Payment Status & Invoices</h2>
           <p className="text-xs text-slate-500">
             View, generate, and download official Autohub GST tax invoices. Review settlement references and bank remittance details.
@@ -188,11 +184,11 @@ export function PaymentsView() {
                         <button
                           type="button"
                           onClick={() => openInvoiceModal(req)}
-                          className="flex items-center gap-1.5 text-blue-600 hover:text-blue-800 hover:underline group cursor-pointer text-left"
+                          className="flex items-center gap-1.5 text-slate-700 hover:text-slate-800 hover:underline group cursor-pointer text-left"
                           title="Click to view & download official Tax Invoice"
                         >
                           <span className="font-mono font-bold">{invoiceNum}</span>
-                          <FileText className="w-3.5 h-3.5 text-blue-500 group-hover:scale-110 transition-transform" />
+                          <FileText className="w-3.5 h-3.5 text-slate-500 group-hover:scale-110 transition-transform" />
                         </button>
                       </td>
                       <td className="py-4 px-4 font-mono">
@@ -240,7 +236,7 @@ export function PaymentsView() {
                           {paymentStatus === "Unpaid" ? (
                             <button
                               onClick={() => handleOpenPaymentModal(req)}
-                              className="px-3.5 py-1.5 bg-[#B30D12] hover:bg-[#9B0A0F] text-white font-bold text-xs uppercase tracking-wider rounded-lg shadow-xs transition-all"
+                              className="px-3.5 py-1.5 bg-[#FE0000] hover:bg-[#ED2025] text-white font-bold text-xs uppercase tracking-wider rounded-lg shadow-xs transition-all"
                             >
                               Settlement Details →
                             </button>

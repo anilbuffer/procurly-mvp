@@ -40,6 +40,7 @@ import {
   ShipmentMilestone,
   QuoteAcceptanceAudit,
 } from "@/types/portal";
+import { DEFAULT_PART_IMAGE, handleImageError } from "@/lib/default-images";
 
 export function RequestDetailsModal() {
   const router = useRouter();
@@ -429,6 +430,7 @@ export function RequestDetailsModal() {
                               src={p}
                               alt="Quote part preview"
                               className="inline-block h-10 w-10 rounded-lg ring-2 ring-white object-cover shadow-xs cursor-pointer hover:scale-110 transition-transform"
+                              onError={handleImageError}
                               onClick={() => {
                                 setLightboxPhotos(qPhotos);
                                 setLightboxIndex(idx);
@@ -737,6 +739,7 @@ export function RequestDetailsModal() {
                               src={photo}
                               alt={`Admin inspection photo ${idx + 1}`}
                               className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105 opacity-95 group-hover:opacity-100"
+                              onError={handleImageError}
                             />
                             <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-2.5">
                               <span className="text-[10px] font-bold text-white flex items-center gap-1 w-full">
@@ -760,17 +763,19 @@ export function RequestDetailsModal() {
                       </div>
                     )}
 
-                    {/* Customer Reference Photos Comparison (if customer uploaded photos during request) */}
-                    {customerPhotos.length > 0 && (
-                      <div className="mt-4 pt-4 border-t border-slate-100">
-                        <div className="flex items-center justify-between mb-2">
-                          <span className="text-[11px] font-bold text-slate-700 uppercase tracking-wider">
-                            Customer Reference Photos (Submitted at Request)
-                          </span>
-                          <span className="text-[10px] text-slate-400">
-                            {customerPhotos.length} reference photo{customerPhotos.length > 1 ? "s" : ""}
-                          </span>
-                        </div>
+                    {/* Customer Reference Photos Comparison */}
+                    <div className="mt-4 pt-4 border-t border-slate-100">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-[11px] font-bold text-slate-700 uppercase tracking-wider">
+                          Customer Reference Photos (Submitted at Request)
+                        </span>
+                        <span className="text-[10px] text-slate-400">
+                          {customerPhotos.length > 0
+                            ? `${customerPhotos.length} reference photo${customerPhotos.length > 1 ? "s" : ""}`
+                            : "Default reference spec"}
+                        </span>
+                      </div>
+                      {customerPhotos.length > 0 ? (
                         <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2">
                           {customerPhotos.map((photo: string, idx: number) => (
                             <div
@@ -782,6 +787,7 @@ export function RequestDetailsModal() {
                                 src={photo}
                                 alt={`Customer reference ${idx + 1}`}
                                 className="w-full h-full object-cover transition-transform duration-200 group-hover:scale-105"
+                                onError={handleImageError}
                               />
                               <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                                 <ExternalLink className="w-3.5 h-3.5 text-white" />
@@ -792,8 +798,25 @@ export function RequestDetailsModal() {
                             </div>
                           ))}
                         </div>
-                      </div>
-                    )}
+                      ) : (
+                        <div className="flex items-center gap-3 p-3 bg-slate-50 rounded-xl border border-dashed border-slate-200">
+                          <div
+                            className="w-16 h-16 rounded-lg overflow-hidden border border-slate-200 bg-white shrink-0 cursor-pointer hover:border-red-300 transition-colors shadow-xs"
+                            onClick={() => openLightbox([DEFAULT_PART_IMAGE], 0)}
+                          >
+                            <img
+                              src={DEFAULT_PART_IMAGE}
+                              alt="Default OEM Reference"
+                              className="w-full h-full object-cover hover:scale-105 transition-transform"
+                            />
+                          </div>
+                          <div>
+                            <p className="text-xs font-bold text-slate-700">OEM Catalog Schematic Reference</p>
+                            <p className="text-[11px] text-slate-500">Standard factory fitment diagram. No custom workshop photos attached at submission.</p>
+                          </div>
+                        </div>
+                      )}
+                    </div>
                   </div>
 
                   {/* Freight Selection Options */}
@@ -1142,6 +1165,7 @@ export function RequestDetailsModal() {
                                   src={photo}
                                   alt={`Part photo ${idx + 1}`}
                                   className="w-full h-full object-cover transition-transform duration-200 group-hover:scale-105"
+                                  onError={handleImageError}
                                 />
                                 <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                               </div>
@@ -1342,7 +1366,12 @@ export function RequestDetailsModal() {
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                     {req.supporting.photos?.map((url, idx) => (
                       <div key={idx} className="relative aspect-square rounded-xl overflow-hidden border border-emerald-200">
-                        <img src={url} alt={`Subadmin Media ${idx + 1}`} className="w-full h-full object-cover" />
+                        <img
+                          src={url}
+                          alt={`Subadmin Media ${idx + 1}`}
+                          className="w-full h-full object-cover"
+                          onError={handleImageError}
+                        />
                       </div>
                     ))}
                   </div>
@@ -1465,6 +1494,7 @@ export function RequestDetailsModal() {
                           src={photo}
                           alt={`Subadmin Photo ${i + 1}`}
                           className="w-full h-full object-cover"
+                          onError={handleImageError}
                         />
                       </div>
                     ))}
@@ -1703,9 +1733,10 @@ export function RequestDetailsModal() {
           >
             <div className="relative overflow-hidden rounded-2xl shadow-2xl bg-black border border-white/10 flex items-center justify-center max-h-[80vh] w-full">
               <img
-                src={quotePhotoLightbox}
+                src={quotePhotoLightbox || DEFAULT_PART_IMAGE}
                 alt="Part photo preview"
                 className="max-w-full max-h-[80vh] object-contain rounded-xl"
+                onError={handleImageError}
               />
 
               {lightboxPhotos.length > 1 && (

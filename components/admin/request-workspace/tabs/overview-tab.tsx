@@ -23,6 +23,7 @@ import {
   Printer,
 } from "lucide-react";
 import NextLink from "next/link";
+import { handleImageError } from "@/lib/default-images";
 import { PartRequest, RequestStatus } from "@/types/shared";
 import { useUnifiedData } from "@/context/unified-data-context";
 import { StatusBadge, PaymentStatusBadge } from "../../status-badge";
@@ -242,6 +243,7 @@ export function OverviewTab({ request }: OverviewTabProps) {
                   src={p}
                   alt="Customer attachment"
                   className="w-20 h-20 rounded-xl object-cover border border-slate-200 hover:scale-105 transition-transform"
+                  onError={handleImageError}
                 />
               ))}
             </div>
@@ -299,8 +301,6 @@ export function OverviewTab({ request }: OverviewTabProps) {
           </div>
         )}
       </div>
-
-
     </div>
   );
 }

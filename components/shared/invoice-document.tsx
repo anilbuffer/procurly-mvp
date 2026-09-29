@@ -253,8 +253,8 @@ export function InvoiceDocument({
               </span>
               <span
                 className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase border ${isPaid
-                    ? "bg-emerald-50 text-emerald-700 border-emerald-200"
-                    : "bg-amber-50 text-amber-700 border-amber-200"
+                  ? "bg-emerald-50 text-emerald-700 border-emerald-200"
+                  : "bg-amber-50 text-amber-700 border-amber-200"
                   }`}
               >
                 {isPaid ? "Paid in Full" : "Awaiting Settlement"}
@@ -293,7 +293,7 @@ export function InvoiceDocument({
           {/* Print / Save as PDF */}
           <button
             onClick={handlePrint}
-            className="px-3.5 py-2 bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs rounded-xl transition-all flex items-center gap-1.5 shadow-xs"
+            className="px-3.5 py-2 bg-[#FE0000] hover:bg-[#ED2025] text-white font-bold text-xs rounded-xl transition-all flex items-center gap-1.5 shadow-xs"
             title="Print or Save as PDF"
           >
             <Printer className="w-3.5 h-3.5" />
@@ -346,8 +346,8 @@ export function InvoiceDocument({
               type="button"
               onClick={() => setViewMode("uploaded_pdf")}
               className={`px-4 py-2 text-xs font-bold rounded-lg transition-all flex items-center gap-2 cursor-pointer ${viewMode === "uploaded_pdf"
-                  ? "bg-white text-slate-900 shadow-xs border border-slate-200"
-                  : "text-slate-600 hover:text-slate-900"
+                ? "bg-white text-slate-900 shadow-xs border border-slate-200"
+                : "text-slate-600 hover:text-slate-900"
                 }`}
             >
               <FileText className="w-3.5 h-3.5 text-[#FE0000]" />
@@ -361,8 +361,8 @@ export function InvoiceDocument({
               type="button"
               onClick={() => setViewMode("breakdown")}
               className={`px-4 py-2 text-xs font-bold rounded-lg transition-all flex items-center gap-2 cursor-pointer ${viewMode === "breakdown"
-                  ? "bg-white text-slate-900 shadow-xs border border-slate-200"
-                  : "text-slate-600 hover:text-slate-900"
+                ? "bg-white text-slate-900 shadow-xs border border-slate-200"
+                : "text-slate-600 hover:text-slate-900"
                 }`}
             >
               <FileText className="w-3.5 h-3.5 text-slate-400" />
@@ -480,8 +480,8 @@ export function InvoiceDocument({
               <div className="mt-3 sm:flex sm:justify-end">
                 <span
                   className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider border ${isPaid
-                      ? "bg-emerald-100 text-emerald-800 border-emerald-300"
-                      : "bg-amber-100 text-amber-900 border-amber-300"
+                    ? "bg-emerald-100 text-emerald-800 border-emerald-300"
+                    : "bg-amber-100 text-amber-900 border-amber-300"
                     }`}
                 >
                   {isPaid ? (

@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { PartRequest } from "@/types/shared";
 import { Camera, Image as ImageIcon, AlertCircle, CheckCircle, XCircle } from "lucide-react";
 import { useUnifiedData } from "@/context/unified-data-context";
+import { handleImageError } from "@/lib/default-images";
 
 interface SubadminMediaTabProps {
   request: PartRequest;
@@ -58,7 +59,12 @@ export function SubadminMediaTab({ request }: SubadminMediaTabProps) {
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
               {subadminDetails.photos.map((url, idx) => (
                 <div key={idx} className="relative aspect-square rounded-xl overflow-hidden group border border-slate-200">
-                  <img src={url} alt={`Subadmin Media ${idx + 1}`} className="w-full h-full object-cover" />
+                  <img
+                    src={url}
+                    alt={`Subadmin Media ${idx + 1}`}
+                    className="w-full h-full object-cover"
+                    onError={handleImageError}
+                  />
                 </div>
               ))}
             </div>

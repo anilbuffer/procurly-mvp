@@ -48,10 +48,7 @@ export function OrdersView() {
     <div className="space-y-6">
       <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <div className="flex items-center gap-2 text-xs font-bold text-purple-600 uppercase tracking-wider mb-1">
-            <CheckSquare className="w-4 h-4" />
-            <span>Supplier Fulfillment Queue</span>
-          </div>
+
           <h2 className="text-xl font-bold text-slate-900">Procurement Orders</h2>
           <p className="text-xs text-slate-500">
             Active purchase orders released to international manufacturers & suppliers across the 9-stage lifecycle

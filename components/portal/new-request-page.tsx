@@ -26,6 +26,7 @@ import {
   SavedAddress,
 } from "@/types/portal";
 import { NZAddressLookup, NZAddressSelected } from "./nz-address-lookup";
+import { handleImageError } from "@/lib/default-images";
 
 const POPULAR_MAKES_AND_MODELS: Record<string, string[]> = {
   Toyota: ["Hilux GR Sport", "Hilux", "Hiace", "Land Cruiser", "Land Cruiser Prado", "RAV4", "Corolla", "Camry", "Yaris", "Prius", "Aqua", "C-HR", "Fortuner", "Other Toyota Model"],
@@ -563,7 +564,7 @@ export function NewRequestPage() {
                       {photos.map((url, i) => (
                         <div key={i} className="relative w-12 h-12 rounded-md overflow-hidden border border-slate-200 group bg-slate-100">
                           {url.startsWith('http') || url.startsWith('blob') ? (
-                            <img src={url} alt="Preview" className="w-full h-full object-cover" />
+                            <img src={url} alt="Preview" className="w-full h-full object-cover" onError={handleImageError} />
                           ) : (
                             <div className="w-full h-full flex items-center justify-center text-[8px] text-slate-400 break-all p-1 text-center">{url}</div>
                           )}

@@ -24,6 +24,7 @@ import {
   SavedAddress,
 } from "@/types/portal";
 import { NZAddressLookup, NZAddressSelected } from "./nz-address-lookup";
+import { handleImageError } from "@/lib/default-images";
 
 const POPULAR_MAKES_AND_MODELS: Record<string, string[]> = {
   Toyota: [
@@ -780,6 +781,7 @@ export function NewRequestModal() {
                               src={url}
                               alt="Part preview"
                               className="w-full h-full object-cover"
+                              onError={handleImageError}
                             />
                             <button
                               type="button"

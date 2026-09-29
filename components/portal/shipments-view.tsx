@@ -505,10 +505,6 @@ export function ShipmentsView() {
       {/* Overview Banner */}
       <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <div className="flex items-center gap-2 text-xs font-bold text-blue-600 uppercase tracking-wider mb-1">
-            <Truck className="w-4 h-4" />
-            <span>Air Cargo & Express Logistics</span>
-          </div>
           <h2 className="text-xl font-bold text-slate-900">
             Active Freight Consignments
           </h2>
