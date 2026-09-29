@@ -87,14 +87,14 @@ export function BrandPanel() {
         </div>
         <div className="flex flex-col">
           <div className="flex items-center gap-1.5">
-            <span className="text-xs sm:text-[13px] font-black italic tracking-tight text-white uppercase font-sans">
+            <span className="text-sm sm:text-[16px] font-black italic tracking-tight text-white uppercase font-sans">
               PROCUR<span className="not-italic font-bold text-white/90">LY</span>
             </span>
-            <span className="text-[9px] font-bold uppercase tracking-[0.16em] text-white/70 bg-white/10 px-1.5 py-0.5 rounded border border-white/15 leading-none">
+            <span className="text-[12px] font-bold uppercase tracking-[0.16em] text-white/70 bg-white/10 px-1.5 py-0.5 rounded border border-white/15 leading-none">
               Platform
             </span>
           </div>
-          <span className="text-[10px] text-white/70 font-medium tracking-wide">
+          <span className="text-[12px] text-white/80 font-medium tracking-wide">
             B2B Automotive Trade Network
           </span>
         </div>

@@ -76,32 +76,30 @@ export function PoweredByAutohub({
   // Dark variant (used on rich red / dark brand panel surfaces)
   return (
     <div
-      className={`inline-flex items-center gap-3 px-3.5 py-2 rounded-xl bg-white/[0.08] hover:bg-white/[0.14] border border-white/12 backdrop-blur-xs transition-all duration-200 select-none group ${className}`}
+      className={`inline-flex flex-col gap-1.5 px-3.5 py-2.5 rounded-xl bg-white/[0.08] hover:bg-white/[0.14] border border-white/12 backdrop-blur-xs transition-all duration-200 select-none group ${className}`}
       aria-label="Powered by AutoHub - Official Sourcing and Logistics Network"
     >
-      {/* Approved AutoHub 'A' Logo Emblem Badge */}
-      <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg border border-white/40 bg-[#FE0000] shadow-xs flex items-center justify-center shrink-0 transition-transform duration-200 group-hover:scale-105">
-        <span className="text-white font-black text-xs sm:text-sm tracking-tighter leading-none">
-          A
+      {/* Top line: Powered by + A icon + AUTOHUB — all on one row */}
+      <div className="flex items-center gap-2.5">
+        <span className="text-[10px] sm:text-[12px] font-bold uppercase tracking-[0.22em] text-white/80 leading-none whitespace-nowrap">
+          Powered by
         </span>
-      </div>
-
-      {/* Subtle, Professional Typographic Lockup */}
-      <div className="flex flex-col text-left">
-        <span className="text-[9px] font-semibold uppercase tracking-[0.25em] text-white/60 leading-none">
-          POWERED BY
-        </span>
-        <div className="flex items-baseline gap-2 mt-1">
-          <span className="text-xs sm:text-sm font-bold tracking-[0.14em] text-white uppercase font-sans leading-none">
-            AUTOHUB
+        {/* Approved AutoHub 'A' Logo Emblem Badge */}
+        <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg border border-white/40 bg-[#FE0000] shadow-xs flex items-center justify-center shrink-0 transition-transform duration-200 group-hover:scale-105">
+          <span className="text-white font-black text-xs sm:text-sm tracking-tighter leading-none">
+            A
           </span>
-          {showSubtext && (
-            <span className="text-[10px] text-white/50 tracking-normal font-light hidden sm:inline leading-none">
-              • Global Logistics &amp; Sourcing
-            </span>
-          )}
         </div>
+        <span className="text-xs sm:text-sm font-black tracking-[0.14em] text-white uppercase font-sans leading-none whitespace-nowrap">
+          AUTOHUB
+        </span>
       </div>
+      {/* Bottom line: • Global Logistics & Sourcing */}
+      {showSubtext && (
+        <span className="text-[10px] sm:text-[12px] text-white/70 tracking-wide font-medium leading-none pl-0.5">
+          • Global Logistics &amp; Sourcing
+        </span>
+      )}
     </div>
   );
 }
