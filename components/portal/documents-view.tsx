@@ -47,18 +47,15 @@ export function DocumentsView() {
       const prt = req.part?.name || "Component";
       const amt = req.quotedValue || req.customerQuote?.totalAmount || 0;
 
-      // 1. Tax Invoice if invoice exists or status >= Approved
-      if (
-        req.payment ||
-        ["Approved", "Invoicing", "Awaiting Payment", "Ordered", "Shipped", "Delivered", "Completed"].includes(req.status)
-      ) {
-        const invNum = req.payment?.invoiceNumber || `INV-2026-${req.requestNumber.replace(/[^0-9]/g, "")}`;
+      // 1. Tax Invoice only if official real PDF invoice attached by admin
+      if (req.payment?.invoiceUrl) {
+        const invNum = req.payment.invoiceNumber || `INV-2026-${req.requestNumber.replace(/[^0-9]/g, "")}`;
         list.push({
           id: `inv-${req.id}`,
           title: `Tax Invoice ${invNum} (${veh} - ${prt})`,
           category: "Tax Invoice",
-          date: req.dateSubmitted || "08 Sep 2026",
-          size: "188 KB",
+          date: req.payment.invoicedAt || req.dateSubmitted || "08 Sep 2026",
+          size: "Official PDF",
           ref: req.requestNumber,
           vehicleInfo: veh,
           partInfo: prt,
@@ -112,6 +109,21 @@ export function DocumentsView() {
         openInvoiceModal(target);
         setToastMessage(`Opening Official Tax Invoice for ${doc.ref}`);
         setTimeout(() => setToastMessage(null), 3000);
+        return;
+      }
+    }
+
+    if (doc.category === "Tax Invoice") {
+      const target = requests.find((r) => r.requestNumber === doc.ref);
+      if (target?.payment?.invoiceUrl) {
+        const link = document.createElement("a");
+        link.href = target.payment.invoiceUrl;
+        link.download = target.payment.invoiceFileName || `${doc.title.replace(/[^a-zA-Z0-9-_]/g, "_")}.pdf`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        setToastMessage(`Downloaded "${doc.title}"`);
+        setTimeout(() => setToastMessage(null), 3500);
         return;
       }
     }

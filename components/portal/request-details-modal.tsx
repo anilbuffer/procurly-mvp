@@ -333,9 +333,11 @@ export function RequestDetailsModal() {
             >
               <FileText className="w-3.5 h-3.5" />
               <span>Tax Invoice</span>
-              <span className="text-[10px]  bg-slate-100 text-slate-700 px-1.5 py-0.5 rounded font-bold">
-                {req.payment?.invoiceNumber || `INV-2026-${req.requestNumber.replace(/[^0-9]/g, "").padStart(4, "0")}`}
-              </span>
+              {req.payment?.invoiceUrl && (
+                <span className="text-[10px]  bg-slate-100 text-slate-700 px-1.5 py-0.5 rounded font-bold">
+                  {req.payment?.invoiceNumber || `INV-2026-${req.requestNumber.replace(/[^0-9]/g, "").padStart(4, "0")}`}
+                </span>
+              )}
             </button>
           )}
 
@@ -972,51 +974,55 @@ export function RequestDetailsModal() {
                       <p className="text-emerald-700">
                         Accepted by {req.quoteAcceptance.acceptedBy} (
                         {req.quoteAcceptance.userRole}) on{" "}
-                        {req.quoteAcceptance.acceptedAt}. Procurly Invoice Ref:{" "}
-                        <strong className="">{req.payment?.invoiceNumber || "INV-2026-XXXX"}</strong> (Issued by Procurly Operations).
+                        {req.quoteAcceptance.acceptedAt}.
+                        {req.payment?.invoiceUrl && (
+                          <>
+                            {" "}Procurly Invoice Ref:{" "}
+                            <strong className="">{req.payment.invoiceNumber}</strong> (Issued by Procurly Operations).
+                          </>
+                        )}
                       </p>
 
-                      {/* Accounts Receivable Invoice Handover Action Box */}
-                      <div className="bg-white p-3.5 rounded-xl border border-emerald-300 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                        <div>
-                          <span className="text-[10px] uppercase font-bold text-slate-400 block">
-                            Accounts Receivable Invoice Handover
-                          </span>
-                          <div className="flex items-center gap-2 mt-0.5">
-                            <span className=" font-bold text-slate-900 text-sm">
-                              {req.payment?.invoiceNumber || `INV-2026-${req.requestNumber.replace(/[^0-9]/g, "").padStart(4, "0")}`}
+                      {/* Accounts Receivable Invoice Handover Action Box - only once invoice PDF uploaded */}
+                      {req.payment?.invoiceUrl && (
+                        <div className="bg-white p-3.5 rounded-xl border border-emerald-300 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                          <div>
+                            <span className="text-[10px] uppercase font-bold text-slate-400 block">
+                              Accounts Receivable Invoice Handover
                             </span>
-                            <span className="text-[11px] text-slate-500 font-medium">
-                              &bull; Total: ${(req.payment?.amount || req.customerQuote?.totalAmount || req.quotedValue || 450).toFixed(2)} NZD
-                            </span>
+                            <div className="flex items-center gap-2 mt-0.5">
+                              <span className=" font-bold text-slate-900 text-sm">
+                                {req.payment?.invoiceNumber || `INV-2026-${req.requestNumber.replace(/[^0-9]/g, "").padStart(4, "0")}`}
+                              </span>
+                              <span className="text-[11px] text-slate-500 font-medium">
+                                &bull; Total: ${(req.payment?.amount || req.customerQuote?.totalAmount || req.quotedValue || 450).toFixed(2)} NZD
+                              </span>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setActiveTab("invoice");
+                                setSelectedRequestDetailsTab?.("invoice");
+                              }}
+                              className="px-3 py-1.5 bg-[#FE0000] hover:bg-[#9B0A0F] text-white font-bold text-xs rounded-lg transition-colors inline-flex items-center gap-1.5 shadow-xs cursor-pointer"
+                            >
+                              <FileText className="w-3.5 h-3.5" />
+                              <span>View Invoice Tab</span>
+                            </button>
+                            <a
+                              href={req.payment.invoiceUrl}
+                              download={req.payment.invoiceFileName || `Tax_Invoice_${req.payment.invoiceNumber || req.requestNumber}.pdf`}
+                              className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-lg transition-colors inline-flex items-center gap-1.5 cursor-pointer"
+                              title="Download official attached PDF invoice"
+                            >
+                              <Download className="w-3.5 h-3.5" />
+                              <span>Download PDF</span>
+                            </a>
                           </div>
                         </div>
-                        <div className="flex items-center gap-2">
-                          <button
-                            type="button"
-                            onClick={() => {
-                              setActiveTab("invoice");
-                              setSelectedRequestDetailsTab?.("invoice");
-                            }}
-                            className="px-3 py-1.5 bg-[#FE0000] hover:bg-[#9B0A0F] text-white font-bold text-xs rounded-lg transition-colors inline-flex items-center gap-1.5 shadow-xs cursor-pointer"
-                          >
-                            <FileText className="w-3.5 h-3.5" />
-                            <span>View Invoice Tab</span>
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => {
-                              setActiveTab("invoice");
-                              setSelectedRequestDetailsTab?.("invoice");
-                            }}
-                            className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-lg transition-colors inline-flex items-center gap-1.5 cursor-pointer"
-                            title="Open Tax Invoice Tab to print or download"
-                          >
-                            <Download className="w-3.5 h-3.5" />
-                            <span>Download / Print</span>
-                          </button>
-                        </div>
-                      </div>
+                      )}
 
                       {/* Supplier Order Handover Active Box */}
                       {req.supplierOrder && (

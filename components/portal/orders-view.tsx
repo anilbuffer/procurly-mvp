@@ -141,7 +141,7 @@ export function OrdersView() {
                       ${(req.quotedValue || req.customerQuote?.totalAmount || 0).toFixed(2)}
                     </td>
                     <td className="py-4 px-6 text-right space-x-2 whitespace-nowrap">
-                      {(req.payment || req.quoteAcceptance || ["Approved", "Invoicing", "Awaiting Payment", "Ordered", "Shipped", "Delivered", "Completed"].includes(req.status)) && (
+                      {req.payment?.invoiceUrl && (
                         <button
                           onClick={(e) => {
                             e.stopPropagation();

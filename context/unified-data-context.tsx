@@ -488,6 +488,29 @@ export function UnifiedDataProvider({ children }: { children: React.ReactNode })
             let updatedSupplierOrder = r.supplierOrder;
             let paymentStatus = r.payment?.status || r.paymentStatus || "Unpaid";
 
+            if (invoiceNumber || invoiceUrl || invoiceFileName) {
+              if (!updatedPayment) {
+                const amt = r.quotedValue || updatedQuote?.totalAmount || 450;
+                updatedPayment = {
+                  id: `pay-${r.requestNumber}`,
+                  requestId: r.id,
+                  invoiceNumber: invoiceNumber || `INV-2026-${r.requestNumber.replace(/[^0-9]/g, "")}`,
+                  amount: amt,
+                  currency: "NZD",
+                  status: (paymentStatus as "Paid" | "Unpaid") || "Unpaid",
+                  paymentReference: r.requestNumber,
+                  dueDate: new Date(Date.now() + 5 * 86400000).toISOString().split("T")[0],
+                  lastUpdated: "Just now",
+                };
+              }
+              if (invoiceNumber) updatedPayment.invoiceNumber = invoiceNumber;
+              if (invoiceUrl) updatedPayment.invoiceUrl = invoiceUrl;
+              if (invoiceFileName) updatedPayment.invoiceFileName = invoiceFileName;
+              if (!updatedPayment.invoicedAt) {
+                updatedPayment.invoicedAt = new Date().toLocaleDateString("en-NZ", { year: "numeric", month: "short", day: "numeric" });
+              }
+            }
+
             if (status === "Submitted") {
               actionRequired = "Waiting for Autohub specialist sourcing review";
               actionType = "none";
