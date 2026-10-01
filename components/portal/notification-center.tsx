@@ -91,7 +91,7 @@ export function NotificationCenter() {
       if (targetReq) {
         if (targetReq.actionType === "review_quote" || targetReq.status === "Quoted") {
           setSelectedRequest(targetReq);
-        } else if (targetReq.actionType === "pay_now" || ((targetReq.status === "Approved" || targetReq.status === "Awaiting Payment") && targetReq.payment?.status !== "Paid")) {
+        } else if (targetReq.actionType === "pay_now" || (targetReq.status === "Awaiting Payment" && targetReq.payment?.status !== "Paid")) {
           setPaymentRequest(targetReq);
           setIsPaymentModalOpen(true);
         } else {

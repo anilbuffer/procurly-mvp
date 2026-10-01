@@ -49,7 +49,6 @@ export function DashboardView() {
       r.actionType === "pay_now" ||
       (r.actionType === "view_details" && !r.status.startsWith("Subadmin")) ||
       r.status === "Quoted" ||
-      (r.status === "Approved" && r.payment?.status !== "Paid") ||
       (r.status === "Awaiting Payment" && r.payment?.status !== "Paid")
   );
 
@@ -61,7 +60,7 @@ export function DashboardView() {
   const handleActionClick = (req: PartRequest) => {
     if (req.actionType === "review_quote" || req.status === "Quoted") {
       setSelectedRequest(req);
-    } else if (req.actionType === "pay_now" || req.status === "Approved" || req.status === "Awaiting Payment") {
+    } else if (req.actionType === "pay_now" || (req.status === "Awaiting Payment" && req.payment?.status !== "Paid")) {
       setPaymentRequest(req);
       setIsPaymentModalOpen(true);
     } else {
@@ -391,7 +390,7 @@ export function DashboardView() {
                             Quote Ready
                           </span>
                         )}
-                        {(req.status === "Awaiting Payment" || req.payment?.status === "Unpaid") && (
+                        {req.status === "Awaiting Payment" && req.payment?.status !== "Paid" && (
                           <span className="text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-800 border border-amber-200 flex items-center gap-1">
                             <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />
                             Unpaid

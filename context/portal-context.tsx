@@ -248,13 +248,12 @@ export function PortalProvider({ children }: { children: React.ReactNode }) {
         r.actionType === "review_quote" ||
         r.actionType === "pay_now" ||
         r.status === "Quoted" ||
-        (r.status === "Approved" && r.payment?.status !== "Paid") ||
         (r.status === "Awaiting Payment" && r.payment?.status !== "Paid")
     ).length;
     const inProc = requests.filter(
       (r) =>
         r.status === "Sourcing" ||
-        r.status === "Approved" ||
+        r.status === "Invoicing" ||
         r.status === "Awaiting Payment" ||
         r.status === "Ordered"
     ).length;

@@ -68,7 +68,7 @@ export function DocumentsView() {
         req.quotedValue ||
         req.customerQuote ||
         req.costCalculation ||
-        ["Quoted", "Approved", "Invoicing", "Awaiting Payment", "Ordered", "Shipped", "Delivered", "Completed"].includes(req.status)
+        ["Quoted", "Invoicing", "Awaiting Payment", "Ordered", "Shipped", "Delivered", "Completed"].includes(req.status)
       ) {
         list.push({
           id: `quote-${req.id}`,

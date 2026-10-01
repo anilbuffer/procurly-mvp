@@ -24,7 +24,6 @@ export function OrdersView() {
       r.status === "Shipped" ||
       r.status === "Delivered" ||
       r.status === "Completed" ||
-      r.status === "Approved" ||
       r.status === "Invoicing" ||
       r.status === "Awaiting Payment" ||
       r.status === "Sourcing" ||

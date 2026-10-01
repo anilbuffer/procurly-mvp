@@ -116,12 +116,11 @@ export function RequestDetailsModal() {
 
   const req = requests.find((r) => r.id === selectedRequest.id) || selectedRequest;
 
-  // The 9-stage customer-facing lifecycle
+  // The 9-stage customer-facing lifecycle (Skipping [Approved])
   const LIFECYCLE_STAGES: RequestStatus[] = [
     "Submitted",
     "Sourcing",
     "Quoted",
-    "Approved",
     "Invoicing",
     "Awaiting Payment",
     "Ordered",
@@ -141,11 +140,33 @@ export function RequestDetailsModal() {
   const currentStageIndex = (() => {
     const idx = LIFECYCLE_STAGES.indexOf(req.status);
     if (idx !== -1) return idx;
+    if (req.status === "Approved") return LIFECYCLE_STAGES.indexOf("Invoicing");
     if (["Subadmin Pending", "Subadmin Review", "Subadmin Hold", "Subadmin Approved", "Ready for Dispatch"].includes(req.status)) {
       return LIFECYCLE_STAGES.indexOf("Ordered");
     }
     return -1;
   })();
+
+  const handleStageClick = (stage: RequestStatus) => {
+    if (stage === "Submitted" || stage === "Sourcing") {
+      setActiveTab("overview");
+    } else if (stage === "Quoted") {
+      if (req.quotation || req.customerQuote) {
+        setActiveTab("quote");
+      } else {
+        setActiveTab("overview");
+      }
+    } else if (stage === "Invoicing" || stage === "Awaiting Payment") {
+      setActiveTab("invoice");
+      setSelectedRequestDetailsTab?.("invoice");
+    } else if (["Ordered", "Shipped", "Delivered", "Completed"].includes(stage)) {
+      if (req.shipment) {
+        setActiveTab("shipment");
+      } else {
+        setActiveTab("overview");
+      }
+    }
+  };
 
   const handleCopy = (text: string, label: string) => {
     navigator.clipboard?.writeText(text);
@@ -218,7 +239,7 @@ export function RequestDetailsModal() {
           </div>
         </div>
 
-        {/* 9-Stage Visual Lifecycle Stepper Bar */}
+        {/* Visual Lifecycle Stepper Bar */}
         <div className="px-6 py-3 bg-[#111f4e] text-white shrink-0 overflow-x-auto">
           <div className="flex items-center justify-between min-w-[700px] gap-2">
             {LIFECYCLE_STAGES.map((stage, idx) => {
@@ -226,32 +247,37 @@ export function RequestDetailsModal() {
               const isCurrent = idx === currentStageIndex;
               return (
                 <div key={stage} className="flex items-center flex-1 last:flex-none">
-                  <div className="flex flex-col items-center">
+                  <button
+                    type="button"
+                    onClick={() => handleStageClick(stage)}
+                    className="flex flex-col items-center cursor-pointer group hover:opacity-90 transition-opacity"
+                    title={`Click to view details for ${stage}`}
+                  >
                     <div
-                      className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold transition-all ${isPast
+                      className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold transition-all group-hover:scale-110 ${isPast
                         ? "bg-emerald-500 text-white"
                         : isCurrent
                           ? "bg-[#FE0000] text-white ring-4 ring-red-500/20 animate-pulse"
-                          : "bg-slate-700 text-slate-400"
+                          : "bg-slate-700 text-slate-400 group-hover:bg-slate-600 group-hover:text-white"
                         }`}
                     >
                       {isPast ? <Check className="w-3 h-3 stroke-[3]" /> : idx + 1}
                     </div>
                     <span
-                      className={`text-[10px] mt-1 whitespace-nowrap ${isCurrent
+                      className={`text-[10px] mt-1 whitespace-nowrap transition-colors ${isCurrent
                         ? "text-white font-bold"
                         : isPast
-                          ? "text-emerald-400 font-medium"
-                          : "text-slate-500"
+                          ? "text-emerald-400 font-medium group-hover:text-emerald-300"
+                          : "text-slate-400 group-hover:text-slate-200"
                         }`}
                     >
                       {stage}
                     </span>
-                  </div>
+                  </button>
 
                   {idx < LIFECYCLE_STAGES.length - 1 && (
                     <div
-                      className={`flex-1 h-0.5 mx-1.5 ${idx < currentStageIndex ? "bg-emerald-500" : "bg-slate-700"
+                      className={`flex-1 h-0.5 mx-1.5 ${isPast ? "bg-emerald-500" : "bg-slate-700"
                         }`}
                     />
                   )}
@@ -319,7 +345,7 @@ export function RequestDetailsModal() {
             </button>
           )}
 
-          {(req.payment || req.quoteAcceptance || ["Approved", "Invoicing", "Awaiting Payment", "Ordered", "Shipped", "Delivered", "Completed"].includes(req.status)) && (
+          {(req.payment || req.quoteAcceptance || ["Invoicing", "Awaiting Payment", "Ordered", "Shipped", "Delivered", "Completed"].includes(req.status)) && (
             <button
               onClick={() => {
                 setActiveTab("invoice");
@@ -359,7 +385,30 @@ export function RequestDetailsModal() {
           {activeTab === "overview" && (
             <div className="space-y-6">
               {/* Top Quick Status Alert */}
-              {req.actionRequired && (
+              {req.status === "Invoicing" ? (
+                <div className="p-4 rounded-xl bg-indigo-50/80 border border-indigo-200 flex items-start justify-between gap-4">
+                  <div className="flex items-start gap-3">
+                    <Clock className="w-5 h-5 text-indigo-600 shrink-0 mt-0.5" />
+                    <div>
+                      <h4 className="text-xs font-bold text-indigo-950">
+                        Quote Accepted — Invoicing in Progress
+                      </h4>
+                      <p className="text-[11px] text-indigo-800 mt-0.5">
+                        AutoHub operations is generating and attaching your official GST tax invoice. You will be notified once ready for settlement.
+                      </p>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => {
+                      setActiveTab("invoice");
+                      setSelectedRequestDetailsTab?.("invoice");
+                    }}
+                    className="px-4 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs uppercase tracking-wider rounded-lg shadow-sm whitespace-nowrap"
+                  >
+                    View Invoice Tab →
+                  </button>
+                </div>
+              ) : req.actionRequired && (
                 <div className="p-4 rounded-xl bg-amber-50 border border-amber-300 flex items-start justify-between gap-4">
                   <div className="flex items-start gap-3">
                     <AlertTriangle className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
@@ -380,7 +429,7 @@ export function RequestDetailsModal() {
                       Review Quote →
                     </button>
                   )}
-                  {(req.status === "Awaiting Payment" || req.payment?.status === "Unpaid") && (
+                  {req.status === "Awaiting Payment" && req.payment?.status !== "Paid" && (
                     <button
                       onClick={() => {
                         setPaymentRequest(req);
@@ -1051,7 +1100,24 @@ export function RequestDetailsModal() {
                           <span>Order Parameters Verified (Vehicle, Part, Delivery Address).</span>
                         </div>
                       </div>
-                      {(!req.payment || req.payment.status === "Unpaid") && (
+                      {req.status === "Invoicing" ? (
+                        <div className="pt-2 flex flex-wrap items-center justify-between gap-2 border-t border-emerald-200/60">
+                          <div className="flex items-center gap-2 text-xs text-indigo-900 font-medium">
+                            <Clock className="w-4 h-4 text-indigo-600 shrink-0" />
+                            <span>Official Tax Invoice is being prepared and attached by operations. Ready for settlement shortly.</span>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setActiveTab("invoice");
+                              setSelectedRequestDetailsTab?.("invoice");
+                            }}
+                            className="text-xs text-indigo-700 font-bold hover:underline"
+                          >
+                            Preview Invoice Tab →
+                          </button>
+                        </div>
+                      ) : (!req.payment || req.payment.status === "Unpaid") ? (
                         <div className="pt-2 flex flex-wrap items-center justify-between gap-2 border-t border-emerald-200/60">
                           <button
                             onClick={() => {
@@ -1073,7 +1139,7 @@ export function RequestDetailsModal() {
                             View Billing & Payments Tab →
                           </button>
                         </div>
-                      )}
+                      ) : null}
                     </div>
                   )}
 

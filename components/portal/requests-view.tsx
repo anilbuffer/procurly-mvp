@@ -46,7 +46,6 @@ export function RequestsView() {
         if (
           (!r.actionType || r.actionType === "none") &&
           r.status !== "Quoted" &&
-          !(r.status === "Approved" && r.payment?.status !== "Paid") &&
           !(r.status === "Awaiting Payment" && r.payment?.status !== "Paid")
         )
           return false;
@@ -54,7 +53,6 @@ export function RequestsView() {
         if (
           r.status !== "Sourcing" &&
           r.status !== "Ordered" &&
-          r.status !== "Approved" &&
           r.status !== "Invoicing" &&
           r.status !== "Awaiting Payment"
         )
@@ -116,7 +114,6 @@ export function RequestsView() {
               "Submitted",
               "Sourcing",
               "Quoted",
-              "Approved",
               "Invoicing",
               "Awaiting Payment",
               "Ordered",
@@ -239,7 +236,7 @@ export function RequestsView() {
                         >
                           Review Quote →
                         </button>
-                      ) : req.actionType === "pay_now" || ((req.status === "Approved" || req.status === "Awaiting Payment") && req.payment?.status !== "Paid") ? (
+                      ) : req.actionType === "pay_now" || (req.status === "Awaiting Payment" && req.payment?.status !== "Paid") ? (
                         <button
                           onClick={(e) => {
                             e.stopPropagation();

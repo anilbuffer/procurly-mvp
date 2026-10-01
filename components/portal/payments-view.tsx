@@ -26,12 +26,11 @@ export function PaymentsView() {
   } = usePortal();
   const [filterStatus, setFilterStatus] = useState<"All" | "Unpaid" | "Paid">("All");
 
-  // Requests that have payment record, are invoiceable, or in stages Approved onwards
+  // Requests that have payment record, are invoiceable, or in stages Invoicing onwards
   const paymentRequests = requests.filter(
     (r) =>
       r.payment ||
       [
-        "Approved",
         "Invoicing",
         "Awaiting Payment",
         "Ordered",

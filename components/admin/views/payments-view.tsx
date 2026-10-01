@@ -25,7 +25,7 @@ export function PaymentsView() {
   // Requests that have a quoted amount or payment record
   const payableRequests = requests.filter(
     (r) =>
-      r.status === "Approved" ||
+      r.status === "Invoicing" ||
       r.status === "Awaiting Payment" ||
       r.status === "Ordered" ||
       r.status === "Shipped" ||

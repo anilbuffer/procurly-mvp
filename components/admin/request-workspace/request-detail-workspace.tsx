@@ -92,12 +92,11 @@ export function RequestDetailWorkspace({
     setShowNoteModal(false);
   };
 
-  // The 9 Canonical Lifecycle Stages (Section 8)
+  // The 9 Canonical Lifecycle Stages (Skipping [Approved])
   const LIFECYCLE_STAGES: RequestStatus[] = [
     "Submitted",
     "Sourcing",
     "Quoted",
-    "Approved",
     "Invoicing",
     "Awaiting Payment",
     "Ordered",
@@ -109,6 +108,7 @@ export function RequestDetailWorkspace({
   const currentStageIndex = (() => {
     const idx = LIFECYCLE_STAGES.indexOf(request.status);
     if (idx !== -1) return idx;
+    if (request.status === "Approved") return LIFECYCLE_STAGES.indexOf("Invoicing");
     if (["Subadmin Pending", "Subadmin Review", "Subadmin Hold", "Subadmin Approved", "Ready for Dispatch"].includes(request.status)) {
       return LIFECYCLE_STAGES.indexOf("Ordered");
     }
@@ -129,9 +129,9 @@ export function RequestDetailWorkspace({
   const handleStageClick = (stage: RequestStatus) => {
     if (stage === "Sourcing") setActiveTab("sourcing");
     else if (stage === "Quoted") setActiveTab("quote");
-    else if (stage === "Approved" || stage === "Invoicing") setActiveTab("invoice");
+    else if (stage === "Invoicing") setActiveTab("invoice");
     else if (stage === "Awaiting Payment") setActiveTab("payment");
-    else if (stage === "Ordered" || stage === "Shipped" || stage === "Delivered") setActiveTab("shipment");
+    else if (stage === "Ordered" || stage === "Shipped" || stage === "Delivered" || stage === "Completed") setActiveTab("shipment");
     else setActiveTab("overview");
   };
 
@@ -351,7 +351,8 @@ export function RequestDetailWorkspace({
               Request Lifecycle Progression
             </h3>
             <span className="text-xs font-semibold text-slate-500">
-              Stage {currentStageIndex + 1}/10: <span className="text-slate-900 font-bold">{request.status}</span>
+              Stage {currentStageIndex + 1}/{LIFECYCLE_STAGES.length}:{" "}
+              <span className="text-slate-900 font-bold">{request.status}</span>
             </span>
           </div>
 

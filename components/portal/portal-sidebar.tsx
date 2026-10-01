@@ -54,11 +54,11 @@ export function PortalSidebar({
   }, []);
 
   const activeOrdersCount = requests.filter(
-    (r) => r.status === "Ordered" || r.status === "Approved" || r.status === "Invoicing" || r.status === "Awaiting Payment"
+    (r) => r.status === "Invoicing" || r.status === "Awaiting Payment" || r.status === "Ordered"
   ).length;
 
   const awaitingPaymentCount = requests.filter(
-    (r) => r.status === "Awaiting Payment" || r.status === "Invoicing" || (r.status === "Approved" && r.payment?.status !== "Paid")
+    (r) => r.status === "Awaiting Payment" && r.payment?.status !== "Paid"
   ).length;
 
   const navGroups: {

@@ -48,7 +48,6 @@ export function AdminDashboardView() {
           r.status === "Submitted" ||
           r.status === "Sourcing" ||
           r.status === "Awaiting Payment" ||
-          r.status === "Approved" ||
           r.status === "Invoicing" ||
           r.payment?.status === "Unpaid" ||
           (r.status === "Ordered" && !r.shipment) ||
@@ -120,9 +119,9 @@ export function AdminDashboardView() {
           { label: "NEW REQUESTS", value: requests.filter((r) => r.status === "Submitted").length, link: "/admin/requests?status=Submitted", icon: Inbox, color: "text-sky-600" },
           { label: "SOURCING", value: requests.filter((r) => r.status === "Sourcing").length, link: "/admin/requests?status=Sourcing", icon: Search, color: "text-amber-600" },
           { label: "QUOTED", value: requests.filter((r) => r.status === "Quoted").length, link: "/admin/requests?status=Quoted", icon: FileCheck, color: "text-purple-600" },
-          { label: "AWAITING PAYMENT", value: requests.filter((r) => r.status === "Awaiting Payment").length, link: "/admin/requests?status=Awaiting Payment", icon: CreditCard, color: "text-[#FE0000]" },
-          { label: "Subadmin REVIEW", value: requests.filter((r) => r.status === "Subadmin Review" || r.status === "Subadmin Hold").length, link: "/subadmin/dashboard", icon: AlertTriangle, color: "text-rose-600" },
-          { label: "READY TO ORDER", value: requests.filter((r) => r.status === "Approved").length, link: "/admin/requests?status=Approved", icon: ShoppingBag, color: "text-emerald-600" },
+          { label: "INVOICING", value: requests.filter((r) => r.status === "Invoicing").length, link: "/admin/requests?status=Invoicing", icon: FileText, color: "text-indigo-600" },
+          { label: "AWAITING PAYMENT", value: requests.filter((r) => r.status === "Awaiting Payment" && r.payment?.status !== "Paid").length, link: "/admin/requests?status=Awaiting Payment", icon: CreditCard, color: "text-[#FE0000]" },
+          { label: "READY TO ORDER", value: requests.filter((r) => r.payment?.status === "Paid" && !r.supplierOrder).length, link: "/admin/requests?status=Awaiting Payment", icon: ShoppingBag, color: "text-emerald-600" },
           { label: "SHIPPED", value: requests.filter((r) => r.status === "Shipped").length, link: "/admin/requests?status=Shipped", icon: Truck, color: "text-cyan-600" },
           { label: "DELIVERED", value: requests.filter((r) => r.status === "Delivered").length, link: "/admin/requests?status=Delivered", icon: CheckCircle2, color: "text-teal-600" },
         ].map((stat, idx) => (

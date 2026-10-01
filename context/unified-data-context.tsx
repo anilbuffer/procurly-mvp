@@ -179,7 +179,17 @@ export function UnifiedDataProvider({ children }: { children: React.ReactNode })
       if (savedRequests) {
         const parsed = JSON.parse(savedRequests);
         if (Array.isArray(parsed) && parsed.length > 0) {
-          setRequests(parsed);
+          const migrated = parsed.map((r: any) => {
+            if (r.status === "Approved") {
+              return {
+                ...r,
+                status: "Invoicing",
+                actionRequired: r.payment?.status === "Paid" ? "Payment received in full. Ready for supplier ordering." : "Raise and attach invoice PDF",
+              };
+            }
+            return r;
+          });
+          setRequests(migrated);
         }
       }
       const savedCustomers = localStorage.getItem(STORAGE_CUSTOMERS);
@@ -366,8 +376,9 @@ export function UnifiedDataProvider({ children }: { children: React.ReactNode })
       newRequests: requests.filter((r) => r.status === "Submitted").length,
       sourcing: requests.filter((r) => r.status === "Sourcing").length,
       quoted: requests.filter((r) => r.status === "Quoted").length,
-      awaitingPayment: requests.filter((r) => r.status === "Awaiting Payment" || r.status === "Invoicing" || (r.status === "Approved" && r.payment?.status !== "Paid")).length,
-      readyToOrder: requests.filter((r) => (r.status === "Approved" || r.status === "Awaiting Payment") && r.payment?.status === "Paid" && !r.supplierOrder).length,
+      invoicing: requests.filter((r) => r.status === "Invoicing").length,
+      awaitingPayment: requests.filter((r) => r.status === "Awaiting Payment" && r.payment?.status !== "Paid").length,
+      readyToOrder: requests.filter((r) => r.payment?.status === "Paid").length,
       shipped: requests.filter((r) => r.status === "Shipped").length,
       delivered: requests.filter((r) => r.status === "Delivered").length,
       totalActive: requests.filter((r) => r.status !== "Completed").length,
@@ -1434,7 +1445,7 @@ export function UnifiedDataProvider({ children }: { children: React.ReactNode })
 
             return {
               ...r,
-              status: r.status === "Awaiting Payment" ? "Approved" : r.status,
+              status: r.status === "Awaiting Payment" ? "Awaiting Payment" : r.status,
               paymentStatus: "Paid",
               payment: {
                 ...currentPay,
@@ -1443,7 +1454,7 @@ export function UnifiedDataProvider({ children }: { children: React.ReactNode })
                 paymentReference: paymentRef || currentPay.paymentReference || `${r.requestNumber}-PAID`,
                 lastUpdated: "Just now",
               },
-              actionRequired: "Payment received in full. Ready for supplier ordering.",
+              actionRequired: "Payment received in full. Order settled.",
               actionType: "none",
               lastUpdated: "Just now",
               activity: [
@@ -1452,7 +1463,7 @@ export function UnifiedDataProvider({ children }: { children: React.ReactNode })
                   timestamp: new Date().toISOString(),
                   timeLabel: "Just now",
                   title: "Payment marked Paid",
-                  description: `Payment marked as Paid by ${currentStaffUser.name}. Supplier Order Gate UNLOCKED.`,
+                  description: `Payment marked as Paid by ${currentStaffUser.name}. Order payment settled.`,
                   actor: currentStaffUser.name,
                   type: "payment",
                 },
@@ -1471,7 +1482,7 @@ export function UnifiedDataProvider({ children }: { children: React.ReactNode })
             id: `notif-${Date.now()}`,
             type: "Payment Received",
             title: `Payment Received: ${target.requestNumber}`,
-            description: `Payment marked as Paid. Supplier order is now available to place.`,
+            description: `Payment marked as Paid by ${currentStaffUser.name}. Order payment settled.`,
             timestamp: "Just now",
             read: false,
             requestId: target.id,
@@ -1489,10 +1500,9 @@ export function UnifiedDataProvider({ children }: { children: React.ReactNode })
         prev.map((r) => {
           if (r.id === requestId || r.requestNumber === requestId) {
             if (!r.payment) return r;
-            const shouldRevertToAwaiting = r.status === "Approved" && !r.supplierOrder;
             return {
               ...r,
-              status: shouldRevertToAwaiting ? "Awaiting Payment" : r.status,
+              status: "Awaiting Payment",
               paymentStatus: "Unpaid",
               payment: {
                 ...r.payment,
