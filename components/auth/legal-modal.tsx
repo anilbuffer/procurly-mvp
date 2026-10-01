@@ -76,30 +76,33 @@ export function LegalModal({
       role="dialog"
       aria-modal="true"
       aria-labelledby="legal-modal-title"
-      className="fixed inset-0 z-[100] flex items-center justify-center p-3 sm:p-6 bg-slate-900/60 backdrop-blur-xs animate-in fade-in duration-200"
+      className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4 md:p-6 bg-slate-900/60 backdrop-blur-xs animate-in fade-in duration-200"
     >
       <div
-        className="w-full max-w-2xl bg-white rounded-2xl shadow-2xl border border-slate-200 flex flex-col max-h-[85vh] overflow-hidden animate-in zoom-in-95 duration-150"
+        className="w-full max-w-2xl bg-white rounded-t-2xl sm:rounded-2xl shadow-2xl border-t sm:border border-slate-200 flex flex-col h-[92vh] sm:max-h-[85vh] overflow-hidden animate-in slide-in-from-bottom-4 sm:zoom-in-95 duration-200"
         onClick={(e) => e.stopPropagation()}
       >
+        {/* Mobile drag handle */}
+        <div className="sm:hidden w-12 h-1 bg-slate-300 rounded-full mx-auto mt-2.5 mb-0.5 shrink-0" />
+
         {/* Modal Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200 bg-slate-50/90 shrink-0">
-          <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-[#FE0000]/10 border border-[#FE0000]/20 flex items-center justify-center text-[#FE0000]">
+        <div className="flex items-center justify-between px-4 sm:px-6 py-3 sm:py-4 border-b border-slate-200 bg-slate-50/90 shrink-0">
+          <div className="flex items-center gap-2.5 sm:gap-3 min-w-0 pr-2">
+            <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-[#FE0000]/10 border border-[#FE0000]/20 flex items-center justify-center text-[#FE0000] shrink-0">
               {activeDoc === "terms" ? (
                 <FileText className="w-4 h-4" />
               ) : (
                 <Shield className="w-4 h-4" />
               )}
             </div>
-            <div>
+            <div className="min-w-0">
               <h2
                 id="legal-modal-title"
-                className="text-base font-bold text-slate-900 leading-tight"
+                className="text-sm sm:text-base font-bold text-slate-900 leading-tight truncate"
               >
                 {title || (activeDoc === "terms" ? "Particular Terms of Trade" : "Procurly Privacy Policy")}
               </h2>
-              <p className="text-[11px] text-slate-500">
+              <p className="text-[10px] sm:text-[11px] text-slate-500 truncate">
                 Official Autohub Procurement Network Documentation • v2.4 (2026)
               </p>
             </div>
@@ -108,7 +111,7 @@ export function LegalModal({
           <button
             type="button"
             onClick={onClose}
-            className="w-8 h-8 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-200/60 flex items-center justify-center transition-colors cursor-pointer"
+            className="w-9 h-9 rounded-xl text-slate-400 hover:text-slate-700 active:bg-slate-200/70 hover:bg-slate-200/60 flex items-center justify-center transition-colors cursor-pointer shrink-0"
             title="Close dialog"
             aria-label="Close dialog"
           >
@@ -117,7 +120,7 @@ export function LegalModal({
         </div>
 
         {/* Tab Switcher */}
-        <div className="flex border-b border-slate-200 px-6 bg-white gap-2 shrink-0">
+        <div className="flex border-b border-slate-200 px-4 sm:px-6 bg-white gap-2 sm:gap-4 shrink-0 overflow-x-auto no-scrollbar">
           <button
             type="button"
             onClick={() => {
@@ -126,13 +129,13 @@ export function LegalModal({
               setScrollProgress(0);
               if (scrollContainerRef.current) scrollContainerRef.current.scrollTop = 0;
             }}
-            className={`py-3 text-xs font-bold border-b-2 transition-all flex items-center gap-1.5 cursor-pointer ${activeDoc === "terms"
+            className={`py-2.5 sm:py-3 text-xs font-bold border-b-2 transition-all flex items-center gap-1.5 cursor-pointer whitespace-nowrap ${activeDoc === "terms"
               ? "border-[#FE0000] text-[#FE0000]"
               : "border-transparent text-slate-500 hover:text-slate-800"
               }`}
           >
-            <FileText className="w-3.5 h-3.5" />
-            Particular Terms of Trade
+            <FileText className="w-3.5 h-3.5 shrink-0" />
+            <span>Particular Terms of Trade</span>
           </button>
           <button
             type="button"
@@ -142,13 +145,13 @@ export function LegalModal({
               setScrollProgress(0);
               if (scrollContainerRef.current) scrollContainerRef.current.scrollTop = 0;
             }}
-            className={`py-3 text-xs font-bold border-b-2 transition-all flex items-center gap-1.5 cursor-pointer ${activeDoc === "privacy"
+            className={`py-2.5 sm:py-3 text-xs font-bold border-b-2 transition-all flex items-center gap-1.5 cursor-pointer whitespace-nowrap ${activeDoc === "privacy"
               ? "border-[#FE0000] text-[#FE0000]"
               : "border-transparent text-slate-500 hover:text-slate-800"
               }`}
           >
-            <Shield className="w-3.5 h-3.5" />
-            Privacy Policy
+            <Shield className="w-3.5 h-3.5 shrink-0" />
+            <span>Privacy Policy</span>
           </button>
         </div>
 
@@ -156,7 +159,7 @@ export function LegalModal({
         <div
           ref={scrollContainerRef}
           onScroll={handleScroll}
-          className="flex-1 overflow-y-auto px-6 py-5 space-y-4 text-xs text-slate-700 leading-relaxed custom-scrollbar"
+          className="flex-1 overflow-y-auto px-4 sm:px-6 py-4 sm:py-5 space-y-4 text-xs text-slate-700 leading-relaxed custom-scrollbar"
         >
           {activeDoc === "terms" ? (
             <div className="space-y-5 text-slate-800  text-xs leading-relaxed">
@@ -473,28 +476,31 @@ export function LegalModal({
 
         {/* Scroll Enforcement Guidance Banner */}
         {!hasScrolledToBottom && showAcceptButton && (
-          <div className="flex items-center justify-between text-xs text-amber-900 bg-amber-50 px-6 py-2.5 border-t border-amber-200 shrink-0">
-            <span className="flex items-center gap-2 font-medium">
+          <div className="flex items-center justify-between text-xs text-amber-900 bg-amber-50 px-4 sm:px-6 py-2 border-t border-amber-200 shrink-0">
+            <span className="flex items-center gap-2 font-medium min-w-0 pr-2">
               <ArrowDown className="w-4 h-4 animate-bounce text-[#FE0000] shrink-0" />
-              <span>Please scroll through and view the entire terms to enable acceptance</span>
+              <span className="truncate sm:whitespace-normal">
+                <span className="sm:hidden">Scroll to view all terms to agree</span>
+                <span className="hidden sm:inline">Please scroll through and view the entire terms to enable acceptance</span>
+              </span>
             </span>
-            <span className=" font-bold text-[11px] bg-white px-2 py-0.5 rounded border border-amber-200 shrink-0">
-              {scrollProgress}% viewed
+            <span className="font-bold text-[11px] bg-white px-2 py-0.5 rounded border border-amber-200 shrink-0">
+              {scrollProgress}%
             </span>
           </div>
         )}
 
         {/* Modal Footer */}
-        <div className="flex items-center justify-between px-6 py-4 border-t border-slate-200 bg-slate-50/90 shrink-0">
-          <span className="text-[11px] text-slate-500">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5 px-4 sm:px-6 py-3 sm:py-4 border-t border-slate-200 bg-slate-50/95 shrink-0 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
+          <span className="text-[11px] text-slate-500 text-center sm:text-left order-2 sm:order-1">
             {hasScrolledToBottom ? "✓ Terms fully viewed. You may now accept." : "Scroll down to read all terms."}
           </span>
 
-          <div className="flex items-center gap-2.5">
+          <div className="flex items-center gap-2 order-1 sm:order-2 w-full sm:w-auto">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 text-xs font-semibold text-slate-600 hover:text-slate-800 hover:bg-slate-200/60 rounded-xl transition-all cursor-pointer"
+              className="flex-1 sm:flex-initial h-11 px-4 text-xs font-bold text-slate-600 hover:text-slate-800 bg-white sm:bg-transparent hover:bg-slate-200/60 border sm:border-transparent border-slate-300 rounded-xl transition-all cursor-pointer flex items-center justify-center active:scale-95"
             >
               Close
             </button>
@@ -508,15 +514,15 @@ export function LegalModal({
                     onClose();
                   }
                 }}
-                className={`px-5 py-2.5 text-xs font-bold rounded-xl transition-all shadow-xs inline-flex items-center gap-2 ${hasScrolledToBottom
-                  ? "bg-[#FE0000] hover:bg-[#9B0A0F] text-white shadow-md shadow-red-500/20 active:scale-95 cursor-pointer"
+                className={`flex-[2] sm:flex-initial h-11 px-4 sm:px-5 text-xs font-bold rounded-xl transition-all shadow-xs inline-flex items-center justify-center gap-2 ${hasScrolledToBottom
+                  ? "bg-[#FE0000] hover:bg-[#9B0A0F] active:bg-[#85080C] text-white shadow-md shadow-red-500/20 active:scale-95 cursor-pointer"
                   : "bg-slate-200 text-slate-400 cursor-not-allowed border border-slate-300"
                   }`}
                 title={hasScrolledToBottom ? "Click to accept" : "Please scroll to bottom first"}
               >
-                <CheckCircle2 className="w-4 h-4" />
-                <span>
-                  {hasScrolledToBottom ? "I Have Read & Agree to Terms" : "Scroll to Bottom to Agree (↓)"}
+                <CheckCircle2 className="w-4 h-4 shrink-0" />
+                <span className="truncate">
+                  {hasScrolledToBottom ? "Accept & Agree to Terms" : "Scroll to Agree (↓)"}
                 </span>
               </button>
             )}

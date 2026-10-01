@@ -129,11 +129,10 @@ export default function AdminInvoicePage() {
           <div className="flex flex-wrap items-center gap-2">
             {/* Status Badge */}
             <span
-              className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider border flex items-center gap-1.5 ${
-                isPaid
+              className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider border flex items-center gap-1.5 ${isPaid
                   ? "bg-emerald-50 text-emerald-700 border-emerald-200"
                   : "bg-amber-50 text-amber-700 border-amber-200"
-              }`}
+                }`}
             >
               {isPaid ? (
                 <>
@@ -153,11 +152,10 @@ export default function AdminInvoicePage() {
               type="button"
               onClick={handleTogglePaymentStatus}
               disabled={isUpdatingPayment}
-              className={`px-3 py-1.5 rounded-xl font-bold text-xs transition-all flex items-center gap-1.5 shadow-xs cursor-pointer ${
-                isPaid
+              className={`px-3 py-1.5 rounded-xl font-bold text-xs transition-all flex items-center gap-1.5 shadow-xs cursor-pointer ${isPaid
                   ? "bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200"
                   : "bg-emerald-600 hover:bg-emerald-700 text-white"
-              }`}
+                }`}
             >
               <CreditCard className="w-3.5 h-3.5" />
               <span>{isPaid ? "Mark as Unpaid" : "Record Payment →"}</span>
@@ -174,16 +172,6 @@ export default function AdminInvoicePage() {
                   <Download className="w-3.5 h-3.5 text-slate-600" />
                   <span>Download PDF</span>
                 </a>
-
-                <button
-                  type="button"
-                  onClick={handleOpenFullWindow}
-                  className="px-3.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-xl transition-all flex items-center gap-1.5 cursor-pointer"
-                  title="Open PDF in new window"
-                >
-                  <ExternalLink className="w-3.5 h-3.5 text-slate-600" />
-                  <span>Full Window</span>
-                </button>
 
                 <button
                   type="button"

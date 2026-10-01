@@ -110,11 +110,10 @@ export function InvoiceDocument({
                 {invoiceNumber}
               </span>
               <span
-                className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase border ${
-                  isPaid
-                    ? "bg-emerald-50 text-emerald-700 border-emerald-200"
-                    : "bg-amber-50 text-amber-700 border-amber-200"
-                }`}
+                className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase border ${isPaid
+                  ? "bg-emerald-50 text-emerald-700 border-emerald-200"
+                  : "bg-amber-50 text-amber-700 border-amber-200"
+                  }`}
               >
                 {isPaid ? "Paid in Full" : "Awaiting Settlement"}
               </span>
@@ -138,15 +137,6 @@ export function InvoiceDocument({
           </a>
 
           {/* Full Window - opens safe blob URL to avoid Chrome data URL block */}
-          <button
-            type="button"
-            onClick={handleOpenFullWindow}
-            className="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-xl transition-all flex items-center gap-1.5 cursor-pointer"
-            title="Open PDF in new window"
-          >
-            <ExternalLink className="w-3.5 h-3.5 text-slate-600" />
-            <span>Full Window</span>
-          </button>
 
           {/* Print */}
           <button
@@ -221,15 +211,7 @@ export function InvoiceDocument({
               <Download className="w-3.5 h-3.5 text-slate-500" />
               <span>Download</span>
             </a>
-            <a
-              href={pdfUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="px-3 py-1.5 bg-[#FE0000] hover:bg-[#9B0A0F] text-white text-xs font-bold rounded-lg transition-colors flex items-center gap-1.5 shadow-xs"
-            >
-              <ExternalLink className="w-3.5 h-3.5" />
-              <span>Full Window</span>
-            </a>
+
           </div>
         </div>
 

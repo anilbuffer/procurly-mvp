@@ -148,9 +148,8 @@ export function AdminSidebar({
       >
         {/* Brand Header */}
         <div
-          className={`h-16 flex items-center bg-[#FE0000] border-b border-slate-800 shrink-0 px-4 ${
-            collapsed ? "lg:justify-center lg:px-2.5" : "justify-between"
-          }`}
+          className={`h-16 flex items-center bg-[#FE0000] border-b border-slate-800 shrink-0 px-4 ${collapsed ? "lg:justify-center lg:px-2.5" : "justify-between"
+            }`}
         >
           {/* Brand Logo & Name */}
           <Link
@@ -180,7 +179,7 @@ export function AdminSidebar({
               className="hidden lg:flex items-center justify-center"
             >
               <div className="w-9 h-9 rounded-lg border-2 border-white bg-[#FE0000] flex items-center justify-center shadow-sm">
-                <span className="text-white font-black text-sm tracking-tighter leading-none shrink-0">A</span>
+                <span className="text-white font-black text-sm tracking-tighter leading-none shrink-0">P</span>
               </div>
             </Link>
           )}
@@ -211,18 +210,16 @@ export function AdminSidebar({
                       href={item.href}
                       onClick={onCloseMobile}
                       title={collapsed ? item.name : undefined}
-                      className={`relative w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-[13px] font-medium transition-all group overflow-hidden ${
-                        active
+                      className={`relative w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-[13px] font-medium transition-all group overflow-hidden ${active
                           ? "bg-[#1E2538] text-white before:absolute before:left-0 before:top-1/2 before:-translate-y-1/2 before:w-1 before:h-[60%] before:bg-[#FE0000] before:rounded-r-full"
                           : "text-slate-400 hover:text-white hover:bg-[#1E2538]/50"
-                      } ${collapsed ? "lg:justify-center lg:px-0" : ""}`}
+                        } ${collapsed ? "lg:justify-center lg:px-0" : ""}`}
                     >
                       <Icon
-                        className={`w-[18px] h-[18px] shrink-0 transition-colors ${
-                          active
+                        className={`w-[18px] h-[18px] shrink-0 transition-colors ${active
                             ? "text-white"
                             : "text-slate-400 group-hover:text-white"
-                        }`}
+                          }`}
                       />
                       <span className={`flex-1 truncate text-left ${collapsed ? "lg:hidden" : ""}`}>
                         {item.name}
@@ -231,9 +228,8 @@ export function AdminSidebar({
                       {item.badge !== undefined && (
                         <span
                           suppressHydrationWarning
-                          className={`text-[10px] font-bold px-1.5 py-0.5 rounded-md shrink-0 leading-none ${
-                            collapsed ? "lg:hidden" : ""
-                          } ${item.badgeColor || "bg-red-500 text-white"}`}
+                          className={`text-[10px] font-bold px-1.5 py-0.5 rounded-md shrink-0 leading-none ${collapsed ? "lg:hidden" : ""
+                            } ${item.badgeColor || "bg-red-500 text-white"}`}
                         >
                           {item.badge}
                         </span>
@@ -246,81 +242,81 @@ export function AdminSidebar({
           ))}
         </div>
 
-      {/* User Info / Profile Card at Bottom */}
-      <div ref={userMenuRef} className="p-3 border-t border-[#1E2538]/60 relative">
-        <div
-          onClick={() => setShowUserMenu(!showUserMenu)}
-          className={`flex items-center justify-between p-2 rounded-xl transition-all select-none cursor-pointer bg-[#141B2B] hover:bg-[#182033] border border-transparent hover:border-[#27324D]/60 ${collapsed ? "justify-center" : ""
-            }`}
-          title={collapsed ? `${currentStaffUser?.name || "David Vance"} (${currentStaffUser?.role || "Administrator"})` : undefined}
-        >
-          <div className="flex items-center gap-3 min-w-0">
-            <div className="w-8 h-8 rounded-full bg-[#FE0000] hover:bg-[#9B0A0F] flex items-center justify-center text-white font-black text-xs shrink-0 shadow-md">
-              {(currentStaffUser?.name || "David Vance")
-                .split(" ")
-                .map((n) => n[0])
-                .join("") || "DV"}
+        {/* User Info / Profile Card at Bottom */}
+        <div ref={userMenuRef} className="p-3 border-t border-[#1E2538]/60 relative">
+          <div
+            onClick={() => setShowUserMenu(!showUserMenu)}
+            className={`flex items-center justify-between p-2 rounded-xl transition-all select-none cursor-pointer bg-[#141B2B] hover:bg-[#182033] border border-transparent hover:border-[#27324D]/60 ${collapsed ? "justify-center" : ""
+              }`}
+            title={collapsed ? `${currentStaffUser?.name || "David Vance"} (${currentStaffUser?.role || "Administrator"})` : undefined}
+          >
+            <div className="flex items-center gap-3 min-w-0">
+              <div className="w-8 h-8 rounded-full bg-[#FE0000] hover:bg-[#9B0A0F] flex items-center justify-center text-white font-black text-xs shrink-0 shadow-md">
+                {(currentStaffUser?.name || "David Vance")
+                  .split(" ")
+                  .map((n) => n[0])
+                  .join("") || "DV"}
+              </div>
+              {!collapsed && (
+                <div className="truncate text-left">
+                  <p className="text-xs font-bold text-white truncate leading-tight">
+                    {currentStaffUser?.name || "David Vance"}
+                  </p>
+                  <p className="text-[10px] text-slate-400 font-medium truncate">
+                    {currentStaffUser?.role || "Administrator"}
+                  </p>
+                </div>
+              )}
             </div>
             {!collapsed && (
-              <div className="truncate text-left">
-                <p className="text-xs font-bold text-white truncate leading-tight">
-                  {currentStaffUser?.name || "David Vance"}
-                </p>
-                <p className="text-[10px] text-slate-400 font-medium truncate">
-                  {currentStaffUser?.role || "Administrator"}
-                </p>
-              </div>
+              <ChevronDown
+                className={`w-3.5 h-3.5 text-slate-400 shrink-0 transition-transform duration-200 ${showUserMenu ? "rotate-180" : ""
+                  }`}
+              />
             )}
           </div>
-          {!collapsed && (
-            <ChevronDown
-              className={`w-3.5 h-3.5 text-slate-400 shrink-0 transition-transform duration-200 ${showUserMenu ? "rotate-180" : ""
-                }`}
-            />
+
+          {/* User dropdown popover */}
+          {showUserMenu && (
+            <div
+              className={`absolute bottom-16 ${collapsed ? "left-20 ml-2 w-64" : "left-3 right-3"
+                } bg-[#182033] border border-[#27324D] rounded-xl shadow-2xl p-2.5 space-y-2 z-50 text-xs text-slate-200 animate-in fade-in slide-in-from-bottom-2 duration-150`}
+            >
+              <div className="px-2 py-1 border-b border-[#27324D]/60 pb-2">
+                <p className="font-bold text-white text-xs mt-0.5">{currentStaffUser?.name || "David Vance"}</p>
+                <p className="text-[10px] text-slate-400  truncate">{currentStaffUser?.email}</p>
+              </div>
+
+              <div className="pt-0.5 space-y-0.5">
+                <Link
+                  href="/admin/settings"
+                  onClick={() => setShowUserMenu(false)}
+                  className="w-full flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-[#222C46] text-slate-300 hover:text-white transition-colors"
+                >
+                  <Settings className="w-3.5 h-3.5 text-emerald-400" />
+                  <span>Admin Profile & Settings</span>
+                </Link>
+                <Link
+                  href="/customer/dashboard"
+                  onClick={() => setShowUserMenu(false)}
+                  className="w-full flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-blue-500/15 text-blue-400 hover:text-blue-300 transition-colors font-medium"
+                >
+                  <ArrowRightLeft className="w-3.5 h-3.5 text-blue-400" />
+                  <span>Switch to Customer Portal</span>
+                </Link>
+                <Link
+                  href="/login"
+                  onClick={() => setShowUserMenu(false)}
+                  className="w-full flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-red-500/10 text-red-400 hover:text-red-300 transition-colors"
+                >
+                  <LogOut className="w-3.5 h-3.5" />
+                  <span>Log Out</span>
+                </Link>
+              </div>
+            </div>
           )}
         </div>
-
-        {/* User dropdown popover */}
-        {showUserMenu && (
-          <div
-            className={`absolute bottom-16 ${collapsed ? "left-20 ml-2 w-64" : "left-3 right-3"
-              } bg-[#182033] border border-[#27324D] rounded-xl shadow-2xl p-2.5 space-y-2 z-50 text-xs text-slate-200 animate-in fade-in slide-in-from-bottom-2 duration-150`}
-          >
-            <div className="px-2 py-1 border-b border-[#27324D]/60 pb-2">
-              <p className="font-bold text-white text-xs mt-0.5">{currentStaffUser?.name || "David Vance"}</p>
-              <p className="text-[10px] text-slate-400  truncate">{currentStaffUser?.email}</p>
-            </div>
-
-            <div className="pt-0.5 space-y-0.5">
-              <Link
-                href="/admin/settings"
-                onClick={() => setShowUserMenu(false)}
-                className="w-full flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-[#222C46] text-slate-300 hover:text-white transition-colors"
-              >
-                <Settings className="w-3.5 h-3.5 text-emerald-400" />
-                <span>Admin Profile & Settings</span>
-              </Link>
-              <Link
-                href="/customer/dashboard"
-                onClick={() => setShowUserMenu(false)}
-                className="w-full flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-blue-500/15 text-blue-400 hover:text-blue-300 transition-colors font-medium"
-              >
-                <ArrowRightLeft className="w-3.5 h-3.5 text-blue-400" />
-                <span>Switch to Customer Portal</span>
-              </Link>
-              <Link
-                href="/login"
-                onClick={() => setShowUserMenu(false)}
-                className="w-full flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-red-500/10 text-red-400 hover:text-red-300 transition-colors"
-              >
-                <LogOut className="w-3.5 h-3.5" />
-                <span>Log Out</span>
-              </Link>
-            </div>
-          </div>
-        )}
-      </div>
-    </aside>
+      </aside>
     </>
   );
 }

@@ -65,6 +65,7 @@ const STEPS = [
   { id: 4, label: "Review", shortLabel: "Review", icon: FileText, description: "Confirm & submit" },
 ] as const;
 
+
 export function RegisterView() {
   const router = useRouter();
   const { customers, addCustomer } = useUnifiedData();
@@ -404,9 +405,9 @@ export function RegisterView() {
         {/* ═══════════════════════════════════════════════════════════════════ */}
         {isRegisteredSuccess && registeredRecord ? (
           <div className="space-y-6 animate-in zoom-in-95 duration-200">
-            <div className="p-6 rounded-2xl bg-white border border-slate-200 shadow-sm space-y-5">
+            <div className="p-4 sm:p-6 rounded-2xl bg-white border border-slate-200/90 shadow-sm space-y-4 sm:space-y-5">
               {/* Status Header */}
-              <div className="flex items-start gap-4 pb-4 border-b border-slate-100">
+              <div className="flex items-start gap-3.5 sm:gap-4 pb-4 border-b border-slate-100">
                 <div className="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-amber-600 flex items-center justify-center shrink-0">
                   <Clock className="w-6 h-6" />
                 </div>
@@ -628,8 +629,8 @@ export function RegisterView() {
                 })}
               </div>
 
-              {/* Mobile Step Indicator (compact bar + dots) */}
-              <div className="sm:hidden space-y-3">
+              {/* Mobile Step Indicator (tactile interactive pills + progress bar) */}
+              <div className="sm:hidden space-y-2.5">
                 {/* Progress bar */}
                 <div className="relative h-1.5 bg-slate-200 rounded-full overflow-hidden">
                   <div
@@ -637,46 +638,52 @@ export function RegisterView() {
                     style={{ width: `${((currentStep - 1) / 3) * 100}%` }}
                   />
                 </div>
-                {/* Current step label */}
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    {(() => {
-                      const CurrentIcon = STEPS[currentStep - 1].icon;
-                      return (
-                        <>
-                          <div className="w-7 h-7 rounded-lg bg-[#FE0000] text-white flex items-center justify-center">
-                            <CurrentIcon className="w-3.5 h-3.5" />
-                          </div>
-                          <div>
-                            <p className="text-xs font-bold text-slate-900">{STEPS[currentStep - 1].label}</p>
-                            <p className="text-[10px] text-slate-500">{STEPS[currentStep - 1].description}</p>
-                          </div>
-                        </>
-                      );
-                    })()}
-                  </div>
-                  {/* Dots */}
-                  <div className="flex items-center gap-1.5">
-                    {STEPS.map((step) => (
-                      <div
+
+                {/* 4 Interactive Step Pills */}
+                <div className="grid grid-cols-4 gap-1.5">
+                  {STEPS.map((step) => {
+                    const status = getStepStatus(step.id);
+                    const StepIcon = step.icon;
+                    const canJump = step.id <= currentStep || visitedSteps.has(step.id);
+                    return (
+                      <button
                         key={step.id}
-                        className={`w-2 h-2 rounded-full transition-all duration-300 ${step.id === currentStep
-                          ? "bg-[#FE0000] w-5"
-                          : isStepComplete(step.id)
-                            ? "bg-emerald-500"
-                            : "bg-slate-300"
+                        type="button"
+                        disabled={!canJump}
+                        onClick={() => {
+                          if (step.id < currentStep) goToStep(step.id);
+                          else if (step.id === currentStep + 1) handleNext();
+                        }}
+                        className={`flex flex-col items-center justify-center py-2 px-1 rounded-xl transition-all ${status === "active"
+                          ? "bg-[#FE0000] text-white shadow-xs font-bold ring-1 ring-[#FE0000]"
+                          : status === "completed"
+                            ? "bg-emerald-50 border border-emerald-200 text-emerald-800 font-semibold cursor-pointer active:scale-95"
+                            : status === "visited"
+                              ? "bg-white border border-slate-200 text-slate-600 font-medium cursor-pointer"
+                              : "bg-slate-100/80 border border-transparent text-slate-400 cursor-default"
                           }`}
-                      />
-                    ))}
-                  </div>
+                      >
+                        <div className="flex items-center gap-1">
+                          {status === "completed" ? (
+                            <Check className="w-3 h-3 text-emerald-600 shrink-0" />
+                          ) : (
+                            <StepIcon className="w-3 h-3 shrink-0" />
+                          )}
+                          <span className="text-[10px] tracking-tight truncate">
+                            {step.shortLabel}
+                          </span>
+                        </div>
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-5">
+            <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-5">
               {/* General Alert Message */}
               {generalError && (
-                <div className="p-4 rounded-xl bg-rose-50 border border-rose-300 text-rose-900 text-xs font-medium flex items-start gap-2.5 animate-in fade-in duration-200">
+                <div className="p-3.5 sm:p-4 rounded-xl bg-rose-50 border border-rose-300 text-rose-900 text-xs font-medium flex items-start gap-2.5 animate-in fade-in duration-200">
                   <AlertCircle className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
                   <div className="flex-1">
                     <p className="font-bold">Registration requirement missing</p>
@@ -690,19 +697,19 @@ export function RegisterView() {
               {/* ──────────────────────────────────────────────────────── */}
               {currentStep === 1 && (
                 <div className="animate-in fade-in slide-in-from-right-4 duration-300">
-                  <div className="p-5 sm:p-6 bg-white rounded-2xl border border-slate-200 shadow-2xs space-y-4">
+                  <div className="p-4 sm:p-6 bg-white rounded-2xl border border-slate-200/90 shadow-sm space-y-4">
                     <div className="flex items-center gap-2.5 pb-2 border-b border-slate-100">
-                      <div className="w-8 h-8 rounded-lg bg-red-50 text-[#FE0000] flex items-center justify-center font-bold">
+                      <div className="w-8 h-8 rounded-lg bg-red-50 text-[#FE0000] flex items-center justify-center font-bold shrink-0">
                         <Building2 className="w-4 h-4" />
                       </div>
                       <div>
                         <h2 className="text-sm font-bold text-slate-900">
-                          Business &amp; Company Details
+                          Business
                         </h2>
                       </div>
                     </div>
 
-                    <div className="space-y-6">
+                    <div className="space-y-4 sm:space-y-5">
                       {/* Business Legal Name */}
                       <div>
                         <label
@@ -722,13 +729,13 @@ export function RegisterView() {
                             }}
                             placeholder="e.g. SP Motors Ltd"
                             required
-                            className={`w-full h-11 px-3.5 rounded-xl border text-xs sm:text-sm font-medium transition-all focus:outline-none focus:ring-2 ${duplicateCompany
+                            className={`w-full h-12 px-3.5 rounded-xl border text-base sm:text-sm font-medium transition-all focus:outline-none focus:ring-2 ${duplicateCompany
                               ? "border-rose-400 bg-rose-50/40 focus:ring-rose-200 text-rose-900"
                               : "border-slate-300 bg-white focus:border-[#FE0000] focus:ring-[#FE0000]/15 text-slate-900"
                               }`}
                           />
                           {businessName && !duplicateCompany && (
-                            <div className="absolute right-3 top-3 text-emerald-600">
+                            <div className="absolute right-3.5 top-1/2 -translate-y-1/2 text-emerald-600">
                               <Check className="w-4 h-4" />
                             </div>
                           )}
@@ -774,7 +781,7 @@ export function RegisterView() {
                             value={tradingName}
                             onChange={(e) => setTradingName(e.target.value)}
                             placeholder="e.g. SP Performance & Dyno"
-                            className="w-full h-11 px-3.5 rounded-xl border border-slate-300 bg-white text-xs sm:text-sm font-medium focus:outline-none focus:border-[#FE0000] focus:ring-2 focus:ring-[#FE0000]/15"
+                            className="w-full h-12 px-3.5 rounded-xl border border-slate-300 bg-white text-base sm:text-sm font-medium focus:outline-none focus:border-[#FE0000] focus:ring-2 focus:ring-[#FE0000]/15"
                           />
                         </div>
 
@@ -795,7 +802,7 @@ export function RegisterView() {
                             value={nzbn}
                             onChange={(e) => setNzbn(e.target.value)}
                             placeholder="e.g. 9429041234567"
-                            className="w-full h-11 px-3.5 rounded-xl border border-slate-300 bg-white text-xs sm:text-sm font-medium focus:outline-none focus:border-[#FE0000] focus:ring-2 focus:ring-[#FE0000]/15"
+                            className="w-full h-12 px-3.5 rounded-xl border border-slate-300 bg-white text-base sm:text-sm font-medium focus:outline-none focus:border-[#FE0000] focus:ring-2 focus:ring-[#FE0000]/15"
                           />
                         </div>
                       </div>
@@ -808,13 +815,13 @@ export function RegisterView() {
                             htmlFor="reg-category"
                             className="block text-xs font-bold text-slate-700 mb-1"
                           >
-                            Company type <span className="text-rose-500">*</span>
+                            Company Type <span className="text-rose-500">*</span>
                           </label>
                           <select
                             id="reg-category"
                             value={businessType}
                             onChange={(e) => setBusinessType(e.target.value)}
-                            className="w-full h-11 px-3.5 rounded-xl border border-slate-300 bg-white text-xs sm:text-sm font-medium focus:outline-none focus:border-[#FE0000] focus:ring-2 focus:ring-[#FE0000]/15"
+                            className="w-full h-12 px-3.5 rounded-xl border border-slate-300 bg-white text-base sm:text-sm font-medium focus:outline-none focus:border-[#FE0000] focus:ring-2 focus:ring-[#FE0000]/15"
                           >
                             {BUSINESS_CATEGORIES.map((cat) => (
                               <option key={cat} value={cat}>
@@ -838,7 +845,7 @@ export function RegisterView() {
                             value={website}
                             onChange={(e) => setWebsite(e.target.value)}
                             placeholder="https://spmotors.co.nz"
-                            className="w-full h-11 px-3.5 rounded-xl border border-slate-300 bg-white text-xs sm:text-sm font-medium focus:outline-none focus:border-[#FE0000] focus:ring-2 focus:ring-[#FE0000]/15"
+                            className="w-full h-12 px-3.5 rounded-xl border border-slate-300 bg-white text-base sm:text-sm font-medium focus:outline-none focus:border-[#FE0000] focus:ring-2 focus:ring-[#FE0000]/15"
                           />
                         </div>
                       </div>
@@ -852,9 +859,9 @@ export function RegisterView() {
               {/* ──────────────────────────────────────────────────────── */}
               {currentStep === 2 && (
                 <div className="animate-in fade-in slide-in-from-right-4 duration-300">
-                  <div className="p-5 sm:p-6 bg-white rounded-2xl border border-slate-200 shadow-2xs space-y-4">
+                  <div className="p-4 sm:p-6 bg-white rounded-2xl border border-slate-200/90 shadow-sm space-y-4">
                     <div className="flex items-center gap-2.5 pb-2 border-b border-slate-100">
-                      <div className="w-8 h-8 rounded-lg bg-red-50 text-[#FE0000] flex items-center justify-center font-bold">
+                      <div className="w-8 h-8 rounded-lg bg-red-50 text-[#FE0000] flex items-center justify-center font-bold shrink-0">
                         <User className="w-4 h-4" />
                       </div>
                       <div>
@@ -864,7 +871,7 @@ export function RegisterView() {
                       </div>
                     </div>
 
-                    <div className="space-y-6">
+                    <div className="space-y-4 sm:space-y-5">
                       {/* Contact Name & Role */}
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
                         <div>
@@ -884,7 +891,7 @@ export function RegisterView() {
                             }}
                             placeholder="e.g. James Wilson"
                             required
-                            className="w-full h-11 px-3.5 rounded-xl border border-slate-300 bg-white text-xs sm:text-sm font-medium focus:outline-none focus:border-[#FE0000] focus:ring-2 focus:ring-[#FE0000]/15"
+                            className="w-full h-12 px-3.5 rounded-xl border border-slate-300 bg-white text-base sm:text-sm font-medium focus:outline-none focus:border-[#FE0000] focus:ring-2 focus:ring-[#FE0000]/15"
                           />
                         </div>
 
@@ -902,7 +909,7 @@ export function RegisterView() {
                             onChange={(e) => setContactRole(e.target.value)}
                             placeholder="e.g. Workshop Director / Lead Tech"
                             required
-                            className="w-full h-11 px-3.5 rounded-xl border border-slate-300 bg-white text-xs sm:text-sm font-medium focus:outline-none focus:border-[#FE0000] focus:ring-2 focus:ring-[#FE0000]/15"
+                            className="w-full h-12 px-3.5 rounded-xl border border-slate-300 bg-white text-base sm:text-sm font-medium focus:outline-none focus:border-[#FE0000] focus:ring-2 focus:ring-[#FE0000]/15"
                           />
                         </div>
                       </div>
@@ -928,13 +935,13 @@ export function RegisterView() {
                               }}
                               placeholder="james@spmotors.co.nz"
                               required
-                              className={`w-full h-11 px-3.5 rounded-xl border text-xs sm:text-sm font-medium transition-all focus:outline-none focus:ring-2 ${duplicateEmail
+                              className={`w-full h-12 px-3.5 rounded-xl border text-base sm:text-sm font-medium transition-all focus:outline-none focus:ring-2 ${duplicateEmail
                                 ? "border-rose-400 bg-rose-50/40 focus:ring-rose-200 text-rose-900"
                                 : "border-slate-300 bg-white focus:border-[#FE0000] focus:ring-[#FE0000]/15 text-slate-900"
                                 }`}
                             />
                             {email && !duplicateEmail && email.includes("@") && (
-                              <div className="absolute right-3 top-3 text-emerald-600">
+                              <div className="absolute right-3.5 top-1/2 -translate-y-1/2 text-emerald-600">
                                 <Check className="w-4 h-4" />
                               </div>
                             )}
@@ -980,7 +987,7 @@ export function RegisterView() {
                             }}
                             placeholder="+64 21 555 0192"
                             required
-                            className="w-full h-11 px-3.5 rounded-xl border border-slate-300 bg-white text-xs sm:text-sm font-medium focus:outline-none focus:border-[#FE0000] focus:ring-2 focus:ring-[#FE0000]/15"
+                            className="w-full h-12 px-3.5 rounded-xl border border-slate-300 bg-white text-base sm:text-sm font-medium focus:outline-none focus:border-[#FE0000] focus:ring-2 focus:ring-[#FE0000]/15"
                           />
                         </div>
                       </div>
@@ -1003,12 +1010,12 @@ export function RegisterView() {
                               onChange={(e) => setPassword(e.target.value)}
                               placeholder="Min. 6 characters"
                               required
-                              className="w-full h-11 pl-3.5 pr-10 rounded-xl border border-slate-300 bg-white text-xs sm:text-sm font-medium focus:outline-none focus:border-[#FE0000] focus:ring-2 focus:ring-[#FE0000]/15"
+                              className="w-full h-12 pl-3.5 pr-11 rounded-xl border border-slate-300 bg-white text-base sm:text-sm font-medium focus:outline-none focus:border-[#FE0000] focus:ring-2 focus:ring-[#FE0000]/15"
                             />
                             <button
                               type="button"
                               onClick={() => setShowPassword(!showPassword)}
-                              className="absolute right-3 top-3 text-slate-400 hover:text-slate-600"
+                              className="absolute right-1 top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center text-slate-400 hover:text-slate-600"
                               title={showPassword ? "Hide password" : "Show password"}
                             >
                               {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
@@ -1032,7 +1039,7 @@ export function RegisterView() {
                               onChange={(e) => setConfirmPassword(e.target.value)}
                               placeholder="Re-enter password"
                               required
-                              className={`w-full h-11 pl-3.5 pr-10 rounded-xl border text-xs sm:text-sm font-medium focus:outline-none focus:ring-2 ${confirmPassword && password !== confirmPassword
+                              className={`w-full h-12 pl-3.5 pr-11 rounded-xl border text-base sm:text-sm font-medium focus:outline-none focus:ring-2 ${confirmPassword && password !== confirmPassword
                                 ? "border-rose-400 bg-rose-50/30 focus:ring-rose-200"
                                 : confirmPassword && password === confirmPassword
                                   ? "border-emerald-500 bg-emerald-50/20 focus:ring-emerald-200"
@@ -1042,7 +1049,7 @@ export function RegisterView() {
                             <button
                               type="button"
                               onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                              className="absolute right-3 top-3 text-slate-400 hover:text-slate-600"
+                              className="absolute right-1 top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center text-slate-400 hover:text-slate-600"
                               title={showConfirmPassword ? "Hide password" : "Show password"}
                             >
                               {showConfirmPassword ? (
@@ -1067,10 +1074,10 @@ export function RegisterView() {
               {/* ──────────────────────────────────────────────────────── */}
               {currentStep === 3 && (
                 <div className="animate-in fade-in slide-in-from-right-4 duration-300">
-                  <div className="p-5 sm:p-6 bg-white rounded-2xl border border-slate-200 shadow-2xs space-y-4">
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2 border-b border-slate-100">
+                  <div className="p-4 sm:p-6 bg-white rounded-2xl border border-slate-200/90 shadow-sm space-y-4">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 pb-2 border-b border-slate-100">
                       <div className="flex items-center gap-2.5">
-                        <div className="w-8 h-8 rounded-lg bg-red-50 text-[#FE0000] flex items-center justify-center font-bold">
+                        <div className="w-8 h-8 rounded-lg bg-red-50 text-[#FE0000] flex items-center justify-center font-bold shrink-0">
                           <Truck className="w-4 h-4" />
                         </div>
                         <div>
@@ -1083,13 +1090,13 @@ export function RegisterView() {
                       <button
                         type="button"
                         onClick={handleCopyContactToDelivery}
-                        className="text-[11px] font-semibold text-slate-600 hover:text-[#FE0000] bg-slate-100 hover:bg-red-50 px-2.5 py-1 rounded-lg border border-slate-200 transition-all self-start sm:self-auto cursor-pointer"
+                        className="text-xs font-semibold text-slate-600 hover:text-[#FE0000] bg-slate-100 hover:bg-red-50 px-2.5 py-1.5 rounded-lg border border-slate-200 transition-all self-start sm:self-auto cursor-pointer active:scale-95"
                       >
                         Use Contact Details
                       </button>
                     </div>
 
-                    <div className="space-y-6">
+                    <div className="space-y-4 sm:space-y-5">
                       {/* Bay Label & Delivery Recipient */}
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
                         <div>
@@ -1106,7 +1113,7 @@ export function RegisterView() {
                             onChange={(e) => setDeliveryBayLabel(e.target.value)}
                             placeholder="e.g. Main Workshop Bay 1"
                             required
-                            className="w-full h-11 px-3.5 rounded-xl border border-slate-300 bg-white text-xs sm:text-sm font-medium focus:outline-none focus:border-[#FE0000] focus:ring-2 focus:ring-[#FE0000]/15"
+                            className="w-full h-12 px-3.5 rounded-xl border border-slate-300 bg-white text-base sm:text-sm font-medium focus:outline-none focus:border-[#FE0000] focus:ring-2 focus:ring-[#FE0000]/15"
                           />
                         </div>
 
@@ -1124,7 +1131,7 @@ export function RegisterView() {
                             onChange={(e) => setDeliveryRecipient(e.target.value)}
                             placeholder="e.g. James Wilson or Workshop Foreman"
                             required
-                            className="w-full h-11 px-3.5 rounded-xl border border-slate-300 bg-white text-xs sm:text-sm font-medium focus:outline-none focus:border-[#FE0000] focus:ring-2 focus:ring-[#FE0000]/15"
+                            className="w-full h-12 px-3.5 rounded-xl border border-slate-300 bg-white text-base sm:text-sm font-medium focus:outline-none focus:border-[#FE0000] focus:ring-2 focus:ring-[#FE0000]/15"
                           />
                         </div>
                       </div>
@@ -1144,7 +1151,7 @@ export function RegisterView() {
                           onChange={(e) => setStreetAddress(e.target.value)}
                           placeholder="e.g. 14 Neilson Street"
                           required
-                          className="w-full h-11 px-3.5 rounded-xl border border-slate-300 bg-white text-xs sm:text-sm font-medium focus:outline-none focus:border-[#FE0000] focus:ring-2 focus:ring-[#FE0000]/15"
+                          className="w-full h-12 px-3.5 rounded-xl border border-slate-300 bg-white text-base sm:text-sm font-medium focus:outline-none focus:border-[#FE0000] focus:ring-2 focus:ring-[#FE0000]/15"
                         />
                       </div>
 
@@ -1164,7 +1171,7 @@ export function RegisterView() {
                             onChange={(e) => setSuburb(e.target.value)}
                             placeholder="e.g. Onehunga"
                             required
-                            className="w-full h-11 px-3.5 rounded-xl border border-slate-300 bg-white text-xs sm:text-sm font-medium focus:outline-none focus:border-[#FE0000] focus:ring-2 focus:ring-[#FE0000]/15"
+                            className="w-full h-12 px-3.5 rounded-xl border border-slate-300 bg-white text-base sm:text-sm font-medium focus:outline-none focus:border-[#FE0000] focus:ring-2 focus:ring-[#FE0000]/15"
                           />
                         </div>
 
@@ -1180,7 +1187,7 @@ export function RegisterView() {
                             value={city}
                             onChange={(e) => setCity(e.target.value)}
                             required
-                            className="w-full h-11 px-3.5 rounded-xl border border-slate-300 bg-white text-xs sm:text-sm font-medium focus:outline-none focus:border-[#FE0000] focus:ring-2 focus:ring-[#FE0000]/15"
+                            className="w-full h-12 px-3.5 rounded-xl border border-slate-300 bg-white text-base sm:text-sm font-medium focus:outline-none focus:border-[#FE0000] focus:ring-2 focus:ring-[#FE0000]/15"
                           >
                             {NZ_REGIONS.map((region) => (
                               <option key={region} value={region}>
@@ -1204,7 +1211,7 @@ export function RegisterView() {
                             onChange={(e) => setPostalCode(e.target.value)}
                             placeholder="e.g. 1061"
                             required
-                            className="w-full h-11 px-3.5 rounded-xl border border-slate-300 bg-white text-xs sm:text-sm font-medium focus:outline-none focus:border-[#FE0000] focus:ring-2 focus:ring-[#FE0000]/15"
+                            className="w-full h-12 px-3.5 rounded-xl border border-slate-300 bg-white text-base sm:text-sm font-medium focus:outline-none focus:border-[#FE0000] focus:ring-2 focus:ring-[#FE0000]/15"
                           />
                         </div>
                       </div>
@@ -1225,7 +1232,7 @@ export function RegisterView() {
                             onChange={(e) => setDeliveryPhone(e.target.value)}
                             placeholder="e.g. +64 9 525 1122"
                             required
-                            className="w-full h-11 px-3.5 rounded-xl border border-slate-300 bg-white text-xs sm:text-sm font-medium focus:outline-none focus:border-[#FE0000] focus:ring-2 focus:ring-[#FE0000]/15"
+                            className="w-full h-12 px-3.5 rounded-xl border border-slate-300 bg-white text-base sm:text-sm font-medium focus:outline-none focus:border-[#FE0000] focus:ring-2 focus:ring-[#FE0000]/15"
                           />
                         </div>
 
@@ -1242,20 +1249,20 @@ export function RegisterView() {
                             value={deliveryInstructions}
                             onChange={(e) => setDeliveryInstructions(e.target.value)}
                             placeholder="Forklift on site, entry via Gate 2"
-                            className="w-full h-11 px-3.5 rounded-xl border border-slate-300 bg-white text-xs sm:text-sm font-medium focus:outline-none focus:border-[#FE0000] focus:ring-2 focus:ring-[#FE0000]/15"
+                            className="w-full h-12 px-3.5 rounded-xl border border-slate-300 bg-white text-base sm:text-sm font-medium focus:outline-none focus:border-[#FE0000] focus:ring-2 focus:ring-[#FE0000]/15"
                           />
                         </div>
                       </div>
 
                       {/* Default delivery bay checkbox */}
-                      <label className="flex items-center gap-2 text-xs text-slate-700 cursor-pointer pt-1">
+                      <label className="flex items-center gap-2.5 p-3 rounded-xl border border-slate-200 bg-slate-50/60 hover:bg-slate-50 transition-colors text-xs text-slate-700 cursor-pointer">
                         <input
                           type="checkbox"
                           checked={isDefaultDelivery}
                           onChange={(e) => setIsDefaultDelivery(e.target.checked)}
-                          className="w-4 h-4 rounded text-[#FE0000] accent-[#FE0000] focus:ring-0 cursor-pointer"
+                          className="w-4 h-4 rounded text-[#FE0000] accent-[#FE0000] focus:ring-0 cursor-pointer shrink-0"
                         />
-                        <span>Designate this workshop bay as your primary delivery address</span>
+                        <span className="leading-snug">Designate this workshop bay as your primary delivery address</span>
                       </label>
                     </div>
                   </div>
@@ -1268,9 +1275,9 @@ export function RegisterView() {
               {currentStep === 4 && (
                 <div className="animate-in fade-in slide-in-from-right-4 duration-300 space-y-4">
                   {/* ─── Review Summary Cards ─────────────────────────── */}
-                  <div className="p-5 sm:p-6 bg-white rounded-2xl border border-slate-200 shadow-2xs space-y-4">
+                  <div className="p-4 sm:p-6 bg-white rounded-2xl border border-slate-200/90 shadow-sm space-y-4">
                     <div className="flex items-center gap-2.5 pb-2 border-b border-slate-100">
-                      <div className="w-8 h-8 rounded-lg bg-red-50 text-[#FE0000] flex items-center justify-center font-bold">
+                      <div className="w-8 h-8 rounded-lg bg-red-50 text-[#FE0000] flex items-center justify-center font-bold shrink-0">
                         <Sparkles className="w-4 h-4" />
                       </div>
                       <div>
@@ -1281,7 +1288,7 @@ export function RegisterView() {
                     </div>
 
                     {/* Business Summary */}
-                    <div className="p-3.5 bg-slate-50 rounded-xl border border-slate-200 space-y-1.5">
+                    <div className="p-3.5 sm:p-4 bg-slate-50/80 rounded-xl border border-slate-200 space-y-1.5">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-1.5 text-slate-500 text-[11px] font-semibold">
                           <Building2 className="w-3.5 h-3.5" />
@@ -1290,7 +1297,7 @@ export function RegisterView() {
                         <button
                           type="button"
                           onClick={() => goToStep(1)}
-                          className="text-[10px] font-bold text-[#FE0000] hover:underline cursor-pointer"
+                          className="px-2.5 py-1 text-xs font-bold text-[#FE0000] bg-red-50 hover:bg-red-100 rounded-md transition-colors cursor-pointer"
                         >
                           Edit
                         </button>
@@ -1307,7 +1314,7 @@ export function RegisterView() {
                     </div>
 
                     {/* Contact Summary */}
-                    <div className="p-3.5 bg-slate-50 rounded-xl border border-slate-200 space-y-1.5">
+                    <div className="p-3.5 sm:p-4 bg-slate-50/80 rounded-xl border border-slate-200 space-y-1.5">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-1.5 text-slate-500 text-[11px] font-semibold">
                           <User className="w-3.5 h-3.5" />
@@ -1316,19 +1323,19 @@ export function RegisterView() {
                         <button
                           type="button"
                           onClick={() => goToStep(2)}
-                          className="text-[10px] font-bold text-[#FE0000] hover:underline cursor-pointer"
+                          className="px-2.5 py-1 text-xs font-bold text-[#FE0000] bg-red-50 hover:bg-red-100 rounded-md transition-colors cursor-pointer"
                         >
                           Edit
                         </button>
                       </div>
                       <p className="font-bold text-slate-900 text-sm">{contactName}</p>
                       <p className="text-xs text-slate-600">{contactRole}</p>
-                      <p className="text-xs text-slate-800">{email}</p>
+                      <p className="text-xs text-slate-800 break-all">{email}</p>
                       <p className="text-xs text-slate-800">{phone}</p>
                     </div>
 
                     {/* Delivery Summary */}
-                    <div className="p-3.5 bg-slate-50 rounded-xl border border-slate-200 space-y-1.5">
+                    <div className="p-3.5 sm:p-4 bg-slate-50/80 rounded-xl border border-slate-200 space-y-1.5">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-1.5 text-slate-500 text-[11px] font-semibold">
                           <Truck className="w-3.5 h-3.5 text-[#FE0000]" />
@@ -1337,7 +1344,7 @@ export function RegisterView() {
                         <button
                           type="button"
                           onClick={() => goToStep(3)}
-                          className="text-[10px] font-bold text-[#FE0000] hover:underline cursor-pointer"
+                          className="px-2.5 py-1 text-xs font-bold text-[#FE0000] bg-red-50 hover:bg-red-100 rounded-md transition-colors cursor-pointer"
                         >
                           Edit
                         </button>
@@ -1363,16 +1370,16 @@ export function RegisterView() {
 
                   {/* ─── Terms of Trade Section ───────────────────────── */}
                   <div
-                    className={`p-5 sm:p-6 rounded-2xl border transition-all ${termsAttemptedError && !termsAccepted
+                    className={`p-4 sm:p-6 rounded-2xl border transition-all ${termsAttemptedError && !termsAccepted
                       ? "bg-rose-50/70 border-rose-300 ring-2 ring-rose-400/20"
                       : termsAccepted
                         ? "bg-emerald-50/40 border-emerald-300"
-                        : "bg-white border-slate-200 shadow-2xs"
+                        : "bg-white border-slate-200/90 shadow-sm"
                       }`}
                   >
                     <div className="flex items-center justify-between pb-3 border-b border-slate-100 mb-3">
                       <div className="flex items-center gap-2.5">
-                        <div className="w-8 h-8 rounded-lg bg-red-50 text-[#FE0000] flex items-center justify-center font-bold">
+                        <div className="w-8 h-8 rounded-lg bg-red-50 text-[#FE0000] flex items-center justify-center font-bold shrink-0">
                           <FileText className="w-4 h-4" />
                         </div>
                         <div>
@@ -1387,7 +1394,7 @@ export function RegisterView() {
                     </div>
                     {/* Explicit Acknowledgement Checkbox */}
                     <div
-                      className={`p-3.5 rounded-xl border transition-all ${termsAccepted
+                      className={`p-3.5 sm:p-4 rounded-xl border transition-all ${termsAccepted
                         ? "bg-emerald-50 border-emerald-200"
                         : "bg-slate-50 border-slate-200"
                         }`}
@@ -1450,15 +1457,15 @@ export function RegisterView() {
 
                       {/* Audit Confirmation Timestamp */}
                       {termsAccepted && (
-                        <div className="mt-3 pt-2.5 border-t border-emerald-200 flex items-center justify-between text-[11px] text-emerald-800">
+                        <div className="mt-3 pt-2.5 border-t border-emerald-200 flex flex-wrap items-center justify-between gap-2 text-[11px] text-emerald-800">
                           <span className="flex items-center gap-1.5 font-semibold">
-                            <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                            <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
                             <span>Explicitly acknowledged on {termsAcknowledgedAt}</span>
                           </span>
                           <button
                             type="button"
                             onClick={() => handleOpenLegal("terms")}
-                            className="text-[10px] underline font-bold hover:text-emerald-950"
+                            className="text-[10px] underline font-bold hover:text-emerald-950 cursor-pointer"
                           >
                             Re-read terms
                           </button>
@@ -1475,7 +1482,7 @@ export function RegisterView() {
                           <button
                             type="button"
                             onClick={() => handleOpenLegal("terms")}
-                            className="px-3 py-1 bg-[#FE0000] text-white font-bold rounded-lg hover:bg-[#9B0A0F] transition-all text-[11px] shrink-0 cursor-pointer"
+                            className="px-3 py-1.5 bg-[#FE0000] text-white font-bold rounded-lg hover:bg-[#9B0A0F] transition-all text-xs shrink-0 cursor-pointer self-start sm:self-auto"
                           >
                             Review Terms Now →
                           </button>
@@ -1490,13 +1497,13 @@ export function RegisterView() {
               {/* WIZARD NAVIGATION BUTTONS                                */}
               {/* ──────────────────────────────────────────────────────── */}
               <div className="space-y-3 pt-2">
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2.5 sm:gap-3">
                   {/* Back Button */}
                   {currentStep > 1 && (
                     <button
                       type="button"
                       onClick={handleBack}
-                      className="h-12 px-5 rounded-xl bg-white hover:bg-slate-50 text-slate-700 text-sm font-bold border border-slate-300 transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-[0.99]"
+                      className="h-12 px-4 sm:px-5 rounded-xl bg-white hover:bg-slate-50 text-slate-700 text-xs sm:text-sm font-bold border border-slate-300 transition-all flex items-center justify-center gap-1.5 cursor-pointer active:scale-[0.99] shrink-0 shadow-2xs"
                     >
                       <ArrowLeft className="w-4 h-4" />
                       <span>Back</span>
@@ -1508,29 +1515,31 @@ export function RegisterView() {
                     <button
                       type="button"
                       onClick={handleNext}
-                      className="flex-1 h-12 rounded-xl bg-[#FE0000] hover:bg-[#9B0A0F] active:bg-[#85080C] text-white text-sm font-bold transition-all shadow-sm shadow-red-600/20 hover:shadow-md flex items-center justify-center gap-2 cursor-pointer active:scale-[0.99]"
+                      className="flex-1 h-12 rounded-xl bg-[#FE0000] hover:bg-[#9B0A0F] active:bg-[#85080C] text-white text-xs sm:text-sm font-bold transition-all shadow-sm shadow-red-600/20 hover:shadow-md flex items-center justify-center gap-2 cursor-pointer active:scale-[0.99]"
                     >
-                      <span>Continue to {STEPS[currentStep]?.label || "Next"}</span>
-                      <ArrowRight className="w-4 h-4" />
+                      <span className="hidden sm:inline">Continue to {STEPS[currentStep]?.label || "Next"}</span>
+                      <span className="sm:hidden">Next: {STEPS[currentStep]?.label || "Continue"}</span>
+                      <ArrowRight className="w-4 h-4 shrink-0" />
                     </button>
                   ) : (
                     <button
                       type="submit"
                       disabled={isSubmitting || Boolean(duplicateEmail) || Boolean(duplicateCompany)}
-                      className={`flex-1 h-12 rounded-xl text-sm font-bold transition-all shadow-sm flex items-center justify-center gap-2 ${isSubmitting || duplicateEmail || duplicateCompany
+                      className={`flex-1 h-12 rounded-xl text-xs sm:text-sm font-bold transition-all shadow-sm flex items-center justify-center gap-2 ${isSubmitting || duplicateEmail || duplicateCompany
                         ? "bg-slate-300 text-slate-500 cursor-not-allowed"
                         : "bg-[#FE0000] hover:bg-[#9B0A0F] active:bg-[#85080C] text-white shadow-red-600/20 hover:shadow-md cursor-pointer active:scale-[0.99]"
                         }`}
                     >
                       {isSubmitting ? (
                         <>
-                          <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                          <span>Submitting Trade Application...</span>
+                          <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin shrink-0" />
+                          <span>Submitting Application...</span>
                         </>
                       ) : (
                         <>
-                          <span>Submit Registration</span>
-                          <ArrowRight className="w-4 h-4" />
+                          <span className="hidden sm:inline">Submit Trade Registration</span>
+                          <span className="sm:hidden">Submit Registration</span>
+                          <ArrowRight className="w-4 h-4 shrink-0" />
                         </>
                       )}
                     </button>

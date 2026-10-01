@@ -391,16 +391,6 @@ export function InvoiceTab({ request: initialRequest, onNavigateToTab }: Invoice
                       {/* Safe Full Window button */}
                       <button
                         type="button"
-                        onClick={handleOpenFullWindow}
-                        className="px-3 py-1.5 bg-white border border-emerald-300 text-emerald-800 text-xs font-bold rounded-lg hover:bg-emerald-100 transition-colors flex items-center gap-1.5 shadow-xs cursor-pointer"
-                        title="Open PDF in separate browser window"
-                      >
-                        <ExternalLink className="w-3.5 h-3.5" />
-                        <span>Full Window</span>
-                      </button>
-
-                      <button
-                        type="button"
                         onClick={() => fileInputRef.current?.click()}
                         className="px-3 py-1.5 bg-white border border-slate-200 text-slate-700 text-xs font-bold rounded-lg hover:bg-slate-50 transition-colors shadow-xs cursor-pointer"
                       >
@@ -422,11 +412,10 @@ export function InvoiceTab({ request: initialRequest, onNavigateToTab }: Invoice
                     onDragLeave={handleDragLeave}
                     onDrop={handleDrop}
                     onClick={() => fileInputRef.current?.click()}
-                    className={`border-2 border-dashed rounded-xl p-8 flex flex-col items-center justify-center text-center transition-all cursor-pointer ${
-                      isDragging
-                        ? "border-[#FE0000] bg-red-50/50 scale-[1.01]"
-                        : "border-slate-300 bg-slate-50/70 hover:bg-slate-100/70 hover:border-slate-400"
-                    }`}
+                    className={`border-2 border-dashed rounded-xl p-8 flex flex-col items-center justify-center text-center transition-all cursor-pointer ${isDragging
+                      ? "border-[#FE0000] bg-red-50/50 scale-[1.01]"
+                      : "border-slate-300 bg-slate-50/70 hover:bg-slate-100/70 hover:border-slate-400"
+                      }`}
                   >
                     <div className="w-12 h-12 rounded-2xl bg-white border border-slate-200 flex items-center justify-center text-slate-400 mb-3 shadow-xs">
                       <UploadCloud className="w-6 h-6 text-[#FE0000]" />
@@ -490,11 +479,11 @@ export function InvoiceTab({ request: initialRequest, onNavigateToTab }: Invoice
 
       {/* 3. In-App Interactive PDF Preview Modal (Fixed Preview) */}
       {showPreviewModal && attachedPdfUrl && (
-        <div 
+        <div
           className="fixed inset-0 z-50 bg-slate-900/70 backdrop-blur-sm flex items-center justify-center p-3 sm:p-6 animate-in fade-in duration-150"
           onClick={() => setShowPreviewModal(false)}
         >
-          <div 
+          <div
             className="bg-white w-full max-w-5xl h-[88vh] rounded-2xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col"
             onClick={(e) => e.stopPropagation()}
           >
@@ -529,16 +518,6 @@ export function InvoiceTab({ request: initialRequest, onNavigateToTab }: Invoice
                   <Download className="w-3.5 h-3.5 text-slate-600" />
                   <span>Download</span>
                 </a>
-
-                <button
-                  type="button"
-                  onClick={handleOpenFullWindow}
-                  className="px-3 py-1.5 bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold rounded-lg transition-colors flex items-center gap-1.5 shadow-xs cursor-pointer"
-                  title="Open in new window"
-                >
-                  <ExternalLink className="w-3.5 h-3.5" />
-                  <span>Full Window</span>
-                </button>
 
                 <button
                   type="button"
