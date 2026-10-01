@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { usePathname } from "next/navigation";
 import { PortalSidebar } from "./portal-sidebar";
 import { PortalHeader } from "./portal-header";
 import { NewRequestModal } from "./new-request-modal";
@@ -14,9 +15,16 @@ interface CustomerPortalLayoutProps {
 }
 
 export function CustomerPortalLayout({ children }: CustomerPortalLayoutProps) {
+  const pathname = usePathname();
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
-  const { selectedRequest, setSelectedRequest, setSelectedRequestDetailsTab, setActiveTab } = usePortal();
+  const [isMobileOpen, setIsMobileOpen] = useState(false);
+  const { selectedRequest, setSelectedRequest, setSelectedRequestDetailsTab, setActiveTab, activeTab } = usePortal();
   const { getRequestById } = useUnifiedData();
+
+  // Close mobile drawer whenever pathname or activeTab changes
+  useEffect(() => {
+    setIsMobileOpen(false);
+  }, [pathname, activeTab]);
 
   // Listen for search item selection in customer portal
   useEffect(() => {
@@ -38,26 +46,30 @@ export function CustomerPortalLayout({ children }: CustomerPortalLayoutProps) {
   }, [getRequestById, setSelectedRequest, setSelectedRequestDetailsTab, setActiveTab]);
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] flex  text-slate-900">
-      {/* Dark Sidebar */}
+    <div className="min-h-screen bg-[#F8FAFC] flex text-slate-900 w-full overflow-x-hidden">
+      {/* Dark Sidebar with Mobile Drawer */}
       <PortalSidebar
         collapsed={isSidebarCollapsed}
         onToggleCollapse={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+        mobileOpen={isMobileOpen}
+        onCloseMobile={() => setIsMobileOpen(false)}
       />
 
-      {/* Main Content Area */}
+      {/* Main Content Area - ml-0 on mobile/tablet, lg:ml-64/20 on desktop */}
       <div
-        className={`flex-1 flex flex-col transition-all duration-300 min-h-screen ${isSidebarCollapsed ? "ml-20" : "ml-64"
-          }`}
+        className={`flex-1 flex flex-col transition-all duration-300 min-h-screen min-w-0 max-w-full overflow-x-hidden ml-0 ${
+          isSidebarCollapsed ? "lg:ml-20" : "lg:ml-64"
+        }`}
       >
         {/* Top Sticky Header */}
         <PortalHeader
           onToggleSidebar={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
           isSidebarCollapsed={isSidebarCollapsed}
+          onToggleMobile={() => setIsMobileOpen(!isMobileOpen)}
         />
 
         {/* Dynamic Page Content */}
-        <main className="flex-1 p-6 sm:p-8 max-w-7xl mx-auto w-full flex flex-col">
+        <main className="flex-1 p-3.5 sm:p-6 lg:p-8 max-w-7xl mx-auto w-full min-w-0 flex flex-col">
           {selectedRequest ? <RequestDetailsModal /> : children}
         </main>
       </div>

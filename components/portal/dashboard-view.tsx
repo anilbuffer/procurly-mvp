@@ -462,7 +462,7 @@ export function DashboardView() {
             </div>
 
             {/* Recent Requests Table */}
-            <div className="overflow-x-auto">
+            <div className="overflow-x-auto custom-scrollbar">
               {requests.length === 0 ? (
                 <div className="py-12 text-center">
                   <div className="w-12 h-12 rounded-2xl bg-slate-100 text-slate-400 mx-auto flex items-center justify-center mb-3">
@@ -479,7 +479,7 @@ export function DashboardView() {
                   </Link>
                 </div>
               ) : (
-                <table className="w-full text-left border-collapse">
+                <table className="w-full min-w-[650px] text-left border-collapse">
                   <thead>
                     <tr className="border-b border-slate-100 bg-slate-50/50 text-[11px] font-bold text-slate-500 uppercase tracking-wider">
                       <th className="py-3 px-5">Request</th>

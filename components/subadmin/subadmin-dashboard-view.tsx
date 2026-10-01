@@ -61,7 +61,7 @@ export function SubadminDashboardView() {
       </div>
 
       {/* 2. KPI Summary Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Subadmin Pending Card */}
         <div
           onClick={() => handleFilter("pending")}
@@ -186,8 +186,8 @@ export function SubadminDashboardView() {
             </p>
           </div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
+          <div className="overflow-x-auto custom-scrollbar">
+            <table className="w-full min-w-[650px] text-left border-collapse">
               <thead>
                 <tr className="border-b border-slate-100 bg-slate-50/50 text-[11px] font-bold text-slate-500 uppercase tracking-wider">
                   <th className="px-6 py-3">Request / Supplier Ref</th>

@@ -573,13 +573,13 @@ export function GlobalSearchModal() {
       role="dialog"
       aria-modal="true"
       aria-label="Global Search Command Palette"
-      className="fixed inset-0 z-50 flex items-start justify-center pt-16 sm:pt-24 px-4 bg-slate-950/50 backdrop-blur-md transition-all duration-200 animate-in fade-in"
+      className="fixed inset-0 z-50 flex items-start justify-center pt-3 sm:pt-20 px-2.5 sm:px-4 bg-slate-950/60 backdrop-blur-md transition-all duration-200 animate-in fade-in"
       onClick={(e) => {
         if (e.target === e.currentTarget) closeSearch();
       }}
     >
       <div
-        className="w-full max-w-3xl bg-white rounded-3xl border border-slate-200/90 shadow-2xl shadow-slate-950/25 overflow-hidden flex flex-col max-h-[82vh] animate-in zoom-in-95 duration-150 relative"
+        className="w-full max-w-3xl bg-white rounded-2xl sm:rounded-3xl border border-slate-200/90 shadow-2xl shadow-slate-950/25 overflow-hidden flex flex-col max-h-[92vh] sm:max-h-[82vh] animate-in zoom-in-95 duration-150 relative"
         onKeyDown={handleKeyDown}
       >
         {/* Top Search Input Bar */}

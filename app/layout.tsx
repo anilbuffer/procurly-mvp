@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/context/auth-context";
@@ -16,6 +16,14 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: "Procurly | Unified Autohub Admin & Customer Platform",
   description: "Procurly — Unified B2B Automotive Procurement Platform built with Next.js, TypeScript, and Tailwind CSS.",
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
+  userScalable: true,
+  themeColor: "#FE0000",
 };
 
 export default function RootLayout({

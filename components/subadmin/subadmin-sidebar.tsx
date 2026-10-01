@@ -13,15 +13,23 @@ import {
   ChevronDown,
   ArrowRightLeft,
   LogOut,
+  X,
 } from "lucide-react";
 import { useUnifiedData } from "@/context/unified-data-context";
 
 interface SubadminSidebarProps {
   collapsed: boolean;
   onToggleCollapse?: () => void;
+  mobileOpen?: boolean;
+  onCloseMobile?: () => void;
 }
 
-export function SubadminSidebar({ collapsed, onToggleCollapse }: SubadminSidebarProps) {
+export function SubadminSidebar({
+  collapsed,
+  onToggleCollapse,
+  mobileOpen = false,
+  onCloseMobile,
+}: SubadminSidebarProps) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const { requests, currentStaffUser } = useUnifiedData();
@@ -76,13 +84,33 @@ export function SubadminSidebar({ collapsed, onToggleCollapse }: SubadminSidebar
   ];
 
   return (
-    <aside
-      className={`fixed top-0 left-0 z-40 h-screen bg-[#0C101A] text-slate-300 border-r border-slate-800 flex flex-col transition-all duration-300 ease-in-out ${collapsed ? "w-20" : "w-64"
-        }`}
-    >
-      <div className={`h-16 flex items-center bg-[#FE0000] border-b border-slate-800 shrink-0 ${collapsed ? "justify-center px-2.5" : "justify-between px-4"}`}>
-        {!collapsed ? (
-          <Link href="/subadmin/dashboard" className="flex items-center gap-3">
+    <>
+      {/* Mobile Backdrop Overlay */}
+      {mobileOpen && (
+        <div
+          className="fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-40 lg:hidden transition-opacity duration-300 animate-in fade-in"
+          onClick={onCloseMobile}
+          aria-hidden="true"
+        />
+      )}
+
+      <aside
+        className={`fixed top-0 bottom-0 left-0 z-50 h-screen bg-[#0C101A] text-slate-300 border-r border-slate-800 flex flex-col transition-all duration-300 ease-in-out shadow-2xl lg:shadow-none
+        ${mobileOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}
+        w-72 max-w-[85vw] lg:w-auto
+        ${collapsed ? "lg:w-20" : "lg:w-64"}
+        `}
+      >
+        <div
+          className={`h-16 flex items-center bg-[#FE0000] border-b border-slate-800 shrink-0 px-4 ${
+            collapsed ? "lg:justify-center lg:px-2.5" : "justify-between"
+          }`}
+        >
+          <Link
+            href="/subadmin/dashboard"
+            onClick={onCloseMobile}
+            className={`flex items-center gap-3 ${collapsed ? "lg:hidden" : "flex"}`}
+          >
             <div className="w-9 h-9 rounded-xl border-2 border-white bg-[#FE0000] flex items-center justify-center shadow-sm">
               <span className="text-white font-black text-sm tracking-tighter leading-none shrink-0">P</span>
             </div>
@@ -97,73 +125,92 @@ export function SubadminSidebar({ collapsed, onToggleCollapse }: SubadminSidebar
               </span>
             </div>
           </Link>
-        ) : (
-          <Link href="/subadmin/dashboard" className="flex items-center">
-            <div className="w-9 h-9 rounded-lg border-2 border-white bg-[#FE0000] flex items-center justify-center shadow-sm">
-              <span className="text-white font-black text-sm tracking-tighter leading-none shrink-0">A</span>
-            </div>
-          </Link>
-        )}
-      </div>
 
-      <div className="flex-1 overflow-y-auto px-3 py-4 space-y-1 custom-scrollbar">
-        {navGroups.map((group) => (
-          <div key={group.label} className="space-y-1">
-            <div className="space-y-1">
-              {group.items.map((item) => {
-                let active = false;
-                const itemPath = item.href.split('?')[0];
-                const itemFilter = item.href.includes('?filter=') ? item.href.split('?filter=')[1] : null;
-                const currentFilter = searchParams.get('filter');
+          {/* Desktop Collapsed Brand Icon */}
+          {collapsed && (
+            <Link
+              href="/subadmin/dashboard"
+              className="hidden lg:flex items-center justify-center"
+            >
+              <div className="w-9 h-9 rounded-lg border-2 border-white bg-[#FE0000] flex items-center justify-center shadow-sm">
+                <span className="text-white font-black text-sm tracking-tighter leading-none shrink-0">A</span>
+              </div>
+            </Link>
+          )}
 
-                if (itemPath === "/subadmin/dashboard" && pathname === "/subadmin/dashboard") {
-                  if (itemFilter) {
-                    active = currentFilter === itemFilter;
+          {/* Mobile Close Button (X) */}
+          <button
+            onClick={onCloseMobile}
+            type="button"
+            className="lg:hidden p-2 rounded-xl text-white/80 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
+            aria-label="Close menu"
+          >
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+
+        <div className="flex-1 overflow-y-auto px-3 py-4 space-y-1 custom-scrollbar">
+          {navGroups.map((group) => (
+            <div key={group.label} className="space-y-1">
+              <div className="space-y-1">
+                {group.items.map((item) => {
+                  let active = false;
+                  const itemPath = item.href.split('?')[0];
+                  const itemFilter = item.href.includes('?filter=') ? item.href.split('?filter=')[1] : null;
+                  const currentFilter = searchParams.get('filter');
+
+                  if (itemPath === "/subadmin/dashboard" && pathname === "/subadmin/dashboard") {
+                    if (itemFilter) {
+                      active = currentFilter === itemFilter;
+                    } else {
+                      active = !currentFilter;
+                    }
                   } else {
-                    active = !currentFilter;
+                    active = isMainActive(itemPath);
                   }
-                } else {
-                  active = isMainActive(itemPath);
-                }
 
-                const Icon = item.icon;
+                  const Icon = item.icon;
 
-                return (
-                  <Link
-                    key={item.name}
-                    href={item.href}
-                    title={collapsed ? item.name : undefined}
-                    className={`relative w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-[13px] font-medium transition-all group overflow-hidden ${active
-                      ? "bg-[#1E2538] text-white before:absolute before:left-0 before:top-1/2 before:-translate-y-1/2 before:w-1 before:h-[60%] before:bg-[#FE0000] before:rounded-r-full"
-                      : "text-slate-400 hover:text-white hover:bg-[#1E2538]/50"
-                      } ${collapsed ? "justify-center px-0" : ""}`}
-                  >
-                    <Icon
-                      className={`w-[18px] h-[18px] shrink-0 transition-colors ${active
-                        ? "text-white"
-                        : "text-slate-400 group-hover:text-white"
+                  return (
+                    <Link
+                      key={item.name}
+                      href={item.href}
+                      onClick={onCloseMobile}
+                      title={collapsed ? item.name : undefined}
+                      className={`relative w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-[13px] font-medium transition-all group overflow-hidden ${
+                        active
+                          ? "bg-[#1E2538] text-white before:absolute before:left-0 before:top-1/2 before:-translate-y-1/2 before:w-1 before:h-[60%] before:bg-[#FE0000] before:rounded-r-full"
+                          : "text-slate-400 hover:text-white hover:bg-[#1E2538]/50"
+                      } ${collapsed ? "lg:justify-center lg:px-0" : ""}`}
+                    >
+                      <Icon
+                        className={`w-[18px] h-[18px] shrink-0 transition-colors ${
+                          active
+                            ? "text-white"
+                            : "text-slate-400 group-hover:text-white"
                         }`}
-                    />
-                    {!collapsed && (
-                      <span className="flex-1 truncate text-left">{item.name}</span>
-                    )}
-
-                    {!collapsed && item.badge !== undefined && (
-                      <span
-                        suppressHydrationWarning
-                        className={`text-[10px] font-bold px-1.5 py-0.5 rounded-md shrink-0 leading-none ${item.badgeColor || "bg-red-500 text-white"
-                          }`}
-                      >
-                        {item.badge}
+                      />
+                      <span className={`flex-1 truncate text-left ${collapsed ? "lg:hidden" : ""}`}>
+                        {item.name}
                       </span>
-                    )}
-                  </Link>
-                );
-              })}
+
+                      {item.badge !== undefined && (
+                        <span
+                          suppressHydrationWarning
+                          className={`text-[10px] font-bold px-1.5 py-0.5 rounded-md shrink-0 leading-none ${
+                            collapsed ? "lg:hidden" : ""
+                          } ${item.badgeColor || "bg-red-500 text-white"}`}
+                        >
+                          {item.badge}
+                        </span>
+                      )}
+                    </Link>
+                  );
+                })}
+              </div>
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
 
       <div ref={userMenuRef} className="p-3 border-t border-[#1E2538]/60 relative">
         <div
@@ -230,5 +277,6 @@ export function SubadminSidebar({ collapsed, onToggleCollapse }: SubadminSidebar
         )}
       </div>
     </aside>
+    </>
   );
 }

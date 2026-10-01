@@ -56,7 +56,7 @@ export function NotificationPopover() {
 
       {/* Popover Dropdown */}
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-84 sm:w-96 rounded-2xl bg-white p-3 shadow-xl border border-slate-200 z-50 animate-in fade-in-0 zoom-in-95 duration-150">
+        <div className="absolute right-0 mt-2 w-[calc(100vw-2rem)] max-w-sm sm:w-96 rounded-2xl bg-white p-3 shadow-xl border border-slate-200 z-50 animate-in fade-in-0 zoom-in-95 duration-150">
           <div className="flex items-center justify-between px-2 pb-2 mb-2 border-b border-slate-100">
             <div className="flex items-center gap-2">
               <span className="text-xs font-bold text-slate-900 uppercase tracking-wider">

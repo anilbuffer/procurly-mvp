@@ -74,3 +74,35 @@ input[type="number"] {
   -moz-appearance: textfield;
   appearance: textfield;
 }
+
+/* Mobile Responsiveness & Touch Polish */
+html {
+  -webkit-text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Mobile smooth momentum scrolling */
+.custom-scrollbar,
+.overflow-x-auto,
+.overflow-y-auto {
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Hide scrollbar utility */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Table tabular numbers for perfect data alignment */
+table {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Mobile touch targets & active state enhancements */
+button, a, input, select, textarea {
+  touch-action: manipulation;
+}

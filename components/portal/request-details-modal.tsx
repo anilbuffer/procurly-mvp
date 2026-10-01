@@ -262,10 +262,10 @@ export function RequestDetailsModal() {
         </div>
 
         {/* Modal Navigation Tabs */}
-        <div className="flex border-b border-slate-200 bg-white px-6 text-xs font-bold text-slate-600 shrink-0">
+        <div className="flex border-b border-slate-200 bg-white px-3 sm:px-6 text-xs font-bold text-slate-600 shrink-0 overflow-x-auto custom-scrollbar no-scrollbar">
           <button
             onClick={() => setActiveTab("overview")}
-            className={`py-3 px-4 border-b-2 flex items-center gap-2 transition-colors ${activeTab === "overview"
+            className={`py-3 px-3.5 sm:px-4 border-b-2 flex items-center gap-2 transition-colors shrink-0 whitespace-nowrap ${activeTab === "overview"
               ? "border-[#FE0000] text-[#FE0000]"
               : "border-transparent hover:text-slate-900"
               }`}
@@ -277,7 +277,7 @@ export function RequestDetailsModal() {
           {(req.quotation || req.customerQuote) && (
             <button
               onClick={() => setActiveTab("quote")}
-              className={`py-3 px-4 border-b-2 flex items-center gap-2 transition-colors ${activeTab === "quote"
+              className={`py-3 px-3.5 sm:px-4 border-b-2 flex items-center gap-2 transition-colors shrink-0 whitespace-nowrap ${activeTab === "quote"
                 ? "border-[#FE0000] text-[#FE0000]"
                 : "border-transparent hover:text-slate-900"
                 }`}
@@ -293,7 +293,7 @@ export function RequestDetailsModal() {
           {req.shipment && (
             <button
               onClick={() => setActiveTab("shipment")}
-              className={`py-3 px-4 border-b-2 flex items-center gap-2 transition-colors ${activeTab === "shipment"
+              className={`py-3 px-3.5 sm:px-4 border-b-2 flex items-center gap-2 transition-colors shrink-0 whitespace-nowrap ${activeTab === "shipment"
                 ? "border-[#FE0000] text-[#FE0000]"
                 : "border-transparent hover:text-slate-900"
                 }`}
@@ -306,7 +306,7 @@ export function RequestDetailsModal() {
           {req.SubadminDetails && (
             <button
               onClick={() => setActiveTab("Subadmin")}
-              className={`py-3 px-4 border-b-2 flex items-center gap-2 transition-colors ${activeTab === "Subadmin"
+              className={`py-3 px-3.5 sm:px-4 border-b-2 flex items-center gap-2 transition-colors shrink-0 whitespace-nowrap ${activeTab === "Subadmin"
                 ? "border-[#FE0000] text-[#FE0000]"
                 : "border-transparent hover:text-slate-900"
                 }`}
@@ -325,7 +325,7 @@ export function RequestDetailsModal() {
                 setActiveTab("invoice");
                 setSelectedRequestDetailsTab?.("invoice");
               }}
-              className={`py-3 px-4 border-b-2 flex items-center gap-2 transition-colors ${activeTab === "invoice"
+              className={`py-3 px-3.5 sm:px-4 border-b-2 flex items-center gap-2 transition-colors shrink-0 whitespace-nowrap ${activeTab === "invoice"
                 ? "border-[#FE0000] text-[#FE0000]"
                 : "border-transparent hover:text-slate-900 text-slate-700"
                 }`}

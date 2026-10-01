@@ -106,8 +106,8 @@ export function UsersView() {
 
       {/* Staff Table (Section 28) */}
       <div className="bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs border-collapse">
+        <div className="overflow-x-auto custom-scrollbar">
+          <table className="w-full min-w-[650px] text-left text-xs border-collapse">
             <thead>
               <tr className="bg-slate-50/80 border-b border-slate-200 text-[10px] font-bold uppercase tracking-wider text-slate-500">
                 <th className="py-3 px-4">Staff Member</th>

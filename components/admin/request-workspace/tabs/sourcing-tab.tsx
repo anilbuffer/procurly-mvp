@@ -167,8 +167,8 @@ export function SourcingTab({ request }: SourcingTabProps) {
         </div>
       ) : (
         <div className="bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse text-xs">
+          <div className="overflow-x-auto custom-scrollbar">
+            <table className="w-full min-w-[650px] text-left border-collapse text-xs">
               <thead>
                 <tr className="bg-slate-50/80 border-b border-slate-200 text-slate-500 font-bold uppercase tracking-wider text-[10px]">
                   <th className="py-3 px-4">Selection</th>
