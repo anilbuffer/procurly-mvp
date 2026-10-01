@@ -38,16 +38,24 @@ import { useUnifiedData } from "@/context/unified-data-context";
 
 interface RequestDetailWorkspaceProps {
   request: PartRequest;
+  initialTab?: RequestDetailTab;
   onBack?: () => void;
 }
 
 export function RequestDetailWorkspace({
   request: initialRequest,
+  initialTab,
   onBack,
 }: RequestDetailWorkspaceProps) {
   const { requests, updateRequestStatus, assignStaff, addInternalNote, staffUsers } = useUnifiedData();
   const request = requests.find((r) => r.id === initialRequest.id) || initialRequest;
-  const [activeTab, setActiveTab] = useState<RequestDetailTab>("overview");
+  const [activeTab, setActiveTab] = useState<RequestDetailTab>(initialTab || "overview");
+
+  React.useEffect(() => {
+    if (initialTab && ["overview", "sourcing", "quote", "invoice", "payment", "shipment", "documents", "subadmin", "activity"].includes(initialTab)) {
+      setActiveTab(initialTab);
+    }
+  }, [initialTab]);
 
   const finalAmount = request.payment?.amount || request.quotedValue || request.customerQuote?.totalAmount || request.costCalculation?.totalCustomerQuote || 0;
 

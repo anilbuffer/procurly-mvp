@@ -3,6 +3,8 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/context/auth-context";
 import { UnifiedDataProvider } from "@/context/unified-data-context";
+import { GlobalSearchProvider } from "@/context/global-search-context";
+import { GlobalSearchModal } from "@/components/shared/global-search-modal";
 
 const inter = Inter({
   weight: ["300", "400", "500", "600", "700", "800", "900"],
@@ -25,7 +27,12 @@ export default function RootLayout({
     <html lang="en" className={inter.variable}>
       <body className={`${inter.className} min-h-screen bg-slate-50 text-slate-900 antialiased`}>
         <AuthProvider>
-          <UnifiedDataProvider>{children}</UnifiedDataProvider>
+          <UnifiedDataProvider>
+            <GlobalSearchProvider>
+              {children}
+              <GlobalSearchModal />
+            </GlobalSearchProvider>
+          </UnifiedDataProvider>
         </AuthProvider>
       </body>
     </html>

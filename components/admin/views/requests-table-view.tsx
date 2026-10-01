@@ -103,6 +103,7 @@ export function RequestsTableView() {
     return (
       <RequestDetailWorkspace
         request={selectedRequest}
+        initialTab={(searchParams.get("tab") as any) || "overview"}
         onBack={() => router.push("/admin/requests")}
       />
     );

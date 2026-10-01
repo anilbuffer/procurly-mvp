@@ -1,12 +1,13 @@
 "use client";
 
 import React from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { useUnifiedData } from "@/context/unified-data-context";
 import { RequestDetailWorkspace } from "@/components/admin/request-workspace/request-detail-workspace";
 
 export default function AdminRequestDetailPage() {
   const params = useParams();
+  const searchParams = useSearchParams();
   const router = useRouter();
   const { getRequestById } = useUnifiedData();
 
@@ -34,6 +35,7 @@ export default function AdminRequestDetailPage() {
   return (
     <RequestDetailWorkspace
       request={request}
+      initialTab={(searchParams.get("tab") as any) || "overview"}
       onBack={() => router.push("/admin/requests")}
     />
   );

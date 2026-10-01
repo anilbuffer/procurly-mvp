@@ -1,12 +1,13 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { PortalSidebar } from "./portal-sidebar";
 import { PortalHeader } from "./portal-header";
 import { NewRequestModal } from "./new-request-modal";
 import { RequestDetailsModal } from "./request-details-modal";
 import { PaymentModal } from "./payment-modal";
 import { usePortal } from "@/context/portal-context";
+import { useUnifiedData } from "@/context/unified-data-context";
 
 interface CustomerPortalLayoutProps {
   children?: React.ReactNode;
@@ -14,7 +15,27 @@ interface CustomerPortalLayoutProps {
 
 export function CustomerPortalLayout({ children }: CustomerPortalLayoutProps) {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
-  const { selectedRequest } = usePortal();
+  const { selectedRequest, setSelectedRequest, setSelectedRequestDetailsTab, setActiveTab } = usePortal();
+  const { getRequestById } = useUnifiedData();
+
+  // Listen for search item selection in customer portal
+  useEffect(() => {
+    const handleOpenCustomerRequest = (e: Event) => {
+      const customEvent = e as CustomEvent<{ requestId: string; tab?: string }>;
+      if (!customEvent.detail?.requestId) return;
+      const req = getRequestById(customEvent.detail.requestId);
+      if (req) {
+        setSelectedRequest(req as any);
+        if (customEvent.detail.tab) {
+          setSelectedRequestDetailsTab(customEvent.detail.tab);
+        }
+        setActiveTab("requests");
+      }
+    };
+
+    window.addEventListener("procurly:open-customer-request", handleOpenCustomerRequest);
+    return () => window.removeEventListener("procurly:open-customer-request", handleOpenCustomerRequest);
+  }, [getRequestById, setSelectedRequest, setSelectedRequestDetailsTab, setActiveTab]);
 
   return (
     <div className="min-h-screen bg-[#F8FAFC] flex  text-slate-900">
