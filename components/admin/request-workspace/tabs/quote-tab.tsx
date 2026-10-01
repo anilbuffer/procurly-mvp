@@ -698,7 +698,7 @@ export function QuoteTab({ request, onNavigateToTab }: QuoteTabProps) {
                     <span className="text-slate-900">Total Landed Price (Door-to-Door):</span>
                     <span className="font-bold text-[#FE0000]  text-base">${totalCustomerQuote.toFixed(2)} NZD</span>
                   </div>
-                  <div className="text-[10px] text-slate-500 text-right">Includes 15% NZ GST &amp; all customs clearance</div>
+                  <div className="text-[10px] text-slate-500 text-right">Includes 15% NZ GST</div>
                 </div>
 
                 {/* ⭐ ADMIN COMMENTS IN EMAIL NOTIFICATION ⭐ */}

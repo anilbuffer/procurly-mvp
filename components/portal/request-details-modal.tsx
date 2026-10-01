@@ -873,7 +873,7 @@ export function RequestDetailsModal() {
                             <span className="font-semibold">7–10 business days</span> transit
                           </div>
                           <p className="text-[10px] text-slate-400 leading-relaxed">
-                            Priority air cargo. Landed door-to-door including customs clearance.
+                            Priority air cargo. Landed door-to-door.
                           </p>
                         </div>
 
@@ -911,7 +911,7 @@ export function RequestDetailsModal() {
                             <span className="font-semibold">25–40 business days</span> transit
                           </div>
                           <p className="text-[10px] text-slate-400 leading-relaxed">
-                            Economy ocean route. Landed door-to-door including customs clearance.
+                            Economy ocean route. Landed door-to-door.
                           </p>
                           {/* Savings badge */}
                           {(quote.airFreightCost && (quote.seaFreightCost || quote.freightCost)) && (

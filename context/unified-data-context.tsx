@@ -245,7 +245,7 @@ export function UnifiedDataProvider({ children }: { children: React.ReactNode })
               broadcastChannelRef.current.postMessage({ type: "SYNC_STATE", key, data });
             }
           }
-        } catch (e) {}
+        } catch (e) { }
       }
     },
     [isHydrated]
@@ -294,7 +294,7 @@ export function UnifiedDataProvider({ children }: { children: React.ReactNode })
         } else if (e.key === STORAGE_NOTIFICATIONS && Array.isArray(parsed)) {
           setNotifications(parsed);
         }
-      } catch (err) {}
+      } catch (err) { }
       setTimeout(() => {
         isSyncingRef.current = false;
       }, 50);
@@ -601,7 +601,7 @@ export function UnifiedDataProvider({ children }: { children: React.ReactNode })
               if (invoiceUrl) updatedPayment.invoiceUrl = invoiceUrl;
               if (invoiceFileName) updatedPayment.invoiceFileName = invoiceFileName;
               updatedPayment.invoicedAt = new Date().toLocaleDateString("en-NZ", { year: "numeric", month: "short", day: "numeric" });
-              
+
               actionRequired = "Settle invoice via Bank Transfer or Card";
               actionType = "pay_now";
             } else if (status === "Ordered") {
@@ -732,7 +732,7 @@ export function UnifiedDataProvider({ children }: { children: React.ReactNode })
             const nextStatus = isIssueLogged ? "Subadmin Hold" : "Subadmin Review";
             const nextAction = isIssueLogged ? "Subadmin Issue Logged. Admin Resolution Required." : "Review Subadmin Media";
             const nextSubadminStatus = isIssueLogged ? "Hold" : "Review";
-            
+
             return {
               ...r,
               status: nextStatus,
@@ -753,8 +753,8 @@ export function UnifiedDataProvider({ children }: { children: React.ReactNode })
                   timestamp: new Date().toISOString(),
                   timeLabel: "Just now",
                   title: isIssueLogged ? "Subadmin Issue Logged" : "Subadmin Media Uploaded",
-                  description: isIssueLogged 
-                    ? "Quality assurance issue logged. Order placed on hold." 
+                  description: isIssueLogged
+                    ? "Quality assurance issue logged. Order placed on hold."
                     : "Quality assurance media and notes submitted for admin review.",
                   actor: currentStaffUser.name,
                   type: "status",
@@ -766,14 +766,14 @@ export function UnifiedDataProvider({ children }: { children: React.ReactNode })
           return r;
         })
       );
-      
+
       // Notify Admin
       setNotifications((prev) => [
         {
           id: `notif-${Date.now()}`,
           type: "Subadmin Review Required",
           title: isIssueLogged ? "Subadmin Hold Alert" : "Subadmin Review Required",
-          description: isIssueLogged 
+          description: isIssueLogged
             ? `An issue was logged for ${requestId}. Order placed on hold.`
             : `Subadmin media uploaded for ${requestId}. Please review and approve.`,
           timestamp: "Just now",
@@ -820,7 +820,7 @@ export function UnifiedDataProvider({ children }: { children: React.ReactNode })
           return r;
         })
       );
-      
+
       // Real-time status notification for the customer
       setNotifications((prev) => [
         {
@@ -905,7 +905,7 @@ export function UnifiedDataProvider({ children }: { children: React.ReactNode })
           return r;
         })
       );
-      
+
       // Notify Customer
       setNotifications((prev) => [
         {
@@ -1298,14 +1298,14 @@ export function UnifiedDataProvider({ children }: { children: React.ReactNode })
               actionType: "pay_now",
               lastUpdated: "Just now",
               payment: r.payment
-                ? { 
-                    ...r.payment, 
-                    invoiceNumber: invoiceData.invoiceNumber,
-                    amount: invoiceData.amount,
-                    dueDate: invoiceData.dueDate,
-                    invoiceUrl: invoiceData.pdfUrl, 
-                    status: "Unpaid" 
-                  }
+                ? {
+                  ...r.payment,
+                  invoiceNumber: invoiceData.invoiceNumber,
+                  amount: invoiceData.amount,
+                  dueDate: invoiceData.dueDate,
+                  invoiceUrl: invoiceData.pdfUrl,
+                  status: "Unpaid"
+                }
                 : undefined,
               activity: [
                 {
@@ -1324,7 +1324,7 @@ export function UnifiedDataProvider({ children }: { children: React.ReactNode })
           return r;
         })
       );
-      
+
       const target = getRequestById(requestId);
       const reqNum = target?.requestNumber || "Request";
       setNotifications((prev) => [
@@ -1635,7 +1635,7 @@ export function UnifiedDataProvider({ children }: { children: React.ReactNode })
 
   // ─── Actions: Shipments & Internal Milestones ────────────
   // Customer-facing top-level status remains SHIPPED.
-  // Internal milestones: Received At Shipping Facility -> In Transit -> Arrived in NZ -> Customs Clearance -> Out For Delivery -> Delivered
+  // Internal milestones: Received At Shipping Facility -> In Transit -> Arrived in NZ -> Out For Delivery -> Delivered
   const createShipment = useCallback(
     (
       requestId: string,
@@ -1989,7 +1989,7 @@ export function UnifiedDataProvider({ children }: { children: React.ReactNode })
     if (typeof window !== "undefined") {
       try {
         localStorage.removeItem(STORAGE_ACTIVE_ROLE);
-      } catch (e) {}
+      } catch (e) { }
     }
   }, []);
 
@@ -2021,7 +2021,7 @@ export function UnifiedDataProvider({ children }: { children: React.ReactNode })
         if (broadcastChannelRef.current) {
           broadcastChannelRef.current.postMessage({ type: "RESET_ALL" });
         }
-      } catch (e) {}
+      } catch (e) { }
     }
     setRequests(INITIAL_SHARED_REQUESTS);
     setCustomers(MOCK_CUSTOMERS);

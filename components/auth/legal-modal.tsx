@@ -300,7 +300,7 @@ export function LegalModal({
                   All delivery dates and transit times are <strong>estimates only</strong> unless expressly agreed otherwise in writing.
                 </p>
                 <p>
-                  International freight may be affected by customs clearance, port congestion, carrier schedules, weather, regulatory inspections, dangerous-goods requirements and other circumstances outside Autohub&apos;s reasonable control.
+                  International freight may be affected by port congestion, carrier schedules, weather, regulatory inspections, dangerous-goods requirements and other circumstances outside Autohub&apos;s reasonable control.
                 </p>
                 <p>
                   Autohub will use reasonable commercial efforts to coordinate delivery and keep the customer informed of material delays but does not guarantee a particular arrival date.

@@ -505,7 +505,7 @@ export function PaymentTab({ request: initialRequest, onNavigateToTab }: Payment
                     onChange={(e) => setHandoverMode(e.target.value as any)}
                     className="text-xs py-1 px-2 rounded-lg border border-slate-300 bg-white font-medium text-slate-800 focus:outline-none focus:border-[#FE0000]"
                   >
-                    <option value="Consolidated via Autohub Hub">Consolidated via Autohub Auckland Hub (MPI Clearance First)</option>
+                    <option value="Consolidated via Autohub Hub">Consolidated via Autohub Auckland Hub</option>
                     <option value="Direct Drop-ship to Requester">Direct Drop-ship to Requester Workshop Bay</option>
                   </select>
                 </div>

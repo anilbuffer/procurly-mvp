@@ -5,7 +5,7 @@ import { Shield, ArrowLeft, FileText, CheckCircle2 } from "lucide-react";
 export const metadata: Metadata = {
   title: "Privacy Policy | Procurly B2B Platform",
   description:
-    "Official Procurly Trade Customer Privacy Policy covering commercial confidentiality, MPI/customs clearance, and AES-256 data protection.",
+    "Official Procurly Trade Customer Privacy Policy covering commercial confidentiality and AES-256 data protection.",
 };
 
 export default function PrivacyPolicyPage() {

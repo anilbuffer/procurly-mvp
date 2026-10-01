@@ -199,7 +199,7 @@ For formal queries contact ops@procurly.autohub.co.nz
           </div>
           <h2 className="text-xl font-bold text-slate-900">Procurement Documents</h2>
           <p className="text-xs text-slate-500">
-            Official GST tax invoices, supplier packing slips, and customs clearance certs
+            Official GST tax invoices, supplier packing slips, and certs
           </p>
         </div>
 
