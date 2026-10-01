@@ -131,8 +131,7 @@ export function PortalSidebar({
       <aside
         className={`fixed top-0 bottom-0 left-0 z-50 h-screen bg-[#0C101A] border-r border-[#1E2538] transition-all duration-300 flex flex-col justify-between select-none shadow-2xl lg:shadow-none
         ${mobileOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}
-        w-72 max-w-[85vw] lg:w-auto
-        ${collapsed ? "lg:w-20" : "lg:w-64"}
+        w-72 max-w-[85vw] lg:max-w-none ${collapsed ? "lg:w-20" : "lg:w-64"}
         `}
       >
         {/* Top Section */}
