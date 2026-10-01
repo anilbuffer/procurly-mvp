@@ -64,7 +64,7 @@ export function PaymentsView() {
           <span className="text-slate-400 block text-[11px] uppercase font-bold tracking-wider">
             Total Outstanding (Unpaid)
           </span>
-          <span className="font-mono text-2xl font-black text-rose-600 mt-1 block">
+          <span className=" text-2xl font-black text-rose-600 mt-1 block">
             NZ${totalOutstanding.toFixed(2)}
           </span>
           <span className="text-[10px] text-slate-400 mt-0.5 block">
@@ -76,7 +76,7 @@ export function PaymentsView() {
           <span className="text-slate-400 block text-[11px] uppercase font-bold tracking-wider">
             Settled Payments (Paid)
           </span>
-          <span className="font-mono text-2xl font-black text-emerald-600 mt-1 block">
+          <span className=" text-2xl font-black text-emerald-600 mt-1 block">
             NZ${totalCollected.toFixed(2)}
           </span>
           <span className="text-[10px] text-slate-400 mt-0.5 block">
@@ -164,13 +164,13 @@ export function PaymentsView() {
                       onClick={() => router.push(`/admin/requests?id=${req.id}`)}
                       className="hover:bg-slate-50/70 cursor-pointer transition-colors group"
                     >
-                      <td className="py-3.5 px-4 font-mono font-bold text-slate-700 hover:text-slate-800 hover:underline">
+                      <td className="py-3.5 px-4  font-bold text-slate-700 hover:text-slate-800 hover:underline">
                         {req.requestNumber}
                       </td>
                       <td className="py-3.5 px-4">
                         <span className="font-bold text-slate-900 block">{req.customerName}</span>
                         <div className="flex items-center gap-1.5 mt-0.5">
-                          <span className="text-[10px] text-slate-400 font-mono">
+                          <span className="text-[10px] text-slate-400 ">
                             {pay?.invoiceNumber || `INV-${req.requestNumber.replace("AutoHub-P-", "")}`}
                           </span>
                           {pay?.invoiceUrl && (
@@ -180,13 +180,13 @@ export function PaymentsView() {
                           )}
                         </div>
                       </td>
-                      <td className="py-3.5 px-4 text-right font-mono font-bold text-slate-900">
+                      <td className="py-3.5 px-4 text-right  font-bold text-slate-900">
                         NZ${amt.toFixed(2)}
                       </td>
                       <td className="py-3.5 px-4">
                         <PaymentStatusBadge status={pay?.status || "Unpaid"} size="sm" />
                       </td>
-                      <td className="py-3.5 px-4 font-mono text-slate-700">
+                      <td className="py-3.5 px-4  text-slate-700">
                         {pay?.paymentReference || req.requestNumber}
                       </td>
                       <td className="py-3.5 px-4 text-slate-600">

@@ -14,7 +14,6 @@ import {
   ChevronRight,
   LogOut,
   ArrowRightLeft,
-  Menu,
 } from "lucide-react";
 import { usePortal } from "@/context/portal-context";
 import { PortalTab } from "@/types/portal";
@@ -119,7 +118,7 @@ export function PortalSidebar({ collapsed = false, onToggleCollapse }: PortalSid
       <div className="flex flex-col flex-1 min-h-0">
         {/* Brand Header */}
         <div
-          className={`h-16 flex items-center justify-between border-b border-[#1E2538]/60 shrink-0 ${collapsed ? "px-3" : "px-5"
+          className={`h-16 flex items-center bg-[#FE0000] border-b border-[#FE0000]/60 shrink-0 ${collapsed ? "justify-center px-3" : "justify-between px-5"
             }`}
         >
           <Link
@@ -127,29 +126,19 @@ export function PortalSidebar({ collapsed = false, onToggleCollapse }: PortalSid
             className="flex items-center gap-3 cursor-pointer group"
           >
             <div className="w-9 h-9 rounded-xl border-2 border-white bg-[#FE0000] flex items-center justify-center shadow-sm">
-              <span className="text-white font-black text-sm tracking-tighter leading-none shrink-0">A</span>
+              <span className="text-white font-black text-sm tracking-tighter leading-none shrink-0">P</span>
             </div>
             {!collapsed && (
               <div className="flex flex-col">
-                <span className="font-black italic text-[#FE0000] uppercase text-lg tracking-tight leading-none font-sans">
+                <span className="font-black italic text-white uppercase text-lg tracking-tight leading-none ">
                   PROCUR<span className="not-italic text-white">LY</span>
                 </span>
-                <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider mt-1">
+                <span className="text-[11px] font-bold text-white/80 uppercase tracking-wider mt-1">
                   Customer Portal
                 </span>
               </div>
             )}
           </Link>
-
-          {onToggleCollapse && (
-            <button
-              onClick={onToggleCollapse}
-              className="p-1.5 rounded-lg text-slate-400 hover:text-white transition-colors focus:outline-none"
-              title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
-            >
-              <Menu className="w-5 h-5" />
-            </button>
-          )}
         </div>
 
         {/* Navigation Groups */}
@@ -168,7 +157,7 @@ export function PortalSidebar({ collapsed = false, onToggleCollapse }: PortalSid
                       onClick={() => setSelectedRequest(null)}
                       title={collapsed ? item.label : undefined}
                       className={`relative w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-[13px] font-medium transition-all group overflow-hidden ${isActive
-                        ? "bg-[#1E2538] text-white before:absolute before:left-0 before:top-1/2 before:-translate-y-1/2 before:w-1 before:h-[60%] before:bg-white before:rounded-r-full"
+                        ? "bg-[#1E2538] text-white before:absolute before:left-0 before:top-1/2 before:-translate-y-1/2 before:w-1 before:h-[60%] before:bg-[#FE0000] before:rounded-r-full"
                         : "text-slate-400 hover:text-white hover:bg-[#1E2538]/50"
                         } ${collapsed ? "justify-center px-0" : ""}`}
                     >
@@ -209,7 +198,7 @@ export function PortalSidebar({ collapsed = false, onToggleCollapse }: PortalSid
           title={collapsed ? `${activeCustomer.contactName} (${activeCustomer.businessName})` : undefined}
         >
           <div className="flex items-center gap-3 min-w-0">
-            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-600 to-indigo-700 text-white font-bold text-xs flex items-center justify-center shadow-md shadow-blue-500/20 shrink-0 uppercase">
+            <div className="w-8 h-8 rounded-full bg-[#FE0000] hover:bg-[#9B0A0F] text-white font-bold text-xs flex items-center justify-center shadow-md shadow-blue-500/20 shrink-0 uppercase">
               {activeCustomer.contactName
                 .split(" ")
                 .map((n) => n[0])
@@ -243,7 +232,7 @@ export function PortalSidebar({ collapsed = false, onToggleCollapse }: PortalSid
           >
             <div className="px-2 py-1 border-b border-[#27324D]/60 pb-2">
               <p className="font-bold text-white text-xs mt-0.5">{activeCustomer.businessName}</p>
-              <p className="text-[10px] text-slate-400 font-mono">{activeCustomer.email}</p>
+              <p className="text-[10px] text-slate-400 ">{activeCustomer.email}</p>
             </div>
 
             <div className="pt-0.5 space-y-0.5">

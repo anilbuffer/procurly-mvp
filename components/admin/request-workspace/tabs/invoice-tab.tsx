@@ -200,7 +200,7 @@ export function InvoiceTab({ request: initialRequest, onNavigateToTab }: Invoice
 
               <div className="border-t border-slate-200 mt-auto pt-4 flex justify-between items-center">
                 <span className="font-bold text-slate-700">Total Billable:</span>
-                <span className="font-bold text-slate-900 text-base font-mono">
+                <span className="font-bold text-slate-900 text-base ">
                   ${finalAmount.toFixed(2)} NZD
                 </span>
               </div>
@@ -231,7 +231,7 @@ export function InvoiceTab({ request: initialRequest, onNavigateToTab }: Invoice
                   type="text"
                   value={invoiceNumber}
                   onChange={(e) => setInvoiceNumber(e.target.value)}
-                  className="w-full text-sm p-3 rounded-xl bg-white border border-slate-200 shadow-sm focus:outline-none focus:ring-2 focus:ring-[#FE0000]/30 focus:border-[#FE0000] font-medium text-slate-700 font-mono"
+                  className="w-full text-sm p-3 rounded-xl bg-white border border-slate-200 shadow-sm focus:outline-none focus:ring-2 focus:ring-[#FE0000]/30 focus:border-[#FE0000] font-medium text-slate-700 "
                   required
                 />
               </div>
@@ -258,7 +258,7 @@ export function InvoiceTab({ request: initialRequest, onNavigateToTab }: Invoice
                       {attachedPdfName || "Official_Invoice.pdf"}
                     </p>
                     {attachedPdfSize && (
-                      <p className="text-xs text-emerald-700 mt-0.5 font-mono">{attachedPdfSize}</p>
+                      <p className="text-xs text-emerald-700 mt-0.5 ">{attachedPdfSize}</p>
                     )}
 
                     <div className="flex items-center gap-2 mt-3">
@@ -295,8 +295,8 @@ export function InvoiceTab({ request: initialRequest, onNavigateToTab }: Invoice
                     onDrop={handleDrop}
                     onClick={() => fileInputRef.current?.click()}
                     className={`border-2 border-dashed rounded-xl p-8 flex flex-col items-center justify-center text-center transition-all cursor-pointer ${isDragging
-                        ? "border-[#FE0000] bg-red-50/50 scale-[1.01]"
-                        : "border-slate-300 bg-slate-50/70 hover:bg-slate-100/70 hover:border-slate-400"
+                      ? "border-[#FE0000] bg-red-50/50 scale-[1.01]"
+                      : "border-slate-300 bg-slate-50/70 hover:bg-slate-100/70 hover:border-slate-400"
                       }`}
                   >
                     <div className="w-12 h-12 rounded-2xl bg-white border border-slate-200 flex items-center justify-center text-slate-400 mb-3 shadow-xs">

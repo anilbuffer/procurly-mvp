@@ -17,7 +17,7 @@ export function CustomerPortalLayout({ children }: CustomerPortalLayoutProps) {
   const { selectedRequest } = usePortal();
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] flex font-sans text-slate-900">
+    <div className="min-h-screen bg-[#F8FAFC] flex  text-slate-900">
       {/* Dark Sidebar */}
       <PortalSidebar
         collapsed={isSidebarCollapsed}
@@ -26,12 +26,14 @@ export function CustomerPortalLayout({ children }: CustomerPortalLayoutProps) {
 
       {/* Main Content Area */}
       <div
-        className={`flex-1 flex flex-col transition-all duration-300 min-h-screen ${
-          isSidebarCollapsed ? "ml-20" : "ml-64"
-        }`}
+        className={`flex-1 flex flex-col transition-all duration-300 min-h-screen ${isSidebarCollapsed ? "ml-20" : "ml-64"
+          }`}
       >
         {/* Top Sticky Header */}
-        <PortalHeader />
+        <PortalHeader
+          onToggleSidebar={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+          isSidebarCollapsed={isSidebarCollapsed}
+        />
 
         {/* Dynamic Page Content */}
         <main className="flex-1 p-6 sm:p-8 max-w-7xl mx-auto w-full flex flex-col">

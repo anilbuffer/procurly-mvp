@@ -158,7 +158,7 @@ export function QuoteTab({ request, onNavigateToTab }: QuoteTabProps) {
             </div>
             <div className="flex justify-between items-center border-b border-slate-100 pb-3">
               <span className="text-slate-500 text-[10px] font-bold uppercase tracking-wider">VIN / Chassis Number (Mandatory)</span>
-              <span className="font-bold text-slate-900 font-mono tracking-wide">{request.vehicle.vin}</span>
+              <span className="font-bold text-slate-900  tracking-wide">{request.vehicle.vin}</span>
             </div>
             <div className="flex justify-between items-center border-b border-slate-100 pb-3">
               <span className="text-slate-500 text-[10px] font-bold uppercase tracking-wider">NZ Registration Plate (Optional)</span>
@@ -200,7 +200,7 @@ export function QuoteTab({ request, onNavigateToTab }: QuoteTabProps) {
           <div className="space-y-3.5 text-xs">
             <div className="flex justify-between items-center border-b border-slate-100 pb-3">
               <span className="text-slate-500">OEM Part Number:</span>
-              <span className="font-bold text-slate-900 bg-slate-100 px-2 py-0.5 rounded font-mono">{request.part.partNumber || "To be sourced by Autohub"}</span>
+              <span className="font-bold text-slate-900 bg-slate-100 px-2 py-0.5 rounded ">{request.part.partNumber || "To be sourced by Autohub"}</span>
             </div>
             <div className="flex justify-between items-center border-b border-slate-100 pb-3">
               <span className="text-slate-500">Condition Requirement:</span>
@@ -256,7 +256,7 @@ export function QuoteTab({ request, onNavigateToTab }: QuoteTabProps) {
                 <span className="text-slate-500 block text-[10px] font-bold uppercase mb-1 flex items-center gap-1">
                   <Globe className="w-3 h-3 text-[#2B4499]" /> IP Address
                 </span>
-                <span className="font-bold text-[#0f172a] font-mono">{request.quoteAcceptance.ipAddress || "Not Recorded"}</span>
+                <span className="font-bold text-[#0f172a] ">{request.quoteAcceptance.ipAddress || "Not Recorded"}</span>
               </div>
               <div>
                 <span className="text-slate-500 block text-[10px] font-bold uppercase mb-1">Terms &amp; Conditions</span>
@@ -314,7 +314,7 @@ export function QuoteTab({ request, onNavigateToTab }: QuoteTabProps) {
                         )}
                       </div>
                       <div className="text-right shrink-0">
-                        <div className={`font-bold text-[15px] font-mono ${isSelected ? "text-[#FE0000]" : "text-slate-900"}`}>
+                        <div className={`font-bold text-[15px]  ${isSelected ? "text-[#FE0000]" : "text-slate-900"}`}>
                           ${totalCost.toFixed(2)} NZD
                         </div>
                       </div>
@@ -346,7 +346,7 @@ export function QuoteTab({ request, onNavigateToTab }: QuoteTabProps) {
                 <span className="text-[10px] font-bold text-[#FE0000] bg-red-50 border border-red-200 px-2.5 py-0.5 rounded-md uppercase tracking-widest">
                   FORMAL QUOTATION
                 </span>
-                <span className="text-xs text-slate-400 font-mono">QTE-2026-00138</span>
+                <span className="text-xs text-slate-400 ">QTE-2026-00138</span>
               </div>
               <h2 className="text-lg font-bold text-slate-900 tracking-tight">Total Landed Cost Schedule (NZD)</h2>
             </div>
@@ -635,7 +635,7 @@ export function QuoteTab({ request, onNavigateToTab }: QuoteTabProps) {
             {/* Email Container */}
             <div className="bg-slate-50 rounded-xl border border-slate-200 overflow-hidden flex-1 overflow-y-auto">
               {/* Email Envelope Metadata */}
-              <div className="bg-slate-100/80 px-4 py-3 border-b border-slate-200 text-xs space-y-1.5 font-mono">
+              <div className="bg-slate-100/80 px-4 py-3 border-b border-slate-200 text-xs space-y-1.5 ">
                 <div className="flex">
                   <span className="w-16 font-bold text-slate-500">From:</span>
                   <span className="text-slate-800 font-medium">Procurely Trade Operations &lt;notifications@procurly.co.nz&gt;</span>
@@ -688,7 +688,7 @@ export function QuoteTab({ request, onNavigateToTab }: QuoteTabProps) {
                   </div>
                   <div className="flex justify-between items-center border-b border-slate-200/60 pb-1.5">
                     <span className="text-slate-500 font-medium">VIN / Chassis:</span>
-                    <span className="font-mono text-slate-700 font-semibold">{request.vehicle.vin}</span>
+                    <span className=" text-slate-700 font-semibold">{request.vehicle.vin}</span>
                   </div>
                   <div className="flex justify-between items-center border-b border-slate-200/60 pb-1.5">
                     <span className="text-slate-500 font-medium">Selected Freight:</span>
@@ -696,7 +696,7 @@ export function QuoteTab({ request, onNavigateToTab }: QuoteTabProps) {
                   </div>
                   <div className="flex justify-between items-center pt-1 text-sm font-bold">
                     <span className="text-slate-900">Total Landed Price (Door-to-Door):</span>
-                    <span className="font-bold text-[#FE0000] font-mono text-base">${totalCustomerQuote.toFixed(2)} NZD</span>
+                    <span className="font-bold text-[#FE0000]  text-base">${totalCustomerQuote.toFixed(2)} NZD</span>
                   </div>
                   <div className="text-[10px] text-slate-500 text-right">Includes 15% NZ GST &amp; all customs clearance</div>
                 </div>

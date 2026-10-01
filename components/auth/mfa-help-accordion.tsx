@@ -64,7 +64,7 @@ export function MfaHelpAccordion({
               Setup key:
             </span>
             <div className="flex items-center justify-between gap-2 p-2 rounded-md bg-slate-50 border border-slate-200">
-              <span className="font-mono text-xs font-bold tracking-wider text-slate-900 select-all">
+              <span className=" text-xs font-bold tracking-wider text-slate-900 select-all">
                 {setupKey}
               </span>
               <button

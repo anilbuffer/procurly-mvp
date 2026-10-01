@@ -138,21 +138,21 @@ export function PaymentTab({ request: initialRequest, onNavigateToTab }: Payment
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs">
           <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-100">
             <span className="text-slate-400 block text-[11px]">Payable Amount</span>
-            <span className="font-mono text-lg font-bold text-slate-900">
+            <span className=" text-lg font-bold text-slate-900">
               NZ${amount.toFixed(2)}
             </span>
           </div>
 
           <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-100">
             <span className="text-slate-400 block text-[11px]">Payment Reference</span>
-            <span className="font-mono font-semibold text-slate-800">
+            <span className=" font-semibold text-slate-800">
               {payment?.paymentReference || request.requestNumber}
             </span>
           </div>
 
           <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-100">
             <span className="text-slate-400 block text-[11px]">Autohub Invoice #</span>
-            <span className="font-mono font-semibold text-slate-800">
+            <span className=" font-semibold text-slate-800">
               {payment?.invoiceNumber || `INV-2026-${request.requestNumber.replace("AutoHub-P-", "")}`}
             </span>
             <span className="text-[10px] text-slate-400 block">External accounting ref</span>
@@ -261,7 +261,7 @@ export function PaymentTab({ request: initialRequest, onNavigateToTab }: Payment
               <ShoppingBag className="w-4 h-4 text-[#FE0000]" />
               Active Supplier Order (PO)
             </h3>
-            <span className="text-xs font-mono font-bold text-slate-700 bg-slate-100 px-2 py-0.5 rounded">
+            <span className="text-xs  font-bold text-slate-700 bg-slate-100 px-2 py-0.5 rounded">
               {request.supplierOrder.supplierRef}
             </span>
           </div>
@@ -280,13 +280,13 @@ export function PaymentTab({ request: initialRequest, onNavigateToTab }: Payment
             </div>
             <div>
               <span className="text-slate-400 block text-[11px]">Procurement Cost</span>
-              <span className="font-mono font-bold text-slate-900">
+              <span className=" font-bold text-slate-900">
                 NZ${request.supplierOrder.cost.toFixed(2)}
               </span>
             </div>
             <div>
               <span className="text-slate-400 block text-[11px]">Inbound Freight</span>
-              <span className="font-mono font-semibold text-slate-700">
+              <span className=" font-semibold text-slate-700">
                 NZ${request.supplierOrder.freight.toFixed(2)}
               </span>
             </div>
@@ -324,7 +324,7 @@ export function PaymentTab({ request: initialRequest, onNavigateToTab }: Payment
                 <span className="text-slate-400 text-[10px] uppercase font-bold block">Target Vehicle & Part Scope</span>
                 <span className="font-semibold text-slate-800 block">{request.supplierOrder.vehicleSummary || `${request.vehicle.year} ${request.vehicle.make} ${request.vehicle.model}`}</span>
                 <span className="text-slate-600 text-[11px] block mt-0.5">{request.supplierOrder.partSummary || `${request.part.name} (Qty: ${request.part.quantity || 1})`}</span>
-                <span className="text-slate-400 font-mono text-[10px] block mt-0.5">Trade Ref: {request.requestNumber}</span>
+                <span className="text-slate-400  text-[10px] block mt-0.5">Trade Ref: {request.requestNumber}</span>
               </div>
             </div>
           </div>
@@ -370,14 +370,14 @@ export function PaymentTab({ request: initialRequest, onNavigateToTab }: Payment
                     onChange={(e) => setPaymentRefInput(e.target.value)}
                     placeholder="e.g. ANZ-TRACE-98124"
                     required
-                    className="w-full text-sm pl-10 pr-4 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 font-mono transition-all shadow-sm"
+                    className="w-full text-sm pl-10 pr-4 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500  transition-all shadow-sm"
                   />
                 </div>
               </div>
 
               <div className="p-4 bg-emerald-50 border border-emerald-100 rounded-xl text-sm flex items-center justify-between text-emerald-900 shadow-sm mt-2">
                 <span className="font-medium">Amount Cleared:</span>
-                <span className="font-mono font-black text-base">NZ${amount.toFixed(2)}</span>
+                <span className=" font-black text-base">NZ${amount.toFixed(2)}</span>
               </div>
 
               <div className="flex justify-end gap-3 pt-4 border-t border-slate-100 mt-2">
@@ -431,7 +431,7 @@ export function PaymentTab({ request: initialRequest, onNavigateToTab }: Payment
                   <User className="w-3.5 h-3.5 text-[#FE0000]" />
                   <span>Supplier Handover: Requester & Consignment Details</span>
                 </span>
-                <span className="text-[10px] font-mono font-bold text-slate-600 bg-white border border-slate-200 px-2 py-0.5 rounded">
+                <span className="text-[10px]  font-bold text-slate-600 bg-white border border-slate-200 px-2 py-0.5 rounded">
                   Ref: {request.requestNumber}
                 </span>
               </div>
@@ -478,7 +478,7 @@ export function PaymentTab({ request: initialRequest, onNavigateToTab }: Payment
                     {request.vehicle.year} {request.vehicle.make} {request.vehicle.model}
                   </span>
                   {request.vehicle.vin && (
-                    <span className="text-slate-500 font-mono block text-[10px]">
+                    <span className="text-slate-500  block text-[10px]">
                       VIN: {request.vehicle.vin}
                     </span>
                   )}
@@ -489,7 +489,7 @@ export function PaymentTab({ request: initialRequest, onNavigateToTab }: Payment
                     {request.part.name} (Qty: {request.part.quantity || 1})
                   </span>
                   {request.part.partNumber && (
-                    <span className="text-slate-500 font-mono block text-[10px]">
+                    <span className="text-slate-500  block text-[10px]">
                       OEM #: {request.part.partNumber}
                     </span>
                   )}
@@ -564,7 +564,7 @@ export function PaymentTab({ request: initialRequest, onNavigateToTab }: Payment
                       value={orderSupplierRef}
                       onChange={(e) => setOrderSupplierRef(e.target.value)}
                       required
-                      className="w-full text-sm pl-10 pr-4 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-4 focus:ring-[#FE0000]/10 focus:border-[#FE0000] transition-all bg-white font-mono shadow-sm"
+                      className="w-full text-sm pl-10 pr-4 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-4 focus:ring-[#FE0000]/10 focus:border-[#FE0000] transition-all bg-white  shadow-sm"
                     />
                   </div>
                 </div>

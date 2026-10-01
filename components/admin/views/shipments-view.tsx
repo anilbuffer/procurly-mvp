@@ -78,7 +78,7 @@ export function ShipmentsView() {
           <span className="text-slate-400 block text-[11px] uppercase font-bold tracking-wider">
             Total Freight Consignments
           </span>
-          <span className="font-mono text-2xl font-black text-slate-900 mt-1 block">
+          <span className=" text-2xl font-black text-slate-900 mt-1 block">
             {shipmentRequests.length}
           </span>
           <span className="text-[10px] text-slate-400 mt-0.5 block">
@@ -90,7 +90,7 @@ export function ShipmentsView() {
           <span className="text-slate-400 block text-[11px] uppercase font-bold tracking-wider">
             Active in Transit
           </span>
-          <span className="font-mono text-2xl font-black text-cyan-600 mt-1 block">
+          <span className=" text-2xl font-black text-cyan-600 mt-1 block">
             {inTransitCount}
           </span>
           <span className="text-[10px] text-slate-400 mt-0.5 block">
@@ -102,7 +102,7 @@ export function ShipmentsView() {
           <span className="text-slate-400 block text-[11px] uppercase font-bold tracking-wider">
             Delivered to Workshop
           </span>
-          <span className="font-mono text-2xl font-black text-emerald-600 mt-1 block">
+          <span className=" text-2xl font-black text-emerald-600 mt-1 block">
             {deliveredCount}
           </span>
           <span className="text-[10px] text-slate-400 mt-0.5 block">
@@ -176,7 +176,7 @@ export function ShipmentsView() {
                       onClick={() => router.push(`/admin/requests?id=${req.id}`)}
                       className="hover:bg-slate-50/70 cursor-pointer transition-colors group"
                     >
-                      <td className="py-3.5 px-4 font-mono font-bold text-slate-700 hover:text-slate-800 hover:underline">
+                      <td className="py-3.5 px-4  font-bold text-slate-700 hover:text-slate-800 hover:underline">
                         {req.requestNumber}
                       </td>
                       <td className="py-3.5 px-4 font-bold text-slate-900">{req.customerName}</td>

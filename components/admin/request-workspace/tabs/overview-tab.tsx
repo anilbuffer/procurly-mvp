@@ -108,7 +108,7 @@ export function OverviewTab({ request }: OverviewTabProps) {
               <Car className="w-4 h-4 text-[#FE0000]" />
               Vehicle Specifications
             </h3>
-            <span className="text-xs font-mono font-bold text-slate-700 bg-slate-100 px-2 py-0.5 rounded">
+            <span className="text-xs  font-bold text-slate-700 bg-slate-100 px-2 py-0.5 rounded">
               {request.vehicle.registration || "NO PLATE"}
             </span>
           </div>
@@ -133,7 +133,7 @@ export function OverviewTab({ request }: OverviewTabProps) {
             </div>
             <div>
               <span className="text-slate-400 block text-[10px] font-bold uppercase tracking-wider mb-0.5">VIN / Chassis Number (Mandatory)</span>
-              <span className="font-mono font-semibold text-slate-800 break-all">
+              <span className=" font-semibold text-slate-800 break-all">
                 {request.vehicle.vin}
               </span>
             </div>
@@ -191,7 +191,7 @@ export function OverviewTab({ request }: OverviewTabProps) {
             <div className="grid grid-cols-2 gap-2 pt-1">
               <div>
                 <span className="text-slate-400 block text-[11px]">Part Number (OEM)</span>
-                <span className="font-mono font-semibold text-slate-800">
+                <span className=" font-semibold text-slate-800">
                   {request.part.partNumber || "To be sourced by Autohub"}
                 </span>
               </div>

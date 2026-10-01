@@ -201,7 +201,7 @@ export function SubadminDashboardView() {
                 {SubadminRequests.map((req) => (
                   <tr key={req.id} className="hover:bg-slate-50/80 transition-colors group cursor-pointer" onClick={() => setSelectedRequestId(req.id)}>
                     <td className="px-6 py-4">
-                      <div className="font-mono font-bold text-slate-900 group-hover:text-[#FE0000] transition-colors">{req.requestNumber}</div>
+                      <div className=" font-bold text-slate-900 group-hover:text-[#FE0000] transition-colors">{req.requestNumber}</div>
                       <div className="text-[11px] text-slate-500 mt-0.5 font-medium">
                         Ref: {req.selectedQuotationId ? req.supplierQuotations?.find(q => q.id === req.selectedQuotationId)?.supplierPartRef : "N/A"}
                       </div>

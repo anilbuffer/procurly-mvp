@@ -197,12 +197,12 @@ export function RequestDetailsModal() {
               <ChevronLeft className="w-5 h-5" />
             </button>
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-[#0C101A] text-white flex items-center justify-center font-mono font-bold text-xs shadow-md">
+              <div className="w-10 h-10 rounded-xl bg-[#0C101A] text-white flex items-center justify-center  font-bold text-xs shadow-md">
                 AH
               </div>
               <div>
                 <div className="flex items-center gap-2">
-                  <h2 className="text-base font-bold text-slate-900 font-mono">
+                  <h2 className="text-base font-bold text-slate-900 ">
                     {req.requestNumber}
                   </h2>
                   <span className="text-xs px-2.5 py-0.5 rounded-full font-bold uppercase bg-slate-200/80 text-slate-800">
@@ -333,7 +333,7 @@ export function RequestDetailsModal() {
             >
               <FileText className="w-3.5 h-3.5" />
               <span>Tax Invoice</span>
-              <span className="text-[10px] font-mono bg-slate-100 text-slate-700 px-1.5 py-0.5 rounded font-bold">
+              <span className="text-[10px]  bg-slate-100 text-slate-700 px-1.5 py-0.5 rounded font-bold">
                 {req.payment?.invoiceNumber || `INV-2026-${req.requestNumber.replace(/[^0-9]/g, "").padStart(4, "0")}`}
               </span>
             </button>
@@ -400,7 +400,7 @@ export function RequestDetailsModal() {
                       <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-[#FE0000] text-white">
                         Quotation Ready
                       </span>
-                      <span className="text-xs font-semibold text-slate-500 font-mono">
+                      <span className="text-xs font-semibold text-slate-500 ">
                         {(req.quotation || req.customerQuote)?.oemNumber ? `OEM Ref: ${(req.quotation || req.customerQuote)?.oemNumber}` : "Verified Part"}
                       </span>
                       {req.status === "Quoted" && (
@@ -476,13 +476,13 @@ export function RequestDetailsModal() {
                     </div>
                     <div className="flex justify-between border-b border-slate-200/60 pb-1.5">
                       <span className="text-slate-500">VIN / Chassis:</span>
-                      <span className="font-mono font-bold text-slate-800">
+                      <span className=" font-bold text-slate-800">
                         {req.vehicle.vin}
                       </span>
                     </div>
                     <div className="flex justify-between border-b border-slate-200/60 pb-1.5">
                       <span className="text-slate-500">Registration Plate:</span>
-                      <span className="font-mono font-bold text-slate-800 uppercase">
+                      <span className=" font-bold text-slate-800 uppercase">
                         {req.vehicle.registration || "—"}
                       </span>
                     </div>
@@ -516,7 +516,7 @@ export function RequestDetailsModal() {
                     </div>
                     <div className="flex justify-between border-b border-slate-200/60 pb-1.5">
                       <span className="text-slate-500">Part Number:</span>
-                      <span className="font-mono font-bold text-slate-800">
+                      <span className=" font-bold text-slate-800">
                         {req.part.partNumber || "OEM Catalog Lookup Required"}
                       </span>
                     </div>
@@ -610,7 +610,7 @@ export function RequestDetailsModal() {
                       <h3 className="text-lg font-bold text-slate-900">
                         {quote.itemDescription}
                       </h3>
-                      <p className="text-xs text-slate-500 font-mono">
+                      <p className="text-xs text-slate-500 ">
                         OEM Ref: {quote.oemNumber || req.part.partNumber || "Verified"} • Supplier Hub:{" "}
                         {quote.supplierLocation || "Japan / Global"}
                       </p>
@@ -626,7 +626,7 @@ export function RequestDetailsModal() {
                       <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
                         Total Landed Price
                       </span>
-                      <div className="text-2xl font-black text-slate-900 font-mono">
+                      <div className="text-2xl font-black text-slate-900 ">
                         {selectedFreightType ? (
                           <>
                             ${(
@@ -690,7 +690,7 @@ export function RequestDetailsModal() {
                           {customerVisibleNotes.map((note: any) => (
                             <div key={note.id} className="bg-white/70 p-2.5 rounded-lg border border-amber-100 flex items-start justify-between gap-3 text-xs">
                               <p className="text-slate-700">{note.content}</p>
-                              <span className="text-[10px] text-slate-400 font-mono shrink-0">{note.createdAt}</span>
+                              <span className="text-[10px] text-slate-400  shrink-0">{note.createdAt}</span>
                             </div>
                           ))}
                         </div>
@@ -862,7 +862,7 @@ export function RequestDetailsModal() {
                               <span className="text-[10px] text-slate-500">Fastest option</span>
                             </div>
                           </div>
-                          <div className="text-xl font-black text-slate-900 font-mono mb-2">
+                          <div className="text-xl font-black text-slate-900  mb-2">
                             ${((quote.subtotal + (quote.airFreightCost || 0)) * 1.15).toFixed(2)}
                             <span className="text-xs font-bold text-slate-500 ml-1">NZD</span>
                           </div>
@@ -900,7 +900,7 @@ export function RequestDetailsModal() {
                               <span className="text-[10px] text-emerald-600 font-semibold">Budget-friendly</span>
                             </div>
                           </div>
-                          <div className="text-xl font-black text-slate-900 font-mono mb-2">
+                          <div className="text-xl font-black text-slate-900  mb-2">
                             ${((quote.subtotal + (quote.seaFreightCost || quote.freightCost || 0)) * 1.15).toFixed(2)}
                             <span className="text-xs font-bold text-slate-500 ml-1">NZD</span>
                           </div>
@@ -943,7 +943,7 @@ export function RequestDetailsModal() {
                             Locked
                           </span>
                         </div>
-                        <span className="font-mono text-sm font-bold text-slate-900">
+                        <span className=" text-sm font-bold text-slate-900">
                           ${(req.quoteAcceptance?.freightCost || quote.freightCost || 0).toFixed(2)} NZD
                         </span>
                       </div>
@@ -973,7 +973,7 @@ export function RequestDetailsModal() {
                         Accepted by {req.quoteAcceptance.acceptedBy} (
                         {req.quoteAcceptance.userRole}) on{" "}
                         {req.quoteAcceptance.acceptedAt}. Procurly Invoice Ref:{" "}
-                        <strong className="font-mono">{req.payment?.invoiceNumber || "INV-2026-XXXX"}</strong> (Issued by Procurly Operations).
+                        <strong className="">{req.payment?.invoiceNumber || "INV-2026-XXXX"}</strong> (Issued by Procurly Operations).
                       </p>
 
                       {/* Accounts Receivable Invoice Handover Action Box */}
@@ -983,7 +983,7 @@ export function RequestDetailsModal() {
                             Accounts Receivable Invoice Handover
                           </span>
                           <div className="flex items-center gap-2 mt-0.5">
-                            <span className="font-mono font-bold text-slate-900 text-sm">
+                            <span className=" font-bold text-slate-900 text-sm">
                               {req.payment?.invoiceNumber || `INV-2026-${req.requestNumber.replace(/[^0-9]/g, "").padStart(4, "0")}`}
                             </span>
                             <span className="text-[11px] text-slate-500 font-medium">
@@ -1027,7 +1027,7 @@ export function RequestDetailsModal() {
                               <span>Supplier Order Handover Active</span>
                             </div>
                             <p className="text-slate-600 text-[11px] mt-0.5">
-                              Purchase Order <strong className="font-mono text-slate-800">{req.supplierOrder.supplierRef}</strong> released to {req.supplierOrder.supplierName}. Handover Route: <span className="font-semibold text-slate-700">{req.supplierOrder.handoverMode || "Consolidated via Autohub Hub"}</span>.
+                              Purchase Order <strong className=" text-slate-800">{req.supplierOrder.supplierRef}</strong> released to {req.supplierOrder.supplierName}. Handover Route: <span className="font-semibold text-slate-700">{req.supplierOrder.handoverMode || "Consolidated via Autohub Hub"}</span>.
                             </p>
                           </div>
                           <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200 shrink-0">
@@ -1186,7 +1186,7 @@ export function RequestDetailsModal() {
                             {selectedFreightType === "Air" ? "Air Express" : "Sea Freight"} — {selectedFreightType === "Air" ? "7–10 days" : "25–40 days"}
                           </span>
                         </div>
-                        <span className="font-mono text-sm font-bold text-[#FE0000]">
+                        <span className=" text-sm font-bold text-[#FE0000]">
                           ${(
                             (quote.subtotal +
                               (selectedFreightType === "Air"
@@ -1418,7 +1418,7 @@ export function RequestDetailsModal() {
                             >
                               {m.milestone}
                             </span>
-                            <span className="text-[10px] text-slate-400 font-mono">
+                            <span className="text-[10px] text-slate-400 ">
                               • {m.timestamp}
                             </span>
                           </div>
@@ -1612,7 +1612,7 @@ export function RequestDetailsModal() {
                     Recommended
                   </span>
                 </div>
-                <p className="text-slate-600 font-mono text-xs">
+                <p className="text-slate-600  text-xs">
                   procurement@autohub.co.nz
                 </p>
                 <div className="flex items-center gap-2 pt-1">
@@ -1675,7 +1675,7 @@ export function RequestDetailsModal() {
                     7:30 AM - 6:00 PM NZST
                   </span>
                 </div>
-                <p className="text-slate-600 font-mono text-xs">
+                <p className="text-slate-600  text-xs">
                   +64 9 555 0192 (Ext 2 - Trade Desk)
                 </p>
                 <div className="flex items-center gap-2 pt-1">

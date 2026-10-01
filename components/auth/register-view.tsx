@@ -53,15 +53,8 @@ const NZ_REGIONS = [
 ];
 
 const BUSINESS_CATEGORIES = [
-  "Independent Automotive Workshop",
-  "Franchised Dealership / Service Centre",
-  "Fleet & Commercial Transport Operator",
-  "Panel & Paint / Collision Repair",
-  "European & Prestige Vehicle Specialist",
-  "Japanese Domestic Market (JDM) Specialist",
-  "Heavy Diesel & Machinery Workshop",
-  "Automotive Parts Wholesaler / Importer",
-  "Other Automotive Trade",
+  "Registered company",
+  "Sole trader",
 ];
 
 // ─── Wizard step definitions ─────────────────────────────────
@@ -462,7 +455,7 @@ export function RegisterView() {
                       <p className="text-slate-600">Trading as: {registeredRecord.tradingName}</p>
                     )}
                     {registeredRecord.nzbn && (
-                      <p className="text-slate-600 font-mono text-[11px]">
+                      <p className="text-slate-600 text-[11px]">
                         NZBN: {registeredRecord.nzbn}
                       </p>
                     )}
@@ -479,8 +472,8 @@ export function RegisterView() {
                       {registeredRecord.contactName}
                     </p>
                     <p className="text-slate-600">{registeredRecord.contactRole}</p>
-                    <p className="font-mono text-slate-800 text-[11px]">{registeredRecord.email}</p>
-                    <p className="font-mono text-slate-800 text-[11px]">{registeredRecord.phone}</p>
+                    <p className="text-slate-800 text-[11px]">{registeredRecord.email}</p>
+                    <p className="text-slate-800 text-[11px]">{registeredRecord.phone}</p>
                   </div>
                 </div>
 
@@ -599,12 +592,12 @@ export function RegisterView() {
                       {/* Circle */}
                       <div
                         className={`w-10 h-10 rounded-full flex items-center justify-center border-2 transition-all duration-300 ${status === "completed"
-                            ? "bg-emerald-500 border-emerald-500 text-white shadow-sm shadow-emerald-200"
-                            : status === "active"
-                              ? "bg-[#FE0000] border-[#FE0000] text-white shadow-md shadow-red-200 scale-110"
-                              : status === "visited"
-                                ? "bg-white border-slate-300 text-slate-500"
-                                : "bg-slate-100 border-slate-200 text-slate-400"
+                          ? "bg-emerald-500 border-emerald-500 text-white shadow-sm shadow-emerald-200"
+                          : status === "active"
+                            ? "bg-[#FE0000] border-[#FE0000] text-white shadow-md shadow-red-200 scale-110"
+                            : status === "visited"
+                              ? "bg-white border-slate-300 text-slate-500"
+                              : "bg-slate-100 border-slate-200 text-slate-400"
                           }`}
                       >
                         {status === "completed" ? (
@@ -618,10 +611,10 @@ export function RegisterView() {
                       <div className="text-center">
                         <span
                           className={`block text-[11px] font-bold transition-colors ${status === "active"
-                              ? "text-[#FE0000]"
-                              : status === "completed"
-                                ? "text-emerald-700"
-                                : "text-slate-400"
+                            ? "text-[#FE0000]"
+                            : status === "completed"
+                              ? "text-emerald-700"
+                              : "text-slate-400"
                             }`}
                         >
                           {step.label}
@@ -668,10 +661,10 @@ export function RegisterView() {
                       <div
                         key={step.id}
                         className={`w-2 h-2 rounded-full transition-all duration-300 ${step.id === currentStep
-                            ? "bg-[#FE0000] w-5"
-                            : isStepComplete(step.id)
-                              ? "bg-emerald-500"
-                              : "bg-slate-300"
+                          ? "bg-[#FE0000] w-5"
+                          : isStepComplete(step.id)
+                            ? "bg-emerald-500"
+                            : "bg-slate-300"
                           }`}
                       />
                     ))}
@@ -706,13 +699,10 @@ export function RegisterView() {
                         <h2 className="text-sm font-bold text-slate-900">
                           Business &amp; Company Details
                         </h2>
-                        <p className="text-[11px] text-slate-500">
-                          Your registered automotive business, workshop, or dealership entity.
-                        </p>
                       </div>
                     </div>
 
-                    <div className="space-y-3.5">
+                    <div className="space-y-6">
                       {/* Business Legal Name */}
                       <div>
                         <label
@@ -805,7 +795,7 @@ export function RegisterView() {
                             value={nzbn}
                             onChange={(e) => setNzbn(e.target.value)}
                             placeholder="e.g. 9429041234567"
-                            className="w-full h-11 px-3.5 rounded-xl border border-slate-300 bg-white text-xs sm:text-sm font-medium font-mono focus:outline-none focus:border-[#FE0000] focus:ring-2 focus:ring-[#FE0000]/15"
+                            className="w-full h-11 px-3.5 rounded-xl border border-slate-300 bg-white text-xs sm:text-sm font-medium focus:outline-none focus:border-[#FE0000] focus:ring-2 focus:ring-[#FE0000]/15"
                           />
                         </div>
                       </div>
@@ -818,7 +808,7 @@ export function RegisterView() {
                             htmlFor="reg-category"
                             className="block text-xs font-bold text-slate-700 mb-1"
                           >
-                            Workshop Category <span className="text-rose-500">*</span>
+                            Company type <span className="text-rose-500">*</span>
                           </label>
                           <select
                             id="reg-category"
@@ -871,13 +861,10 @@ export function RegisterView() {
                         <h2 className="text-sm font-bold text-slate-900">
                           Primary Contact &amp; Security Credentials
                         </h2>
-                        <p className="text-[11px] text-slate-500">
-                          Account holder details for quote communications and portal access.
-                        </p>
                       </div>
                     </div>
 
-                    <div className="space-y-3.5">
+                    <div className="space-y-6">
                       {/* Contact Name & Role */}
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
                         <div>
@@ -1090,9 +1077,6 @@ export function RegisterView() {
                           <h2 className="text-sm font-bold text-slate-900">
                             Workshop Delivery Bay Address
                           </h2>
-                          <p className="text-[11px] text-slate-500">
-                            Physical workshop address for parts consignments and courier deliveries.
-                          </p>
                         </div>
                       </div>
 
@@ -1105,7 +1089,7 @@ export function RegisterView() {
                       </button>
                     </div>
 
-                    <div className="space-y-3.5">
+                    <div className="space-y-6">
                       {/* Bay Label & Delivery Recipient */}
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
                         <div>
@@ -1220,7 +1204,7 @@ export function RegisterView() {
                             onChange={(e) => setPostalCode(e.target.value)}
                             placeholder="e.g. 1061"
                             required
-                            className="w-full h-11 px-3.5 rounded-xl border border-slate-300 bg-white text-xs sm:text-sm font-medium font-mono focus:outline-none focus:border-[#FE0000] focus:ring-2 focus:ring-[#FE0000]/15"
+                            className="w-full h-11 px-3.5 rounded-xl border border-slate-300 bg-white text-xs sm:text-sm font-medium focus:outline-none focus:border-[#FE0000] focus:ring-2 focus:ring-[#FE0000]/15"
                           />
                         </div>
                       </div>
@@ -1293,9 +1277,6 @@ export function RegisterView() {
                         <h2 className="text-sm font-bold text-slate-900">
                           Review Your Application
                         </h2>
-                        <p className="text-[11px] text-slate-500">
-                          Please confirm your details before submitting.
-                        </p>
                       </div>
                     </div>
 
@@ -1319,7 +1300,7 @@ export function RegisterView() {
                         <p className="text-xs text-slate-600">Trading as: {tradingName}</p>
                       )}
                       {nzbn && (
-                        <p className="text-xs text-slate-600 font-mono">NZBN: {nzbn}</p>
+                        <p className="text-xs text-slate-600">NZBN: {nzbn}</p>
                       )}
                       <p className="text-[11px] text-slate-500">{businessType}</p>
                       {website && <p className="text-[11px] text-slate-500">{website}</p>}
@@ -1342,8 +1323,8 @@ export function RegisterView() {
                       </div>
                       <p className="font-bold text-slate-900 text-sm">{contactName}</p>
                       <p className="text-xs text-slate-600">{contactRole}</p>
-                      <p className="text-xs font-mono text-slate-800">{email}</p>
-                      <p className="text-xs font-mono text-slate-800">{phone}</p>
+                      <p className="text-xs text-slate-800">{email}</p>
+                      <p className="text-xs text-slate-800">{phone}</p>
                     </div>
 
                     {/* Delivery Summary */}

@@ -142,7 +142,7 @@ export function UsersView() {
                       </div>
                     </div>
                   </td>
-                  <td className="py-3.5 px-4 text-slate-600 font-mono text-[11px]">{u.email}</td>
+                  <td className="py-3.5 px-4 text-slate-600  text-[11px]">{u.email}</td>
                   <td className="py-3.5 px-4">
                     <span className="text-xs font-bold text-slate-800 bg-slate-100 px-2.5 py-1 rounded-lg">
                       {u.role}
@@ -152,8 +152,8 @@ export function UsersView() {
                   <td className="py-3.5 px-4">
                     <span
                       className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${u.status === "Active"
-                          ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
-                          : "bg-slate-100 text-slate-500"
+                        ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
+                        : "bg-slate-100 text-slate-500"
                         }`}
                     >
                       {u.status}

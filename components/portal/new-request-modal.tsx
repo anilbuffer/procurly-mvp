@@ -355,7 +355,7 @@ export function NewRequestModal() {
               </span>
               <h3 className="text-2xl font-black text-slate-900 tracking-tight">
                 Request Number:{" "}
-                <span className="text-[#FE0000] font-mono font-black">
+                <span className="text-[#FE0000]  font-black">
                   {submittedRequestNumber}
                 </span>
               </h3>
@@ -376,7 +376,7 @@ export function NewRequestModal() {
               </div>
               <div className="flex justify-between">
                 <span className="text-slate-500">VIN / Chassis:</span>
-                <span className="font-mono font-semibold text-slate-800">
+                <span className=" font-semibold text-slate-800">
                   {vehicle.vin}
                 </span>
               </div>
@@ -529,7 +529,7 @@ export function NewRequestModal() {
                         onChange={(e) =>
                           setVehicle({ ...vehicle, vin: e.target.value })
                         }
-                        className="w-full text-xs p-2.5 rounded-lg border border-slate-200 font-mono focus:ring-2 focus:ring-[#FE0000]/20 focus:border-[#FE0000] outline-none"
+                        className="w-full text-xs p-2.5 rounded-lg border border-slate-200  focus:ring-2 focus:ring-[#FE0000]/20 focus:border-[#FE0000] outline-none"
                         placeholder="e.g. GDH201-0012845"
                       />
                     </div>
@@ -545,7 +545,7 @@ export function NewRequestModal() {
                         onChange={(e) =>
                           setVehicle({ ...vehicle, registration: e.target.value })
                         }
-                        className="w-full text-xs p-2.5 rounded-lg border border-slate-200 font-mono uppercase focus:ring-2 focus:ring-[#FE0000]/20 focus:border-[#FE0000] outline-none"
+                        className="w-full text-xs p-2.5 rounded-lg border border-slate-200  uppercase focus:ring-2 focus:ring-[#FE0000]/20 focus:border-[#FE0000] outline-none"
                         placeholder="e.g. MTB842"
                       />
                     </div>
@@ -652,7 +652,7 @@ export function NewRequestModal() {
                         onChange={(e) =>
                           setPart({ ...part, partNumber: e.target.value })
                         }
-                        className="w-full text-xs p-2.5 rounded-lg border border-slate-200 font-mono focus:ring-2 focus:ring-[#FE0000]/20 focus:border-[#FE0000] outline-none"
+                        className="w-full text-xs p-2.5 rounded-lg border border-slate-200  focus:ring-2 focus:ring-[#FE0000]/20 focus:border-[#FE0000] outline-none"
                         placeholder="e.g. 48069-26150"
                       />
                     </div>
@@ -809,7 +809,7 @@ export function NewRequestModal() {
                           key={idx}
                           className="flex items-center justify-between p-2 rounded-lg bg-slate-50 border border-slate-200 text-xs"
                         >
-                          <span className="font-mono text-slate-700">{doc}</span>
+                          <span className=" text-slate-700">{doc}</span>
                           <button
                             type="button"
                             onClick={() =>
@@ -995,7 +995,7 @@ export function NewRequestModal() {
                     <p>
                       <strong className="text-slate-900">Automatic Request Code:</strong> Submitting will lock
                       your request and generate a tracked procurement reference in format{" "}
-                      <code className="font-mono font-bold bg-white px-1.5 py-0.5 rounded border border-slate-200 text-slate-900">
+                      <code className=" font-bold bg-white px-1.5 py-0.5 rounded border border-slate-200 text-slate-900">
                         AutoHub-P-XXX
                       </code>
                       .

@@ -56,7 +56,7 @@ export function MfaCodeInput({
           placeholder=""
           aria-label="Authenticator code"
           className={clsx(
-            "w-full h-12 px-4 bg-white rounded-lg text-slate-900 font-mono text-base tracking-[0.25em] font-semibold transition-all",
+            "w-full h-12 px-4 bg-white rounded-lg text-slate-900  text-base tracking-[0.25em] font-semibold transition-all",
             "bg-[#E8EAEF]/60 border border-slate-300 shadow-2xs",
             "focus:bg-white focus:outline-none focus:border-[#FE0000] focus:ring-2 focus:ring-[#FE0000]/20",
             hasError && "border-red-500 bg-red-50/40 text-red-900 focus:border-red-600 focus:ring-red-500/20",
@@ -64,7 +64,7 @@ export function MfaCodeInput({
           )}
         />
         {value.length > 0 && (
-          <span className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[11px] font-mono text-slate-400 pointer-events-none">
+          <span className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[11px]  text-slate-400 pointer-events-none">
             {value.length}/6
           </span>
         )}

@@ -266,7 +266,7 @@ export function NewRequestPage() {
                 required
                 value={vehicle.vin}
                 onChange={(e) => setVehicle({ ...vehicle, vin: e.target.value })}
-                className="w-full text-xs p-2.5 rounded-lg border border-slate-200 font-mono focus:ring-2 focus:ring-[#FE0000]/20 focus:border-[#FE0000] outline-none"
+                className="w-full text-xs p-2.5 rounded-lg border border-slate-200  focus:ring-2 focus:ring-[#FE0000]/20 focus:border-[#FE0000] outline-none"
                 placeholder="e.g. MR0HA3CD800192841"
               />
             </div>
@@ -279,7 +279,7 @@ export function NewRequestPage() {
                 type="text"
                 value={vehicle.registration || ""}
                 onChange={(e) => setVehicle({ ...vehicle, registration: e.target.value })}
-                className="w-full text-xs p-2.5 rounded-lg border border-slate-200 font-mono uppercase focus:ring-2 focus:ring-[#FE0000]/20 focus:border-[#FE0000] outline-none"
+                className="w-full text-xs p-2.5 rounded-lg border border-slate-200  uppercase focus:ring-2 focus:ring-[#FE0000]/20 focus:border-[#FE0000] outline-none"
                 placeholder="e.g. NZZ482"
               />
             </div>
@@ -388,7 +388,7 @@ export function NewRequestPage() {
                 type="text"
                 value={part.partNumber || ""}
                 onChange={(e) => setPart({ ...part, partNumber: e.target.value })}
-                className="w-full text-xs p-2.5 rounded-lg border border-slate-200 font-mono focus:ring-2 focus:ring-[#FE0000]/20 focus:border-[#FE0000] outline-none"
+                className="w-full text-xs p-2.5 rounded-lg border border-slate-200  focus:ring-2 focus:ring-[#FE0000]/20 focus:border-[#FE0000] outline-none"
                 placeholder="e.g. 27060-0E050"
               />
             </div>
@@ -579,7 +579,7 @@ export function NewRequestPage() {
                     <div className="space-y-1.5">
                       {documents.map((doc, idx) => (
                         <div key={idx} className="flex items-center justify-between p-2 rounded-lg bg-slate-50 border border-slate-200 text-xs">
-                          <span className="font-mono text-slate-700 truncate mr-2">{doc}</span>
+                          <span className=" text-slate-700 truncate mr-2">{doc}</span>
                           <button type="button" onClick={() => setDocuments(documents.filter((_, i) => i !== idx))} className="text-slate-400 hover:text-red-500 shrink-0">
                             <X className="w-3.5 h-3.5" />
                           </button>
@@ -727,7 +727,7 @@ export function NewRequestPage() {
                 Request Generated & Submitted
               </span>
               <h3 className="text-2xl font-black text-slate-900 tracking-tight">
-                Request Number: <span className="text-[#FE0000] font-mono">{submittedRequestNumber}</span>
+                Request Number: <span className="text-[#FE0000] ">{submittedRequestNumber}</span>
               </h3>
               <p className="text-[13px] text-slate-500 max-w-sm mx-auto leading-relaxed">
                 Your part request has been dispatched to Autohub Sourcing specialists in Japan and overseas distribution centers. You will receive an immediate quote alert once pricing and freight are locked.
@@ -743,7 +743,7 @@ export function NewRequestPage() {
               </div>
               <div className="flex justify-between items-start gap-4">
                 <span className="text-slate-500 shrink-0">VIN / Chassis:</span>
-                <span className="font-mono font-semibold text-slate-800 text-right">
+                <span className=" font-semibold text-slate-800 text-right">
                   {submittedRequestDetails.vehicle.vin}
                 </span>
               </div>

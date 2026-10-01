@@ -268,7 +268,7 @@ export function CustomersView() {
               {selectedCustomer.nzbn && (
                 <div className="mt-1">
                   <span className="text-slate-500 block text-[11px] mb-0.5 font-medium">NZBN</span>
-                  <span className="font-mono text-slate-800 font-semibold">{selectedCustomer.nzbn}</span>
+                  <span className=" text-slate-800 font-semibold">{selectedCustomer.nzbn}</span>
                 </div>
               )}
               {selectedCustomer.businessType && (
@@ -328,7 +328,7 @@ export function CustomersView() {
                       className="p-3.5 bg-white border border-slate-200 hover:border-slate-300 rounded-xl flex items-center justify-between transition-colors shadow-sm"
                     >
                       <div>
-                        <span className="font-mono font-bold text-[#FE0000] mr-2 text-sm">
+                        <span className=" font-bold text-[#FE0000] mr-2 text-sm">
                           {req.requestNumber}
                         </span>
                         <span className="font-semibold text-slate-800 text-sm">

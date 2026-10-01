@@ -240,7 +240,7 @@ export function SourcingTab({ request }: SourcingTabProps) {
                           {quote.supplierCountry} • {quote.supplierContact}
                         </span>
                       </td>
-                      <td className="py-3 px-4 font-mono font-semibold text-slate-700">
+                      <td className="py-3 px-4  font-semibold text-slate-700">
                         {quote.supplierPartRef}
                       </td>
                       <td className="py-3 px-4">
@@ -266,16 +266,16 @@ export function SourcingTab({ request }: SourcingTabProps) {
                       <td className="py-3 px-4 text-slate-600">
                         {quote.leadTimeDays} Days
                       </td>
-                      <td className="py-3 px-4 text-right font-mono text-slate-900">
+                      <td className="py-3 px-4 text-right  text-slate-900">
                         {typeof quote.supplierCost === 'number' ? `NZ$${quote.supplierCost.toFixed(2)}` : quote.supplierCost}
                       </td>
-                      <td className="py-3 px-4 text-right font-mono text-slate-600">
+                      <td className="py-3 px-4 text-right  text-slate-600">
                         NZ${(quote.airFreightCost ?? quote.supplierFreight).toFixed(2)}
                       </td>
-                      <td className="py-3 px-4 text-right font-mono text-slate-600">
+                      <td className="py-3 px-4 text-right  text-slate-600">
                         NZ${(quote.seaFreightCost ?? 0).toFixed(2)}
                       </td>
-                      <td className="py-3 px-4 text-right font-mono font-bold text-slate-900">
+                      <td className="py-3 px-4 text-right  font-bold text-slate-900">
                         NZ${total.toFixed(2)}
                       </td>
                       <td className="py-3 px-4 text-center">

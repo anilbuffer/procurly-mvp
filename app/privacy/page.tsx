@@ -26,7 +26,7 @@ export default function PrivacyPolicyPage() {
               <div className="w-7 h-7 rounded-lg bg-[#FE0000] text-white flex items-center justify-center font-black text-sm">
                 A
               </div>
-              <span className="font-black italic text-lg tracking-tight text-slate-900 uppercase font-sans">
+              <span className="font-black italic text-lg tracking-tight text-slate-900 uppercase ">
                 PROCUR<span className="not-italic font-bold text-slate-700">LY</span>
               </span>
             </div>

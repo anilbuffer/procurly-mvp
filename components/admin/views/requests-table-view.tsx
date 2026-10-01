@@ -273,7 +273,7 @@ export function RequestsTableView() {
                     onClick={() => router.push(`/admin/requests?id=${req.id}`)}
                     className="hover:bg-slate-50/80 cursor-pointer transition-colors group"
                   >
-                    <td className="py-3.5 px-4 font-mono font-bold text-slate-700 hover:text-slate-800 hover:underline">
+                    <td className="py-3.5 px-4  font-bold text-slate-700 hover:text-slate-800 hover:underline">
                       {req.requestNumber}
                     </td>
                     <td className="py-3.5 px-4">
@@ -284,7 +284,7 @@ export function RequestsTableView() {
                       <span className="font-semibold block">
                         {req.vehicle.year} {req.vehicle.make} {req.vehicle.model}
                       </span>
-                      <span className="text-[10px] text-slate-400 font-mono">
+                      <span className="text-[10px] text-slate-400 ">
                         {req.vehicle.registration || req.vehicle.vin}
                       </span>
                     </td>
@@ -303,7 +303,7 @@ export function RequestsTableView() {
                     <td className="py-3.5 px-4">
                       <StatusBadge status={req.status} size="sm" />
                     </td>
-                    <td className="py-3.5 px-4 text-right font-mono font-bold text-slate-900">
+                    <td className="py-3.5 px-4 text-right  font-bold text-slate-900">
                       {req.quotedValue || req.customerQuote?.totalAmount
                         ? `NZ$${(req.quotedValue || req.customerQuote?.totalAmount || 0).toFixed(2)}`
                         : "—"}

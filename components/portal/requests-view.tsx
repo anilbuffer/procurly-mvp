@@ -176,7 +176,7 @@ export function RequestsView() {
                     className="hover:bg-slate-50 cursor-pointer transition-colors group"
                   >
                     {/* Request Number */}
-                    <td className="py-4 px-6 font-mono font-black text-slate-900 group-hover:text-[#FE0000] transition-colors">
+                    <td className="py-4 px-6  font-black text-slate-900 group-hover:text-[#FE0000] transition-colors">
                       {req.requestNumber}
                     </td>
 
@@ -185,7 +185,7 @@ export function RequestsView() {
                       <p className="font-bold text-slate-800">
                         {req.vehicle.year} {req.vehicle.make} {req.vehicle.model}
                       </p>
-                      <p className="text-[11px] font-mono text-slate-500">
+                      <p className="text-[11px]  text-slate-500">
                         {req.vehicle.vin}
                       </p>
                     </td>
@@ -206,7 +206,7 @@ export function RequestsView() {
                     </td>
 
                     {/* Date */}
-                    <td className="py-4 px-4 whitespace-nowrap text-slate-500 font-mono text-[11px]">
+                    <td className="py-4 px-4 whitespace-nowrap text-slate-500  text-[11px]">
                       {req.dateSubmitted}
                     </td>
 
@@ -223,7 +223,7 @@ export function RequestsView() {
                     </td>
 
                     {/* Quoted Value */}
-                    <td className="py-4 px-4 font-mono font-bold text-slate-900 whitespace-nowrap">
+                    <td className="py-4 px-4  font-bold text-slate-900 whitespace-nowrap">
                       {req.quotedValue ? `$${req.quotedValue.toFixed(2)}` : "Pending Quote"}
                     </td>
 

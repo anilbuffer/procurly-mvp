@@ -36,7 +36,7 @@ export default function CustomerInvoicePage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-100 p-4 sm:p-8 font-sans print:bg-white print:p-0">
+    <div className="min-h-screen bg-slate-100 p-4 sm:p-8  print:bg-white print:p-0">
       <div className="max-w-4xl mx-auto mb-6 flex items-center justify-between print:hidden">
         <Link
           href="/customer/payments"
@@ -46,7 +46,7 @@ export default function CustomerInvoicePage() {
           <span>Back to Payments & Invoices</span>
         </Link>
 
-        <span className="text-xs font-mono font-bold text-slate-500">
+        <span className="text-xs  font-bold text-slate-500">
           Request: {request.requestNumber}
         </span>
       </div>

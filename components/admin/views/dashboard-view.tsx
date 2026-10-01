@@ -196,7 +196,7 @@ export function AdminDashboardView() {
                   }`}
               >
                 <span>Active & Open</span>
-                <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-mono ${currentTab === "active" ? "bg-red-50 text-[#FE0000]" : "bg-slate-200 text-slate-700"
+                <span className={`text-[10px] px-1.5 py-0.2 rounded-full  ${currentTab === "active" ? "bg-red-50 text-[#FE0000]" : "bg-slate-200 text-slate-700"
                   }`}>
                   {activeOpenRequests.length}
                 </span>
@@ -211,7 +211,7 @@ export function AdminDashboardView() {
                   }`}
               >
                 <span>Needs Attention</span>
-                <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-mono ${currentTab === "attention" ? "bg-amber-50 text-amber-700" : "bg-slate-200 text-slate-700"
+                <span className={`text-[10px] px-1.5 py-0.2 rounded-full  ${currentTab === "attention" ? "bg-amber-50 text-amber-700" : "bg-slate-200 text-slate-700"
                   }`}>
                   {attentionRequests.length}
                 </span>
@@ -226,7 +226,7 @@ export function AdminDashboardView() {
                   }`}
               >
                 <span>Delivered / Closed</span>
-                <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-mono ${currentTab === "delivered_completed" ? "bg-emerald-50 text-emerald-700" : "bg-slate-200 text-slate-700"
+                <span className={`text-[10px] px-1.5 py-0.2 rounded-full  ${currentTab === "delivered_completed" ? "bg-emerald-50 text-emerald-700" : "bg-slate-200 text-slate-700"
                   }`}>
                   {deliveredCompletedRequests.length}
                 </span>
@@ -241,7 +241,7 @@ export function AdminDashboardView() {
                   }`}
               >
                 <span>All Orders</span>
-                <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-mono ${currentTab === "all" ? "bg-slate-200 text-slate-800" : "bg-slate-200 text-slate-700"
+                <span className={`text-[10px] px-1.5 py-0.2 rounded-full  ${currentTab === "all" ? "bg-slate-200 text-slate-800" : "bg-slate-200 text-slate-700"
                   }`}>
                   {requests.length}
                 </span>
@@ -297,7 +297,7 @@ export function AdminDashboardView() {
                     onClick={() => router.push(`/admin/requests?id=${req.id}`)}
                     className="hover:bg-slate-50/80 cursor-pointer transition-colors group"
                   >
-                    <td className="py-3.5 px-4 font-mono font-bold text-slate-700 hover:text-slate-800 hover:underline">
+                    <td className="py-3.5 px-4  font-bold text-slate-700 hover:text-slate-800 hover:underline">
                       {req.requestNumber}
                     </td>
                     <td className="py-3.5 px-4">
@@ -308,7 +308,7 @@ export function AdminDashboardView() {
                       <span className="font-semibold block">
                         {req.vehicle.year} {req.vehicle.make} {req.vehicle.model}
                       </span>
-                      <span className="text-[10px] text-slate-400 font-mono">
+                      <span className="text-[10px] text-slate-400 ">
                         {req.vehicle.registration || req.vehicle.vin}
                       </span>
                     </td>

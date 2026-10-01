@@ -72,7 +72,7 @@ export function ActivityTab({ request }: ActivityTabProps) {
                         {item.actor}
                       </span>
                     </div>
-                    <span className="text-[11px] text-slate-400 font-mono">
+                    <span className="text-[11px] text-slate-400 ">
                       {item.timeLabel || item.timestamp}
                     </span>
                   </div>

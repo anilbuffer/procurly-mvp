@@ -12,7 +12,7 @@ export default function SubadminLayout({
   const [collapsed, setCollapsed] = useState(false);
 
   return (
-    <div className="min-h-screen bg-[#F7F8FA] text-slate-900 flex font-sans antialiased">
+    <div className="min-h-screen bg-[#F7F8FA] text-slate-900 flex  antialiased">
       {/* Subadmin Sidebar */}
       <Suspense fallback={<div className="w-64 bg-slate-900 min-h-screen"></div>}>
         <SubadminSidebar
@@ -23,12 +23,14 @@ export default function SubadminLayout({
 
       {/* Main Content Area */}
       <div
-        className={`flex-1 flex flex-col transition-all duration-300 min-h-screen ${
-          collapsed ? "ml-20" : "ml-64"
-        }`}
+        className={`flex-1 flex flex-col transition-all duration-300 min-h-screen ${collapsed ? "ml-20" : "ml-64"
+          }`}
       >
         {/* Top Header */}
-        <SubadminHeader />
+        <SubadminHeader
+          onToggleSidebar={() => setCollapsed(!collapsed)}
+          isSidebarCollapsed={collapsed}
+        />
 
         {/* Dynamic Page Content */}
         <main className="flex-1 p-6 sm:p-8 max-w-7xl mx-auto w-full">

@@ -58,7 +58,7 @@ export function AuthStateSimulator({
           )}
         </button>
 
-        <span className="text-[10px] font-mono font-medium px-2 py-0.5 rounded bg-slate-200/80 text-slate-700">
+        <span className="text-[10px]  font-medium px-2 py-0.5 rounded bg-slate-200/80 text-slate-700">
           State: {STATES.find((s) => s.id === currentState)?.number}/10
         </span>
       </div>

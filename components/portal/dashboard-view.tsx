@@ -81,7 +81,7 @@ export function DashboardView() {
               <Rocket className="w-10 h-10" />
             </div>
 
-            <h1 className="text-2xl sm:text-3xl font-bold text-[#0F172A] tracking-tight mb-3 relative z-10 font-sans">
+            <h1 className="text-2xl sm:text-3xl font-bold text-[#0F172A] tracking-tight mb-3 relative z-10 ">
               Welcome to your Procurly Portal, {activeCustomer.businessName}!
             </h1>
             <p className="text-slate-500 max-w-2xl mx-auto mb-8 relative z-10 text-sm sm:text-base">
@@ -107,43 +107,111 @@ export function DashboardView() {
           </div>
 
           {/* How it works steps */}
-          <div className="bg-white rounded-2xl border border-slate-200/90 shadow-sm p-8">
-            <h2 className="text-xl font-bold text-[#0F172A] mb-8 text-center tracking-tight font-sans">How Procurly Works</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-              <div className="text-center space-y-4">
-                <div className="w-14 h-14 mx-auto bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center border border-blue-100 shadow-sm">
-                  <Search className="w-7 h-7" />
-                </div>
-                <div>
-                  <h3 className="font-bold text-slate-900 mb-1.5">1. We Source</h3>
-                  <p className="text-xs text-slate-500 leading-relaxed px-4">You submit a request, and our experts find the exact parts you need.</p>
-                </div>
+          <div className="bg-white rounded-2xl border border-slate-200/90 shadow-sm p-5 sm:p-6 lg:py-6 lg:px-8">
+            <div className="text-center mb-6">
+              <h2 className="text-base sm:text-lg font-bold text-[#0F172A] tracking-tight ">How Procurly Works</h2>
+              <div className="w-8 h-0.5 bg-[#FE0000] rounded-full mx-auto mt-1.5" />
+            </div>
+
+            <div className="relative">
+              {/* Dotted path connecting the nodes across columns on desktop */}
+              <div
+                className="hidden lg:block absolute top-5 left-[12.5%] right-[12.5%] h-[2px] pointer-events-none z-0"
+                aria-hidden="true"
+              >
+                <svg className="w-full h-full" style={{ overflow: "visible" }}>
+                  <line
+                    x1="0"
+                    y1="1"
+                    x2="100%"
+                    y2="1"
+                    stroke="#CBD5E1"
+                    strokeWidth="2"
+                    strokeDasharray="4 6"
+                    strokeLinecap="round"
+                  />
+                </svg>
               </div>
-              <div className="text-center space-y-4">
-                <div className="w-14 h-14 mx-auto bg-amber-50 text-amber-600 rounded-2xl flex items-center justify-center border border-amber-100 shadow-sm">
-                  <FileCheck className="w-7 h-7" />
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-4 relative z-10">
+                {/* Step 1 */}
+                <div className="flex flex-col items-center text-center group">
+                  <div className="relative z-10 mb-3">
+                    <div className="w-10 h-10 rounded-full bg-white border-2 border-blue-500 text-blue-600 ring-4 ring-blue-50 flex items-center justify-center shadow-sm transition-all duration-200 group-hover:scale-110 group-hover:ring-blue-100">
+                      <Search className="w-4 h-4 stroke-[2.2]" />
+                    </div>
+                    <span className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-blue-600 text-white text-[10px] font-bold flex items-center justify-center ring-2 ring-white shadow-sm pointer-events-none">
+                      1
+                    </span>
+                  </div>
+                  <div className="min-h-[42px] flex items-center justify-center mb-1 px-1">
+                    <h3 className="font-bold text-slate-900 text-xs sm:text-sm leading-snug">
+                      We Source
+                    </h3>
+                  </div>
+                  <p className="text-[11px] sm:text-xs text-slate-500 leading-relaxed max-w-[220px]">
+                    You submit a request, and our experts find the exact parts you need.
+                  </p>
                 </div>
-                <div>
-                  <h3 className="font-bold text-slate-900 mb-1.5">2. We Quote</h3>
-                  <p className="text-xs text-slate-500 leading-relaxed px-4">Receive a landed quote for your approval for your approval, with complete transparency.</p>
+
+                {/* Step 2 */}
+                <div className="flex flex-col items-center text-center group">
+                  <div className="relative z-10 mb-3">
+                    <div className="w-10 h-10 rounded-full bg-white border-2 border-amber-500 text-amber-600 ring-4 ring-amber-50 flex items-center justify-center shadow-sm transition-all duration-200 group-hover:scale-110 group-hover:ring-amber-100">
+                      <FileCheck className="w-4 h-4 stroke-[2.2]" />
+                    </div>
+                    <span className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-amber-600 text-white text-[10px] font-bold flex items-center justify-center ring-2 ring-white shadow-sm pointer-events-none">
+                      2
+                    </span>
+                  </div>
+                  <div className="min-h-[42px] flex items-center justify-center mb-1 px-1">
+                    <h3 className="font-bold text-slate-900 text-xs sm:text-sm leading-snug">
+                      Receive a landed door-to-door quote for your approval
+                    </h3>
+                  </div>
+                  <p className="text-[11px] sm:text-xs text-slate-500 leading-relaxed max-w-[220px]">
+                    Receive a landed quote for your approval for your approval, with complete transparency.
+                  </p>
                 </div>
-              </div>
-              <div className="text-center space-y-4">
-                <div className="w-14 h-14 mx-auto bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center border border-emerald-100 shadow-sm">
-                  <CreditCard className="w-7 h-7" />
+
+                {/* Step 3 */}
+                <div className="flex flex-col items-center text-center group">
+                  <div className="relative z-10 mb-3">
+                    <div className="w-10 h-10 rounded-full bg-white border-2 border-emerald-500 text-emerald-600 ring-4 ring-emerald-50 flex items-center justify-center shadow-sm transition-all duration-200 group-hover:scale-110 group-hover:ring-emerald-100">
+                      <CreditCard className="w-4 h-4 stroke-[2.2]" />
+                    </div>
+                    <span className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-emerald-600 text-white text-[10px] font-bold flex items-center justify-center ring-2 ring-white shadow-sm pointer-events-none">
+                      3
+                    </span>
+                  </div>
+                  <div className="min-h-[42px] flex items-center justify-center mb-1 px-1">
+                    <h3 className="font-bold text-slate-900 text-xs sm:text-sm leading-snug">
+                      Approve the quote and pay the invoice
+                    </h3>
+                  </div>
+                  <p className="text-[11px] sm:text-xs text-slate-500 leading-relaxed max-w-[220px]">
+                    Approve quote and pay securely through your dashboard.
+                  </p>
                 </div>
-                <div>
-                  <h3 className="font-bold text-slate-900 mb-1.5">3. You Approve</h3>
-                  <p className="text-xs text-slate-500 leading-relaxed px-4">Approve quote and pay securely through your dashboard.</p>
-                </div>
-              </div>
-              <div className="text-center space-y-4">
-                <div className="w-14 h-14 mx-auto bg-sky-50 text-sky-600 rounded-2xl flex items-center justify-center border border-sky-100 shadow-sm">
-                  <Package className="w-7 h-7" />
-                </div>
-                <div>
-                  <h3 className="font-bold text-slate-900 mb-1.5">4. We Deliver</h3>
-                  <p className="text-xs text-slate-500 leading-relaxed px-4">Track your parts as they make their way to your specified address.</p>
+
+                {/* Step 4 */}
+                <div className="flex flex-col items-center text-center group">
+                  <div className="relative z-10 mb-3">
+                    <div className="w-10 h-10 rounded-full bg-white border-2 border-sky-500 text-sky-600 ring-4 ring-sky-50 flex items-center justify-center shadow-sm transition-all duration-200 group-hover:scale-110 group-hover:ring-sky-100">
+                      <Package className="w-4 h-4 stroke-[2.2]" />
+                    </div>
+                    <span className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-sky-600 text-white text-[10px] font-bold flex items-center justify-center ring-2 ring-white shadow-sm pointer-events-none">
+                      4
+                    </span>
+                  </div>
+                  <div className="min-h-[42px] flex items-center justify-center mb-1 px-1">
+                    <h3 className="font-bold text-slate-900 text-xs sm:text-sm leading-snug">
+                      We Deliver
+                    </h3>
+                  </div>
+                  <p className="text-[11px] sm:text-xs text-slate-500 leading-relaxed max-w-[220px]">
+                    Track your parts as they make their way to your specified address.
+                  </p>
                 </div>
               </div>
             </div>
@@ -161,7 +229,7 @@ export function DashboardView() {
                 <span className="text-emerald-300">•</span>
                 <span className="text-[11px]">{activeCustomer.businessName}</span>
               </div>
-              <h1 className="text-xl sm:text-2xl font-bold text-[#0F172A] tracking-tight font-sans">
+              <h1 className="text-xl sm:text-2xl font-bold text-[#0F172A] tracking-tight ">
                 Good morning, {activeCustomer.businessName}
               </h1>
               <p className="text-xs text-slate-500 font-medium">
@@ -309,7 +377,7 @@ export function DashboardView() {
                   >
                     <div className="space-y-1">
                       <div className="flex flex-wrap items-center gap-2">
-                        <span className="font-mono text-xs font-bold text-slate-900">
+                        <span className=" text-xs font-bold text-slate-900">
                           {req.requestNumber}
                         </span>
                         <span className="text-xs font-bold text-slate-800">
@@ -337,7 +405,7 @@ export function DashboardView() {
                           <>
                             {" "}
                             • Amount:{" "}
-                            <span className="font-bold text-slate-900 font-mono">
+                            <span className="font-bold text-slate-900 ">
                               ${req.quotedValue.toFixed(2)}
                             </span>
                           </>
@@ -431,7 +499,7 @@ export function DashboardView() {
                         className="hover:bg-slate-50/80 cursor-pointer transition-colors group"
                       >
                         {/* Request Number */}
-                        <td className="py-3.5 px-5 font-mono font-bold text-slate-900 group-hover:text-[#FE0000] transition-colors">
+                        <td className="py-3.5 px-5  font-bold text-slate-900 group-hover:text-[#FE0000] transition-colors">
                           {req.requestNumber}
                         </td>
 
@@ -463,7 +531,7 @@ export function DashboardView() {
                         </td>
 
                         {/* Value */}
-                        <td className="py-3.5 px-5 text-right font-mono font-bold text-slate-900 whitespace-nowrap">
+                        <td className="py-3.5 px-5 text-right  font-bold text-slate-900 whitespace-nowrap">
                           {req.quotedValue ? `$${req.quotedValue.toFixed(2)}` : "—"}
                         </td>
 

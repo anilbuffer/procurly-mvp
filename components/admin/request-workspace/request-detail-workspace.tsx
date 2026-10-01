@@ -253,7 +253,7 @@ export function RequestDetailWorkspace({
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-5 mb-5 border-b border-slate-100">
           <div>
             <div className="flex items-center gap-3 flex-wrap">
-              <span className="font-mono text-xl sm:text-2xl font-black text-[#FE0000]">
+              <span className=" text-xl sm:text-2xl font-black text-[#FE0000]">
                 {request.requestNumber}
               </span>
               <StatusBadge status={request.status} size="lg" />
@@ -279,7 +279,7 @@ export function RequestDetailWorkspace({
               <span className="text-slate-400 block text-[11px] font-medium uppercase">
                 Quote Value
               </span>
-              <span className="font-mono text-xl sm:text-2xl font-black text-slate-900">
+              <span className=" text-xl sm:text-2xl font-black text-slate-900">
                 NZ${finalAmount.toFixed(2)}
               </span>
             </div>
@@ -304,7 +304,7 @@ export function RequestDetailWorkspace({
             <span className="font-bold text-slate-900">
               {request.vehicle.year} {request.vehicle.make} {request.vehicle.model}
             </span>
-            <span className="text-[10px] text-slate-500 block font-mono">
+            <span className="text-[10px] text-slate-500 block ">
               VIN: {request.vehicle.vin}
             </span>
           </div>
@@ -314,7 +314,7 @@ export function RequestDetailWorkspace({
             <span className="font-bold text-slate-900 truncate block">
               {request.part.name}
             </span>
-            <span className="text-[10px] text-slate-500 block font-mono">
+            <span className="text-[10px] text-slate-500 block ">
               {request.part.partNumber || "OEM Part"}
             </span>
           </div>

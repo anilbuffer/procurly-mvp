@@ -142,7 +142,7 @@ export function SettingsView() {
             </div>
             <div className="flex justify-between py-1 border-b border-slate-100">
               <span className="text-slate-500">NZBN Number:</span>
-              <span className="font-mono font-bold text-slate-900">
+              <span className=" font-bold text-slate-900">
                 9429049988776
               </span>
             </div>
@@ -319,8 +319,8 @@ export function SettingsView() {
               <div
                 key={addr.id}
                 className={`p-4 rounded-xl border transition-all flex flex-col justify-between ${addr.isDefault
-                    ? "border-[#FE0000]/30 bg-red-50/10 shadow-xs"
-                    : "border-slate-200 bg-slate-50/50 hover:bg-white hover:shadow-xs"
+                  ? "border-[#FE0000]/30 bg-red-50/10 shadow-xs"
+                  : "border-slate-200 bg-slate-50/50 hover:bg-white hover:shadow-xs"
                   }`}
               >
                 <div className="space-y-1.5">

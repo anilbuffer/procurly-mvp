@@ -18,7 +18,7 @@ export function AuthLayout({ children, maxWidth = "max-w-[430px]" }: AuthLayoutP
           <div className="w-7 h-7 rounded-lg border border-white flex items-center justify-center font-black text-sm leading-none text-white bg-[#FE0000] shadow-xs">
             A
           </div>
-          <span className="font-black italic text-lg tracking-tight text-white uppercase leading-none font-sans">
+          <span className="font-black italic text-lg tracking-tight text-white uppercase leading-none ">
             PROCUR<span className="not-italic font-bold text-white/90">LY</span>
           </span>
         </div>

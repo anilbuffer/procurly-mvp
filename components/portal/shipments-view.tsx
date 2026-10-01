@@ -200,7 +200,7 @@ export function ShipmentsView() {
             <div className="h-5 w-px bg-slate-200 hidden sm:block" />
             <div className="text-xs text-slate-500 font-medium">
               Shipments /{" "}
-              <span className="font-mono font-bold text-slate-900">
+              <span className=" font-bold text-slate-900">
                 {selectedReq.requestNumber}
               </span>
             </div>
@@ -224,7 +224,7 @@ export function ShipmentsView() {
           <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-slate-100 pb-5">
             <div className="space-y-1">
               <div className="flex items-center gap-2.5">
-                <span className="font-mono font-black text-base text-slate-900">
+                <span className=" font-black text-base text-slate-900">
                   {selectedReq.requestNumber}
                 </span>
                 <span
@@ -258,7 +258,7 @@ export function ShipmentsView() {
                 <span className="text-[10px] text-emerald-700 uppercase font-bold block">
                   Estimated Delivery
                 </span>
-                <span className="font-bold text-emerald-900 font-mono">
+                <span className="font-bold text-emerald-900 ">
                   {sh.estimatedDelivery}
                 </span>
               </div>
@@ -409,7 +409,7 @@ export function ShipmentsView() {
                   <span className="text-[10px] text-slate-400 uppercase font-bold block">
                     Order Value
                   </span>
-                  <span className="font-mono font-bold text-slate-900">
+                  <span className=" font-bold text-slate-900">
                     ${(selectedReq.quotedValue || selectedReq.customerQuote?.totalAmount || 0).toFixed(2)}
                   </span>
                 </div>
@@ -456,7 +456,7 @@ export function ShipmentsView() {
                           >
                             {m.milestone}
                           </span>
-                          <span className="font-mono text-[11px] text-slate-400">
+                          <span className=" text-[11px] text-slate-400">
                             {m.timestamp}
                           </span>
                         </div>
@@ -520,7 +520,7 @@ export function ShipmentsView() {
           >
             All Requests →
           </button>
-          <div className="flex items-center gap-3 font-mono text-xs">
+          <div className="flex items-center gap-3  text-xs">
             <div className="p-3 bg-slate-50 border border-slate-200 rounded-xl text-center">
               <span className="text-[10px] text-slate-400 block uppercase font-bold">
                 In Transit
@@ -573,7 +573,7 @@ export function ShipmentsView() {
               >
                 <span>{tab}</span>
                 <span
-                  className={`text-[10px] px-1.5 py-0.2 rounded-full font-mono font-bold ${isActive ? "bg-white/20 text-white" : "bg-slate-200 text-slate-700"
+                  className={`text-[10px] px-1.5 py-0.2 rounded-full  font-bold ${isActive ? "bg-white/20 text-white" : "bg-slate-200 text-slate-700"
                     }`}
                 >
                   {count}
@@ -662,7 +662,7 @@ export function ShipmentsView() {
                       title="Click row to view shipment details"
                     >
                       {/* Request ID */}
-                      <td className="py-4 px-4 font-mono font-bold text-slate-700 whitespace-nowrap">
+                      <td className="py-4 px-4  font-bold text-slate-700 whitespace-nowrap">
                         {req.requestNumber}
                       </td>
 
@@ -671,7 +671,7 @@ export function ShipmentsView() {
                         <p className="font-semibold text-slate-800">
                           {req.vehicle?.year} {req.vehicle?.make} {req.vehicle?.model}
                         </p>
-                        <p className="text-[11px] font-mono text-slate-400">
+                        <p className="text-[11px]  text-slate-400">
                           {req.vehicle?.vin || "N/A"}
                         </p>
                       </td>
@@ -697,7 +697,7 @@ export function ShipmentsView() {
                       </td>
 
                       {/* Estimated Delivery */}
-                      <td className="py-4 px-4 font-mono font-bold text-slate-800 whitespace-nowrap">
+                      <td className="py-4 px-4  font-bold text-slate-800 whitespace-nowrap">
                         <div className="flex items-center gap-1.5">
                           <Calendar className="w-3.5 h-3.5 text-slate-400" />
                           <span>{sh.estimatedDelivery}</span>

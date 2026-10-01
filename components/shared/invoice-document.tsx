@@ -239,7 +239,7 @@ export function InvoiceDocument({
   };
 
   return (
-    <div className="w-full flex flex-col font-sans">
+    <div className="w-full flex flex-col ">
       {/* Top Action Bar (Non-printable) */}
       <div className="mb-6 flex flex-wrap items-center justify-between gap-3 bg-white p-4 rounded-2xl border border-slate-200 shadow-xs print:hidden">
         <div className="flex items-center gap-3">
@@ -248,7 +248,7 @@ export function InvoiceDocument({
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <span className="font-mono font-bold text-slate-900 text-sm">
+              <span className=" font-bold text-slate-900 text-sm">
                 {invoiceNumber}
               </span>
               <span
@@ -372,7 +372,7 @@ export function InvoiceDocument({
 
           <div className="text-xs text-slate-500 font-medium px-2">
             Attached File:{" "}
-            <span className="font-bold text-slate-800 font-mono">
+            <span className="font-bold text-slate-800 ">
               {request.payment?.invoiceFileName || "Official_Invoice.pdf"}
             </span>
           </div>
@@ -460,7 +460,7 @@ export function InvoiceDocument({
               <div className="space-y-1 text-xs text-slate-600">
                 <p>
                   <strong>Invoice Number:</strong>{" "}
-                  <span className="font-mono font-bold text-slate-900">
+                  <span className=" font-bold text-slate-900">
                     {invoiceNumber}
                   </span>
                 </p>
@@ -472,7 +472,7 @@ export function InvoiceDocument({
                 </p>
                 <p>
                   <strong>Request Ref:</strong>{" "}
-                  <span className="font-mono text-slate-700">
+                  <span className=" text-slate-700">
                     {request.requestNumber}
                   </span>
                 </p>
@@ -535,7 +535,7 @@ export function InvoiceDocument({
                 <p><strong>Bank:</strong> ANZ New Zealand</p>
                 <p><strong>Account Name:</strong> Procurly NZ Ltd</p>
                 <div className="flex items-center justify-between bg-white p-2 rounded-lg border border-slate-200 mt-1">
-                  <span className="font-mono font-bold text-slate-900">
+                  <span className=" font-bold text-slate-900">
                     01-0288-0349821-00
                   </span>
                   <button
@@ -553,7 +553,7 @@ export function InvoiceDocument({
                 </div>
                 <div className="flex items-center justify-between bg-white p-2 rounded-lg border border-slate-200 mt-1">
                   <span className="text-slate-600 text-[11px]">
-                    Ref: <strong className="text-[#FE0000] font-mono">{invoiceNumber}</strong>
+                    Ref: <strong className="text-[#FE0000] ">{invoiceNumber}</strong>
                   </span>
                   <button
                     type="button"
@@ -582,7 +582,7 @@ export function InvoiceDocument({
                 {request.vehicle.year} {request.vehicle.make} {request.vehicle.model}
               </span>
               {request.vehicle.vin && (
-                <span className="text-slate-500 font-mono text-xs ml-2">
+                <span className="text-slate-500  text-xs ml-2">
                   (VIN: {request.vehicle.vin})
                 </span>
               )}
@@ -625,7 +625,7 @@ export function InvoiceDocument({
                   </p>
                   <p className="text-slate-500 text-[11px] mt-0.5">
                     {request.part.partNumber && (
-                      <span className="font-mono font-medium">OEM Part #{request.part.partNumber} &bull; </span>
+                      <span className=" font-medium">OEM Part #{request.part.partNumber} &bull; </span>
                     )}
                     Condition: {request.part.condition || "Genuine OEM Verified"} &bull; Guaranteed Fitment
                   </p>
@@ -633,10 +633,10 @@ export function InvoiceDocument({
                 <td className="py-4 text-center font-bold text-slate-900">
                   {request.part.quantity || 1}
                 </td>
-                <td className="py-4 text-right font-mono font-semibold">
+                <td className="py-4 text-right  font-semibold">
                   ${subtotal.toFixed(2)}
                 </td>
-                <td className="py-4 text-right font-mono font-bold text-slate-900">
+                <td className="py-4 text-right  font-bold text-slate-900">
                   ${subtotal.toFixed(2)}
                 </td>
               </tr>
@@ -654,10 +654,10 @@ export function InvoiceDocument({
                   <td className="py-4 text-center font-bold text-slate-900">
                     1
                   </td>
-                  <td className="py-4 text-right font-mono font-semibold">
+                  <td className="py-4 text-right  font-semibold">
                     ${freight.toFixed(2)}
                   </td>
-                  <td className="py-4 text-right font-mono font-bold text-slate-900">
+                  <td className="py-4 text-right  font-bold text-slate-900">
                     ${freight.toFixed(2)}
                   </td>
                 </tr>
@@ -680,19 +680,19 @@ export function InvoiceDocument({
             <div className="w-full sm:w-72 space-y-2 text-xs">
               <div className="flex justify-between text-slate-600 py-1">
                 <span>Subtotal (Excl. GST)</span>
-                <span className="font-mono font-semibold">${subtotalExGst.toFixed(2)}</span>
+                <span className=" font-semibold">${subtotalExGst.toFixed(2)}</span>
               </div>
               <div className="flex justify-between text-slate-600 py-1">
                 <span>GST (15.0%)</span>
-                <span className="font-mono font-semibold">${gst.toFixed(2)}</span>
+                <span className=" font-semibold">${gst.toFixed(2)}</span>
               </div>
               <div className="flex justify-between items-center text-lg font-black text-slate-900 border-t-2 border-slate-900 pt-3">
                 <span>Total Amount</span>
-                <span className="font-mono font-bold text-xl">${amount.toFixed(2)} NZD</span>
+                <span className=" font-bold text-xl">${amount.toFixed(2)} NZD</span>
               </div>
               <div className="flex justify-between items-center text-xs pt-1">
                 <span className="font-semibold text-slate-500">Balance Due:</span>
-                <span className={`font-mono font-bold ${isPaid ? "text-emerald-700" : "text-[#FE0000]"}`}>
+                <span className={` font-bold ${isPaid ? "text-emerald-700" : "text-[#FE0000]"}`}>
                   {isPaid ? "$0.00 NZD (Paid)" : `$${amount.toFixed(2)} NZD`}
                 </span>
               </div>

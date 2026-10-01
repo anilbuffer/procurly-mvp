@@ -298,7 +298,7 @@ export default function AdminInvoicePage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-100 p-4 md:p-8 font-sans print:bg-white print:p-0">
+    <div className="min-h-screen bg-slate-100 p-4 md:p-8  print:bg-white print:p-0">
       {/* ─── Non-printable Executive Top Control Bar ─────────────────── */}
       <div className="max-w-4xl mx-auto mb-6 flex flex-col gap-3 print:hidden">
         {/* Breadcrumb & Navigation */}
@@ -316,7 +316,7 @@ export default function AdminInvoicePage() {
 
             <div className="hidden sm:flex items-center gap-2 text-xs text-slate-500">
               <span className="text-slate-300">/</span>
-              <span className="font-mono font-bold text-slate-700">{request.requestNumber}</span>
+              <span className=" font-bold text-slate-700">{request.requestNumber}</span>
               <span className="text-slate-300">/</span>
               <span className="font-bold text-[#FE0000]">Tax Invoice</span>
             </div>
@@ -327,8 +327,8 @@ export default function AdminInvoicePage() {
             {/* Status Pill */}
             <span
               className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider border flex items-center gap-1.5 ${isPaid
-                  ? "bg-emerald-50 text-emerald-700 border-emerald-200"
-                  : "bg-amber-50 text-amber-700 border-amber-200"
+                ? "bg-emerald-50 text-emerald-700 border-emerald-200"
+                : "bg-amber-50 text-amber-700 border-amber-200"
                 }`}
             >
               {isPaid ? (
@@ -350,8 +350,8 @@ export default function AdminInvoicePage() {
               onClick={handleTogglePaymentStatus}
               disabled={isUpdatingPayment}
               className={`px-3 py-1.5 rounded-xl font-bold text-xs transition-all flex items-center gap-1.5 shadow-xs cursor-pointer ${isPaid
-                  ? "bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200"
-                  : "bg-emerald-600 hover:bg-emerald-700 text-white"
+                ? "bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200"
+                : "bg-emerald-600 hover:bg-emerald-700 text-white"
                 }`}
               title={isPaid ? "Click to revert payment to Unpaid" : "Click to mark as Paid / Settled in full"}
             >
@@ -394,7 +394,7 @@ export default function AdminInvoicePage() {
                 Internal Financial Ledger &amp; Margin Reconciliation (Admin Eyes Only)
               </span>
             </div>
-            <span className="text-[11px] font-mono text-slate-400">
+            <span className="text-[11px]  text-slate-400">
               Assigned PO: <strong className="text-white">{request.supplierOrder?.supplierRef || "PO Pending"}</strong>
             </span>
           </div>
@@ -402,19 +402,19 @@ export default function AdminInvoicePage() {
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs">
             <div>
               <span className="text-slate-400 block text-[10px] uppercase font-bold">Customer Invoiced</span>
-              <span className="font-mono text-base font-bold text-white">${amount.toFixed(2)} NZD</span>
+              <span className=" text-base font-bold text-white">${amount.toFixed(2)} NZD</span>
             </div>
             <div>
               <span className="text-slate-400 block text-[10px] uppercase font-bold">Est. Supplier Cost (PO)</span>
-              <span className="font-mono text-base font-bold text-slate-300">${supplierCost.toFixed(2)} NZD</span>
+              <span className=" text-base font-bold text-slate-300">${supplierCost.toFixed(2)} NZD</span>
             </div>
             <div>
               <span className="text-slate-400 block text-[10px] uppercase font-bold">Est. Logistics &amp; Freight</span>
-              <span className="font-mono text-base font-bold text-slate-300">${supplierFreight.toFixed(2)} NZD</span>
+              <span className=" text-base font-bold text-slate-300">${supplierFreight.toFixed(2)} NZD</span>
             </div>
             <div>
               <span className="text-emerald-400 block text-[10px] uppercase font-bold">Gross Margin</span>
-              <span className="font-mono text-base font-bold text-emerald-400">
+              <span className=" text-base font-bold text-emerald-400">
                 ${grossProfit.toFixed(2)} <span className="text-xs text-emerald-300 font-semibold">({marginPercent}%)</span>
               </span>
             </div>
@@ -453,7 +453,7 @@ export default function AdminInvoicePage() {
             <div className="space-y-1 text-xs text-slate-600">
               <p>
                 <strong>Invoice Number:</strong>{" "}
-                <span className="font-mono font-bold text-slate-900 text-sm">
+                <span className=" font-bold text-slate-900 text-sm">
                   {invoiceNumber}
                 </span>
               </p>
@@ -465,20 +465,20 @@ export default function AdminInvoicePage() {
               </p>
               <p>
                 <strong>Request Ref:</strong>{" "}
-                <span className="font-mono text-slate-700">{request.requestNumber}</span>
+                <span className=" text-slate-700">{request.requestNumber}</span>
               </p>
               {request.supplierOrder?.supplierRef && (
                 <p>
                   <strong>Linked PO:</strong>{" "}
-                  <span className="font-mono text-slate-700">{request.supplierOrder.supplierRef}</span>
+                  <span className=" text-slate-700">{request.supplierOrder.supplierRef}</span>
                 </p>
               )}
             </div>
             <div className="mt-3 sm:flex sm:justify-end">
               <span
                 className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider border ${isPaid
-                    ? "bg-emerald-100 text-emerald-800 border-emerald-300"
-                    : "bg-amber-100 text-amber-900 border-amber-300"
+                  ? "bg-emerald-100 text-emerald-800 border-emerald-300"
+                  : "bg-amber-100 text-amber-900 border-amber-300"
                   }`}
               >
                 {isPaid ? (
@@ -516,7 +516,7 @@ export default function AdminInvoicePage() {
                 {request.deliveryAddress?.city || "Auckland"} {request.deliveryAddress?.postalCode || ""}
               </p>
               <p>New Zealand</p>
-              <p className="mt-2 text-[11px] text-slate-400 font-mono">
+              <p className="mt-2 text-[11px] text-slate-400 ">
                 Account Status: Verified Trade Client (Net 5 Settlement)
               </p>
             </div>
@@ -532,7 +532,7 @@ export default function AdminInvoicePage() {
               <p><strong>Bank:</strong> ANZ New Zealand</p>
               <p><strong>Account Name:</strong> Procurly NZ Ltd</p>
               <div className="flex items-center justify-between bg-white p-2 rounded-lg border border-slate-200 mt-1">
-                <span className="font-mono font-bold text-slate-900">
+                <span className=" font-bold text-slate-900">
                   01-0288-0349821-00
                 </span>
                 <button
@@ -550,7 +550,7 @@ export default function AdminInvoicePage() {
               </div>
               <div className="flex items-center justify-between bg-white p-2 rounded-lg border border-slate-200 mt-1">
                 <span className="text-slate-600 text-[11px]">
-                  Ref: <strong className="text-[#FE0000] font-mono">{invoiceNumber}</strong>
+                  Ref: <strong className="text-[#FE0000] ">{invoiceNumber}</strong>
                 </span>
                 <button
                   type="button"
@@ -579,7 +579,7 @@ export default function AdminInvoicePage() {
               {request.vehicle.year} {request.vehicle.make} {request.vehicle.model}
             </span>
             {request.vehicle.vin && (
-              <span className="text-slate-500 ml-2 font-mono">
+              <span className="text-slate-500 ml-2 ">
                 (VIN: {request.vehicle.vin})
               </span>
             )}
@@ -625,13 +625,13 @@ export default function AdminInvoicePage() {
                   {request.part.condition || "Genuine OEM Verified"}
                 </span>
               </td>
-              <td className="py-4 px-4 text-center font-mono font-medium">
+              <td className="py-4 px-4 text-center  font-medium">
                 {request.part.quantity || 1}
               </td>
-              <td className="py-4 px-4 text-right font-mono font-medium text-slate-700">
+              <td className="py-4 px-4 text-right  font-medium text-slate-700">
                 ${subtotal.toFixed(2)}
               </td>
-              <td className="py-4 pl-4 text-right font-mono font-bold text-slate-900">
+              <td className="py-4 pl-4 text-right  font-bold text-slate-900">
                 ${subtotal.toFixed(2)}
               </td>
             </tr>
@@ -647,11 +647,11 @@ export default function AdminInvoicePage() {
                     Landed delivery to {request.deliveryAddress?.city || "New Zealand"} facility. Includes customs tariff processing & clearance.
                   </p>
                 </td>
-                <td className="py-4 px-4 text-center font-mono font-medium">1</td>
-                <td className="py-4 px-4 text-right font-mono font-medium text-slate-700">
+                <td className="py-4 px-4 text-center  font-medium">1</td>
+                <td className="py-4 px-4 text-right  font-medium text-slate-700">
                   ${freight.toFixed(2)}
                 </td>
-                <td className="py-4 pl-4 text-right font-mono font-bold text-slate-900">
+                <td className="py-4 pl-4 text-right  font-bold text-slate-900">
                   ${freight.toFixed(2)}
                 </td>
               </tr>
@@ -674,19 +674,19 @@ export default function AdminInvoicePage() {
           <div className="w-full sm:w-72 space-y-2 text-xs">
             <div className="flex justify-between text-slate-600 py-1">
               <span>Subtotal (Excl. GST)</span>
-              <span className="font-mono font-semibold">${subtotalExGst.toFixed(2)}</span>
+              <span className=" font-semibold">${subtotalExGst.toFixed(2)}</span>
             </div>
             <div className="flex justify-between text-slate-600 py-1">
               <span>GST (15.0%)</span>
-              <span className="font-mono font-semibold">${gst.toFixed(2)}</span>
+              <span className=" font-semibold">${gst.toFixed(2)}</span>
             </div>
             <div className="flex justify-between items-center text-lg font-black text-slate-900 border-t-2 border-slate-900 pt-3">
               <span>Total Amount</span>
-              <span className="font-mono font-bold text-xl">${amount.toFixed(2)} NZD</span>
+              <span className=" font-bold text-xl">${amount.toFixed(2)} NZD</span>
             </div>
             <div className="flex justify-between items-center text-xs pt-1">
               <span className="font-semibold text-slate-500">Balance Due:</span>
-              <span className={`font-mono font-bold ${isPaid ? "text-emerald-700" : "text-[#FE0000]"}`}>
+              <span className={` font-bold ${isPaid ? "text-emerald-700" : "text-[#FE0000]"}`}>
                 {isPaid ? "$0.00 NZD (Paid)" : `$${amount.toFixed(2)} NZD`}
               </span>
             </div>

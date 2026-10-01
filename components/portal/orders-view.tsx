@@ -106,10 +106,10 @@ export function OrdersView() {
                     onClick={() => setSelectedRequest(req)}
                     className="hover:bg-slate-50 cursor-pointer transition-colors group"
                   >
-                    <td className="py-4 px-6 font-mono font-bold text-slate-900 group-hover:text-[#FE0000]">
+                    <td className="py-4 px-6  font-bold text-slate-900 group-hover:text-[#FE0000]">
                       {req.requestNumber}
                     </td>
-                    <td className="py-4 px-4 font-mono font-bold text-slate-700 whitespace-nowrap">
+                    <td className="py-4 px-4  font-bold text-slate-700 whitespace-nowrap">
                       {req.supplierOrder?.supplierRef || (
                         <span className="text-slate-400 font-normal">Awaiting PO</span>
                       )}
@@ -137,7 +137,7 @@ export function OrdersView() {
                         {req.status}
                       </span>
                     </td>
-                    <td className="py-4 px-4 font-mono font-bold text-slate-900 whitespace-nowrap">
+                    <td className="py-4 px-4  font-bold text-slate-900 whitespace-nowrap">
                       ${(req.quotedValue || req.customerQuote?.totalAmount || 0).toFixed(2)}
                     </td>
                     <td className="py-4 px-6 text-right space-x-2 whitespace-nowrap">

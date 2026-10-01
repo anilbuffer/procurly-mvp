@@ -217,7 +217,7 @@ export function NZAddressLookup({
             </button>
           )}
 
-          <span className="px-1.5 py-0.5 text-[9px] font-bold font-mono text-slate-400 bg-white border border-slate-200 rounded shadow-2xs">
+          <span className="px-1.5 py-0.5 text-[9px] font-bold  text-slate-400 bg-white border border-slate-200 rounded shadow-2xs">
             NZ
           </span>
         </div>
@@ -263,7 +263,7 @@ export function NZAddressLookup({
                       {item.source}
                     </span>
                     {item.postalCode && (
-                      <span className="text-[9px] font-mono font-semibold text-emerald-700 bg-emerald-50 px-1 py-0.2 rounded border border-emerald-200">
+                      <span className="text-[9px]  font-semibold text-emerald-700 bg-emerald-50 px-1 py-0.2 rounded border border-emerald-200">
                         ✓ Verified
                       </span>
                     )}

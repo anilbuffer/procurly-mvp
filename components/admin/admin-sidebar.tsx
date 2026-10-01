@@ -17,13 +17,12 @@ import {
   ChevronDown,
   ArrowRightLeft,
   LogOut,
-  Menu,
 } from "lucide-react";
 import { useUnifiedData } from "@/context/unified-data-context";
 
 interface AdminSidebarProps {
   collapsed: boolean;
-  onToggleCollapse: () => void;
+  onToggleCollapse?: () => void;
 }
 
 export function AdminSidebar({ collapsed, onToggleCollapse }: AdminSidebarProps) {
@@ -129,21 +128,21 @@ export function AdminSidebar({ collapsed, onToggleCollapse }: AdminSidebarProps)
     >
       {/* Brand Header */}
       <div
-        className={`h-16 flex items-center justify-between border-b border-slate-800 shrink-0 ${collapsed ? "px-2.5" : "px-4"
+        className={`h-16 flex items-center bg-[#FE0000] border-b border-slate-800 shrink-0 ${collapsed ? "justify-center px-2.5" : "justify-between px-4"
           }`}
       >
         {!collapsed ? (
           <Link href="/admin/dashboard" className="flex items-center gap-3">
             <div className="w-9 h-9 rounded-xl border-2 border-white bg-[#FE0000] flex items-center justify-center shadow-sm">
-              <span className="text-white font-black text-sm tracking-tighter leading-none shrink-0">A</span>
+              <span className="text-white font-black text-sm tracking-tighter leading-none shrink-0">P</span>
             </div>
             <div>
               <div className="flex items-center gap-1.5">
-                <span className="font-black italic text-[#FE0000] uppercase text-lg tracking-tight leading-none font-sans">
+                <span className="font-black italic text-white uppercase text-lg tracking-tight leading-none ">
                   PROCUR<span className="not-italic text-white">LY</span>
                 </span>
               </div>
-              <span className="text-[11px] font-bold text-slate-400 uppercase block">
+              <span className="text-[11px] font-bold text-white/70 uppercase block">
                 Admin Portal
               </span>
             </div>
@@ -155,15 +154,6 @@ export function AdminSidebar({ collapsed, onToggleCollapse }: AdminSidebarProps)
             </div>
           </Link>
         )}
-
-        <button
-          onClick={onToggleCollapse}
-          type="button"
-          aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
-          className="p-1.5 rounded-lg text-slate-400 hover:text-white transition-colors focus:outline-none"
-        >
-          <Menu className="w-5 h-5" />
-        </button>
       </div>
 
       {/* Navigation Groups */}
@@ -181,7 +171,7 @@ export function AdminSidebar({ collapsed, onToggleCollapse }: AdminSidebarProps)
                     href={item.href}
                     title={collapsed ? item.name : undefined}
                     className={`relative w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-[13px] font-medium transition-all group overflow-hidden ${active
-                      ? "bg-[#1E2538] text-white before:absolute before:left-0 before:top-1/2 before:-translate-y-1/2 before:w-1 before:h-[60%] before:bg-white before:rounded-r-full"
+                      ? "bg-[#1E2538] text-white before:absolute before:left-0 before:top-1/2 before:-translate-y-1/2 before:w-1 before:h-[60%] before:bg-[#FE0000] before:rounded-r-full"
                       : "text-slate-400 hover:text-white hover:bg-[#1E2538]/50"
                       } ${collapsed ? "justify-center px-0" : ""}`}
                   >
@@ -221,21 +211,12 @@ export function AdminSidebar({ collapsed, onToggleCollapse }: AdminSidebarProps)
           title={collapsed ? `${currentStaffUser?.name || "David Vance"} (${currentStaffUser?.role || "Administrator"})` : undefined}
         >
           <div className="flex items-center gap-3 min-w-0">
-            {currentStaffUser?.avatarUrl ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                src={currentStaffUser.avatarUrl}
-                alt={currentStaffUser?.name || "Admin"}
-                className="w-8 h-8 rounded-full object-cover shrink-0 shadow-md ring-1 ring-white/10"
-              />
-            ) : (
-              <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-[#FE0000] to-orange-500 flex items-center justify-center text-white font-black text-xs shrink-0 shadow-md">
-                {(currentStaffUser?.name || "Admin")
-                  .split(" ")
-                  .map((n) => n[0])
-                  .join("") || "AD"}
-              </div>
-            )}
+            <div className="w-8 h-8 rounded-full bg-[#FE0000] hover:bg-[#9B0A0F] flex items-center justify-center text-white font-black text-xs shrink-0 shadow-md">
+              {(currentStaffUser?.name || "David Vance")
+                .split(" ")
+                .map((n) => n[0])
+                .join("") || "DV"}
+            </div>
             {!collapsed && (
               <div className="truncate text-left">
                 <p className="text-xs font-bold text-white truncate leading-tight">
@@ -263,7 +244,7 @@ export function AdminSidebar({ collapsed, onToggleCollapse }: AdminSidebarProps)
           >
             <div className="px-2 py-1 border-b border-[#27324D]/60 pb-2">
               <p className="font-bold text-white text-xs mt-0.5">{currentStaffUser?.name || "David Vance"}</p>
-              <p className="text-[10px] text-slate-400 font-mono truncate">{currentStaffUser?.email}</p>
+              <p className="text-[10px] text-slate-400  truncate">{currentStaffUser?.email}</p>
             </div>
 
             <div className="pt-0.5 space-y-0.5">

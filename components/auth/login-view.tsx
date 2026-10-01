@@ -345,7 +345,7 @@ export function LoginView() {
 
             {/* Heading */}
             <div>
-              <h1 className="text-3xl sm:text-[36px] font-bold text-[#0F172A] tracking-tight leading-[1.15] mb-2 font-sans">
+              <h1 className="text-3xl sm:text-[36px] font-bold text-[#0F172A] tracking-tight leading-[1.15] mb-2 ">
                 Sign in to your account
               </h1>
               <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
@@ -489,7 +489,7 @@ export function LoginView() {
                     }`}
                 >
                   <div className="flex items-center justify-between mb-1.5">
-                    <span className="text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded bg-blue-100 text-blue-800 font-sans">
+                    <span className="text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded bg-blue-100 text-blue-800 ">
                       Customer Portal
                     </span>
 
@@ -518,7 +518,7 @@ export function LoginView() {
                     }`}
                 >
                   <div className="flex items-center justify-between mb-1.5">
-                    <span className="text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded bg-red-100 text-[#FE0000] font-sans">
+                    <span className="text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded bg-red-100 text-[#FE0000] ">
                       Admin Portal
                     </span>
 
@@ -547,7 +547,7 @@ export function LoginView() {
                     }`}
                 >
                   <div className="flex items-center justify-between mb-1.5">
-                    <span className="text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800 font-sans">
+                    <span className="text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800 ">
                       Subadmin Portal
                     </span>
 
@@ -600,7 +600,7 @@ export function LoginView() {
 
             {/* Heading */}
             <div>
-              <h1 className="text-3xl sm:text-[36px] font-bold text-[#0F172A] tracking-tight leading-[1.15] mb-2 font-sans">
+              <h1 className="text-3xl sm:text-[36px] font-bold text-[#0F172A] tracking-tight leading-[1.15] mb-2 ">
                 Register your business
               </h1>
               <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
@@ -642,11 +642,11 @@ export function LoginView() {
                     </div>
                     <div className="flex justify-between border-b border-slate-100 pb-1.5">
                       <span className="text-slate-500">Email Address:</span>
-                      <span className="font-mono text-slate-800">{regEmail}</span>
+                      <span className=" text-slate-800">{regEmail}</span>
                     </div>
                     <div className="flex justify-between border-b border-slate-100 pb-1.5">
                       <span className="text-slate-500">Phone Contact:</span>
-                      <span className="font-mono text-slate-800">{regPhone}</span>
+                      <span className=" text-slate-800">{regPhone}</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-slate-500">Terms of Trade:</span>
@@ -896,7 +896,7 @@ export function LoginView() {
 
 
             {/* Main Heading */}
-            <h1 className="text-3xl sm:text-[36px] font-bold text-[#0F172A] tracking-tight leading-[1.15] font-sans">
+            <h1 className="text-3xl sm:text-[36px] font-bold text-[#0F172A] tracking-tight leading-[1.15] ">
               Protect your account
             </h1>
 
@@ -1004,7 +1004,7 @@ export function LoginView() {
 
             {/* Heading */}
             <div>
-              <h1 className="text-3xl sm:text-[36px] font-bold text-[#0F172A] tracking-tight leading-[1.15] mb-2 font-sans">
+              <h1 className="text-3xl sm:text-[36px] font-bold text-[#0F172A] tracking-tight leading-[1.15] mb-2 ">
                 Reset your password
               </h1>
               <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
@@ -1029,8 +1029,8 @@ export function LoginView() {
                   </div>
                 </div>
 
-                <div className="p-3.5 bg-white rounded-xl border border-emerald-200/80 flex items-center justify-between font-mono">
-                  <span className="text-xs text-slate-500 font-sans font-medium">
+                <div className="p-3.5 bg-white rounded-xl border border-emerald-200/80 flex items-center justify-between ">
+                  <span className="text-xs text-slate-500  font-medium">
                     Demo Recovery PIN:
                   </span>
                   <span className="text-lg font-black text-emerald-800 tracking-wider">
@@ -1108,7 +1108,7 @@ export function LoginView() {
 
             {/* Heading */}
             <div>
-              <h1 className="text-3xl sm:text-[36px] font-bold text-[#0F172A] tracking-tight leading-[1.15] mb-2 font-sans">
+              <h1 className="text-3xl sm:text-[36px] font-bold text-[#0F172A] tracking-tight leading-[1.15] mb-2 ">
                 Change your password
               </h1>
               <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">

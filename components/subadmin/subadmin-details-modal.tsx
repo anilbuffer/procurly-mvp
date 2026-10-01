@@ -30,7 +30,7 @@ export function SubadminDetailsModal({ requestId, onClose }: SubadminDetailsModa
               Subadmin Inspection Details
             </h2>
             <p className="text-sm font-medium text-slate-500 mt-1">
-              For Request: <span className="text-slate-900 font-bold font-mono">{req.requestNumber}</span>
+              For Request: <span className="text-slate-900 font-bold ">{req.requestNumber}</span>
             </p>
           </div>
           <button
@@ -71,9 +71,9 @@ export function SubadminDetailsModal({ requestId, onClose }: SubadminDetailsModa
               </div>
             </div>
             <div className={`px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 ${req.status === "Subadmin Review" ? "bg-amber-100 text-amber-700" :
-                req.status === "Subadmin Hold" ? "bg-purple-100 text-purple-700" :
-                  req.status === "Subadmin Approved" ? "bg-emerald-100 text-emerald-700" :
-                    "bg-red-100 text-[#FE0000]"
+              req.status === "Subadmin Hold" ? "bg-purple-100 text-purple-700" :
+                req.status === "Subadmin Approved" ? "bg-emerald-100 text-emerald-700" :
+                  "bg-red-100 text-[#FE0000]"
               }`}>
               {req.status === "Subadmin Review" && <Clock className="w-4 h-4" />}
               {req.status === "Subadmin Hold" && <AlertCircle className="w-4 h-4" />}

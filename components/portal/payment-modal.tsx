@@ -102,7 +102,7 @@ export function PaymentModal() {
                   </span>
                 )}
               </div>
-              <p className="text-xs text-slate-500 font-mono">
+              <p className="text-xs text-slate-500 ">
                 Autohub Invoice Ref: {pay.invoiceNumber} • Reference: {pay.paymentReference}
               </p>
             </div>
@@ -150,7 +150,7 @@ export function PaymentModal() {
                   <span className="text-slate-400 block text-[10px] uppercase font-bold">
                     Amount Settled
                   </span>
-                  <span className="font-mono font-bold text-emerald-900 text-sm">
+                  <span className=" font-bold text-emerald-900 text-sm">
                     ${pay.amount.toFixed(2)} NZD
                   </span>
                 </div>
@@ -158,7 +158,7 @@ export function PaymentModal() {
                   <span className="text-slate-400 block text-[10px] uppercase font-bold">
                     Payment Reference
                   </span>
-                  <span className="font-mono font-bold text-slate-800">
+                  <span className=" font-bold text-slate-800">
                     {pay.paymentReference}
                   </span>
                 </div>
@@ -187,7 +187,7 @@ export function PaymentModal() {
                   <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
                     Payable Balance (incl GST)
                   </span>
-                  <div className="text-2xl font-black text-slate-900 font-mono">
+                  <div className="text-2xl font-black text-slate-900 ">
                     ${pay.amount.toFixed(2)}{" "}
                     <span className="text-xs font-bold text-slate-500">NZD</span>
                   </div>
@@ -203,16 +203,16 @@ export function PaymentModal() {
                   </h4>
                 </div>
 
-                <div className="space-y-2 font-mono">
+                <div className="space-y-2 ">
                   <div className="flex justify-between items-center bg-white p-2.5 rounded-lg border border-slate-200">
-                    <span className="text-slate-500 font-sans text-xs">Bank:</span>
+                    <span className="text-slate-500  text-xs">Bank:</span>
                     <span className="font-bold text-slate-900">
                       {pay.bankDetails?.bankName || "ANZ New Zealand"}
                     </span>
                   </div>
 
                   <div className="flex justify-between items-center bg-white p-2.5 rounded-lg border border-slate-200">
-                    <span className="text-slate-500 font-sans text-xs">
+                    <span className="text-slate-500  text-xs">
                       Account Name:
                     </span>
                     <span className="font-bold text-slate-900">
@@ -221,7 +221,7 @@ export function PaymentModal() {
                   </div>
 
                   <div className="flex justify-between items-center bg-white p-2.5 rounded-lg border border-slate-200">
-                    <span className="text-slate-500 font-sans text-xs">
+                    <span className="text-slate-500  text-xs">
                       Account Number:
                     </span>
                     <div className="flex items-center gap-2">
@@ -245,7 +245,7 @@ export function PaymentModal() {
                   </div>
 
                   <div className="flex justify-between items-center bg-amber-50/50 p-2.5 rounded-lg border border-amber-300">
-                    <span className="text-amber-900 font-sans text-xs font-bold">
+                    <span className="text-amber-900  text-xs font-bold">
                       Mandatory Reference:
                     </span>
                     <div className="flex items-center gap-2">
@@ -277,7 +277,7 @@ export function PaymentModal() {
                     value={bankReference}
                     onChange={(e) => setBankReference(e.target.value)}
                     placeholder="e.g. ANZ-TX-98124912"
-                    className="w-full text-xs p-2.5 rounded-lg border border-slate-200 outline-none focus:border-[#FE0000] bg-white font-mono"
+                    className="w-full text-xs p-2.5 rounded-lg border border-slate-200 outline-none focus:border-[#FE0000] bg-white "
                   />
                   <p className="text-[10px] text-slate-400 mt-1">
                     If you have already initiated your bank transfer, enter your transaction reference above to assist our accounts team with reconciliation.

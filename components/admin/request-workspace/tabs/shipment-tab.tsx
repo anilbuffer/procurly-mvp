@@ -232,7 +232,7 @@ export function ShipmentTab({ request: initialRequest }: ShipmentTabProps) {
                   The Customer Portal automatically displays the latest achieved milestone.
                 </p>
               </div>
-              <span className="text-xs font-mono font-bold text-cyan-800 bg-cyan-50 px-2.5 py-1 rounded-lg border border-cyan-200">
+              <span className="text-xs  font-bold text-cyan-800 bg-cyan-50 px-2.5 py-1 rounded-lg border border-cyan-200">
                 Step {currentMilestoneIndex + 1} of {MILESTONES.length}
               </span>
             </div>
@@ -277,7 +277,7 @@ export function ShipmentTab({ request: initialRequest }: ShipmentTabProps) {
                           )}
                         </div>
                         {matchingLog?.timestamp && (
-                          <span className="text-[11px] text-slate-400 font-mono">
+                          <span className="text-[11px] text-slate-400 ">
                             {matchingLog.timestamp}
                           </span>
                         )}

@@ -148,7 +148,7 @@ export function SuppliersView() {
           <span className="text-slate-400 block text-[11px] uppercase font-bold tracking-wider">
             Total Distribution Partners
           </span>
-          <span className="font-mono text-2xl font-black text-slate-900 mt-1 block">
+          <span className=" text-2xl font-black text-slate-900 mt-1 block">
             {suppliers.length}
           </span>
           <span className="text-[10px] text-slate-400 mt-0.5 block">
@@ -160,7 +160,7 @@ export function SuppliersView() {
           <span className="text-slate-400 block text-[11px] uppercase font-bold tracking-wider">
             Active / Preferred Suppliers
           </span>
-          <span className="font-mono text-2xl font-black text-emerald-600 mt-1 block">
+          <span className=" text-2xl font-black text-emerald-600 mt-1 block">
             {activeCount}
           </span>
           <span className="text-[10px] text-slate-400 mt-0.5 block">
@@ -172,7 +172,7 @@ export function SuppliersView() {
           <span className="text-slate-400 block text-[11px] uppercase font-bold tracking-wider">
             Inactive / Suspended
           </span>
-          <span className="font-mono text-2xl font-black text-slate-500 mt-1 block">
+          <span className=" text-2xl font-black text-slate-500 mt-1 block">
             {inactiveCount}
           </span>
           <span className="text-[10px] text-slate-400 mt-0.5 block">
@@ -384,7 +384,7 @@ export function SuppliersView() {
                       className="p-3 bg-white border border-slate-200 rounded-xl flex items-center justify-between text-xs"
                     >
                       <div>
-                        <span className="font-mono font-bold text-[#FE0000] mr-2">{reqNum}</span>
+                        <span className=" font-bold text-[#FE0000] mr-2">{reqNum}</span>
                         <span className="font-semibold text-slate-800">
                           {quote.supplierPartRef}
                         </span>
@@ -392,7 +392,7 @@ export function SuppliersView() {
                           {quote.condition} • {quote.leadTimeDays} Days Lead Time
                         </span>
                       </div>
-                      <div className="text-right font-mono">
+                      <div className="text-right ">
                         <span className="font-bold text-slate-900 block">
                           NZ${Number(quote.supplierCost).toFixed(2)}
                         </span>

@@ -154,7 +154,7 @@ export function AdminSettingsView() {
                 type="text"
                 value={refPrefix}
                 onChange={(e) => setRefPrefix(e.target.value)}
-                className="w-full text-xs p-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#FE0000]/30 focus:border-[#FE0000] font-mono"
+                className="w-full text-xs p-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#FE0000]/30 focus:border-[#FE0000] "
               />
               <span className="text-[10px] text-slate-400 mt-1 block">
                 Format: <code className="font-bold text-slate-700">{refPrefix}000123</code>

@@ -248,13 +248,13 @@ For formal queries contact ops@procurly.autohub.co.nz
                         if (target) setSelectedRequest(target);
                         else setActiveTab("requests");
                       }}
-                      className="font-mono text-[#FE0000] font-bold hover:underline"
+                      className=" text-[#FE0000] font-bold hover:underline"
                       title="Open linked request details"
                     >
                       {d.ref}
                     </button>
                   ) : (
-                    <span className="font-mono text-slate-500 font-bold">{d.ref}</span>
+                    <span className=" text-slate-500 font-bold">{d.ref}</span>
                   )}
                 </div>
               </div>

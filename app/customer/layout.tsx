@@ -12,7 +12,7 @@ function CustomerLoadingFallback() {
           <span className="text-white font-black text-xl tracking-tighter leading-none shrink-0">A</span>
         </div>
         <div className="flex flex-col items-center text-center">
-          <span className="font-black italic text-[#0F172A] uppercase text-base tracking-tight leading-none font-sans">
+          <span className="font-black italic text-[#0F172A] uppercase text-base tracking-tight leading-none ">
             PROCUR<span className="not-italic font-bold text-slate-500">LY</span>
           </span>
           <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">

@@ -102,15 +102,15 @@ export function PaymentsView() {
         </div>
 
         <div className="flex flex-wrap items-center gap-3">
-          <div className="p-3.5 bg-slate-50 border border-slate-200 rounded-xl flex items-center gap-6 text-xs font-mono">
+          <div className="p-3.5 bg-slate-50 border border-slate-200 rounded-xl flex items-center gap-6 text-xs ">
             <div>
-              <span className="text-[10px] text-slate-400 block uppercase font-sans font-bold">
+              <span className="text-[10px] text-slate-400 block uppercase  font-bold">
                 Awaiting Settlement
               </span>
               <span className="font-bold text-amber-600">${totalUnpaid.toFixed(2)} NZD</span>
             </div>
             <div className="border-l pl-6 border-slate-200">
-              <span className="text-[10px] text-slate-400 block uppercase font-sans font-bold">
+              <span className="text-[10px] text-slate-400 block uppercase  font-bold">
                 Total Settled
               </span>
               <span className="font-bold text-emerald-600">${totalPaid.toFixed(2)} NZD</span>
@@ -180,18 +180,18 @@ export function PaymentsView() {
 
                   return (
                     <tr key={req.id} className="hover:bg-slate-50 transition-colors">
-                      <td className="py-4 px-6 font-mono font-bold text-slate-900">
+                      <td className="py-4 px-6  font-bold text-slate-900">
                         <button
                           type="button"
                           onClick={() => openInvoiceModal(req)}
                           className="flex items-center gap-1.5 text-slate-700 hover:text-slate-800 hover:underline group cursor-pointer text-left"
                           title="Click to view & download official Tax Invoice"
                         >
-                          <span className="font-mono font-bold">{invoiceNum}</span>
+                          <span className=" font-bold">{invoiceNum}</span>
                           <FileText className="w-3.5 h-3.5 text-slate-500 group-hover:scale-110 transition-transform" />
                         </button>
                       </td>
-                      <td className="py-4 px-4 font-mono">
+                      <td className="py-4 px-4 ">
                         <button
                           onClick={() => setSelectedRequest(req)}
                           className="text-slate-700 hover:text-[#B30D12] font-bold hover:underline"
@@ -206,7 +206,7 @@ export function PaymentsView() {
                           {req.vehicle?.year} {req.vehicle?.make} {req.vehicle?.model}
                         </p>
                       </td>
-                      <td className="py-4 px-4 font-mono font-bold text-slate-900">
+                      <td className="py-4 px-4  font-bold text-slate-900">
                         ${amount.toFixed(2)}
                       </td>
                       <td className="py-4 px-4">

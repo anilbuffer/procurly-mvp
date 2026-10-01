@@ -58,7 +58,7 @@ export function SubadminUploadModal({ requestId, onClose }: SubadminUploadModalP
               Upload Subadmin Media
             </h2>
             <p className="text-sm font-medium text-slate-500 mt-1">
-              For Request: <span className="text-slate-900 font-bold font-mono">{req.requestNumber}</span>
+              For Request: <span className="text-slate-900 font-bold ">{req.requestNumber}</span>
             </p>
           </div>
           <button
@@ -97,7 +97,7 @@ export function SubadminUploadModal({ requestId, onClose }: SubadminUploadModalP
                     <AlertCircle className="w-3.5 h-3.5" />
                     Supplier Ref
                   </p>
-                  <p className="text-sm font-bold text-slate-800 font-mono">
+                  <p className="text-sm font-bold text-slate-800 ">
                     {req.selectedQuotationId ? req.supplierQuotations?.find(q => q.id === req.selectedQuotationId)?.supplierPartRef : "N/A"}
                   </p>
                 </div>

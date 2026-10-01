@@ -83,20 +83,17 @@ export function BrandPanel() {
       {/* Top Platform Identity with Approved AutoHub 'A' Logo Badge */}
       <div className="relative z-10 flex items-center gap-3 select-none">
         <div className="w-10 h-10 rounded-xl border-2 border-white bg-[#FE0000] shadow-md flex items-center justify-center font-black text-xl text-white tracking-tighter leading-none shrink-0 transition-transform duration-200 hover:scale-105">
-          A
+          P
         </div>
         <div className="flex flex-col">
           <div className="flex items-center gap-1.5">
-            <span className="text-sm sm:text-[16px] font-black italic tracking-tight text-white uppercase font-sans">
-              PROCUR<span className="not-italic font-bold text-white/90">LY</span>
+            <span className="text-sm sm:text-[20px] font-black italic tracking-tight text-white uppercase ">
+              PROCUR<span className="not-italic font-bold text-white">LY</span>
             </span>
-            <span className="text-[12px] font-bold uppercase tracking-[0.16em] text-white/70 bg-white/10 px-1.5 py-0.5 rounded border border-white/15 leading-none">
+            <span className="text-[12px] font-bold uppercase tracking-[0.16em] text-white/70 bg-white/40 px-1.5 py-0.5 rounded border border-white/15 leading-none">
               Platform
             </span>
           </div>
-          <span className="text-[12px] text-white/80 font-medium tracking-wide">
-            B2B Automotive Trade Network
-          </span>
         </div>
       </div>
 
@@ -105,8 +102,8 @@ export function BrandPanel() {
         {/* Brand Wordmark: Refined PROCURly - Aerodynamic italic with precision speed accent */}
         <div className="mb-4 select-none">
           <div className="inline-block">
-            <h1 className="text-6xl sm:text-7xl lg:text-8xl font-black italic tracking-tight text-white leading-none font-sans uppercase">
-              PROCUR<span className="not-italic font-extrabold text-white/95">LY</span>
+            <h1 className="text-6xl sm:text-7xl lg:text-8xl font-black italic tracking-tight text-white leading-none  uppercase">
+              PROCUR<span className="not-italic font-extrabold text-white">LY</span>
             </h1>
             {/* Precision aerodynamic speed accent blade beneath PRO */}
             <div className="flex items-center gap-1.5 mt-3.5">
