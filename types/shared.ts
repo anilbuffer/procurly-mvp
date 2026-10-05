@@ -172,6 +172,7 @@ export interface CustomerQuoteVersion {
   status: "Draft" | "Sent" | "Accepted" | "Rejected" | "Revised";
   createdBy: string;
   quotePhotos?: string[];
+  selectedFreightType?: "Air" | "Sea";
 }
 
 export interface Quotation {
@@ -198,6 +199,7 @@ export interface Quotation {
   notes?: string;
   procurementTerms?: string;
   quotePhotos?: string[];
+  selectedFreightType?: "Air" | "Sea";
 }
 
 export interface QuoteAcceptanceAudit {
