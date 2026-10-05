@@ -226,6 +226,7 @@ export function PaymentsView() {
                         )}
                       </td>
                       <td className="py-4 px-6 text-right whitespace-nowrap">
+                        <div className="flex items-center justify-end gap-2">
                           <button
                             type="button"
                             onClick={() => openInvoiceModal(req)}

@@ -7,6 +7,7 @@ import { PortalHeader } from "./portal-header";
 import { NewRequestModal } from "./new-request-modal";
 import { RequestDetailsModal } from "./request-details-modal";
 import { PaymentModal } from "./payment-modal";
+import { AcceptQuoteModal } from "./accept-quote-modal";
 import { usePortal } from "@/context/portal-context";
 import { useUnifiedData } from "@/context/unified-data-context";
 
@@ -77,6 +78,7 @@ export function CustomerPortalLayout({ children }: CustomerPortalLayoutProps) {
       {/* Interactive Global Modals */}
       <NewRequestModal />
       <PaymentModal />
+      <AcceptQuoteModal />
     </div>
   );
 }
