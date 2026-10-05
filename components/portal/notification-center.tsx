@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { usePortal } from "@/context/portal-context";
 import { NotificationType } from "@/types/portal";
+import { useRouter } from "next/navigation";
 
 export function NotificationCenter() {
   const [isOpen, setIsOpen] = React.useState(false);
@@ -24,12 +25,15 @@ export function NotificationCenter() {
     markAllNotificationsAsRead,
     requests,
     setSelectedRequest,
+    setSelectedRequestDetailsTab,
     setIsQuoteModalOpen,
     setQuoteRequest,
     setIsPaymentModalOpen,
     setPaymentRequest,
     setActiveTab,
   } = usePortal();
+
+  const router = useRouter();
 
   // Close on outside click
   useEffect(() => {
@@ -90,12 +94,17 @@ export function NotificationCenter() {
       const targetReq = requests.find((r) => r.id === notif.requestId);
       if (targetReq) {
         if (targetReq.actionType === "review_quote" || targetReq.status === "Quoted") {
+          setSelectedRequestDetailsTab?.("quote");
           setSelectedRequest(targetReq);
+          setActiveTab("requests");
+          router.push(`/customer/requests?request=${targetReq.requestNumber || targetReq.id}&tab=quote`);
         } else if (targetReq.actionType === "pay_now" || (targetReq.status === "Awaiting Payment" && targetReq.payment?.status !== "Paid")) {
           setPaymentRequest(targetReq);
           setIsPaymentModalOpen(true);
         } else {
           setSelectedRequest(targetReq);
+          setActiveTab("requests");
+          router.push(`/customer/requests?request=${targetReq.requestNumber || targetReq.id}`);
         }
       }
     }

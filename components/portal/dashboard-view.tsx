@@ -17,6 +17,7 @@ import {
   Package,
 } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { usePortal } from "@/context/portal-context";
 import { PartRequest, RequestStatus } from "@/types/portal";
 import { getStatusBadgeClasses } from "@/lib/status-styles";
@@ -37,6 +38,8 @@ export function DashboardView() {
     simulateZeroState,
     setSimulateZeroState,
   } = usePortal();
+
+  const router = useRouter();
 
   // Pagination state
   const [currentPage, setCurrentPage] = React.useState(1);
@@ -88,8 +91,10 @@ export function DashboardView() {
 
   const handleActionClick = (req: PartRequest) => {
     if (req.actionType === "review_quote" || req.status === "Quoted") {
-      setQuoteRequest(req);
-      setIsQuoteModalOpen(true);
+      setSelectedRequestDetailsTab?.("quote");
+      setSelectedRequest(req);
+      setActiveTab("requests");
+      router.push(`/customer/requests?request=${req.requestNumber || req.id}&tab=quote`);
     } else if (
       req.actionType === "pay_now" ||
       (req.status === "Awaiting Payment" && req.payment?.status !== "Paid") ||
@@ -99,6 +104,8 @@ export function DashboardView() {
       setIsPaymentModalOpen(true);
     } else {
       setSelectedRequest(req);
+      setActiveTab("requests");
+      router.push(`/customer/requests?request=${req.requestNumber || req.id}`);
     }
   };
 
@@ -534,7 +541,11 @@ export function DashboardView() {
                     {requests.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE).map((req) => (
                       <tr
                         key={req.id}
-                        onClick={() => setSelectedRequest(req)}
+                        onClick={() => {
+                          setSelectedRequest(req);
+                          setActiveTab("requests");
+                          router.push(`/customer/requests?request=${req.requestNumber || req.id}`);
+                        }}
                         className="hover:bg-slate-50/80 cursor-pointer transition-colors group"
                       >
                         {/* Request Number */}

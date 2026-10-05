@@ -14,6 +14,7 @@ import {
   AlertTriangle,
 } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { usePortal } from "@/context/portal-context";
 import { PartRequest, RequestStatus } from "@/types/portal";
 import { getStatusBadgeClasses } from "@/lib/status-styles";
@@ -31,6 +32,8 @@ export function RequestsView() {
     setIsPaymentModalOpen,
     setPaymentRequest,
   } = usePortal();
+
+  const router = useRouter();
 
   const [statusFilter, setStatusFilter] = useState<string>("All");
   const [currentPage, setCurrentPage] = useState<number>(1);
@@ -170,7 +173,10 @@ export function RequestsView() {
                 paginatedRequests.map((req) => (
                   <tr
                     key={req.id}
-                    onClick={() => setSelectedRequest(req)}
+                    onClick={() => {
+                      setSelectedRequest(req);
+                      router.push(`/customer/requests?request=${req.requestNumber || req.id}`);
+                    }}
                     className="hover:bg-slate-50 cursor-pointer transition-colors group"
                   >
                     {/* Request Number */}
@@ -233,6 +239,7 @@ export function RequestsView() {
                             e.stopPropagation();
                             setSelectedRequestDetailsTab?.("quote");
                             setSelectedRequest(req);
+                            router.push(`/customer/requests?request=${req.requestNumber || req.id}&tab=quote`);
                           }}
                           className="px-3 py-1 bg-[#FE0000] hover:bg-[#9B0A0F] text-white font-bold text-[11px] uppercase tracking-wider rounded-lg shadow-xs cursor-pointer"
                         >

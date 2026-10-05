@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import { PortalSidebar } from "./portal-sidebar";
 import { PortalHeader } from "./portal-header";
 import { NewRequestModal } from "./new-request-modal";
@@ -17,6 +17,7 @@ interface CustomerPortalLayoutProps {
 
 export function CustomerPortalLayout({ children }: CustomerPortalLayoutProps) {
   const pathname = usePathname();
+  const searchParams = useSearchParams();
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const { selectedRequest, setSelectedRequest, setSelectedRequestDetailsTab, setActiveTab, activeTab } = usePortal();
@@ -26,6 +27,32 @@ export function CustomerPortalLayout({ children }: CustomerPortalLayoutProps) {
   useEffect(() => {
     setIsMobileOpen(false);
   }, [pathname, activeTab]);
+
+  // Sync with ?request= search param (e.g. /customer/requests?request=req-000145)
+  useEffect(() => {
+    const requestId = searchParams?.get("request");
+    if (!requestId) return;
+
+    if (
+      selectedRequest &&
+      (selectedRequest.id.toLowerCase() === requestId.toLowerCase() ||
+        selectedRequest.requestNumber.toLowerCase() === requestId.toLowerCase())
+    ) {
+      return;
+    }
+
+    const req = getRequestById(requestId);
+    if (req) {
+      setSelectedRequest(req as any);
+      const tab = searchParams?.get("tab");
+      if (tab) {
+        setSelectedRequestDetailsTab(tab);
+      } else if (req.status === "Quoted" || req.actionType === "review_quote") {
+        setSelectedRequestDetailsTab("quote");
+      }
+      setActiveTab("requests");
+    }
+  }, [searchParams, getRequestById, selectedRequest, setSelectedRequest, setSelectedRequestDetailsTab, setActiveTab]);
 
   // Listen for search item selection in customer portal
   useEffect(() => {
