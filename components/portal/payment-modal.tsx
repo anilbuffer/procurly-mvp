@@ -36,7 +36,9 @@ export function PaymentModal() {
   const pay = req.payment || {
     id: `pay-${req.id}`,
     requestId: req.id,
-    invoiceNumber: req.payment?.invoiceNumber || (req.requestNumber ? `INV-2026-${req.requestNumber.replace(/[^0-9]/g, "").padStart(4, "0")}` : "INV-2026-0001"),
+    invoiceNumber: req.requestNumber
+      ? `INV-2026-${req.requestNumber.replace(/[^0-9]/g, "").padStart(4, "0")}`
+      : "INV-2026-0001",
     amount:
       req.quotedValue ||
       req.customerQuote?.totalAmount ||
@@ -44,7 +46,7 @@ export function PaymentModal() {
       485.0,
     currency: "NZD",
     status: "Unpaid" as "Unpaid" | "Paid",
-    paymentReference: req.payment?.paymentReference || `${req.requestNumber}`,
+    paymentReference: req.requestNumber || `REF-${req.id}`,
     bankDetails: {
       bankName: "ANZ New Zealand",
       accountName: "Autohub Procurement NZ Ltd",
