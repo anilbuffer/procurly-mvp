@@ -36,7 +36,7 @@ export function PaymentModal() {
   const pay = req.payment || {
     id: `pay-${req.id}`,
     requestId: req.id,
-    invoiceNumber: `INV-2026-${req.requestNumber.replace(/[^0-9]/g, "")}`,
+    invoiceNumber: req.payment?.invoiceNumber || (req.requestNumber ? `INV-2026-${req.requestNumber.replace(/[^0-9]/g, "").padStart(4, "0")}` : "INV-2026-0001"),
     amount:
       req.quotedValue ||
       req.customerQuote?.totalAmount ||
@@ -44,7 +44,7 @@ export function PaymentModal() {
       485.0,
     currency: "NZD",
     status: "Unpaid" as "Unpaid" | "Paid",
-    paymentReference: `${req.requestNumber}`,
+    paymentReference: req.payment?.paymentReference || `${req.requestNumber}`,
     bankDetails: {
       bankName: "ANZ New Zealand",
       accountName: "Autohub Procurement NZ Ltd",
@@ -57,23 +57,19 @@ export function PaymentModal() {
   const isPaid = pay.status === "Paid";
 
   const handleCopy = (text: string, field: string) => {
-    navigator.clipboard.writeText(text);
+    navigator.clipboard?.writeText(text);
     setCopiedField(field);
     setTimeout(() => setCopiedField(null), 2000);
   };
 
   const handleSubmitRemittanceNote = () => {
-    if (bankReference.trim()) {
-      submitPayment(req.id, bankReference.trim());
-      setReferenceSubmitted(true);
-      setTimeout(() => {
-        setIsPaymentModalOpen(false);
-        setPaymentRequest(null);
-      }, 1500);
-    } else {
+    const ref = bankReference.trim() || `${req.requestNumber}-CONFIRMED`;
+    submitPayment(req.id, ref);
+    setReferenceSubmitted(true);
+    setTimeout(() => {
       setIsPaymentModalOpen(false);
       setPaymentRequest(null);
-    }
+    }, 1500);
   };
 
   return (
@@ -317,22 +313,17 @@ export function PaymentModal() {
 
           {!isPaid && (
             <div className="flex items-center gap-2">
-              {bankReference.trim() ? (
-                <button
-                  onClick={handleSubmitRemittanceNote}
-                  className="px-4 py-2.5 bg-[#FE0000] hover:bg-[#9B0A0F] text-white font-bold text-xs uppercase tracking-wider rounded-lg shadow-sm transition-all flex items-center gap-1.5 cursor-pointer active:scale-95"
-                >
-                  <span>Submit Remittance Note</span>
-                  <ArrowRight className="w-4 h-4" />
-                </button>
-              ) : (
-                <button
-                  onClick={() => setIsPaymentModalOpen(false)}
-                  className="px-4 py-2.5 bg-[#FE0000] hover:bg-[#ED2025] text-white font-bold text-xs uppercase tracking-wider rounded-lg shadow-sm transition-all cursor-pointer"
-                >
-                  I Understand
-                </button>
-              )}
+              <button
+                onClick={handleSubmitRemittanceNote}
+                className="px-4 py-2.5 bg-[#FE0000] hover:bg-[#9B0A0F] text-white font-bold text-xs uppercase tracking-wider rounded-lg shadow-sm transition-all flex items-center gap-1.5 cursor-pointer active:scale-95"
+              >
+                <span>
+                  {bankReference.trim()
+                    ? "Submit Remittance Note"
+                    : "I Have Paid / Record Settlement"}
+                </span>
+                <ArrowRight className="w-4 h-4" />
+              </button>
             </div>
           )}
         </div>

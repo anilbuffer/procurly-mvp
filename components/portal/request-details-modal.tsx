@@ -81,7 +81,7 @@ export function RequestDetailsModal() {
   const [isRejecting, setIsRejecting] = useState(false);
   const [rejectReason, setRejectReason] = useState("Local source found faster");
 
-  const [selectedFreightType, setSelectedFreightType] = useState<"Air" | "Sea" | null>(null);
+  const [selectedFreightType, setSelectedFreightType] = useState<"Air" | "Sea">("Sea");
   const [quotePhotoLightbox, setQuotePhotoLightbox] = useState<string | null>(null);
   const [lightboxIndex, setLightboxIndex] = useState<number>(0);
   const [lightboxPhotos, setLightboxPhotos] = useState<string[]>([]);
@@ -111,6 +111,17 @@ export function RequestDetailsModal() {
       setActiveTab("overview");
     }
   }, [selectedRequest?.id, selectedRequest?.status, selectedRequestDetailsTab, requests]);
+
+  // Set default freight selection whenever selected request changes
+  React.useEffect(() => {
+    if (!selectedRequest) return;
+    const current = requests.find((r) => r.id === selectedRequest.id) || selectedRequest;
+    if (current.quoteAcceptance?.selectedFreightType) {
+      setSelectedFreightType(current.quoteAcceptance.selectedFreightType);
+    } else if (current.customerQuote?.selectedFreightType) {
+      setSelectedFreightType(current.customerQuote.selectedFreightType);
+    }
+  }, [selectedRequest?.id, requests]);
 
   if (!selectedRequest) return null;
 
@@ -174,8 +185,28 @@ export function RequestDetailsModal() {
     setTimeout(() => setCopiedContact(null), 2000);
   };
 
+  const handleVerifyAll = () => {
+    setVerifyVehicle(true);
+    setVerifyPart(true);
+    setVerifyAddress(true);
+    setAcceptTerms(true);
+    if (!termsAcceptedAt) {
+      setTermsAcceptedAt(new Date().toLocaleString("en-NZ", { timeZone: "Pacific/Auckland" }));
+    }
+  };
+
   const handleConfirmAcceptance = () => {
-    if (!verifyVehicle || !verifyPart || !verifyAddress || !acceptTerms || !selectedFreightType) return;
+    const freight = selectedFreightType || "Sea";
+    if (!verifyVehicle || !verifyPart || !verifyAddress || !acceptTerms) return;
+
+    const freightCost =
+      freight === "Air"
+        ? req.quotation?.airFreightCost || req.customerQuote?.airFreightCost || 105.0
+        : req.quotation?.seaFreightCost ||
+          req.customerQuote?.seaFreightCost ||
+          req.quotation?.freightCost ||
+          req.customerQuote?.freightCost ||
+          65.0;
 
     const audit: QuoteAcceptanceAudit = {
       acceptedAt: new Date().toLocaleString("en-NZ", { timeZone: "Pacific/Auckland" }),
@@ -187,15 +218,46 @@ export function RequestDetailsModal() {
       vehicleVerified: true,
       partVerified: true,
       addressVerified: true,
-      selectedFreightType: selectedFreightType!,
-      freightCost: selectedFreightType === "Air" ? (req.quotation?.airFreightCost || req.customerQuote?.airFreightCost || 0) : (req.quotation?.seaFreightCost || req.customerQuote?.seaFreightCost || req.quotation?.freightCost || req.customerQuote?.freightCost || 45.0),
+      selectedFreightType: freight,
+      freightCost,
     };
 
     acceptQuote(req.id, audit);
     setIsAcceptingQuote(false);
-    // Switch directly to the Tax Invoice tab within the current view (no floating popup modal)
+
+    // Switch directly to the Tax Invoice tab within the current view
     setActiveTab("invoice");
     setSelectedRequestDetailsTab?.("invoice");
+
+    // Launch the Payment Modal immediately so the customer can pay/settle right away!
+    const updatedReq: PartRequest = {
+      ...req,
+      status: "Awaiting Payment",
+      customerResponse: "Accepted",
+      actionRequired: "Settle invoice via Bank Transfer or Card",
+      actionType: "pay_now",
+      quoteAcceptance: audit,
+      payment: {
+        id: req.payment?.id || `pay-${req.requestNumber}`,
+        requestId: req.id,
+        invoiceNumber: req.payment?.invoiceNumber || `INV-2026-${req.requestNumber.replace(/[^0-9]/g, "").padStart(4, "0")}`,
+        amount: req.quotedValue || req.customerQuote?.totalAmount || 485.0,
+        currency: "NZD",
+        status: "Unpaid",
+        paymentReference: req.payment?.paymentReference || req.requestNumber,
+        dueDate: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000).toISOString().split("T")[0],
+        lastUpdated: "Just now",
+        bankDetails: {
+          bankName: "ANZ New Zealand",
+          accountName: "Autohub Procurement NZ Ltd",
+          accountNumber: "01-0288-0349821-00",
+          swiftBic: "ANZBNZ22",
+        },
+      },
+    };
+
+    setPaymentRequest(updatedReq);
+    setIsPaymentModalOpen(true);
   };
 
   const handleConfirmReject = () => {
@@ -424,9 +486,9 @@ export function RequestDetailsModal() {
                   {req.status === "Quoted" && (
                     <button
                       onClick={() => setActiveTab("quote")}
-                      className="px-4 py-1.5 bg-[#FE0000] hover:bg-[#9B0A0F] text-white font-bold text-xs uppercase tracking-wider rounded-lg shadow-sm whitespace-nowrap"
+                      className="px-4 py-1.5 bg-[#FE0000] hover:bg-[#9B0A0F] text-white font-bold text-xs uppercase tracking-wider rounded-lg shadow-sm whitespace-nowrap cursor-pointer"
                     >
-                      Review Quote →
+                      Accept Quote →
                     </button>
                   )}
                   {req.status === "Awaiting Payment" && req.payment?.status !== "Paid" && (
@@ -435,9 +497,9 @@ export function RequestDetailsModal() {
                         setPaymentRequest(req);
                         setIsPaymentModalOpen(true);
                       }}
-                      className="px-4 py-1.5 bg-[#FE0000] hover:bg-[#9B0A0F] text-white font-bold text-xs uppercase tracking-wider rounded-lg shadow-sm whitespace-nowrap"
+                      className="px-4 py-1.5 bg-[#FE0000] hover:bg-[#9B0A0F] text-white font-bold text-xs uppercase tracking-wider rounded-lg shadow-sm whitespace-nowrap cursor-pointer"
                     >
-                      Record Settlement (Unpaid) →
+                      Pay Now (Unpaid) →
                     </button>
                   )}
                 </div>
@@ -1164,20 +1226,14 @@ export function RequestDetailsModal() {
                         <button
                           onClick={() => {
                             if (!selectedFreightType) {
-                              // Scroll to freight section or flash it
-                              const el = document.getElementById('freight-selection-section');
-                              if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                              return;
+                              setSelectedFreightType("Sea");
                             }
                             setIsAcceptingQuote(true);
                           }}
-                          className={`px-6 py-2.5 font-bold text-xs uppercase tracking-wider rounded-xl shadow-md transition-all inline-flex items-center gap-2 ${selectedFreightType
-                            ? 'bg-[#FE0000] hover:bg-[#9B0A0F] text-white shadow-red-500/25'
-                            : 'bg-slate-300 text-slate-500 cursor-not-allowed shadow-none'
-                            }`}
+                          className="px-6 py-2.5 font-bold text-xs uppercase tracking-wider rounded-xl shadow-md transition-all inline-flex items-center gap-2 bg-[#FE0000] hover:bg-[#9B0A0F] text-white shadow-red-500/25 cursor-pointer active:scale-95"
                         >
-                          <FileCheck2 className="w-4 h-4" />
-                          Review Quote
+                          <ShieldCheck className="w-4 h-4" />
+                          <span>Accept Quote</span>
                         </button>
                       </div>
                     </div>
@@ -1186,14 +1242,24 @@ export function RequestDetailsModal() {
                   {/* Single Static Terms Verification Checklist Before Acceptance */}
                   {isAcceptingQuote && (
                     <div className="p-5 rounded-2xl bg-slate-50 border-2 border-slate-200 text-black space-y-5 animate-in fade-in slide-in-from-bottom-2 duration-300">
-                      <div className="border-b border-slate-200 pb-4">
-                        <h4 className="text-sm font-bold text-slate-900 flex items-center gap-2">
-                          <ShieldCheck className="w-5 h-5 text-[#FE0000]" />
-                          Quote Acceptance — Final Review
-                        </h4>
-                        <p className="text-xs text-slate-500 mt-1">
-                          Please review the details below and confirm all information is correct before accepting this quotation.
-                        </p>
+                      <div className="border-b border-slate-200 pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                        <div>
+                          <h4 className="text-sm font-bold text-slate-900 flex items-center gap-2">
+                            <ShieldCheck className="w-5 h-5 text-[#FE0000]" />
+                            Quote Acceptance — Final Review &amp; Order
+                          </h4>
+                          <p className="text-xs text-slate-500 mt-1">
+                            Please verify the details below to confirm acceptance and proceed directly to payment settlement.
+                          </p>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={handleVerifyAll}
+                          className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-lg border border-slate-200 transition-colors inline-flex items-center gap-1.5 self-start sm:self-auto cursor-pointer"
+                        >
+                          <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                          <span>Verify All</span>
+                        </button>
                       </div>
 
                       {/* Prominent Admin Comments in Acceptance */}

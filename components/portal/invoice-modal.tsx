@@ -36,7 +36,7 @@ export function InvoiceModal() {
     };
   }, [isInvoiceModalOpen]);
 
-  if (!isInvoiceModalOpen || !invoiceRequest || !invoiceRequest.payment?.invoiceUrl) {
+  if (!isInvoiceModalOpen || !invoiceRequest) {
     return null;
   }
 

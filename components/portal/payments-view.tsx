@@ -226,24 +226,21 @@ export function PaymentsView() {
                         )}
                       </td>
                       <td className="py-4 px-6 text-right whitespace-nowrap">
-                        <div className="flex items-center justify-end gap-2">
-                          {req.payment?.invoiceUrl && (
-                            <button
-                              type="button"
-                              onClick={() => openInvoiceModal(req)}
-                              className="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-lg transition-colors inline-flex items-center gap-1"
-                              title="View & Download Invoice"
-                            >
-                              <FileText className="w-3.5 h-3.5 text-slate-600" />
-                              <span>Invoice</span>
-                            </button>
-                          )}
+                          <button
+                            type="button"
+                            onClick={() => openInvoiceModal(req)}
+                            className="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-lg transition-colors inline-flex items-center gap-1 cursor-pointer"
+                            title="View & Download Official GST Tax Invoice"
+                          >
+                            <FileText className="w-3.5 h-3.5 text-slate-600" />
+                            <span>Invoice</span>
+                          </button>
                           {paymentStatus === "Unpaid" ? (
                             <button
                               onClick={() => handleOpenPaymentModal(req)}
-                              className="px-3.5 py-1.5 bg-[#FE0000] hover:bg-[#ED2025] text-white font-bold text-xs uppercase tracking-wider rounded-lg shadow-xs transition-all"
+                              className="px-3.5 py-1.5 bg-[#FE0000] hover:bg-[#9B0A0F] text-white font-bold text-xs uppercase tracking-wider rounded-lg shadow-xs transition-all cursor-pointer"
                             >
-                              Settlement Details →
+                              Pay Now →
                             </button>
                           ) : (
                             <button

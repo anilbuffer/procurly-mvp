@@ -28,6 +28,7 @@ export function DashboardView() {
     setIsNewRequestModalOpen,
     setActiveTab,
     setSelectedRequest,
+    setSelectedRequestDetailsTab,
     setIsQuoteModalOpen,
     setQuoteRequest,
     setIsPaymentModalOpen,
@@ -47,9 +48,10 @@ export function DashboardView() {
     (r) =>
       r.actionType === "review_quote" ||
       r.actionType === "pay_now" ||
-      (r.actionType === "view_details" && !r.status.startsWith("Subadmin")) ||
       r.status === "Quoted" ||
-      (r.status === "Awaiting Payment" && r.payment?.status !== "Paid")
+      (r.status === "Awaiting Payment" && r.payment?.status !== "Paid") ||
+      (r.payment && r.payment.status !== "Paid" && (r.status === "Invoicing" || r.customerResponse === "Accepted")) ||
+      (r.actionType === "view_details" && !r.status.startsWith("Subadmin"))
   );
 
   // Status badge styling helper (covers all workflow statuses)
@@ -59,8 +61,13 @@ export function DashboardView() {
 
   const handleActionClick = (req: PartRequest) => {
     if (req.actionType === "review_quote" || req.status === "Quoted") {
+      setSelectedRequestDetailsTab?.("quote");
       setSelectedRequest(req);
-    } else if (req.actionType === "pay_now" || (req.status === "Awaiting Payment" && req.payment?.status !== "Paid")) {
+    } else if (
+      req.actionType === "pay_now" ||
+      (req.status === "Awaiting Payment" && req.payment?.status !== "Paid") ||
+      (req.payment && req.payment.status !== "Paid" && (req.status === "Invoicing" || req.customerResponse === "Accepted"))
+    ) {
       setPaymentRequest(req);
       setIsPaymentModalOpen(true);
     } else {
@@ -383,14 +390,20 @@ export function DashboardView() {
                           {req.vehicle.make} {req.vehicle.model} - {req.vehicle.year}
                         </span>
 
-                        {/* Pill Tag */}
+                        {/* Pill Tag with prominent Accept Quote Alert */}
                         {req.status === "Quoted" && (
-                          <span className="text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-800 border border-amber-200 flex items-center gap-1">
-                            <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />
-                            Quote Ready
-                          </span>
+                          <div className="flex items-center gap-1.5 flex-wrap">
+                            <span className="text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-purple-50 text-purple-700 border border-purple-200 flex items-center gap-1">
+                              <span className="w-1.5 h-1.5 rounded-full bg-purple-500" />
+                              Quote Ready
+                            </span>
+                            <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-900 border border-amber-300 flex items-center gap-1.5 shadow-2xs">
+                              <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
+                              Accept Quote
+                            </span>
+                          </div>
                         )}
-                        {req.status === "Awaiting Payment" && req.payment?.status !== "Paid" && (
+                        {(req.status === "Awaiting Payment" || (req.payment && req.payment.status !== "Paid" && (req.status === "Invoicing" || req.customerResponse === "Accepted"))) && (
                           <span className="text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-800 border border-amber-200 flex items-center gap-1">
                             <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />
                             Unpaid
@@ -416,12 +429,12 @@ export function DashboardView() {
                     <div>
                       <button
                         onClick={() => handleActionClick(req)}
-                        className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-4 py-2 bg-[#FE0000] hover:bg-[#9B0A0F] text-white font-bold text-xs uppercase tracking-wider rounded-lg shadow-sm hover:shadow transition-all active:scale-95"
+                        className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-4 py-2 bg-[#FE0000] hover:bg-[#9B0A0F] text-white font-bold text-xs uppercase tracking-wider rounded-lg shadow-sm hover:shadow transition-all active:scale-95 cursor-pointer"
                       >
                         <span>
-                          {req.actionType === "review_quote"
-                            ? "Review Quote"
-                            : req.actionType === "pay_now"
+                          {req.actionType === "review_quote" || req.status === "Quoted"
+                            ? "Accept Quote"
+                            : req.actionType === "pay_now" || (req.payment?.status !== "Paid" && (req.status === "Awaiting Payment" || req.status === "Invoicing" || req.customerResponse === "Accepted"))
                               ? "Pay Now"
                               : "View Details"}
                         </span>

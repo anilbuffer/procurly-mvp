@@ -22,6 +22,7 @@ export function RequestsView() {
   const {
     requests,
     setSelectedRequest,
+    setSelectedRequestDetailsTab,
     setIsNewRequestModalOpen,
     searchQuery,
     setSearchQuery,
@@ -230,20 +231,21 @@ export function RequestsView() {
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
+                            setSelectedRequestDetailsTab?.("quote");
                             setSelectedRequest(req);
                           }}
-                          className="px-3 py-1 bg-[#FE0000] hover:bg-[#9B0A0F] text-white font-bold text-[11px] uppercase tracking-wider rounded-lg shadow-xs"
+                          className="px-3 py-1 bg-[#FE0000] hover:bg-[#9B0A0F] text-white font-bold text-[11px] uppercase tracking-wider rounded-lg shadow-xs cursor-pointer"
                         >
-                          Review Quote →
+                          Accept Quote →
                         </button>
-                      ) : req.actionType === "pay_now" || (req.status === "Awaiting Payment" && req.payment?.status !== "Paid") ? (
+                      ) : req.actionType === "pay_now" || (req.status === "Awaiting Payment" && req.payment?.status !== "Paid") || (req.payment && req.payment.status !== "Paid" && (req.status === "Invoicing" || req.customerResponse === "Accepted")) ? (
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
                             setPaymentRequest(req);
                             setIsPaymentModalOpen(true);
                           }}
-                          className="px-3 py-1 bg-[#FE0000] hover:bg-[#9B0A0F] text-white font-bold text-[11px] uppercase tracking-wider rounded-lg shadow-xs"
+                          className="px-3 py-1 bg-[#FE0000] hover:bg-[#9B0A0F] text-white font-bold text-[11px] uppercase tracking-wider rounded-lg shadow-xs cursor-pointer"
                         >
                           Pay Now →
                         </button>

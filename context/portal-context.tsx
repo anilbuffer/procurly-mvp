@@ -305,7 +305,7 @@ export function PortalProvider({ children }: { children: React.ReactNode }) {
         timestamp: new Date().toISOString(),
         timeLabel: "Just now",
         title: `Quote Accepted for ${reqNum}`,
-        description: `Accepted by ${acceptanceAudit.acceptedBy}. Status moved to Invoicing. Pending invoice issuance.`,
+        description: `Accepted by ${acceptanceAudit.acceptedBy}. Status moved to Awaiting Payment. Settle invoice to dispatch order.`,
         type: "quote",
         requestId,
       },

@@ -1215,21 +1215,21 @@ export function UnifiedDataProvider({ children }: { children: React.ReactNode })
   );
 
   // ─── Actions: Customer Approval ──────────────────────────
-  // Sets Customer Response = Accepted and moves status to Approved (Stage 4)
+  // Sets Customer Response = Accepted and moves status to Awaiting Payment with pay_now action
   const acceptCustomerQuote = useCallback(
     (requestId: string, audit: QuoteAcceptanceAudit) => {
       setRequests((prev) =>
         prev.map((r) => {
           if (r.id === requestId || r.requestNumber === requestId) {
-            const amount = r.quotedValue || r.customerQuote?.totalAmount || 410.0;
+            const amount = r.quotedValue || r.customerQuote?.totalAmount || 485.0;
             const actor = audit.acceptedBy || r.contactName || "Customer";
 
             return {
               ...r,
-              status: "Invoicing",
+              status: "Awaiting Payment",
               customerResponse: "Accepted",
-              actionRequired: "Raise and attach invoice PDF",
-              actionType: "upload_invoice",
+              actionRequired: "Settle invoice via Bank Transfer or Card",
+              actionType: "pay_now",
               lastUpdated: "Just now",
               quoteAcceptance: {
                 acceptedAt: audit.acceptedAt || "Just now",
@@ -1245,9 +1245,9 @@ export function UnifiedDataProvider({ children }: { children: React.ReactNode })
                 selectedFreightType: audit.selectedFreightType,
               },
               payment: {
-                id: `pay-${r.requestNumber}`,
+                id: r.payment?.id || `pay-${r.requestNumber}`,
                 requestId: r.id,
-                invoiceNumber: `INV-2026-${r.requestNumber.replace("AutoHub-P-", "")}`,
+                invoiceNumber: r.payment?.invoiceNumber || `INV-2026-${r.requestNumber.replace(/[^0-9]/g, "").padStart(4, "0")}`,
                 amount,
                 currency: "NZD",
                 status: "Unpaid", // Payment is Unpaid
@@ -1267,7 +1267,7 @@ export function UnifiedDataProvider({ children }: { children: React.ReactNode })
                   timestamp: new Date().toISOString(),
                   timeLabel: "Just now",
                   title: "Customer accepted quote",
-                  description: `Quote accepted by ${actor}. Status: Invoicing. Pending PDF attachment.`,
+                  description: `Quote accepted by ${actor}. Status moved to Awaiting Payment. Settle invoice to release order for dispatch.`,
                   actor,
                   type: "quote",
                 },
@@ -1286,7 +1286,7 @@ export function UnifiedDataProvider({ children }: { children: React.ReactNode })
           id: `notif-${Date.now()}`,
           type: "Quote Accepted",
           title: `Quote Accepted: ${reqNum}`,
-          description: `Customer response recorded as Accepted. Status moved to Invoicing.`,
+          description: `Quote accepted by customer. Status moved to Awaiting Payment. Settle invoice to release order.`,
           timestamp: "Just now",
           read: false,
           requestId,
