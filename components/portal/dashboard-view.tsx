@@ -139,10 +139,10 @@ export function DashboardView() {
                 </svg>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-4 relative z-10">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-16 relative z-10">
                 {/* Step 1 */}
                 <div className="flex flex-col items-center text-center group">
-                  <div className="relative z-10 mb-3">
+                  <div className="relative z-10 mb-4">
                     <div className="w-10 h-10 rounded-full bg-white border-2 border-blue-500 text-blue-600 ring-4 ring-blue-50 flex items-center justify-center shadow-sm transition-all duration-200 group-hover:scale-110 group-hover:ring-blue-100">
                       <Search className="w-4 h-4 stroke-[2.2]" />
                     </div>
@@ -150,7 +150,7 @@ export function DashboardView() {
                       1
                     </span>
                   </div>
-                  <div className="min-h-[42px] flex items-center justify-center mb-1 px-1">
+                  <div className="h-11 sm:h-12 flex items-start justify-center mb-2.5 sm:mb-3 px-1">
                     <h3 className="font-bold text-slate-900 text-xs sm:text-sm leading-snug">
                       We Source
                     </h3>
@@ -162,7 +162,7 @@ export function DashboardView() {
 
                 {/* Step 2 */}
                 <div className="flex flex-col items-center text-center group">
-                  <div className="relative z-10 mb-3">
+                  <div className="relative z-10 mb-4">
                     <div className="w-10 h-10 rounded-full bg-white border-2 border-amber-500 text-amber-600 ring-4 ring-amber-50 flex items-center justify-center shadow-sm transition-all duration-200 group-hover:scale-110 group-hover:ring-amber-100">
                       <FileCheck className="w-4 h-4 stroke-[2.2]" />
                     </div>
@@ -170,19 +170,19 @@ export function DashboardView() {
                       2
                     </span>
                   </div>
-                  <div className="min-h-[42px] flex items-center justify-center mb-1 px-1">
+                  <div className="h-11 sm:h-12 flex items-start justify-center mb-2.5 sm:mb-3 px-1">
                     <h3 className="font-bold text-slate-900 text-xs sm:text-sm leading-snug">
                       Receive a landed door-to-door quote for your approval
                     </h3>
                   </div>
                   <p className="text-[11px] sm:text-xs text-slate-500 leading-relaxed max-w-[220px]">
-                    Receive a landed quote for your approval for your approval, with complete transparency.
+                    Receive a landed quote for your approval, with complete transparency.
                   </p>
                 </div>
 
                 {/* Step 3 */}
                 <div className="flex flex-col items-center text-center group">
-                  <div className="relative z-10 mb-3">
+                  <div className="relative z-10 mb-4">
                     <div className="w-10 h-10 rounded-full bg-white border-2 border-emerald-500 text-emerald-600 ring-4 ring-emerald-50 flex items-center justify-center shadow-sm transition-all duration-200 group-hover:scale-110 group-hover:ring-emerald-100">
                       <CreditCard className="w-4 h-4 stroke-[2.2]" />
                     </div>
@@ -190,7 +190,7 @@ export function DashboardView() {
                       3
                     </span>
                   </div>
-                  <div className="min-h-[42px] flex items-center justify-center mb-1 px-1">
+                  <div className="h-11 sm:h-12 flex items-start justify-center mb-2.5 sm:mb-3 px-1">
                     <h3 className="font-bold text-slate-900 text-xs sm:text-sm leading-snug">
                       Approve the quote and pay the invoice
                     </h3>
@@ -202,7 +202,7 @@ export function DashboardView() {
 
                 {/* Step 4 */}
                 <div className="flex flex-col items-center text-center group">
-                  <div className="relative z-10 mb-3">
+                  <div className="relative z-10 mb-4">
                     <div className="w-10 h-10 rounded-full bg-white border-2 border-sky-500 text-sky-600 ring-4 ring-sky-50 flex items-center justify-center shadow-sm transition-all duration-200 group-hover:scale-110 group-hover:ring-sky-100">
                       <Package className="w-4 h-4 stroke-[2.2]" />
                     </div>
@@ -210,7 +210,7 @@ export function DashboardView() {
                       4
                     </span>
                   </div>
-                  <div className="min-h-[42px] flex items-center justify-center mb-1 px-1">
+                  <div className="h-11 sm:h-12 flex items-start justify-center mb-2.5 sm:mb-3 px-1">
                     <h3 className="font-bold text-slate-900 text-xs sm:text-sm leading-snug">
                       We Deliver
                     </h3>
