@@ -34,6 +34,7 @@ import {
 import { usePortal } from "@/context/portal-context";
 import { InvoiceDocument } from "@/components/shared/invoice-document";
 import { LegalModal } from "@/components/auth/legal-modal";
+import { OperationalTrackingTimeline } from "./operational-tracking-timeline";
 import {
   PartRequest,
   RequestStatus,
@@ -1481,9 +1482,16 @@ export function RequestDetailsModal() {
                   <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
                     Assigned Freight Carrier
                   </span>
-                  <h3 className="text-base font-bold text-slate-900">
-                    {req.shipment.carrier}
-                  </h3>
+                  <div className="flex items-center gap-2.5">
+                    <h3 className="text-base font-bold text-slate-900">
+                      {req.shipment.carrier}
+                    </h3>
+                    {req.shipment.trackingNumber && (
+                      <span className="text-xs font-mono bg-slate-100 text-slate-700 px-2 py-0.5 rounded-md border border-slate-200 font-semibold">
+                        {req.shipment.trackingNumber}
+                      </span>
+                    )}
+                  </div>
                 </div>
 
                 <div className="text-right">
@@ -1529,77 +1537,19 @@ export function RequestDetailsModal() {
                 </div>
               )}
 
-              {/* Internal Logistics Milestones within Shipped Stage */}
-              <div className="p-6 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-4">
-                <div>
-                  <h4 className="text-xs font-bold text-slate-900 uppercase tracking-wider">
-                    Internal Logistics Milestones (Shipped Stage)
-                  </h4>
-                  <p className="text-[11px] text-slate-500">
-                    Real-time operational tracking from international facility to workshop
-                  </p>
-                </div>
-
-                <div className="relative pl-6 space-y-6 before:absolute before:left-2 before:top-2 before:bottom-2 before:w-0.5 before:bg-slate-300">
-                  {req.shipment.milestonesHistory.map((m, idx) => {
-                    const isCurrent =
-                      req.shipment?.currentMilestone === m.milestone;
-                    return (
-                      <div key={idx} className="relative">
-                        <div
-                          className={`absolute -left-6 top-0.5 w-4 h-4 rounded-full border-2 flex items-center justify-center ${m.isCompleted
-                            ? "bg-emerald-500 border-emerald-500 text-white"
-                            : isCurrent
-                              ? "bg-[#FE0000] border-[#FE0000] text-white animate-pulse"
-                              : "bg-white border-slate-300"
-                            }`}
-                        >
-                          {m.isCompleted && <Check className="w-2.5 h-2.5 stroke-[3]" />}
-                        </div>
-
-                        <div className="space-y-0.5">
-                          <div className="flex items-center gap-2">
-                            <span
-                              className={`text-xs font-bold ${isCurrent
-                                ? "text-[#FE0000]"
-                                : m.isCompleted
-                                  ? "text-slate-900"
-                                  : "text-slate-500"
-                                }`}
-                            >
-                              {m.milestone}
-                            </span>
-                            <span className="text-[10px] text-slate-400 ">
-                              • {m.timestamp}
-                            </span>
-                          </div>
-                          <p className="text-xs text-slate-600 font-medium">
-                            {m.location}
-                          </p>
-                          <p className="text-[11px] text-slate-500">
-                            {m.description}
-                          </p>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-
-                <div className="pt-3 flex items-center justify-between border-t border-slate-200 text-xs">
-                  <span className="text-slate-500">Need full tracking dashboard?</span>
-                  <button
-                    onClick={() => {
-                      const id = selectedRequest.id;
-                      setSelectedRequest(null);
-                      router.push(`/customer/shipments?id=${encodeURIComponent(id)}`);
-                    }}
-                    className="inline-flex items-center gap-1.5 font-bold text-[#FE0000] hover:underline cursor-pointer"
-                  >
-                    <span>Open in Full Shipments View</span>
-                    <ExternalLink className="w-3.5 h-3.5" />
-                  </button>
-                </div>
-              </div>
+              {/* Real-time Operational Tracking Timeline */}
+              <OperationalTrackingTimeline
+                shipment={req.shipment}
+                requestStatus={req.status}
+                title='INTERNAL SHIPPING MILESTONES (INSIDE "SHIPPED")'
+                subtitle="The Customer Portal automatically displays the latest achieved milestone."
+                showCarrierSummary={false}
+                onOpenFullShipments={() => {
+                  const id = selectedRequest.id;
+                  setSelectedRequest(null);
+                  router.push(`/customer/shipments?id=${encodeURIComponent(id)}`);
+                }}
+              />
             </div>
           )}
 

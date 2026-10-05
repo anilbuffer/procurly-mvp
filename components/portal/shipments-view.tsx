@@ -25,6 +25,7 @@ import {
 } from "lucide-react";
 import { usePortal } from "@/context/portal-context";
 import { ShipmentMilestone, PartRequest } from "@/types/portal";
+import { OperationalTrackingTimeline } from "./operational-tracking-timeline";
 
 const MILESTONES: ShipmentMilestone[] = [
   "Received At Shipping Facility",
@@ -287,7 +288,7 @@ export function ShipmentsView() {
               </span>
             </div>
 
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2.5">
               {MILESTONES.map((m, idx) => {
                 const isCompleted = idx <= currentMilestoneIdx;
                 const isCurrent = idx === currentMilestoneIdx;
@@ -417,62 +418,14 @@ export function ShipmentsView() {
             </div>
           </div>
 
-          {/* Milestone Event Timeline Audit Log */}
-          {sh.milestonesHistory && sh.milestonesHistory.length > 0 && (
-            <div className="space-y-3 pt-2">
-              <div className="flex items-center justify-between text-xs font-bold text-slate-800">
-                <div className="flex items-center gap-2">
-                  <Clock className="w-4 h-4 text-slate-500" />
-                  <span>Consignment Event Timeline & Audit Trail</span>
-                </div>
-                <span className="text-[11px] text-slate-500 font-normal">
-                  {sh.milestonesHistory.length} tracked checkpoints
-                </span>
-              </div>
-
-              <div className="bg-slate-50/50 rounded-xl border border-slate-200 p-4 space-y-4">
-                {sh.milestonesHistory.map((m, idx) => {
-                  return (
-                    <div key={idx} className="flex items-start gap-3.5 text-xs group">
-                      <div className="mt-0.5 relative">
-                        <div
-                          className={`w-3.5 h-3.5 rounded-full border-2 flex items-center justify-center ${m.isCompleted
-                            ? "bg-emerald-500 border-emerald-500"
-                            : "bg-white border-slate-300"
-                            }`}
-                        >
-                          {m.isCompleted && <Check className="w-2.5 h-2.5 text-white stroke-[3]" />}
-                        </div>
-                        {idx !== sh.milestonesHistory.length - 1 && (
-                          <div className="w-0.5 h-7 bg-slate-200 absolute top-3.5 left-1.5 -translate-x-1/2" />
-                        )}
-                      </div>
-
-                      <div className="flex-1 space-y-0.5">
-                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
-                          <span
-                            className={`font-bold ${m.isCompleted ? "text-slate-900" : "text-slate-500"
-                              }`}
-                          >
-                            {m.milestone}
-                          </span>
-                          <span className=" text-[11px] text-slate-400">
-                            {m.timestamp}
-                          </span>
-                        </div>
-                        <p className="text-slate-600 text-[11px] font-medium">
-                          {m.location}
-                        </p>
-                        <p className="text-slate-500 text-[11px]">
-                          {m.description}
-                        </p>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          )}
+          {/* Real-time Operational Tracking Milestones Stepper (Section 23 Matching Attached Design) */}
+          <OperationalTrackingTimeline
+            shipment={sh}
+            requestStatus={selectedReq.status}
+            title='INTERNAL SHIPPING MILESTONES (INSIDE "SHIPPED")'
+            subtitle="The Customer Portal automatically displays the latest achieved milestone."
+            showCarrierSummary={false}
+          />
 
           {/* Card Bottom Actions */}
           <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-4 border-t border-slate-100 text-xs">

@@ -237,7 +237,7 @@ export function ShipmentTab({ request: initialRequest }: ShipmentTabProps) {
               </span>
             </div>
 
-            <div className="relative pl-6 space-y-8 before:absolute before:left-2.5 before:top-3 before:bottom-3 before:w-0.5 before:bg-slate-200">
+            <div className="relative pl-6 space-y-8">
               {MILESTONES.map((m, idx) => {
                 const isPassed = idx < currentMilestoneIndex;
                 const isCurrent = idx === currentMilestoneIndex;
@@ -249,6 +249,15 @@ export function ShipmentTab({ request: initialRequest }: ShipmentTabProps) {
 
                 return (
                   <div key={m.name} className="relative flex items-start gap-4">
+                    {/* Connecting line segment */}
+                    {idx < MILESTONES.length - 1 && (
+                      <div
+                        className={`absolute -left-[14px] top-4 -bottom-8 w-0.5 transition-colors ${
+                          idx < currentMilestoneIndex ? "bg-emerald-500" : "bg-slate-200"
+                        }`}
+                      />
+                    )}
+
                     {/* Circle marker */}
                     <div
                       className={`absolute -left-6 mt-0.5 w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold z-10 transition-all ${isPassed
@@ -276,11 +285,9 @@ export function ShipmentTab({ request: initialRequest }: ShipmentTabProps) {
                             </span>
                           )}
                         </div>
-                        {matchingLog?.timestamp && (
-                          <span className="text-[11px] text-slate-400 ">
-                            {matchingLog.timestamp}
-                          </span>
-                        )}
+                        <span className="text-[11px] text-slate-400 font-normal">
+                          {matchingLog?.timestamp || (isFuture ? "Pending" : "")}
+                        </span>
                       </div>
 
                       <p className="text-xs text-slate-600 mt-1">
